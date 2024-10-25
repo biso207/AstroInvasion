@@ -14,8 +14,10 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        img = new Texture("lobby_marketplace_ita.png");  // LibGDX fornisce questa immagine di esempio
+        img = new Texture("libgdx.png");  // LibGDX fornisce questa immagine di esempio
     }
+
+    //Prova numero 1
 
     @Override
     public void render() {
