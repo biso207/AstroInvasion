@@ -11,42 +11,60 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.io.*;
 import java.util.Scanner;
 
-public class LogInSignUp extends ScreenAdapter implements InputProcessor {
+public class LogInSignUp extends ScreenAdapter {
     private SpriteBatch screen;
     private Texture img1, img2, img3, img4;
     private BitmapFont font; // Aggiungi BitmapFont per il testo
-    private StringBuilder nicknameInput, passwordInput;
+    private StringBuilder nicknameInput;
+    private StringBuilder passwordInput;
     private boolean enteringNickname;
     public String nickname;
     private int state = 0; // 0 = LogIn, 1 = errore LogIn, 2 = SignUp, 3 = errore SignUp
-    private final Game game; // variabile di riferimento tipo gioco
+    private final Main game; // variabile di riferimento tipo gioco
 
     // costruttore
-    public LogInSignUp(Game game) {
+    public LogInSignUp(Main game) {
         this.game = game;
-        this.screen = Main.screen;
+        this.screen = game.screen;
         this.enteringNickname = true;
-        Gdx.input.setInputProcessor(this); // Imposta l'input processor per rilevare caratteri
+
+        // Carica il font
+        loadFont();
+
+        // Inizializza le stringhe
+        nicknameInput = new StringBuilder();
+        passwordInput = new StringBuilder();
+
+        // chiama le operazioni iniziali per aprire la pagina di accesso o registrazione
+        userOperations();
+    }
+
+    // metodo per caricare il font
+    private void loadFont() {
+        try {
+            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
+        } catch (Exception e) {
+            Gdx.app.log("Font Error", "Il font non è stato caricato correttamente: " + e.getMessage());
+            font = new BitmapFont(); // Carica un font predefinito in caso di errore
+        }
     }
 
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
         // lettura presenza di almeno un utente
         try {
-            FileReader checkUser = new FileReader("data\\is_user.txt");
-            boolean isUSer = Boolean.parseBoolean(new Scanner(checkUser).nextLine());
+            FileReader checkUser = new FileReader("data/is_user.txt");
+            boolean isUser = Boolean.parseBoolean(new Scanner(checkUser).nextLine());
 
             // "bivio" operazioni
-            if (isUSer) { // almeno un utente presente => operazione accesso
+            if (isUser) { // almeno un utente presente => operazione accesso
                 // set state a "accesso"
                 state = 0;
-            }
-            else { // nessun utente presente => operazione registrazione
+            } else { // nessun utente presente => operazione registrazione
                 // set state a "registrazione"
                 state = 2;
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
@@ -55,8 +73,7 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
 
     // algoritmo per la registrazione
     public void SignUpAlg() {
-
-        //processo registrazione
+        // processo registrazione
         File generalFolder = new File("data/" + nicknameInput);
         File dataFolder = new File("data/" + nicknameInput + "/data_user");
 
@@ -65,8 +82,6 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
             // creazione cartella generale e dati utente
             generalFolder.mkdir();
             dataFolder.mkdir();
-
-            // chiamata metodo per creare i file di base
 
             // scrittura dati utente
             try {
@@ -82,8 +97,7 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else { // utente già creato
+        } else { // utente già creato
             // set dello stato in "utente già creato"
             state = 3;
         }
@@ -112,18 +126,11 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
 
     // metodo con switch per gestire le schermate LogIn e SignUp
     public void operationsScreen() {
-        font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
-
-
         // creazione delle 4 possibili immagini da mostrare
         img1 = new Texture("login_signup_pages/page_1_log_in_eng.png");
         img2 = new Texture("login_signup_pages/page_1_log_in_eng_error.png");
         img3 = new Texture("login_signup_pages/page_2_sign_up_eng.png");
         img4 = new Texture("login_signup_pages/page_2_sign_up_eng_error.png");
-
-        // creazione delle variabili di tipo StringBuilder per nickname e password
-        nicknameInput = new StringBuilder(); // nickname
-        passwordInput = new StringBuilder(); // password
 
         // controllo inserimento nickname o password
         enteringNickname = true;
@@ -131,10 +138,12 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     }
 
     // metodi dalla classe Screen
-    @Override public void show() {}
+    @Override
+    public void show() {}
 
     @Override
     public void render(float v) {
+        handleInput();
         screen.begin();
 
         // stampa immagine in base allo stato dello switch
@@ -157,10 +166,8 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
 
         // stampa del testo digitato (nickname e password)
         if (enteringNickname) {
-            // stampa nickname in digitazione
             font.draw(screen, nicknameInput, 100, 50);
         } else {
-            // stampa del nickname già digitato e password in digitazione
             font.draw(screen, nicknameInput, 100, 50);
             font.draw(screen, passwordInput, 100, 30);
         }
@@ -172,31 +179,31 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     metodo per la digitazione da tastiera di nickname e password,
     e controlla la pressione del tasto "Enter" per passare alla digitazione successiva
     */
-    public boolean keyTyped(char character) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            if (character == '\r' || character == '\n') {
-                enteringNickname = false; // inserimento password
+    private void handleInput() {
+        // Controlla se si sta digitando un nickname
+        if (enteringNickname) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                enteringNickname = false; // Passa a digitare la password
             } else {
-                // passaggio agli algoritmi una volta completate le digitazioni di nickname e password
-                processLoginOrSignup();
-            }
-        } else if (character == '\b') { // controllo backspace (invio)
-            if (enteringNickname && nicknameInput.length() > 0) {
-                nicknameInput.setLength(nicknameInput.length() - 1);
-            } else if (!enteringNickname && passwordInput.length() > 0) {
-                passwordInput.setLength(passwordInput.length() - 1);
+                // Aggiungi caratteri alla stringa finché non viene premuto 'ENTER'
+                for (char c = 0; c < 128; c++) {
+                    if (Gdx.input.isKeyJustPressed(c)) {
+                        nicknameInput.append(c);
+                    }
+                }
             }
         } else {
-            // aggiunta dei caratteri digitati a nickname e password
-            if (Character.isLetterOrDigit(character) || character == ' ') {
-                if (enteringNickname) {
-                    nicknameInput.append(character);
-                } else {
-                    passwordInput.append(character);
+            // Controlla per la password
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                // Gestisci l'input della password, se necessario
+            } else {
+                for (char c = 0; c < 128; c++) {
+                    if (Gdx.input.isKeyJustPressed(c)) {
+                        passwordInput.append(c);
+                    }
                 }
             }
         }
-        return true;
     }
 
     // metodo per passare agli algoritmi
@@ -223,20 +230,12 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     @Override
     // dispose per chiudere le "schermate"
     public void dispose() {
-        font.dispose();
+        if (font != null) {
+            font.dispose();
+        }
         img1.dispose();
         img2.dispose();
         img3.dispose();
         img4.dispose();
     }
-
-    // implementazione vuota per gli altri metodi di InputProcessor
-    @Override public boolean keyDown(int keycode) { return false; }
-    @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchCancelled(int i, int i1, int i2, int i3) {return false;}
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
 }

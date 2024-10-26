@@ -13,18 +13,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class LoadingScreen implements Screen {
     private SpriteBatch screen;
     private final Texture background; // Immagine di sfondo
-    private final Texture loadingBar; // Texture per la barra di caricamento
     private float loadingProgress = 0; // Progresso di caricamento attuale
     private boolean loadingFinished = false;
     private final ShapeRenderer shapeRenderer;
-    private final Game game; // variabile di riferimento tipo gioco
+    private final Main game; // variabile di riferimento tipo gioco
 
-    public LoadingScreen(Game game) {
+    public LoadingScreen(Main game) {
         this.game = game; // Assegna il riferimento
-        this.screen = Main.screen;
+        this.screen = game.screen;
         shapeRenderer = new ShapeRenderer();
         background = new Texture("loading_screen.png"); // Carica l'immagine di sfondo
-        loadingBar = new Texture("loading_screen.png"); // Carica un'immagine per la barra di caricamento
 
         // musica di apertura
         Music openSound = Gdx.audio.newMusic(Gdx.files.internal("soundtrack home 2023.mp3")); // Carica il file audio
@@ -68,9 +66,7 @@ public class LoadingScreen implements Screen {
         shapeRenderer.end(); // chiusura render disegno
 
         if (loadingFinished) {
-            // creazione oggetto per registrazione/accesso e chiamata metodo di controllo
-            LogInSignUp logInSignUp = new LogInSignUp(game);
-            logInSignUp.userOperations();
+            // apertura schermata accesso/registrazione
             game.setScreen(new LogInSignUp(game));
         }
     }
@@ -101,6 +97,5 @@ public class LoadingScreen implements Screen {
     @Override
     public void dispose() {
         background.dispose();
-        loadingBar.dispose();
     }
 }
