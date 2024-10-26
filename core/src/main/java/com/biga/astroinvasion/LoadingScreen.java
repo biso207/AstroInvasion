@@ -33,8 +33,8 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
+    // inizializza la schermata di caricamento
     public void show() {
-        // Inizializza la schermata di caricamento
     }
 
     @Override
@@ -68,7 +68,9 @@ public class LoadingScreen implements Screen {
         shapeRenderer.end(); // chiusura render disegno
 
         if (loadingFinished) {
-            game.setScreen(new Lobby(game)); // Passa alla nuova schermata
+            // creazione oggetto per registrazione/accesso e chiamata metodo di controllo
+            LogInSignUp logInSignUp = new LogInSignUp(game);
+            logInSignUp.userOperations();
         }
     }
 
@@ -82,6 +84,7 @@ public class LoadingScreen implements Screen {
         shapeRenderer.arc(x + radius, y + height - radius, radius, 90, 90); // Angolo in basso a sinistra
     }
 
+    // metodi dalla classe Screen
     @Override
     public void resize(int width, int height) { }
 
