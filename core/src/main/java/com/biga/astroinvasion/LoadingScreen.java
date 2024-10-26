@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class LoadingScreen implements Screen {
-    private final SpriteBatch batch;
+    private SpriteBatch screen;
     private final Texture background; // Immagine di sfondo
     private final Texture loadingBar; // Texture per la barra di caricamento
     private float loadingProgress = 0; // Progresso di caricamento attuale
@@ -21,7 +21,7 @@ public class LoadingScreen implements Screen {
 
     public LoadingScreen(Game game) {
         this.game = game; // Assegna il riferimento
-        batch = new SpriteBatch();
+        this.screen = Main.screen;
         shapeRenderer = new ShapeRenderer();
         background = new Texture("loading_screen.png"); // Carica l'immagine di sfondo
         loadingBar = new Texture("loading_screen.png"); // Carica un'immagine per la barra di caricamento
@@ -41,19 +41,19 @@ public class LoadingScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Pulisce lo schermo
 
-        // Incrementa il progresso del caricamento
+        // incrementa il progresso del caricamento
         loadingProgress += delta; // Incrementa il progresso basato sul tempo trascorso
-        // Tempo di caricamento totale in secondi
+        // tempo di caricamento totale in secondi
         float loadingTime = 4.5f;
         if (loadingProgress >= loadingTime) {
             loadingProgress = loadingTime; // Assicura che non superi il tempo totale
             loadingFinished = true; // Imposta il caricamento come completato
         }
 
-        // Disegna lo sfondo
-        batch.begin();
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Disegna l'immagine di sfondo
-        batch.end();
+        // disegna lo sfondo
+        screen.begin();
+        screen.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // stampa immagine sfondo
+        screen.end();
 
         // dimensione e posizione barra
         int loadingBarWidth = 390; // larghezza barra di caricamento
@@ -71,6 +71,7 @@ public class LoadingScreen implements Screen {
             // creazione oggetto per registrazione/accesso e chiamata metodo di controllo
             LogInSignUp logInSignUp = new LogInSignUp(game);
             logInSignUp.userOperations();
+            game.setScreen(new LogInSignUp(game));
         }
     }
 

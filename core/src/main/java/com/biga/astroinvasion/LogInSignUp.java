@@ -1,21 +1,20 @@
-/*
+package com.biga.astroinvasion;/*
 Astro Invasion - class LogInSignUp -
 This class permits the users to create or login profiles
 Developed by BIGA©. All rights reserved.
 */
 
-package com.biga.astroinvasion;
-
-// import librerie
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.io.*;
 import java.util.Scanner;
 
 public class LogInSignUp extends ScreenAdapter implements InputProcessor {
-    private SpriteBatch batch;
+    private SpriteBatch screen;
     private Texture img1, img2, img3, img4;
+    private BitmapFont font; // Aggiungi BitmapFont per il testo
     private StringBuilder nicknameInput, passwordInput;
     private boolean enteringNickname;
     public String nickname;
@@ -25,6 +24,7 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     // costruttore
     public LogInSignUp(Game game) {
         this.game = game;
+        this.screen = Main.screen;
         this.enteringNickname = true;
         Gdx.input.setInputProcessor(this); // Imposta l'input processor per rilevare caratteri
     }
@@ -33,7 +33,7 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     public void userOperations() {
         // lettura presenza di almeno un utente
         try {
-            FileReader checkUser = new FileReader("data/is_user.txt");
+            FileReader checkUser = new FileReader("data\\is_user.txt");
             boolean isUSer = Boolean.parseBoolean(new Scanner(checkUser).nextLine());
 
             // "bivio" operazioni
@@ -112,13 +112,14 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
 
     // metodo con switch per gestire le schermate LogIn e SignUp
     public void operationsScreen() {
-        batch = new SpriteBatch();
+        font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
+
 
         // creazione delle 4 possibili immagini da mostrare
         img1 = new Texture("login_signup_pages/page_1_log_in_eng.png");
         img2 = new Texture("login_signup_pages/page_1_log_in_eng_error.png");
-        img3 = new Texture("login_signup_pages/page_1_sign_up_eng.png");
-        img4 = new Texture("login_signup_pages/page_1_sign_up_eng_error.png");
+        img3 = new Texture("login_signup_pages/page_2_sign_up_eng.png");
+        img4 = new Texture("login_signup_pages/page_2_sign_up_eng_error.png");
 
         // creazione delle variabili di tipo StringBuilder per nickname e password
         nicknameInput = new StringBuilder(); // nickname
@@ -130,28 +131,25 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     }
 
     // metodi dalla classe Screen
-    @Override
-    public void show() {
-
-    }
+    @Override public void show() {}
 
     @Override
     public void render(float v) {
-        batch.begin();
+        screen.begin();
 
         // stampa immagine in base allo stato dello switch
-        switch(state) {
+        switch (state) {
             case 1:
-                batch.draw(img1, 0, 0); // stampa img accesso
+                screen.draw(img1, 0, 0); // stampa img accesso
                 break;
             case 2:
-                batch.draw(img2, 0, 0); // stampa img accesso con errore
+                screen.draw(img2, 0, 0); // stampa img accesso con errore
                 break;
             case 3:
-                batch.draw(img3, 0, 0); // stampa img registrazione
+                screen.draw(img3, 0, 0); // stampa img registrazione
                 break;
             case 4:
-                batch.draw(img4, 0, 0); // stampa img registrazione con errore
+                screen.draw(img4, 0, 0); // stampa img registrazione con errore
                 break;
             default:
                 break;
@@ -160,15 +158,14 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
         // stampa del testo digitato (nickname e password)
         if (enteringNickname) {
             // stampa nickname in digitazione
-            font.draw(batch, nicknameInput.toString(), 100, 50);
+            font.draw(screen, nicknameInput, 100, 50);
         } else {
             // stampa del nickname già digitato e password in digitazione
-            font.draw(batch, nicknameInput.toString(), 100, 50);
-            font.draw(batch, passwordInput.toString(), 100, 30);
+            font.draw(screen, nicknameInput, 100, 50);
+            font.draw(screen, passwordInput, 100, 30);
         }
 
-        batch.end();
-
+        screen.end();
     }
 
     /*
@@ -226,7 +223,7 @@ public class LogInSignUp extends ScreenAdapter implements InputProcessor {
     @Override
     // dispose per chiudere le "schermate"
     public void dispose() {
-        batch.dispose();
+        font.dispose();
         img1.dispose();
         img2.dispose();
         img3.dispose();
