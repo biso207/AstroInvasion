@@ -100,7 +100,6 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void dispose() {
-        batch.dispose();
         background.dispose();
         loadingBar.dispose();
     }
