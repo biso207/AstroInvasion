@@ -10,7 +10,8 @@ public class Main extends Game {
     @Override
     public void create() {
         screen = new SpriteBatch();
-        Gdx.input.setInputProcessor(new MyInputProcessor()); // Imposta MyInputProcessor per gestire gli input
+        Gdx.input.setInputProcessor(new MyInputProcessor()); // imposta MyInputProcessor per gestire gli input
+
         this.setScreen(new LoadingScreen(this)); // schermata di caricamento
     }
 

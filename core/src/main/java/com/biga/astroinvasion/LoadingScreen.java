@@ -11,23 +11,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class LoadingScreen implements Screen {
-    private SpriteBatch screen;
+    private final SpriteBatch screen;
     private final Texture background; // Immagine di sfondo
     private float loadingProgress = 0; // Progresso di caricamento attuale
-    private boolean loadingFinished = false;
+    public boolean loadingFinished = false;
     private final ShapeRenderer shapeRenderer;
     private final Main game; // variabile di riferimento tipo gioco
 
     public LoadingScreen(Main game) {
-        this.game = game; // Assegna il riferimento
-        this.screen = game.screen;
+        this.game = game; // riferimento al game principale
+        this.screen = game.screen; // riferimento allo screen creato nel main
+
         shapeRenderer = new ShapeRenderer();
-        background = new Texture("loading_screen.png"); // Carica l'immagine di sfondo
+        background = new Texture("loading_screen.png"); // immagine di sfondo
 
         // musica di apertura
-        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("soundtrack home 2023.mp3")); // Carica il file audio
+        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("soundtrack home 2023.mp3")); // file audio
         openSound.setLooping(false); // true=loop music; false=no loop
-        openSound.play(); // Avvia la musica
+        openSound.play(); // avvio musica
     }
 
     @Override
@@ -37,15 +38,15 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Pulisce lo schermo
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // pulizia schermo
 
         // incrementa il progresso del caricamento
-        loadingProgress += delta; // Incrementa il progresso basato sul tempo trascorso
-        // tempo di caricamento totale in secondi
+        loadingProgress += delta; // incrementa il progresso basato sul tempo trascorso
+        // tempo di caricamento totale in secondi (4.5)
         float loadingTime = 4.5f;
         if (loadingProgress >= loadingTime) {
-            loadingProgress = loadingTime; // Assicura che non superi il tempo totale
-            loadingFinished = true; // Imposta il caricamento come completato
+            loadingProgress = loadingTime;
+            loadingFinished = true; // caricamento completato
         }
 
         // disegna lo sfondo
@@ -65,8 +66,8 @@ public class LoadingScreen implements Screen {
         drawRoundedRectangle(shapeRenderer, barX, barY, barWidth, 20, 10); // barra rossa di riempimento
         shapeRenderer.end(); // chiusura render disegno
 
+        // apertura schermata Accesso/Registrazione al completamente del caricamento
         if (loadingFinished) {
-            // apertura schermata accesso/registrazione
             game.setScreen(new LogInSignUp(game));
         }
     }

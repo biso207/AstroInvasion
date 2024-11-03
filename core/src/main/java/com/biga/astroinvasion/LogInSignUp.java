@@ -1,8 +1,10 @@
-package com.biga.astroinvasion;/*
+/*
 Astro Invasion - class LogInSignUp -
 This class permits the users to create or login profiles
 Developed by BIGA©. All rights reserved.
 */
+
+package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,6 +20,7 @@ public class LogInSignUp extends ScreenAdapter {
     private StringBuilder nicknameInput;
     private StringBuilder passwordInput;
     private boolean enteringNickname;
+    private boolean enteringPassword;
     public String nickname;
     private int state = 0; // 0 = LogIn, 1 = errore LogIn, 2 = SignUp, 3 = errore SignUp
     private final Main game; // variabile di riferimento tipo gioco
@@ -27,6 +30,7 @@ public class LogInSignUp extends ScreenAdapter {
         this.game = game;
         this.screen = game.screen;
         this.enteringNickname = true;
+        this.enteringPassword = true;
 
         // Carica il font
         loadFont();
@@ -39,16 +43,7 @@ public class LogInSignUp extends ScreenAdapter {
         userOperations();
     }
 
-    // metodo per caricare il font
-    private void loadFont() {
-        try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
-        } catch (Exception e) {
-            Gdx.app.log("Font Error", "Il font non è stato caricato correttamente: " + e.getMessage());
-            font = new BitmapFont(); // Carica un font predefinito in caso di errore
-        }
-    }
-
+    // LOGICA
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
         // lettura presenza di almeno un utente
@@ -69,6 +64,22 @@ public class LogInSignUp extends ScreenAdapter {
         }
 
         operationsScreen();
+    }
+
+    // metodo per passare agli algoritmi
+    private void processLoginOrSignup() {
+        // chiamata algoritmo di controllo (0, 1 = accesso; 2, 3 = registrazione)
+        if (state == 0 || state == 1) {
+            LogInAlg(); // accesso
+        } else {
+            SignUpAlg(); // registrazione
+        }
+
+        // reset del testo digitato
+        nicknameInput.setLength(0);
+        passwordInput.setLength(0);
+        enteringNickname = true;
+        enteringPassword = true;
     }
 
     // algoritmo per la registrazione
@@ -124,6 +135,17 @@ public class LogInSignUp extends ScreenAdapter {
         nickname = String.valueOf(nicknameInput); // setting della variabile nickname con quello digitato correttamente
     }
 
+    // GRAFICA
+    // metodo per caricare il font
+    private void loadFont() {
+        try {
+            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
+        } catch (Exception e) {
+            Gdx.app.log("Font Error", "Il font non è stato caricato correttamente: " + e.getMessage());
+            font = new BitmapFont(); // Carica un font predefinito in caso di errore
+        }
+    }
+
     // metodo con switch per gestire le schermate LogIn e SignUp
     public void operationsScreen() {
         // creazione delle 4 possibili immagini da mostrare
@@ -148,16 +170,16 @@ public class LogInSignUp extends ScreenAdapter {
 
         // stampa immagine in base allo stato dello switch
         switch (state) {
-            case 1:
+            case 0:
                 screen.draw(img1, 0, 0); // stampa img accesso
                 break;
-            case 2:
+            case 1:
                 screen.draw(img2, 0, 0); // stampa img accesso con errore
                 break;
-            case 3:
+            case 2:
                 screen.draw(img3, 0, 0); // stampa img registrazione
                 break;
-            case 4:
+            case 3:
                 screen.draw(img4, 0, 0); // stampa img registrazione con errore
                 break;
             default:
@@ -166,12 +188,16 @@ public class LogInSignUp extends ScreenAdapter {
 
         // stampa del testo digitato (nickname e password)
         if (enteringNickname) {
-            font.draw(screen, nicknameInput, 100, 50);
-        } else {
-            font.draw(screen, nicknameInput, 100, 50);
-            font.draw(screen, passwordInput, 100, 30);
+            font.draw(screen, nicknameInput, 100, 300); // stampa del nickname che si sta digitando
         }
-
+        else if (enteringPassword) {
+            font.draw(screen, nicknameInput, 100, 300); // stampa del nickname digitato
+            font.draw(screen, passwordInput, 100, 250); // stampa della password che si sta digitando
+        }
+        else { // nickname e password digitati
+            // apertura algoritmi di controllo nickname e password
+            processLoginOrSignup();
+        }
         screen.end();
     }
 
@@ -195,7 +221,7 @@ public class LogInSignUp extends ScreenAdapter {
         } else {
             // Controlla per la password
             if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-                // Gestisci l'input della password, se necessario
+                enteringPassword = false;
             } else {
                 for (char c = 0; c < 128; c++) {
                     if (Gdx.input.isKeyJustPressed(c)) {
@@ -204,21 +230,6 @@ public class LogInSignUp extends ScreenAdapter {
                 }
             }
         }
-    }
-
-    // metodo per passare agli algoritmi
-    private void processLoginOrSignup() {
-        // chiamata algoritmo di controllo (1, 2 = accesso; 3, 4 = registrazione)
-        if (state == 1 || state == 2) {
-            LogInAlg(); // accesso
-        } else {
-            SignUpAlg(); // registrazione
-        }
-
-        // reset del testo digitato
-        nicknameInput.setLength(0);
-        passwordInput.setLength(0);
-        enteringNickname = true;
     }
 
     // metodi classe Screen
