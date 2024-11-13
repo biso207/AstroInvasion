@@ -1,6 +1,6 @@
-# AstroInvasion
-
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+# AstroInvasion™ - BIGA® Games - All rights reserved
+AstroInvasion is a game developed by BIGA from September 2024. If you're reading this README file is because now you have the possibility to work and contribute on this project.
+Thank you for being part of us.
 
 This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
 
