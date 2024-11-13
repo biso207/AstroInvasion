@@ -7,6 +7,7 @@ Developed by BIGA©. All rights reserved.
 package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -47,20 +48,18 @@ public class LogInSignUp extends ScreenAdapter {
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
         // lettura presenza di almeno un utente
-        try {
-            FileReader checkUser = new FileReader("data/is_user.txt");
-            boolean isUser = Boolean.parseBoolean(new Scanner(checkUser).nextLine());
+        FileHandle checkUser = Gdx.files.internal("data/is_user.txt");
+        String isUser = checkUser.readString();
+        //FileReader checkUser = new FileReader("data/is_user.txt");
+        //boolean isUser = Boolean.parseBoolean(new Scanner(checkUser).nextLine());
 
-            // "bivio" operazioni
-            if (isUser) { // almeno un utente presente => operazione accesso
-                // set state a "accesso"
-                state = 0;
-            } else { // nessun utente presente => operazione registrazione
-                // set state a "registrazione"
-                state = 2;
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+        // "bivio" operazioni
+        if (isUser!=null) { // almeno un utente presente => operazione accesso
+            // set state a "accesso"
+            state = 0;
+        } else { // nessun utente presente => operazione registrazione
+            // set state a "registrazione"
+            state = 2;
         }
 
         operationsScreen();
