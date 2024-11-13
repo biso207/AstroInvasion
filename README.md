@@ -1,6 +1,7 @@
 # AstroInvasion - BIGA Games
 `AstroInvasion` is a game developed by `BIGA` from September 2024. If you're reading this `README file` is because now you have the possibility to work and contribute on this project.
 Thank you for being part of us.
+
 The BIGA Games Development, Design, and Production area aims to create high-quality video games.
 
 ## Platforms
