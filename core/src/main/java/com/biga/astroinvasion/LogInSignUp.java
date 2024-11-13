@@ -9,15 +9,13 @@ package com.biga.astroinvasion;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import java.io.*;
-import java.util.Scanner;
+import com.badlogic.gdx.graphics.Color;
 
 public class LogInSignUp extends ScreenAdapter {
-    private SpriteBatch screen;
-    private Texture img1, img2, img3, img4;
+    private final SpriteBatch screen;
+    private Texture img1, img2, img3, img4, img5;
     private BitmapFont font;
     private final StringBuilder nicknameInput;
     private final StringBuilder passwordInput;
@@ -44,7 +42,7 @@ public class LogInSignUp extends ScreenAdapter {
         userOperations();
     }
 
-    // classe interna per gestire l'input di nickname e password
+    // classe interna per gestire input nickname e password
     private class MyInputProcessor extends InputAdapter {
         @Override
         public boolean keyTyped(char character) {
@@ -53,7 +51,7 @@ public class LogInSignUp extends ScreenAdapter {
                     enteringNickname = false;
                 } else if (character == '\b' && nicknameInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     nicknameInput.deleteCharAt(nicknameInput.length() - 1);
-                } else if (character >= 32 && character < 127 && nicknameInput.length()<=20) { // Controllo per caratteri validi
+                } else if (character >= 32 && character < 127) { // controllo digitazione caratteri validi
                     nicknameInput.append(character);
                 }
             } else if (enteringPassword) {
@@ -61,7 +59,7 @@ public class LogInSignUp extends ScreenAdapter {
                     enteringPassword = false;
                 } else if (character == '\b' && passwordInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     passwordInput.deleteCharAt(passwordInput.length() - 1);
-                } else if (character >= 32 && character < 127 && passwordInput.length()<=20) { // Controllo per caratteri validi
+                } else if (character >= 32 && character < 127) { // controllo digitazione caratteri validi
                     passwordInput.append(character);
                 }
             }
