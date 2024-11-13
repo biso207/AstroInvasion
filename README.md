@@ -1,5 +1,6 @@
 # AstroInvasion - BIGA Games
 `AstroInvasion` is a game developed by `BIGA`. If you're reading this README file, it means you now have the opportunity to work on and contribute to this project.
+
 The BIGA Games Development, Design, and Production area aims to create high-quality video games.
 
 ## Platforms
