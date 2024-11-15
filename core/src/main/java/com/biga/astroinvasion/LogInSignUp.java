@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 
 public class LogInSignUp extends ScreenAdapter {
     private final SpriteBatch screen;
-    private Texture img1, img2, img3, img4, img5;
+    private Texture img1, img2, img3, img4;
     private BitmapFont font;
     private final StringBuilder nicknameInput;
     private final StringBuilder passwordInput;
@@ -23,13 +23,16 @@ public class LogInSignUp extends ScreenAdapter {
     private boolean enteringPassword;
     public String nickname;
     private int state = 0; // 0 = LogIn, 1 = errore LogIn, 2 = SignUp, 3 = errore SignUp
+    private final Main game; // variabile di riferimento tipo gioco
 
+    // costruttore
     public LogInSignUp(Main game) {
+        this.game = game;
         this.screen = game.screen;
         this.enteringNickname = true;
         this.enteringPassword = true;
 
-        // Carica il font
+        // carica il font
         loadFont();
 
         // init stringhe
@@ -42,7 +45,11 @@ public class LogInSignUp extends ScreenAdapter {
         userOperations();
     }
 
-    // classe interna per gestire input nickname e password
+    // --------------- //
+    // GESTIONE INPUT //
+    // --------------- //
+
+    // classe interna per gestire gli input da mouse e tastiera
     private class MyInputProcessor extends InputAdapter {
         @Override
         public boolean keyTyped(char character) {
@@ -65,6 +72,8 @@ public class LogInSignUp extends ScreenAdapter {
             }
             return true;
         }
+
+        // metodo recuperare il click del mouse
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             // click pulsante "crea nuovo profilo" da pagina accesso
@@ -73,18 +82,21 @@ public class LogInSignUp extends ScreenAdapter {
             }
             // click pulsante "avanti" da pagina "accesso" o "accesso con errore"
             if ((state==0 || state==1) && (nicknameInput.length()>=1&&passwordInput.length()>=1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
-                state=4;
+                processLoginOrSignup();
             }
             // click pulsante "avanti" da pagina "registrazione" o "registrazione con errore"
             if ((state==2 || state==3) && (nicknameInput.length()>=1&&passwordInput.length()>=1) && (screenX >= 385 && screenX <= 620) && (screenY >= 525 && screenY <= 565)) {
-                state=4;
+                processLoginOrSignup();
             }
             return true;
         }
     }
 
+    // ------------------- //
+    // LOGICA DELLA CLASSE //
+    // ------------------- //
 
-    // Metodo per direzionare l'utente alla pagina LogIn o SignUp
+    // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
         FileHandle checkUser = Gdx.files.internal("data/is_user.txt");
         String isUser = checkUser.readString();
@@ -98,6 +110,7 @@ public class LogInSignUp extends ScreenAdapter {
         operationsScreen();
     }
 
+    // metodo per aprire l'algoritmo di accesso o registrazione
     private void processLoginOrSignup() {
         if (state == 0 || state == 1) {
             LogInAlg();
@@ -111,6 +124,7 @@ public class LogInSignUp extends ScreenAdapter {
         enteringPassword = true;
     }
 
+    // algoritmo di registrazione
     public void SignUpAlg() {
         try {
             // percorsi nuovo utente
@@ -141,6 +155,7 @@ public class LogInSignUp extends ScreenAdapter {
         }
     }
 
+    // algoritmo di accesso
     public void LogInAlg() {
         try {
             // lettura password nickname e password dai file
@@ -157,31 +172,36 @@ public class LogInSignUp extends ScreenAdapter {
         nickname = String.valueOf(nicknameInput);
     }
 
+    // -------------------- //
+    // GRAFICA DELLA CLASSE //
+    // -------------------- //
+
+    // caricamento e creazione font per le scritte
     private void loadFont() {
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt"));
-            font.setColor(Color.valueOf("#151A3B"));
+            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // font personalizzato (inter)
+            font.setColor(Color.valueOf("#151A3B")); // colore blu
         } catch (Exception e) {
-            Gdx.app.log("Font Error", "Il font non è stato caricato correttamente: " + e.getMessage());
-            font = new BitmapFont();
-            font.setColor(Color.valueOf("#151A3B")); // Imposta il colore anche nel font di default
+            font = new BitmapFont(); // font di default (arial)
+            font.setColor(Color.valueOf("#151A3B")); // colore blu
         }
     }
 
+    // metodo per caricare le immagini Accesso e Registrazione
     public void operationsScreen() {
         img1 = new Texture("login_signup_pages/page_1_log_in_eng.png");
         img2 = new Texture("login_signup_pages/page_1_log_in_eng_error.png");
         img3 = new Texture("login_signup_pages/page_2_sign_up_eng.png");
         img4 = new Texture("login_signup_pages/page_2_sign_up_eng_error.png");
-        img5 = new Texture("lobby_marketplace_ita.png");
 
         enteringNickname = true;
-        Gdx.input.setInputProcessor(new MyInputProcessor()); // Riattiva l'InputProcessor
+        Gdx.input.setInputProcessor(new MyInputProcessor()); // riattiva l'InputProcessor
     }
 
     @Override
     public void show() {}
 
+    // metodo per aggiornare lo schermo
     @Override
     public void render(float delta) {
         screen.begin();
@@ -200,7 +220,7 @@ public class LogInSignUp extends ScreenAdapter {
                 screen.draw(img4, 0, 0);
                 break;
             case 4:
-                screen.draw(img5, 0, 0);
+                game.setScreen(new Lobby(game));
                 break;
             default:
                 break;
@@ -222,6 +242,7 @@ public class LogInSignUp extends ScreenAdapter {
     @Override public void resume() {}
     @Override public void hide() {}
 
+    // metodo per rilasciare le risorse
     @Override
     public void dispose() {
         if (font != null) font.dispose();
