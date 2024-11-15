@@ -1,11 +1,9 @@
 package com.biga.astroinvasion;
 import java.util.HashMap;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,12 +11,10 @@ public class Lobby implements Screen {
     private final SpriteBatch screen;
     Texture img, img1, img2, img3, img4, img5, img6, img7, img8, img9,img10, img11, img12, img13, img14, img15, img16, img17, img18, img19, img20, img21_special;
     int state, previousState;
-    private final Game game;
     HashMap<Integer, Texture> hashMap = new HashMap<>();
 
     // costruttore
-    public Lobby(Game game) {
-        this.game = game;
+    public Lobby() {
 
         // set immagine di default (classic game)
         state = previousState = 6;
@@ -113,8 +109,6 @@ public class Lobby implements Screen {
                 if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
                     if (state <= 5 && state>1) state--;
                 }
-                /*elif range_open_avatars.collidepoint(event.pos) and state in possible_page_open_avatars:
-                possible_page_open_avatars = [1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]*/
             }
 
             // chiusura pagina instruction
