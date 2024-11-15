@@ -1,8 +1,7 @@
-# AstroInvasion
+# AstroInvasion - BIGA Games
+`AstroInvasion` is a game developed by `BIGA`. If you're reading this README file, it means you now have the opportunity to work on and contribute to this project.
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
-
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+The BIGA Games Development, Design, and Production area aims to create high-quality video games.
 
 ## Platforms
 
