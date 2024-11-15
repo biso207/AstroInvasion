@@ -45,9 +45,9 @@ public class LogInSignUp extends ScreenAdapter {
         userOperations();
     }
 
-    // --------------- //
+    // -------------- //
     // GESTIONE INPUT //
-    // --------------- //
+    // -------------- //
 
     // classe interna per gestire gli input da mouse e tastiera
     private class MyInputProcessor extends InputAdapter {

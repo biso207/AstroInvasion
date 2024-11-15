@@ -30,9 +30,9 @@ public class Lobby implements Screen {
         loadImages();
     }
 
-    // --------------- //
+    // -------------- //
     // GESTIONE INPUT //
-    // --------------- //
+    // -------------- //
 
     // classe interna per gestire gli input da mouse e tastiera
     private class MyInputProcessor extends InputAdapter {
@@ -101,6 +101,20 @@ public class Lobby implements Screen {
                     previousState = state;
                     state = 7;
                 }
+                // pagina 1 => 'avatar 1'
+                if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
+                    state = 1;
+                }
+                // cambio pagina (1-5) => 'avatar/spacecraft/ 1->5'
+                if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
+                    if (state < 5) state++;
+                }
+                // cambio pagina (5-1) => 'avatar/spacecraft/ 5->1'
+                if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
+                    if (state <= 5 && state>1) state--;
+                }
+                /*elif range_open_avatars.collidepoint(event.pos) and state in possible_page_open_avatars:
+                possible_page_open_avatars = [1, 2, 3, 4, 5, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]*/
             }
 
             // chiusura pagina instruction
