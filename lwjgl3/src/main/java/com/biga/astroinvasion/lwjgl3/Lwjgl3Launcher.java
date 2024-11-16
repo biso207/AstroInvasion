@@ -30,7 +30,7 @@ public class Lwjgl3Launcher {
         configuration.setWindowedMode(1000, 700);
         configuration.setResizable(false);
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+        configuration.setWindowIcon("icon_astroinvasion_16x16.png", "icon_astroinvasion_32x32.png", "icon_astroinvasion_64x64.png", "icon_astroinvasion_128x128.png");
         return configuration;
     }
 }
