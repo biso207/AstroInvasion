@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Lobby implements Screen {
     private final SpriteBatch screen;
-    Texture img, img1, img2, img3, img4, img5, img6, img7, img8, img9,img10, img11, img12, img13, img14, img15, img16, img17, img18, img19, img20, img21_special;
+    Texture img, img1, img2, img3, img4, img5, img6, img7,
+        img8, img9,img10, img11, img12, img13, img14, img15,
+        img16, img17, img18, img19, img20, img21, img22, img_special;
     int state, previousState;
     HashMap<Integer, Texture> hashMap = new HashMap<>();
 
@@ -115,10 +117,24 @@ public class Lobby implements Screen {
                 if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
                     if (state <= 5 && state>1) state--;
                 }
+                // pagine 21 => 'instructions'
+                if ((screenX >= 50 && screenX <=90) && (screenY >= 580 && screenY <=620)) {
+                    previousState = state;
+                    state = 21;
+                }
+                // pagina 22 => 'software infos'
+                if ((screenX >= 150 && screenX <=190) && (screenY >= 580 && screenY <=620)) {
+                    previousState = state;
+                    state = 22;
+                }
             }
 
-            // chiusura pagina instruction
+            // chiusura pagina instruction/settings
             if ((screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+                state = previousState;
+            }
+            // chiusura software.infos
+            if (state == 22 && (screenX >= 0 && screenX <= 1000) && (screenY >= 0 && screenY <= 700)) {
                 state = previousState;
             }
             return true;
@@ -151,7 +167,9 @@ public class Lobby implements Screen {
         img18 = new Texture("lobby_images/lobby_spacecrafts_groupMalloc_eng.png");
         img19 = new Texture("lobby_images/lobby_spacecrafts_groupPhoenix_eng.png");
         img20 = new Texture("lobby_images/lobby_spacecrafts_special_group_eng.png");
-        img21_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
+        img21 = new Texture("lobby_images/lobby_settings_eng.png");
+        img22 = new Texture("lobby_images/lobby_software_info_eng.png");
+        img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // mappatura hashmap
         hashMap.put(1, img1);
@@ -174,7 +192,9 @@ public class Lobby implements Screen {
         hashMap.put(18, img18);
         hashMap.put(19, img19);
         hashMap.put(20, img20);
-        hashMap.put(21, img21_special);
+        hashMap.put(21, img21);
+        hashMap.put(22, img22);
+        hashMap.put(30, img_special);
     }
 
     @Override
