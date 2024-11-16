@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Lobby implements Screen {
+    private final Main game; // variabile di riferimento tipo gioco
     // dichiarazione screen
     private final SpriteBatch screen;
 
@@ -30,13 +31,13 @@ public class Lobby implements Screen {
     boolean secondScreen, open22, open23;
 
     // costruttore
-    public Lobby() {
+    public Lobby(Main game) {
+        this.game = game;
+        // init dello screen
+        this.screen = game.screen;
 
         // set immagine di default (classic game)
         state = previousState = 6;
-
-        // init dello screen
-        screen = new SpriteBatch();
 
         // init del secondo "screen", dello screen software.infos e close.game a false
         secondScreen = open22 = open23 = false;
@@ -133,7 +134,7 @@ public class Lobby implements Screen {
                     open22 = true;
                     secondScreen = true;
                 }
-                // pagina 23 => 'close game'
+                // pagina 23 => 'logout'
                 if ((screenX >= 170 && screenX <=210) && (screenY >= 580 && screenY <=620)) {
                     open23 = true;
                     secondScreen = true;
@@ -148,10 +149,15 @@ public class Lobby implements Screen {
             if ((secondScreen&&open22) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
                 secondScreen = open22 = false;
             }
-            // chiusura (annullamento) close.game
+            // chiusura (annullamento) logout
             if ((secondScreen&&open23) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 secondScreen = open23 = false;
             }
+            // back to LogInSignUp => YES logout
+            if ((secondScreen&&open23) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                game.setScreen(new LogInSignUp(game));
+            }
+
             return true;
         }
     }

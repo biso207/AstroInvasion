@@ -220,7 +220,7 @@ public class LogInSignUp extends ScreenAdapter {
                 screen.draw(img4, 0, 0);
                 break;
             case 4:
-                game.setScreen(new Lobby());
+                game.setScreen(new Lobby(game));
                 break;
             default:
                 break;
