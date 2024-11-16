@@ -4,6 +4,7 @@ import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -24,6 +25,11 @@ public class Lobby implements Screen {
 
         // caricamento immagini
         loadImages();
+
+        // musica di sottofondo
+        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
+        openSound.setLooping(true); // true=loop music; false=no loop
+        openSound.play(); // avvio musica
     }
 
     // -------------- //

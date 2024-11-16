@@ -26,7 +26,7 @@ public class LoadingScreen implements Screen {
         background = new Texture("loading_screen.png"); // immagine di sfondo
 
         // musica di apertura
-        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("soundtrack home 2023.mp3")); // file audio
+        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack home 2023.mp3")); // file audio
         openSound.setLooping(false); // true=loop music; false=no loop
         openSound.play(); // avvio musica
     }
