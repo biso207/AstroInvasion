@@ -19,7 +19,7 @@ public class Lobby implements Screen {
     // dichiarazione immagini
     Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
-        img16, img17, img18, img19, img20, img21, img22, img23, img_special;
+        img16, img17, img18, img19, img20, img21, img22, img23, img24, img_special;
 
     /*
      previousState serve a memorizzare l'ultima pagina aperta.
@@ -82,7 +82,7 @@ public class Lobby implements Screen {
             di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
             Esempio: l'utente NON può aprire la pagina 'classic game' dalla pagina 'instructions'
             */
-            if (state!=7 && state!=21 && !open22 && !open23) {
+            if (state!=7 && state!=21 && state != 24 && !open22 && !open23) {
                 // pagina 6 => 'classic game'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 180 && screenY <= 220)) {
                     state = 6;
@@ -139,10 +139,15 @@ public class Lobby implements Screen {
                     open23 = true;
                     secondScreen = true;
                 }
+                // pagina 24 => 'info difficulty classic game'
+                if ((screenX >= 887 && screenX <=917) && (screenY >= 203 && screenY <=233)) {
+                    previousState = state;
+                    state = 24;
+                }
             }
 
-            // chiusura pagina instruction/settings
-            if ((state == 7 || state == 21) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+            // chiusura pagina instruction/settings/info.difficulty
+            if ((state == 7 || state == 21 || state == 24) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 state = previousState;
             }
             // chiusura software.infos
@@ -210,6 +215,7 @@ public class Lobby implements Screen {
         img21 = new Texture("lobby_images/lobby_settings_eng.png");
         img22 = new Texture("lobby_images/lobby_software_info_eng.png");
         img23 = new Texture("lobby_images/lobby_close_game_eng.png");
+        img24 = new Texture("lobby_images/lobby_info_difficulty_eng.png");
         img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
@@ -237,6 +243,7 @@ public class Lobby implements Screen {
         hashMap.put(19, img19);
         hashMap.put(20, img20);
         hashMap.put(21, img21);
+        hashMap.put(24, img24);
         hashMap.put(30, img_special);
     }
 

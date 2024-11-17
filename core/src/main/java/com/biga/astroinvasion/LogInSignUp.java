@@ -76,16 +76,20 @@ public class LogInSignUp extends ScreenAdapter {
         // metodo recuperare il click del mouse
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            // click pulsante "crea nuovo profilo" da pagina accesso
+            // cambio pagina - accesso => registrazione
             if ((state==0 || state==1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
                 state=2;
             }
-            // click pulsante "avanti" da pagina "accesso" o "accesso con errore"
+            // cambio pagina - registrazione => accesso
+            if ((state==2 || state==3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
+                state = 0; // cambio stato per pagina di accesso
+            }
+            // proseguimento da accesso - click pulsante "accedi"
             if ((state==0 || state==1) && (nicknameInput.length()>=1&&passwordInput.length()>=1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
                 processLoginOrSignup();
             }
-            // click pulsante "avanti" da pagina "registrazione" o "registrazione con errore"
-            if ((state==2 || state==3) && (nicknameInput.length()>=1&&passwordInput.length()>=1) && (screenX >= 385 && screenX <= 620) && (screenY >= 525 && screenY <= 565)) {
+            // proseguimento da registrazione - click pulsante "registrati"
+            if ((state==2 || state==3) && (nicknameInput.length()>=1&&passwordInput.length()>=1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
                 processLoginOrSignup();
             }
             return true;
