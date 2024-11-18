@@ -21,7 +21,7 @@ public class LogInSignUp extends ScreenAdapter {
     private final StringBuilder passwordInput;
     private boolean enteringNickname;
     private boolean enteringPassword;
-    public String nickname;
+    public static String nickname;
     private int state = 0; // 0 = LogIn, 1 = errore LogIn, 2 = SignUp, 3 = errore SignUp
     private final Main game; // variabile di riferimento tipo gioco
 
@@ -58,7 +58,7 @@ public class LogInSignUp extends ScreenAdapter {
                     enteringNickname = false;
                 } else if (character == '\b' && nicknameInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     nicknameInput.deleteCharAt(nicknameInput.length() - 1);
-                } else if (character >= 32 && character < 127) { // controllo digitazione caratteri validi
+                } else if (character >= 32 && character < 127 && nicknameInput.length()<=20) { // controllo digitazione caratteri validi
                     nicknameInput.append(character);
                 }
             } else if (enteringPassword) {
@@ -66,14 +66,14 @@ public class LogInSignUp extends ScreenAdapter {
                     enteringPassword = false;
                 } else if (character == '\b' && passwordInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     passwordInput.deleteCharAt(passwordInput.length() - 1);
-                } else if (character >= 32 && character < 127) { // controllo digitazione caratteri validi
+                } else if (character >= 32 && character < 127 && passwordInput.length()<=20) { // controllo digitazione caratteri validi
                     passwordInput.append(character);
                 }
             }
             return true;
         }
 
-        // metodo recuperare il click del mouse
+        // metodo per recuperare il click del mouse
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             // cambio pagina - accesso => registrazione

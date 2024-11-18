@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,10 +17,20 @@ public class Lobby implements Screen {
     // dichiarazione screen
     private final SpriteBatch screen;
 
+    // recupero nickname utente
+    private final String nicknameInput = LogInSignUp.nickname;
+
     // dichiarazione immagini
     Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
         img16, img17, img18, img19, img20, img21, img22, img23, img24, img_special;
+
+    // dichiarazione variabili attributi utente
+    int avatar, credits, diffCG, diffSB, idMission, level,
+    movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
+    numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB, points;
+
+    boolean isRtgComplete;
 
     /*
      previousState serve a memorizzare l'ultima pagina aperta.
@@ -47,6 +58,9 @@ public class Lobby implements Screen {
 
         // caricamento font
         loadFont();
+
+        // recupero progressi utente
+        readFiles();
 
         // musica di sottofondo
         Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
@@ -165,6 +179,78 @@ public class Lobby implements Screen {
 
             return true;
         }
+    }
+
+    // ------------------- //
+    // LOGICA DELLA CLASSE //
+    // ------------------- //
+
+    // metodo per recuperare i progressi utente
+    public void readFiles() {
+        System.out.println(nicknameInput);
+        // avatar
+        FileHandle readAvatar = Gdx.files.local("data/" + nicknameInput + "/progresses/avatar.txt");
+        avatar = Integer.parseInt(readAvatar.readString());
+        // monete
+        FileHandle readCredits = Gdx.files.local("data/" + nicknameInput + "/progresses/credits.txt");
+        credits = Integer.parseInt(readCredits.readString());
+        // completamento missione RoadToGlory
+        FileHandle readRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/completed_rtg.txt");
+        isRtgComplete = Boolean.parseBoolean(readRTG.readString());
+        // difficoltà classic game
+        FileHandle readDiffCG = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_classic_game.txt");
+        diffCG = Integer.parseInt(readDiffCG.readString());
+        // difficoltà space battle
+        FileHandle readDiffSB = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_space_battle.txt");
+        diffSB = Integer.parseInt(readDiffSB.readString());
+        // id missione (1-4)
+        FileHandle readID = Gdx.files.local("data/" + nicknameInput + "/progresses/mission_id.txt");
+        idMission = Integer.parseInt(readID.readString());
+        // livello
+        FileHandle readLevel = Gdx.files.local("data/" + nicknameInput + "/progresses/level.txt");
+        level = Integer.parseInt(readLevel.readString());
+        // tipo di movimento
+        FileHandle readMovement = Gdx.files.local("data/" + nicknameInput + "/progresses/movement_type.txt");
+        movType = Integer.parseInt(readMovement.readString());
+        // tipo di sparo
+        FileHandle readShot = Gdx.files.local("data/" + nicknameInput + "/progresses/shot_type.txt");
+        shotType = Integer.parseInt(readShot.readString());
+        // navicella
+        FileHandle readSpacecraft = Gdx.files.local("data/" + nicknameInput + "/progresses/spacecraft.txt");
+        spacecraft = Integer.parseInt(readSpacecraft.readString());
+        // numero carte double points
+        FileHandle readNumCards1 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_double_points.txt");
+        numDoublePoints = Integer.parseInt(readNumCards1.readString());
+        // numero carte gold heart
+        FileHandle readNumCards2 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_gold_heart.txt");
+        numGoldHeart = Integer.parseInt(readNumCards2.readString());
+        // numero carte shield
+        FileHandle readNumCards3 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_shield.txt");
+        numShield = Integer.parseInt(readNumCards3.readString());
+        // numero carte super laser
+        FileHandle readNumCards4 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_super_laser.txt");
+        numSuperLaser = Integer.parseInt(readNumCards4.readString());
+        // numero missione raggiunta
+        FileHandle readMission = Gdx.files.local("data/" + nicknameInput + "/progresses/num_mission.txt");
+        mission = Integer.parseInt(readMission.readString());
+        // numero partite vinte a space battle consecutive per RTG
+        FileHandle readWonSbRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB_RTG.txt");
+        wonSbRtg = Integer.parseInt(readWonSbRTG.readString());
+        // partite classic game
+        FileHandle readMatchesCG = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_CG.txt");
+        matchesCG = Integer.parseInt(readMatchesCG.readString());
+        // partite space battle
+        FileHandle readMatchesSB = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_SB.txt");
+        matchesSB = Integer.parseInt(readMatchesSB.readString());
+        // vittorie space battle
+        FileHandle readWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB.txt");
+        wonSB = Integer.parseInt(readWonSB.readString());
+        // vittorie consecutive space battle
+        FileHandle readConsWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/cons_won_SB.txt");
+        consWonSB = Integer.parseInt(readConsWonSB.readString());
+        // punteggio utente
+        FileHandle readPoints = Gdx.files.local("data/" + nicknameInput + "/progresses/points.txt");
+        points = Integer.parseInt(readPoints.readString());
     }
 
     // -------------------- //
