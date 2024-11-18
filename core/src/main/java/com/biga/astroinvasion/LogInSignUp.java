@@ -185,67 +185,67 @@ public class LogInSignUp extends ScreenAdapter {
     // metodo per creare i file per i progressi utente
     public void createFiles() {
         // avatar
-        FileHandle fileAvatar = Gdx.files.local("data/progresses/" + nicknameInput + "/avatar.txt");
+        FileHandle fileAvatar = Gdx.files.local("data/" + nicknameInput + "/progresses/avatar.txt");
         fileAvatar.writeString("1", false);
         // monete
-        FileHandle writeCredits = Gdx.files.local("data/progresses/" + nicknameInput + "/credits.txt");
+        FileHandle writeCredits = Gdx.files.local("data/" + nicknameInput + "/progresses/credits.txt");
         writeCredits.writeString("100", false);
         // completamento missione RoadToGlory
-        FileHandle writeRTG = Gdx.files.local("data/progresses/" + nicknameInput + "/completed_rtg.txt");
+        FileHandle writeRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/completed_rtg.txt");
         writeRTG.writeString("false", false);
         // difficoltà classic game
-        FileHandle writeDiffCG = Gdx.files.local("data/progresses/" + nicknameInput + "/diff_classic_game.txt");
+        FileHandle writeDiffCG = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_classic_game.txt");
         writeDiffCG.writeString("1", false);
         // difficoltà space battle
-        FileHandle writeDiffSB = Gdx.files.local("data/progresses/" + nicknameInput + "/diff_space_battle.txt");
+        FileHandle writeDiffSB = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_space_battle.txt");
         writeDiffSB.writeString("1", false);
         // id missione (1-4)
-        FileHandle writeID = Gdx.files.local("data/progresses/" + nicknameInput + "/mission_id.txt");
+        FileHandle writeID = Gdx.files.local("data/" + nicknameInput + "/progresses/mission_id.txt");
         writeID.writeString("1", false);
         // livello
-        FileHandle writeLevel = Gdx.files.local("data/progresses/" + nicknameInput + "/level.txt");
+        FileHandle writeLevel = Gdx.files.local("data/" + nicknameInput + "/progresses/level.txt");
         writeLevel.writeString("1", false);
         // tipo di movimento
-        FileHandle writeMovement = Gdx.files.local("data/progresses/" + nicknameInput + "/movement_type.txt");
+        FileHandle writeMovement = Gdx.files.local("data/" + nicknameInput + "/progresses/movement_type.txt");
         writeMovement.writeString("1", false);
         // tipo di sparo
-        FileHandle writeShot = Gdx.files.local("data/progresses/" + nicknameInput + "/shot_type.txt");
+        FileHandle writeShot = Gdx.files.local("data/" + nicknameInput + "/progresses/shot_type.txt");
         writeShot.writeString("1", false);
         // navicella
-        FileHandle writeSpacecraft = Gdx.files.local("data/progresses/" + nicknameInput + "/spacecraft.txt");
+        FileHandle writeSpacecraft = Gdx.files.local("data/" + nicknameInput + "/progresses/spacecraft.txt");
         writeSpacecraft.writeString("1", false);
         // numero carte double points
-        FileHandle writeNumCards1 = Gdx.files.local("data/progresses/" + nicknameInput + "/num_double_points.txt");
+        FileHandle writeNumCards1 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_double_points.txt");
         writeNumCards1.writeString("1", false);
         // numero carte gold heart
-        FileHandle writeNumCards2 = Gdx.files.local("data/progresses/" + nicknameInput + "/num_gold_heart.txt");
+        FileHandle writeNumCards2 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_gold_heart.txt");
         writeNumCards2.writeString("1", false);
         // numero carte shield
-        FileHandle writeNumCards3 = Gdx.files.local("data/progresses/" + nicknameInput + "/num_shield.txt");
+        FileHandle writeNumCards3 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_shield.txt");
         writeNumCards3.writeString("1", false);
         // numero carte super laser
-        FileHandle writeNumCards4 = Gdx.files.local("data/progresses/" + nicknameInput + "/num_super_laser.txt");
+        FileHandle writeNumCards4 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_super_laser.txt");
         writeNumCards4.writeString("1", false);
         // numero missione raggiunta
-        FileHandle writeMission = Gdx.files.local("data/progresses/" + nicknameInput + "/num_mission.txt");
+        FileHandle writeMission = Gdx.files.local("data/" + nicknameInput + "/progresses/num_mission.txt");
         writeMission.writeString("1", false);
         // numero partite vinte a space battle consecutive per RTG
-        FileHandle writeWonSbRTG = Gdx.files.local("data/progresses/" + nicknameInput + "/won_SB_RTG.txt");
+        FileHandle writeWonSbRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB_RTG.txt");
         writeWonSbRTG.writeString("0", false);
         // partite classic game
-        FileHandle writeMatchesCG = Gdx.files.local("data/progresses/" + nicknameInput + "/matches_CG.txt");
+        FileHandle writeMatchesCG = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_CG.txt");
         writeMatchesCG.writeString("0", false);
         // partite space battle
-        FileHandle writeMatchesSB = Gdx.files.local("data/progresses/" + nicknameInput + "/matches_SB.txt");
+        FileHandle writeMatchesSB = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_SB.txt");
         writeMatchesSB.writeString("0", false);
         // vittorie space battle
-        FileHandle writeWonSB = Gdx.files.local("data/progresses/" + nicknameInput + "/won_SB.txt");
+        FileHandle writeWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB.txt");
         writeWonSB.writeString("0", false);
         // vittorie consecutive space battle
-        FileHandle writeConsWonSB = Gdx.files.local("data/progresses/" + nicknameInput + "/cons_won_SB.txt");
+        FileHandle writeConsWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/cons_won_SB.txt");
         writeConsWonSB.writeString("0", false);
         // punteggio utente
-        FileHandle writePoints = Gdx.files.local("data/progresses/" + nicknameInput + "/points.txt");
+        FileHandle writePoints = Gdx.files.local("data/" + nicknameInput + "/progresses/points.txt");
         writePoints.writeString("0", false);
 
     }
