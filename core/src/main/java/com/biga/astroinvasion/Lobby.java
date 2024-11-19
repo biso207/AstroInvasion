@@ -301,7 +301,7 @@ public class Lobby implements Screen {
         img21 = new Texture("lobby_images/lobby_settings_eng.png");
         img22 = new Texture("lobby_images/lobby_software_info_eng.png");
         img23 = new Texture("lobby_images/lobby_close_game_eng.png");
-        img24 = new Texture("lobby_images/lobby_info_difficulty_eng.png");
+        img24 = new Texture("lobby_images/lobby_difficulty_info_eng.png");
         img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
