@@ -26,10 +26,14 @@ public class Lobby implements Screen {
     // recupero nickname utente
     private final String nicknameInput = LogInSignUp.nickname;
 
-    // dichiarazione immagini
+    // dichiarazione immagini lobby
     Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
         img16, img17, img18, img19, img20, img21, img22, img23, img24, img25, img_special;
+
+    // dichiarazione immagini avatar
+    Texture av1, av2, av3, av4, av5, av6, av7, av8, av9, av10,
+        av11, av12, av13, av14, av15, av16, av17, av18, av19, av20;
 
     // dichiarazione variabili attributi utente
     int avatar, credits, diffCG, diffSB, idMission, level,
@@ -43,7 +47,10 @@ public class Lobby implements Screen {
      Ciò permette di ritornare alla pagina precedente dopo aver chiuso la pagina delle istruzioni/impostazioni
     */
     int state, previousState;
-    HashMap<Integer, Texture> hashMap = new HashMap<>();
+
+    // hashmap per mappare diversi elementi
+    HashMap<Integer, Texture> mapLobby = new HashMap<>(); // hashmap schermate lobby
+    HashMap<Integer, Texture> mapAvatar = new HashMap<>(); // hashmap immagini avatar
 
     boolean secondScreen, open22, open23;
 
@@ -281,6 +288,7 @@ public class Lobby implements Screen {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // font personalizzato (inter)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
+            font.getData().setScale(0.8f); // ridimensionamento font
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
@@ -318,32 +326,64 @@ public class Lobby implements Screen {
 
         // immagini secondarie variabili
 
+        // immagini avatar
+        av1 = new Texture("images/avatars/av (1).png");
+        av2 = new Texture("images/avatars/av (2).png");
+        av3 = new Texture("images/avatars/av (3).png");
+        av4 = new Texture("images/avatars/av (4).png");
+        av5 = new Texture("images/avatars/av (5).png");
+        av6 = new Texture("images/avatars/av (6).png");
+        av7 = new Texture("images/avatars/av (7).png");
+        av8 = new Texture("images/avatars/av (8).png");
+        av9 = new Texture("images/avatars/av (9).png");
+        av10 = new Texture("images/avatars/av (10).png");
+        av11 = new Texture("images/avatars/av (11).png");
+        av12 = new Texture("images/avatars/av (12).png");
+        av13 = new Texture("images/avatars/av (13).png");
+        av14 = new Texture("images/avatars/av (14).png");
+        av15 = new Texture("images/avatars/av (15).png");
+        av16 = new Texture("images/avatars/av (16).png");
+        av17 = new Texture("images/avatars/av (17).png");
+        av18 = new Texture("images/avatars/av (18).png");
+        av19 = new Texture("images/avatars/av (19).png");
+        av20 = new Texture("images/avatars/av (20).png");
 
-        // mappatura hashmap
-        hashMap.put(1, img1);
-        hashMap.put(2, img2);
-        hashMap.put(3, img3);
-        hashMap.put(4, img4);
-        hashMap.put(5, img5);
-        hashMap.put(6, img6);
-        hashMap.put(7, img7);
-        hashMap.put(8, img8);
-        hashMap.put(9, img9);
-        hashMap.put(10, img10);
-        hashMap.put(11, img11);
-        hashMap.put(12, img12);
-        hashMap.put(13, img13);
-        hashMap.put(14, img14);
-        hashMap.put(15, img15);
-        hashMap.put(16, img16);
-        hashMap.put(17, img17);
-        hashMap.put(18, img18);
-        hashMap.put(19, img19);
-        hashMap.put(20, img20);
-        hashMap.put(21, img21);
-        hashMap.put(24, img24);
-        hashMap.put(25, img25);
-        hashMap.put(30, img_special);
+        // mappatura mapLobby
+        mapping(mapLobby, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12, img13, img14, img15, img16, img17, img18, img19, img20);
+        mapLobby.put(21, img21);
+        mapLobby.put(24, img24);
+        mapLobby.put(25, img25);
+        mapLobby.put(30, img_special);
+
+        // mappatura avatar
+        mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
+    }
+
+    // metodo per mappare le hashmap
+    private void mapping(HashMap<Integer, Texture> map, Texture img1, Texture img2, Texture img3, Texture img4,
+                 Texture img5, Texture img6, Texture img7, Texture img8, Texture img9, Texture img10,
+                 Texture img11, Texture img12, Texture img13, Texture img14, Texture img15, Texture img16,
+                 Texture img17, Texture img18, Texture img19, Texture img20) {
+        map.put(1, img1);
+        map.put(2, img2);
+        map.put(3, img3);
+        map.put(4, img4);
+        map.put(5, img5);
+        map.put(6, img6);
+        map.put(7, img7);
+        map.put(8, img8);
+        map.put(9, img9);
+        map.put(10, img10);
+        map.put(11, img11);
+        map.put(12, img12);
+        map.put(13, img13);
+        map.put(14, img14);
+        map.put(15, img15);
+        map.put(16, img16);
+        map.put(17, img17);
+        map.put(18, img18);
+        map.put(19, img19);
+        map.put(20, img20);
     }
 
     @Override
@@ -371,7 +411,7 @@ public class Lobby implements Screen {
 
         // SCHERMATE //
         // disegno schermo principale
-        screen.draw(hashMap.get(state), 0, 0);
+        screen.draw(mapLobby.get(state), 0, 0);
 
         // disegno schermo sovrapposto (chiusura gioco/software infos)
         if (secondScreen) {
@@ -382,7 +422,8 @@ public class Lobby implements Screen {
         // TESTI //
         // scritte pagina info profilo
         if (state==25) {
-            font.draw(screen, LogInSignUp.nickname, 0, 0);
+            font.draw(screen, LogInSignUp.nickname, 120, 430);
+            screen.draw(mapAvatar.get(avatar), 461, 513);
         }
 
         screen.end();
