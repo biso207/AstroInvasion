@@ -54,7 +54,7 @@ public class LogInSignUp extends ScreenAdapter {
         @Override
         public boolean keyTyped(char character) {
             if (enteringNickname) {
-                if (character == '\n' || character == '\r' && nicknameInput.length()>=1) { // ENTER per terminare il nickname
+                if ((character == '\n' || character == '\r') && nicknameInput.length()>=1) { // ENTER per terminare il nickname
                     enteringNickname = false;
                 } else if (character == '\b' && nicknameInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     nicknameInput.deleteCharAt(nicknameInput.length() - 1);
@@ -62,7 +62,7 @@ public class LogInSignUp extends ScreenAdapter {
                     nicknameInput.append(character);
                 }
             } else if (enteringPassword) {
-                if (character == '\n' || character == '\r' && passwordInput.length()>=1) { // ENTER per terminare la password
+                if ((character == '\n' || character == '\r') && passwordInput.length()>=1) { // ENTER per terminare la password
                     enteringPassword = false;
                 } else if (character == '\b' && passwordInput.length() > 0) { // BACKSPACE per cancellare l'ultimo carattere
                     passwordInput.deleteCharAt(passwordInput.length() - 1);

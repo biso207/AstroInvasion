@@ -17,13 +17,19 @@ public class Lobby implements Screen {
     // dichiarazione screen
     private final SpriteBatch screen;
 
+    // dichiarazione font
+    private BitmapFont font;
+
+    // soundtrack
+    Music soundtrack;
+
     // recupero nickname utente
     private final String nicknameInput = LogInSignUp.nickname;
 
     // dichiarazione immagini
     Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
-        img16, img17, img18, img19, img20, img21, img22, img23, img24, img_special;
+        img16, img17, img18, img19, img20, img21, img22, img23, img24, img25, img_special;
 
     // dichiarazione variabili attributi utente
     int avatar, credits, diffCG, diffSB, idMission, level,
@@ -63,9 +69,9 @@ public class Lobby implements Screen {
         readFiles();
 
         // musica di sottofondo
-        Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
-        openSound.setLooping(true); // true=loop music; false=no loop
-        openSound.play(); // avvio musica
+        soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
+        soundtrack.setLooping(true); // true=loop music; false=no loop
+        soundtrack.play(); // avvio musica
     }
 
     // -------------- //
@@ -92,11 +98,11 @@ public class Lobby implements Screen {
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             /*
-            Lo state deve essere diverso da 7 (instructions) per non generare l'apertura
+            Lo state deve essere diverso da certe pagine per non generare l'apertura
             di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
             Esempio: l'utente NON può aprire la pagina 'classic game' dalla pagina 'instructions'
             */
-            if (state!=7 && state!=21 && state != 24 && !open22 && !open23) {
+            if (state!=7 && state!=21 && state!=24 && state!=25 && !open22 && !open23) {
                 // pagina 6 => 'classic game'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 180 && screenY <= 220)) {
                     state = 6;
@@ -121,10 +127,6 @@ public class Lobby implements Screen {
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 480 && screenY <= 520)) {
                     state = 11;
                 }
-                // pagina 1 => 'avatar 1'
-                if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
-                    state = 1;
-                }
                 // cambio pagina (1-5) => 'avatar/spacecraft/ 1->5'
                 if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
                     if ((state >=1 && state < 5) || (state >= 15 && state < 20)) state++;
@@ -143,6 +145,16 @@ public class Lobby implements Screen {
                     previousState = state;
                     state = 21;
                 }
+                // pagina 24 => 'difficulty info classic game'
+                if ((screenX >= 887 && screenX <=917) && (screenY >= 203 && screenY <=233)) {
+                    previousState = state;
+                    state = 24;
+                }
+                // pagina 25 => 'profile info'
+                if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
+                    previousState = state;
+                    state = 25;
+                }
                 // pagina 22 => 'software infos'
                 if ((screenX >= 110 && screenX <=150) && (screenY >= 580 && screenY <=620)) {
                     open22 = true;
@@ -153,16 +165,15 @@ public class Lobby implements Screen {
                     open23 = true;
                     secondScreen = true;
                 }
-                // pagina 24 => 'info difficulty classic game'
-                if ((screenX >= 887 && screenX <=917) && (screenY >= 203 && screenY <=233)) {
-                    previousState = state;
-                    state = 24;
-                }
             }
 
-            // chiusura pagina instruction/settings/info.difficulty
-            if ((state == 7 || state == 21 || state == 24) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+            // chiusura pagina instruction/settings/profile info&difficulty/
+            if ((state==7 || state==21 || state==24 || state==25) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 state = previousState;
+            }
+            // pagina 1 => 'avatar 1'
+            if (state == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+                state = 1;
             }
             // chiusura software.infos
             if ((secondScreen&&open22) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
@@ -174,6 +185,7 @@ public class Lobby implements Screen {
             }
             // back to LogInSignUp => YES logout
             if ((secondScreen&&open23) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                soundtrack.stop();
                 game.setScreen(new LogInSignUp(game));
             }
 
@@ -266,7 +278,6 @@ public class Lobby implements Screen {
         - per cambiare la dimensione del font usare font.getData().setScale(n) dove n è la dimensione di ingrandimento
         */
         // dichiarazione font
-        BitmapFont font;
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // font personalizzato (inter)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
@@ -302,6 +313,7 @@ public class Lobby implements Screen {
         img22 = new Texture("lobby_images/lobby_software_info_eng.png");
         img23 = new Texture("lobby_images/lobby_close_game_eng.png");
         img24 = new Texture("lobby_images/lobby_difficulty_info_eng.png");
+        img25 = new Texture("lobby_images/lobby_profile_info_eng.png");
         img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
@@ -330,6 +342,7 @@ public class Lobby implements Screen {
         hashMap.put(20, img20);
         hashMap.put(21, img21);
         hashMap.put(24, img24);
+        hashMap.put(25, img25);
         hashMap.put(30, img_special);
     }
 
@@ -356,6 +369,7 @@ public class Lobby implements Screen {
 
         screen.begin();
 
+        // SCHERMATE //
         // disegno schermo principale
         screen.draw(hashMap.get(state), 0, 0);
 
@@ -363,6 +377,12 @@ public class Lobby implements Screen {
         if (secondScreen) {
             if (open22) screen.draw(img22, 250, 175);
             else if (open23) screen.draw(img23, 250, 175);
+        }
+
+        // TESTI //
+        // scritte pagina info profilo
+        if (state==25) {
+            font.draw(screen, LogInSignUp.nickname, 0, 0);
         }
 
         screen.end();
