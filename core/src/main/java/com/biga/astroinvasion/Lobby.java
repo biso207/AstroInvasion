@@ -1,4 +1,5 @@
 package com.biga.astroinvasion;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -19,6 +20,9 @@ public class Lobby implements Screen {
 
     // dichiarazione font
     private BitmapFont font;
+    private BitmapFont fontBlue20;
+    private BitmapFont fontWhite20;
+    private BitmapFont fontRed20;
 
     // soundtrack
     Music soundtrack;
@@ -47,6 +51,9 @@ public class Lobby implements Screen {
      Ciò permette di ritornare alla pagina precedente dopo aver chiuso la pagina delle istruzioni/impostazioni
     */
     int state, previousState;
+
+    // arraylist delle pagine secondarie
+    ArrayList<Integer> listSecondPages = new ArrayList<>();
 
     // hashmap per mappare diversi elementi
     HashMap<Integer, Texture> mapLobby = new HashMap<>(); // hashmap schermate lobby
@@ -89,11 +96,12 @@ public class Lobby implements Screen {
     private class MyInputProcessor extends InputAdapter {
         @Override
         public boolean keyDown(int keycode) {
-            // clic tasto esc
-            if (keycode == Input.Keys.ESCAPE && (state!=7 && state!=21 && !open22 && !open23)) {
+            // click tasto esc
+            if (keycode == Input.Keys.ESCAPE && (state!=7 && state!=21 && !open22 && !open23 && state!=24 && state!=25)) {
                 open23 = true;
                 secondScreen = true;
             }
+            // click tasto esc per annullare il logout
             else if (keycode == Input.Keys.ESCAPE && (secondScreen&&open23)) {
                 secondScreen = open23 = false;
             }
@@ -286,9 +294,9 @@ public class Lobby implements Screen {
         */
         // dichiarazione font
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // font personalizzato (inter)
-            font.setColor(Color.valueOf("#151A3B")); // colore blu
-            font.getData().setScale(0.8f); // ridimensionamento font
+            fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
+            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
+            fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
@@ -354,6 +362,12 @@ public class Lobby implements Screen {
         mapLobby.put(24, img24);
         mapLobby.put(25, img25);
         mapLobby.put(30, img_special);
+
+        // inserimento pagine secondarie nell'arraylist
+        listSecondPages.add(7);
+        listSecondPages.add(21);
+        listSecondPages.add(24);
+        listSecondPages.add(25);
 
         // mappatura avatar
         mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
@@ -422,8 +436,25 @@ public class Lobby implements Screen {
         // TESTI //
         // scritte pagina info profilo
         if (state==25) {
-            font.draw(screen, LogInSignUp.nickname, 120, 430);
+            // scritte a sx
+            fontBlue20.draw(screen, LogInSignUp.nickname, 172, 412); // nickname
+            fontBlue20.draw(screen, LogInSignUp.password, 172, 372); // password
+
+            // scritte a dx
+            fontBlue20.draw(screen, String.valueOf(points), 620, 412);// punti
+            fontBlue20.draw(screen, String.valueOf(level), 610, 372);// livello
+            fontBlue20.draw(screen, String.valueOf(mission), 630, 332);// numero missione
+            fontBlue20.draw(screen, String.valueOf(credits), 630, 292);// crediti
+            fontBlue20.draw(screen, String.valueOf(matchesCG), 690, 252); // partite classic game
+            fontBlue20.draw(screen, String.valueOf(matchesSB), 690, 212); // partite space battle
+            fontBlue20.draw(screen, String.valueOf(wonSB), 690, 172);// vittorie space battle
+
+            // stampa avatar
             screen.draw(mapAvatar.get(avatar), 461, 513);
+        }
+        else if (!listSecondPages.contains(state)) {
+            // stampa avatar
+            screen.draw(mapAvatar.get(avatar), 870, 557);
         }
 
         screen.end();

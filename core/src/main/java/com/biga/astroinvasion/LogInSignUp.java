@@ -22,6 +22,7 @@ public class LogInSignUp extends ScreenAdapter {
     private boolean enteringNickname;
     private boolean enteringPassword;
     public static String nickname;
+    public static String password;
     private int state = 0; // 0 = LogIn, 1 = errore LogIn, 2 = SignUp, 3 = errore SignUp
     private final Main game; // variabile di riferimento tipo gioco
 
@@ -151,6 +152,7 @@ public class LogInSignUp extends ScreenAdapter {
                 writePass.writeString(String.valueOf(passwordInput), false);  // `false` sovrascrive il file se già esiste
 
                 nickname = String.valueOf(nicknameInput);
+                password = String.valueOf(passwordInput);
 
                 // creazione file utente
                 createFiles();
@@ -181,6 +183,7 @@ public class LogInSignUp extends ScreenAdapter {
             state = 1;
         }
         nickname = String.valueOf(nicknameInput);
+        password = String.valueOf(passwordInput);
     }
 
     // metodo per creare i file per i progressi utente
