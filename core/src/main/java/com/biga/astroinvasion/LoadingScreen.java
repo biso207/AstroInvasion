@@ -9,20 +9,36 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.Random;
+
 public class LoadingScreen implements Screen {
     private final SpriteBatch screen;
     private final Texture background; // Immagine di sfondo
     private float loadingProgress = 0; // Progresso di caricamento attuale
     public boolean loadingFinished = false;
     private final ShapeRenderer shapeRenderer;
-    private final Main game; // variabile di riferimento tipo gioco
+    private final Main game;// variabile di riferimento tipo gioco
+
+    // variabile per la pagina di caricamento
+    private final int bg;
+    // array dei colori della barra di caricamento
+    private final String[] colorsLoader =  {"#620616", "#7B0D0E", "#151E51", "#2A1535"};
+
 
     public LoadingScreen(Main game) {
         this.game = game; // riferimento al game principale
         this.screen = game.screen; // riferimento allo screen creato nel main
 
         shapeRenderer = new ShapeRenderer();
-        background = new Texture("loading_screen.png"); // immagine di sfondo
+
+        Random rand = new Random();
+        bg = rand.nextInt(4);
+
+        // array dei percorsi delle immagini di caricamento
+        String[] bgPaths = {"loading_screens/loading_screen_1.png", "loading_screens/loading_screen_2.png",
+            "loading_screens/loading_screen_3.png", "loading_screens/loading_screen_4.png"};
+
+        background = new Texture(bgPaths[bg]); // immagine di sfondo
 
         // musica di apertura
         Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack home 2023.mp3")); // file audio
@@ -31,7 +47,6 @@ public class LoadingScreen implements Screen {
     }
 
     @Override
-    // inizializza la schermata di caricamento
     public void show() {
     }
 
@@ -42,7 +57,7 @@ public class LoadingScreen implements Screen {
         // incrementa il progresso del caricamento
         loadingProgress += delta; // incrementa il progresso basato sul tempo trascorso
         // tempo di caricamento totale in secondi (4.5)
-        float loadingTime = 4.5f;
+        float loadingTime = 5f;
         if (loadingProgress >= loadingTime) {
             loadingProgress = loadingTime;
             loadingFinished = true; // caricamento completato
@@ -50,7 +65,7 @@ public class LoadingScreen implements Screen {
 
         // disegna lo sfondo
         screen.begin();
-        screen.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // stampa immagine sfondo
+        screen.draw(background, 0, 0); // stampa immagine sfondo
         screen.end();
 
         // dimensione e posizione barra
@@ -61,7 +76,7 @@ public class LoadingScreen implements Screen {
 
         // disegno barra
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED); // colore rosso
+        shapeRenderer.setColor(Color.valueOf(colorsLoader[bg])); // colore rosso
         drawRoundedRectangle(shapeRenderer, barX, barY, barWidth, 20, 10); // barra rossa di riempimento
         shapeRenderer.end(); // chiusura render disegno
 
