@@ -212,6 +212,35 @@ public class Lobby implements Screen {
     // LOGICA DELLA CLASSE //
     // ------------------- //
 
+    // creazione oggetti missione
+    public void createMissions() {
+        // creazione oggetti
+        Mission mission1 = new Mission("Hit", 10, "aliens in a Classic Game match.", "1 Gold Heart", "cart1_gold_heart_eng.png");
+        Mission mission2 = new Mission("Win", 1, "Space Battle matches.", "1 Shield", "cart2_shield_eng.png");
+        Mission mission3 = new Mission("Earn", 5000, "points in a single\nClassic Game match.", "100 Credits", "cart4_double points_eng.png");
+        Mission mission4 = new Mission("Earn", 5, "credits.", "1 Super Laser", "cart3_super_laser_eng.png");
+
+        // missione default
+        Mission m=mission1;
+
+        // selezione oggetto in base alla missione corrente
+        switch (idMission) {
+            case 1:
+                break;
+            case 2:
+                m=mission2;
+                break;
+            case 3:
+                m=mission3;
+                break;
+            case 4:
+                m=mission4;
+                break;
+        }
+
+        System.out.println(m.printMission(mission));
+    }
+
     // metodo per recuperare i progressi utente
     public void readFiles() {
         System.out.println(nicknameInput);
@@ -455,6 +484,8 @@ public class Lobby implements Screen {
         else if (!listSecondPages.contains(state)) {
             // stampa avatar
             screen.draw(mapAvatar.get(avatar), 870, 557);
+            if (state==12) createMissions();
+
         }
 
         screen.end();
