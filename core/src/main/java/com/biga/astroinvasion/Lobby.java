@@ -213,7 +213,7 @@ public class Lobby implements Screen {
     // ------------------- //
 
     // creazione oggetti missione
-    public void createMissions() {
+    public String createMissions() {
         // creazione oggetti
         Mission mission1 = new Mission("Hit", 10, "aliens in a Classic Game match.", "1 Gold Heart", "cart1_gold_heart_eng.png");
         Mission mission2 = new Mission("Win", 1, "Space Battle matches.", "1 Shield", "cart2_shield_eng.png");
@@ -238,7 +238,7 @@ public class Lobby implements Screen {
                 break;
         }
 
-        System.out.println(m.printMission(mission));
+        return m.printMission(mission);
     }
 
     // metodo per recuperare i progressi utente
@@ -463,8 +463,13 @@ public class Lobby implements Screen {
         }
 
         // TESTI //
-        // scritte pagina info profilo
-        if (state==25) {
+        // scritte pagina 'rtg'
+        if (state==12) {
+            fontBlue20.draw(screen, createMissions(), 515, 370); // testo missione da completare
+            fontBlue20.draw(screen, String.valueOf(mission), 592, 407); // numero missione raggiunta
+        }
+        // scritte pagina 'profile info'
+        else if (state==25) {
             // scritte a sx
             fontBlue20.draw(screen, LogInSignUp.nickname, 172, 412); // nickname
             fontBlue20.draw(screen, LogInSignUp.password, 172, 372); // password
@@ -484,10 +489,7 @@ public class Lobby implements Screen {
         else if (!listSecondPages.contains(state)) {
             // stampa avatar
             screen.draw(mapAvatar.get(avatar), 870, 557);
-            if (state==12) createMissions();
-
         }
-
         screen.end();
     }
 

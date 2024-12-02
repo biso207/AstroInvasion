@@ -12,15 +12,14 @@ public class Mission {
         this.prize = prize;
         this.path = path;
         this.objMission = objMission;
-
     }
 
-    public String printMission(double num_mission) {
-        double molt = Math.ceil(num_mission / 4);  // moltiplicatore valore base missione
+    public String printMission(double numMission) {
+        double molt = numMission/4;  // moltiplicatore valore base missione
+        molt=Math.ceil(molt); // arrotondamento per eccesso del risultato
+
         double numObjMission = objMission * molt;  // obiettivo missione
 
-        return (text1 + " " + numObjMission + " " + text2);
+        return (text1 + " " + Math.round(numObjMission) + " " + text2);
     }
-
-
 }

@@ -220,16 +220,16 @@ public class LogInSignUp extends ScreenAdapter {
         writeSpacecraft.writeString("1", false);
         // numero carte double points
         FileHandle writeNumCards1 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_double_points.txt");
-        writeNumCards1.writeString("1", false);
+        writeNumCards1.writeString("3", false);
         // numero carte gold heart
         FileHandle writeNumCards2 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_gold_heart.txt");
-        writeNumCards2.writeString("1", false);
+        writeNumCards2.writeString("3", false);
         // numero carte shield
         FileHandle writeNumCards3 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_shield.txt");
-        writeNumCards3.writeString("1", false);
+        writeNumCards3.writeString("3", false);
         // numero carte super laser
         FileHandle writeNumCards4 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_super_laser.txt");
-        writeNumCards4.writeString("1", false);
+        writeNumCards4.writeString("3", false);
         // numero missione raggiunta
         FileHandle writeMission = Gdx.files.local("data/" + nicknameInput + "/progresses/num_mission.txt");
         writeMission.writeString("1", false);
