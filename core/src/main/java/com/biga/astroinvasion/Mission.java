@@ -2,6 +2,9 @@
 
 package com.biga.astroinvasion;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class Mission {
     String text1, text2, prize, path;
     int objMission;
@@ -16,10 +19,14 @@ public class Mission {
 
     public String printMission(double numMission) {
         double molt = numMission/4;  // moltiplicatore valore base missione
-        molt=Math.ceil(molt); // arrotondamento per eccesso del risultato
+        molt = Math.ceil(molt); // arrotondamento per eccesso del risultato
 
         double numObjMission = objMission * molt;  // obiettivo missione
 
-        return (text1 + " " + Math.round(numObjMission) + " " + text2);
+        // formattazione risultato
+        NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US); // formatter per la virgola delle migliaia
+        String numObjMissionStr = formatter.format(numObjMission); // conversione in stringa
+
+        return (text1 + " " + numObjMissionStr + " " + text2);
     }
 }

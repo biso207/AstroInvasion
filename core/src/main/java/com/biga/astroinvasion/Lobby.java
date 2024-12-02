@@ -1,7 +1,16 @@
+/*
+Astro Invasion - class Lobby -
+This class manages and controls all the screens in the game's lobby
+Developed by BIGA©. All rights reserved.
+*/
+
 package com.biga.astroinvasion;
+
+// import librerie
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Locale;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -60,6 +69,12 @@ public class Lobby implements Screen {
     HashMap<Integer, Texture> mapAvatar = new HashMap<>(); // hashmap immagini avatar
 
     boolean secondScreen, open22, open23;
+
+    // oggetto missione
+    Mission m;
+
+    // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
+    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // costruttore
     public Lobby(Main game) {
@@ -215,13 +230,13 @@ public class Lobby implements Screen {
     // creazione oggetti missione
     public String createMissions() {
         // creazione oggetti
-        Mission mission1 = new Mission("Hit", 10, "aliens in a Classic Game match.", "1 Gold Heart", "cart1_gold_heart_eng.png");
-        Mission mission2 = new Mission("Win", 1, "Space Battle matches.", "1 Shield", "cart2_shield_eng.png");
-        Mission mission3 = new Mission("Earn", 5000, "points in a single\nClassic Game match.", "100 Credits", "cart4_double points_eng.png");
-        Mission mission4 = new Mission("Earn", 5, "credits.", "1 Super Laser", "cart3_super_laser_eng.png");
+        Mission mission1 = new Mission("Hit", 10, "aliens in a Classic Game match.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        Mission mission2 = new Mission("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
+        Mission mission3 = new Mission("Earn", 5000, "points in a single\nClassic Game match.", "100 Credits", "images/cards/card_100_coins.png");
+        Mission mission4 = new Mission("Earn", 5, "credits.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         // missione default
-        Mission m=mission1;
+        m=mission1;
 
         // selezione oggetto in base alla missione corrente
         switch (idMission) {
@@ -456,40 +471,90 @@ public class Lobby implements Screen {
         // disegno schermo principale
         screen.draw(mapLobby.get(state), 0, 0);
 
+        // stampa avatar
+        if (!listSecondPages.contains(state)) {
+            screen.draw(mapAvatar.get(avatar), 870, 557);
+        }
+
+        // stampa TESTI e IMMAGINI variabili //
+        switch (state) {
+            // pagina 'classic game'
+            case 6:
+                // testi //
+                fontBlue20.draw(screen, formatter.format(points), 395, 410); // punti totali
+                fontBlue20.draw(screen, formatter.format(matchesCG), 420, 380); // partite giocate
+                fontWhite20.draw(screen, formatter.format(numGoldHeart), 715, 385); // numero 'gold heart'
+                fontWhite20.draw(screen, formatter.format(numShield), 878, 385); // numero 'shield'
+                fontWhite20.draw(screen, formatter.format(numSuperLaser), 715, 229); // numero 'super laser'
+                fontWhite20.draw(screen, formatter.format(numDoublePoints), 878, 229); // numero 'double points'
+
+                // immagini //
+
+                break;
+
+            // pagina 'space battle'
+            case 13:
+                // testi //
+                fontBlue20.draw(screen, formatter.format(wonSB), 420, 410); // vittorie
+                fontBlue20.draw(screen, formatter.format(consWonSB), 435, 380); // vittorie consecutive
+                fontBlue20.draw(screen, formatter.format(matchesSB), 420, 350); // partite giocate
+
+                // immagini //
+
+                break;
+
+            // pagina 'space journey'
+            case 14:
+                // testi //
+                fontBlue20.draw(screen, String.valueOf(level), 385, 410); // livello
+                fontBlue20.draw(screen, String.valueOf((level- 1) / 10 + 1), 475, 380); // galassia corrente
+
+                // immagini //
+
+                break;
+
+            // pagina 'rtg'
+            case 12:
+                // testi //
+                fontBlue20.draw(screen, createMissions(), 515, 370); // missione da completare
+                fontBlue20.draw(screen, formatter.format(mission), 592, 407); // numero missione raggiunta
+                fontBlue20.draw(screen, m.prize, 725, 272); // premio missione
+
+                // immagini //
+                screen.draw(new Texture(m.path), 660, 100);
+                break;
+
+            // pagina 'marketplace'
+            case 11:
+                break;
+
+            // pagina 'profile info'
+            case 25:
+                // testi //
+                // scritte a sx
+                fontBlue20.draw(screen, LogInSignUp.nickname, 172, 412); // nickname
+                fontBlue20.draw(screen, LogInSignUp.password, 172, 372); // password
+
+                // scritte a dx
+                fontBlue20.draw(screen, formatter.format(points), 620, 412); // punti
+                fontBlue20.draw(screen, formatter.format(level), 610, 372); // livello
+                fontBlue20.draw(screen, formatter.format(mission), 630, 332); // numero missione
+                fontBlue20.draw(screen, formatter.format(credits), 630, 292); // crediti
+                fontBlue20.draw(screen, formatter.format(matchesCG), 690, 252); // partite classic game
+                fontBlue20.draw(screen, formatter.format(matchesSB), 690, 212); // partite space battle
+                fontBlue20.draw(screen, formatter.format(wonSB), 690, 172); // vittorie space battle
+
+                // immagini //
+                screen.draw(mapAvatar.get(avatar), 461, 513); // avatar
+        }
+
         // disegno schermo sovrapposto (chiusura gioco/software infos)
         if (secondScreen) {
             if (open22) screen.draw(img22, 250, 175);
             else if (open23) screen.draw(img23, 250, 175);
         }
 
-        // TESTI //
-        // scritte pagina 'rtg'
-        if (state==12) {
-            fontBlue20.draw(screen, createMissions(), 515, 370); // testo missione da completare
-            fontBlue20.draw(screen, String.valueOf(mission), 592, 407); // numero missione raggiunta
-        }
-        // scritte pagina 'profile info'
-        else if (state==25) {
-            // scritte a sx
-            fontBlue20.draw(screen, LogInSignUp.nickname, 172, 412); // nickname
-            fontBlue20.draw(screen, LogInSignUp.password, 172, 372); // password
-
-            // scritte a dx
-            fontBlue20.draw(screen, String.valueOf(points), 620, 412);// punti
-            fontBlue20.draw(screen, String.valueOf(level), 610, 372);// livello
-            fontBlue20.draw(screen, String.valueOf(mission), 630, 332);// numero missione
-            fontBlue20.draw(screen, String.valueOf(credits), 630, 292);// crediti
-            fontBlue20.draw(screen, String.valueOf(matchesCG), 690, 252); // partite classic game
-            fontBlue20.draw(screen, String.valueOf(matchesSB), 690, 212); // partite space battle
-            fontBlue20.draw(screen, String.valueOf(wonSB), 690, 172);// vittorie space battle
-
-            // stampa avatar
-            screen.draw(mapAvatar.get(avatar), 461, 513);
-        }
-        else if (!listSecondPages.contains(state)) {
-            // stampa avatar
-            screen.draw(mapAvatar.get(avatar), 870, 557);
-        }
+        // chiusura screen
         screen.end();
     }
 
