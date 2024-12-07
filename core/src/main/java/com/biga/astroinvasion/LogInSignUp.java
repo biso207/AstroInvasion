@@ -103,7 +103,7 @@ public class LogInSignUp extends ScreenAdapter {
 
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
-        FileHandle checkUser = Gdx.files.local("data/is_user.txt");
+        FileHandle checkUser = Gdx.files.internal("data/is_user.txt");
         String isUser = checkUser.readString();
 
         // scrittura di un valore nel file così da aprire la schermata login alla prossima apertura

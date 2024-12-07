@@ -256,6 +256,11 @@ public class Lobby implements Screen {
         return m.printMission(mission);
     }
 
+    // creazione oggetti navicella
+    public void createSpacecrafts() {
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 1, 1, 0);
+    }
+
     // metodo per recuperare i progressi utente
     public void readFiles() {
         System.out.println(nicknameInput);
@@ -364,10 +369,10 @@ public class Lobby implements Screen {
         img13 = new Texture("lobby_images/lobby_space_battle_eng.png");
         img14 = new Texture("lobby_images/lobby_space_journey_eng.png");
         img15 = new Texture("lobby_images/lobby_spacecrafts_classic_group_eng.png");
-        img16 = new Texture("lobby_images/lobby_spacecrafts_groupEfron_eng.png");
-        img17 = new Texture("lobby_images/lobby_spacecrafts_groupFenixia_eng.png");
-        img18 = new Texture("lobby_images/lobby_spacecrafts_groupMalloc_eng.png");
-        img19 = new Texture("lobby_images/lobby_spacecrafts_groupPhoenix_eng.png");
+        img16 = new Texture("lobby_images/lobby_spacecrafts_groupFenixia_eng.png");
+        img17 = new Texture("lobby_images/lobby_spacecrafts_groupMalloc_eng.png");
+        img18 = new Texture("lobby_images/lobby_spacecrafts_groupPhoenix_eng.png");
+        img19 = new Texture("lobby_images/lobby_spacecrafts_groupEfron_eng.png");
         img20 = new Texture("lobby_images/lobby_spacecrafts_special_group_eng.png");
         img21 = new Texture("lobby_images/lobby_settings_eng.png");
         img22 = new Texture("lobby_images/lobby_software_info_eng.png");
