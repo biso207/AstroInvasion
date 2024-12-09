@@ -32,6 +32,7 @@ public class Lobby implements Screen {
     private BitmapFont fontBlue20;
     private BitmapFont fontWhite20;
     private BitmapFont fontRed20;
+    private BitmapFont fontBlue15;
 
     // soundtrack
     Music soundtrack;
@@ -54,7 +55,11 @@ public class Lobby implements Screen {
     movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
     numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB, points;
 
+    // controllo completamento missione rtg
     boolean isRtgComplete;
+
+    // creazione oggetto navicella generico
+    private Spacecraft selectedSp;
 
     /*
      previousState serve a memorizzare l'ultima pagina aperta.
@@ -103,6 +108,9 @@ public class Lobby implements Screen {
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
         soundtrack.play(); // avvio musica
+
+        // creazione oggetti "navicella"
+        createSpacecrafts();
     }
 
     // -------------- //
@@ -134,7 +142,7 @@ public class Lobby implements Screen {
             di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
             Esempio: l'utente NON può aprire la pagina 'classic game' dalla pagina 'instructions'
             */
-            if (state!=7 && state!=21 && state!=24 && state!=25 && !open22 && !open23) {
+            if (!listSecondPages.contains(state) && !open22 && !open23) {
                 // pagina 6 => 'classic game'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 180 && screenY <= 220)) {
                     state = 6;
@@ -159,14 +167,6 @@ public class Lobby implements Screen {
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 430 && screenY <= 470)) {
                     previousState = state;
                     state = 26;
-                }
-                // cambio pagina (26-32) => 'missions 1-7'
-                if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
-                    if ((state >=26 && state < 32)) state++;
-                }
-                // cambio pagina (32-26) => 'missions 7-1'
-                if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
-                    if ((state <= 32 && state>26)) state--;
                 }
                 // pagina 11 => 'marketplace'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 480 && screenY <= 520)) {
@@ -213,8 +213,16 @@ public class Lobby implements Screen {
             }
 
             // chiusura pagina instruction/settings/profile info&difficulty/missions
-            if ((state==7 || state==21 || state==24 || state==25 || state==26) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+            if ((listSecondPages.contains(state)) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 state = previousState;
+            }
+            // cambio pagina (26-32) => 'missions 1-7'
+            if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <=642)) {
+                if ((state >=26 && state < 32)) state++;
+            }
+            // cambio pagina (32-26) => 'missions 7-1'
+            if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <=642)) {
+                if ((state <= 32 && state > 26)) state--;
             }
             // pagina 1 => 'avatar 1'
             if (state == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
@@ -273,7 +281,7 @@ public class Lobby implements Screen {
 
     // creazione oggetti navicella
     public void createSpacecrafts() {
-        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 1, 1, 0);
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 10, 1, 1);
         Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", 5, 0, 0);
         Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", 1, 0, 0);
         Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", 0, 1, 0);
@@ -322,9 +330,9 @@ public class Lobby implements Screen {
         mapSpacecrafts.put(22, sp22);
         mapSpacecrafts.put(23, sp23);
         mapSpacecrafts.put(24, sp24);
+
+        selectedSp = mapSpacecrafts.get(1);
     }
-
-
 
     // metodo per recuperare i progressi utente
     public void readFiles() {
@@ -411,6 +419,7 @@ public class Lobby implements Screen {
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
             fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
+            fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter regular blue 15
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
@@ -598,7 +607,17 @@ public class Lobby implements Screen {
                 fontWhite20.draw(screen, formatter.format(numSuperLaser), 715, 229); // numero 'super laser'
                 fontWhite20.draw(screen, formatter.format(numDoublePoints), 878, 229); // numero 'double points'
 
-                // immagini //
+                // navicella //
+                // immagine
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                // nome
+                fontBlue15.draw(screen, selectedSp.getName(), 420, 227);
+                // bonus punti
+                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 445, 230);
+                // bonus velocità
+                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 445, 200);
+                // bonus v. laser
+                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 445, 170);
 
                 break;
 
@@ -627,7 +646,7 @@ public class Lobby implements Screen {
             case 12:
                 // testi //
                 fontBlue20.draw(screen, createMissions(), 515, 370); // missione da completare
-                fontBlue20.draw(screen, formatter.format(mission), 592, 407); // numero missione raggiunta
+                fontBlue20.draw(screen, formatter.format(mission), 565, 407); // numero missione raggiunta
                 fontBlue20.draw(screen, m.prize, 725, 272); // premio missione
 
                 // immagini //
