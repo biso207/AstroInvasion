@@ -42,7 +42,8 @@ public class Lobby implements Screen {
     // dichiarazione immagini lobby
     Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
-        img16, img17, img18, img19, img20, img21, img22, img23, img24, img25, img_special;
+        img16, img17, img18, img19, img20, img21, img22, img23, img24,
+        img25, img26, img27, img28, img29, img30, img31, img32, img_special;
 
     // dichiarazione immagini avatar
     Texture av1, av2, av3, av4, av5, av6, av7, av8, av9, av10,
@@ -67,6 +68,7 @@ public class Lobby implements Screen {
     // hashmap per mappare diversi elementi
     HashMap<Integer, Texture> mapLobby = new HashMap<>(); // hashmap schermate lobby
     HashMap<Integer, Texture> mapAvatar = new HashMap<>(); // hashmap immagini avatar
+    HashMap<Integer, Spacecraft> mapSpacecrafts = new HashMap<>(); // hashmap immagini spacecrafts
 
     boolean secondScreen, open22, open23;
 
@@ -149,9 +151,22 @@ public class Lobby implements Screen {
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 330 && screenY <= 370)) {
                     state = 12;
                 }
-                // pagina 15 => 'navicelle 1'
+                // pagina 15 => 'spacecrafts 1'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 380 && screenY <= 420)) {
                     state = 15;
+                }
+                // pagina 26 => 'missions 1'
+                if ((screenX >= 50 && screenX <= 270) && (screenY >= 430 && screenY <= 470)) {
+                    previousState = state;
+                    state = 26;
+                }
+                // cambio pagina (26-32) => 'missions 1-7'
+                if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
+                    if ((state >=26 && state < 32)) state++;
+                }
+                // cambio pagina (32-26) => 'missions 7-1'
+                if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
+                    if ((state <= 32 && state>26)) state--;
                 }
                 // pagina 11 => 'marketplace'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 480 && screenY <= 520)) {
@@ -197,8 +212,8 @@ public class Lobby implements Screen {
                 }
             }
 
-            // chiusura pagina instruction/settings/profile info&difficulty/
-            if ((state==7 || state==21 || state==24 || state==25) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+            // chiusura pagina instruction/settings/profile info&difficulty/missions
+            if ((state==7 || state==21 || state==24 || state==25 || state==26) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 state = previousState;
             }
             // pagina 1 => 'avatar 1'
@@ -259,7 +274,57 @@ public class Lobby implements Screen {
     // creazione oggetti navicella
     public void createSpacecrafts() {
         Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 1, 1, 0);
+        Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", 5, 0, 0);
+        Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", 1, 0, 0);
+        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", 0, 1, 0);
+        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf.png", 0, 2, 0);
+        Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari.png", 10, 0, 0);
+        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko.png", 0, 0, 2);
+        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia.png", 0, 0, 3);
+        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares.png", 0, 3, 0);
+        Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard.png", 15, 0, 0);
+        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad.png", 0, 1, 1);
+        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc.png", 10, 2, 0);
+        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion.png", 0, 2, 1);
+        Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro.png", 20, 0, 0);
+        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr.png", 0, 4, 1);
+        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix.png", 0, 1, 2);
+        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen.png", 0, 2, 2);
+        Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla.png", 30, 0, 0);
+        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto.png", 0, 1, 4);
+        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron.png", 10, 0, 2);
+        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen.png", 0, 5, 5);
+        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen.png", 50, 5, 0);
+        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", 50, 0, 5);
+        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", 70, 6, 6);
+
+        mapSpacecrafts.put(1, sp1);
+        mapSpacecrafts.put(2, sp2);
+        mapSpacecrafts.put(3, sp3);
+        mapSpacecrafts.put(4, sp4);
+        mapSpacecrafts.put(5, sp5);
+        mapSpacecrafts.put(6, sp6);
+        mapSpacecrafts.put(7, sp7);
+        mapSpacecrafts.put(8, sp8);
+        mapSpacecrafts.put(9, sp9);
+        mapSpacecrafts.put(10, sp10);
+        mapSpacecrafts.put(11, sp11);
+        mapSpacecrafts.put(12, sp12);
+        mapSpacecrafts.put(13, sp13);
+        mapSpacecrafts.put(14, sp14);
+        mapSpacecrafts.put(15, sp15);
+        mapSpacecrafts.put(16, sp16);
+        mapSpacecrafts.put(17, sp17);
+        mapSpacecrafts.put(18, sp18);
+        mapSpacecrafts.put(19, sp19);
+        mapSpacecrafts.put(20, sp20);
+        mapSpacecrafts.put(21, sp21);
+        mapSpacecrafts.put(22, sp22);
+        mapSpacecrafts.put(23, sp23);
+        mapSpacecrafts.put(24, sp24);
     }
+
+
 
     // metodo per recuperare i progressi utente
     public void readFiles() {
@@ -379,6 +444,13 @@ public class Lobby implements Screen {
         img23 = new Texture("lobby_images/lobby_close_game_eng.png");
         img24 = new Texture("lobby_images/lobby_difficulty_info_eng.png");
         img25 = new Texture("lobby_images/lobby_profile_info_eng.png");
+        img26 = new Texture("lobby_images/lobby_missions1_eng.png");
+        img27 = new Texture("lobby_images/lobby_missions2_eng.png");
+        img28 = new Texture("lobby_images/lobby_missions3_eng.png");
+        img29 = new Texture("lobby_images/lobby_missions4_eng.png");
+        img30 = new Texture("lobby_images/lobby_missions5_eng.png");
+        img31 = new Texture("lobby_images/lobby_missions6_eng.png");
+        img32 = new Texture("lobby_images/lobby_missions7_eng.png");
         img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
@@ -406,17 +478,50 @@ public class Lobby implements Screen {
         av20 = new Texture("images/avatars/av (20).png");
 
         // mappatura mapLobby
-        mapping(mapLobby, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12, img13, img14, img15, img16, img17, img18, img19, img20);
+        mapLobby.put(1, img1);
+        mapLobby.put(2, img2);
+        mapLobby.put(3, img3);
+        mapLobby.put(4, img4);
+        mapLobby.put(5, img5);
+        mapLobby.put(6, img6);
+        mapLobby.put(7, img7);
+        mapLobby.put(8, img8);
+        mapLobby.put(9, img9);
+        mapLobby.put(10, img10);
+        mapLobby.put(11, img11);
+        mapLobby.put(12, img12);
+        mapLobby.put(13, img13);
+        mapLobby.put(14, img14);
+        mapLobby.put(15, img15);
+        mapLobby.put(16, img16);
+        mapLobby.put(17, img17);
+        mapLobby.put(18, img18);
+        mapLobby.put(19, img19);
+        mapLobby.put(20, img20);
         mapLobby.put(21, img21);
         mapLobby.put(24, img24);
         mapLobby.put(25, img25);
-        mapLobby.put(30, img_special);
+        mapLobby.put(26, img26);
+        mapLobby.put(27, img27);
+        mapLobby.put(28, img28);
+        mapLobby.put(29, img29);
+        mapLobby.put(30, img30);
+        mapLobby.put(31, img31);
+        mapLobby.put(32, img32);
+        mapLobby.put(33, img_special);
 
         // inserimento pagine secondarie nell'arraylist
         listSecondPages.add(7);
         listSecondPages.add(21);
         listSecondPages.add(24);
         listSecondPages.add(25);
+        listSecondPages.add(26);
+        listSecondPages.add(27);
+        listSecondPages.add(28);
+        listSecondPages.add(29);
+        listSecondPages.add(30);
+        listSecondPages.add(31);
+        listSecondPages.add(32);
 
         // mappatura avatar
         mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
