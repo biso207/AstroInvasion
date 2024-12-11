@@ -41,17 +41,20 @@ public class Lobby implements Screen {
     private final String nicknameInput = LogInSignUp.nickname;
 
     // dichiarazione immagini lobby
-    Texture img, img1, img2, img3, img4, img5, img6, img7,
+    private Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
         img16, img17, img18, img19, img20, img21, img22, img23, img24,
         img25, img26, img27, img28, img29, img30, img31, img32, img_special;
+
+    // dichiarazione immagini secondarie
+    private Texture imgComplete;
 
     // dichiarazione immagini avatar
     Texture av1, av2, av3, av4, av5, av6, av7, av8, av9, av10,
         av11, av12, av13, av14, av15, av16, av17, av18, av19, av20;
 
     // dichiarazione variabili attributi utente
-    int avatar, credits, diffCG, diffSB, idMission, level,
+    private int avatar, credits, diffCG, diffSB, idMission, level,
     movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
     numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB, points;
 
@@ -65,7 +68,7 @@ public class Lobby implements Screen {
      previousState serve a memorizzare l'ultima pagina aperta.
      Ciò permette di ritornare alla pagina precedente dopo aver chiuso la pagina delle istruzioni/impostazioni
     */
-    int state, previousState;
+    private int state, previousState;
 
     // arraylist delle pagine secondarie
     ArrayList<Integer> listSecondPages = new ArrayList<>();
@@ -78,7 +81,10 @@ public class Lobby implements Screen {
     boolean secondScreen, open22, open23;
 
     // oggetto missione
-    Mission m;
+    private Mission m;
+
+    // oggetto logica per gestire la logica delle modalità di gioco
+    private final Logic l = new Logic();
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -95,7 +101,10 @@ public class Lobby implements Screen {
         // init del secondo "screen", dello screen software.infos e close.game a false
         secondScreen = open22 = open23 = false;
 
-        // caricamento immagini
+        // caricamento schermate lobby
+        loadLobbyImages();
+
+        // caricamento immagini secondarie
         loadImages();
 
         // caricamento font
@@ -281,7 +290,7 @@ public class Lobby implements Screen {
 
     // creazione oggetti navicella
     public void createSpacecrafts() {
-        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 10, 1, 1);
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 0, 1, 0);
         Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", 5, 0, 0);
         Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", 1, 0, 0);
         Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", 0, 1, 0);
@@ -306,32 +315,16 @@ public class Lobby implements Screen {
         Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", 50, 0, 5);
         Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", 70, 6, 6);
 
-        mapSpacecrafts.put(1, sp1);
-        mapSpacecrafts.put(2, sp2);
-        mapSpacecrafts.put(3, sp3);
-        mapSpacecrafts.put(4, sp4);
-        mapSpacecrafts.put(5, sp5);
-        mapSpacecrafts.put(6, sp6);
-        mapSpacecrafts.put(7, sp7);
-        mapSpacecrafts.put(8, sp8);
-        mapSpacecrafts.put(9, sp9);
-        mapSpacecrafts.put(10, sp10);
-        mapSpacecrafts.put(11, sp11);
-        mapSpacecrafts.put(12, sp12);
-        mapSpacecrafts.put(13, sp13);
-        mapSpacecrafts.put(14, sp14);
-        mapSpacecrafts.put(15, sp15);
-        mapSpacecrafts.put(16, sp16);
-        mapSpacecrafts.put(17, sp17);
-        mapSpacecrafts.put(18, sp18);
-        mapSpacecrafts.put(19, sp19);
-        mapSpacecrafts.put(20, sp20);
-        mapSpacecrafts.put(21, sp21);
-        mapSpacecrafts.put(22, sp22);
-        mapSpacecrafts.put(23, sp23);
-        mapSpacecrafts.put(24, sp24);
+        // array oggetti navicella
+        Spacecraft[] sArray = {sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, sp10,
+            sp11, sp12, sp13, sp14, sp15, sp16, sp17, sp18, sp19, sp20,
+            sp21, sp22, sp23, sp24};
 
-        selectedSp = mapSpacecrafts.get(1);
+        // popolamento mappa navicelle
+        for (int i=1; i<24; i++) mapSpacecrafts.put(i, sArray[i]);
+
+        // recupero navicella utente
+        selectedSp = mapSpacecrafts.get(spacecraft);
     }
 
     // metodo per recuperare i progressi utente
@@ -426,8 +419,8 @@ public class Lobby implements Screen {
         }
     }
 
-    // metodo per caricare le immagini che rappresentano lo schermo
-    public void loadImages(){
+    // metodo per caricare le immagini della Lobby
+    public void loadLobbyImages(){
         img1 = new Texture("lobby_images/lobby_avatars_group1_eng.png");
         img2 = new Texture("lobby_images/lobby_avatars_group2_eng.png");
         img3 = new Texture("lobby_images/lobby_avatars_group3_eng.png");
@@ -536,6 +529,28 @@ public class Lobby implements Screen {
         mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
     }
 
+    // metodo per caricare immagini generiche
+    public void loadImages() {
+        imgComplete = new Texture("images/tick.png");
+    }
+
+    // metodo per stampare testi e immagini nelle pagine 'missions'
+    public void printCompleteMission(int c) {
+        // spostamento lungo y di scritte e immagini ripetitive
+        int y=0, y2=0;
+        // array per controllare il completamente delle missioni in pagine 'missions'
+        boolean[] isCompleted = l.checkCompleted(state, matchesCG);
+        for (int i=0; i<4; i++) {
+            fontBlue20.draw(screen, formatter.format(c), 620, 412+y);
+
+            // spunta completamento missione
+            if (isCompleted[i]) screen.draw(imgComplete, 640, 200+y2);
+
+            y2+=30;
+            y+=30;
+        }
+    }
+
     // metodo per mappare le hashmap
     private void mapping(HashMap<Integer, Texture> map, Texture img1, Texture img2, Texture img3, Texture img4,
                  Texture img5, Texture img6, Texture img7, Texture img8, Texture img9, Texture img10,
@@ -581,6 +596,7 @@ public class Lobby implements Screen {
     // metodo per aggiornare lo schermo
     @Override
     public void render(float delta) {
+
         // attivazione controllo input
         Gdx.input.setInputProcessor(new Lobby.MyInputProcessor());
 
@@ -698,6 +714,36 @@ public class Lobby implements Screen {
 
                 // immagini //
                 screen.draw(mapAvatar.get(avatar), 461, 513); // avatar
+                break;
+
+
+            // pagina 'missions 1'
+            case 26:
+                // testi e immagini //
+                printCompleteMission(matchesCG);
+                break;
+
+            // pagina 'missions 2'
+            case 27:
+                // testi e immagini //
+                printCompleteMission(100000000);
+                break;
+
+            // pagina 'missions 3'
+            case 28:
+                // testi e immagini //
+                printCompleteMission(matchesSB);
+                break;
+
+            // pagina 'missions 4'
+            case 29:
+                printCompleteMission(wonSB);
+                break;
+
+            // pagina 'missions 5'
+            case 30:
+                printCompleteMission(points);
+                break;
         }
 
         // disegno schermo sovrapposto (chiusura gioco/software infos)
