@@ -611,13 +611,13 @@ public class Lobby implements Screen {
                 // immagine
                 screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 420, 227);
-                // bonus punti
-                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 445, 230);
+                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
-                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 445, 200);
+                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
-                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 445, 170);
+                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                // bonus punti
+                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 break;
 
@@ -628,7 +628,17 @@ public class Lobby implements Screen {
                 fontBlue20.draw(screen, formatter.format(consWonSB), 435, 380); // vittorie consecutive
                 fontBlue20.draw(screen, formatter.format(matchesSB), 420, 350); // partite giocate
 
-                // immagini //
+                // navicella //
+                // immagine
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                // nome
+                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                // bonus velocità
+                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
+                // bonus v. laser
+                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                // bonus punti
+                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 break;
 
@@ -638,7 +648,17 @@ public class Lobby implements Screen {
                 fontBlue20.draw(screen, String.valueOf(level), 385, 410); // livello
                 fontBlue20.draw(screen, String.valueOf((level- 1) / 10 + 1), 475, 380); // galassia corrente
 
-                // immagini //
+                // navicella //
+                // immagine
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                // nome
+                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                // bonus velocità
+                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
+                // bonus v. laser
+                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                // bonus punti
+                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 break;
 
@@ -655,6 +675,9 @@ public class Lobby implements Screen {
 
             // pagina 'marketplace'
             case 11:
+                // testi //
+                fontBlue20.draw(screen, formatter.format(credits), 540, 490); // numero totale crediti
+
                 break;
 
             // pagina 'profile info'
