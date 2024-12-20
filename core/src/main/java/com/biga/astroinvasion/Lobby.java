@@ -54,21 +54,23 @@ public class Lobby implements Screen {
         av11, av12, av13, av14, av15, av16, av17, av18, av19, av20;
 
     // dichiarazione variabili attributi utente
-    private int avatar, credits, diffCG, diffSB, idMission, level,
+    private static int avatar, diffCG, diffSB, idMission, level,
     movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
-    numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB, points;
+    numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB;
+
+    public static int points, credits;
 
     // controllo completamento missione rtg
     boolean isRtgComplete;
 
     // creazione oggetto navicella generico
-    private Spacecraft selectedSp;
+    public static Spacecraft selectedSp;
 
     /*
-     previousState serve a memorizzare l'ultima pagina aperta.
-     Ciò permette di ritornare alla pagina precedente dopo aver chiuso la pagina delle istruzioni/impostazioni
+     'previousPage' serve a memorizzare l'ultima pagina aperta.
+     Ciò permette di ritornare alla pagina precedente dopo aver chiuso una pagina che occupa interamente lo schermo
     */
-    private int state, previousState;
+    private int page, previousPage;
 
     // arraylist delle pagine secondarie
     ArrayList<Integer> listSecondPages = new ArrayList<>();
@@ -96,7 +98,7 @@ public class Lobby implements Screen {
         this.screen = game.screen;
 
         // set immagine di default (classic game)
-        state = previousState = 6;
+        page = previousPage = 6;
 
         // init del secondo "screen", dello screen software.infos e close.game a false
         secondScreen = open22 = open23 = false;
@@ -131,7 +133,7 @@ public class Lobby implements Screen {
         @Override
         public boolean keyDown(int keycode) {
             // click tasto esc
-            if (keycode == Input.Keys.ESCAPE && (state!=7 && state!=21 && !open22 && !open23 && state!=24 && state!=25)) {
+            if (keycode == Input.Keys.ESCAPE && (page!=7 && page!=21 && !open22 && !open23 && page!=24 && page!=25)) {
                 open23 = true;
                 secondScreen = true;
             }
@@ -147,67 +149,67 @@ public class Lobby implements Screen {
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             /*
-            Lo state deve essere diverso da certe pagine per non generare l'apertura
+            'page' deve essere diverso da certe pagine per non generare l'apertura
             di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
             Esempio: l'utente NON può aprire la pagina 'classic game' dalla pagina 'instructions'
             */
-            if (!listSecondPages.contains(state) && !open22 && !open23) {
+            if (!listSecondPages.contains(page) && !open22 && !open23) {
                 // pagina 6 => 'classic game'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 180 && screenY <= 220)) {
-                    state = 6;
+                    page = 6;
                 }
                 // pagina 13 => 'space battle'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 230 && screenY <= 270)) {
-                    state = 13;
+                    page = 13;
                 }
                 // pagina 14 => 'space journey'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 280 && screenY <= 320)) {
-                    state = 14;
+                    page = 14;
                 }
                 // pagina 12 => 'road to glory'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 330 && screenY <= 370)) {
-                    state = 12;
+                    page = 12;
                 }
                 // pagina 15 => 'spacecrafts 1'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 380 && screenY <= 420)) {
-                    state = 15;
+                    page = 15;
                 }
                 // pagina 26 => 'missions 1'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 430 && screenY <= 470)) {
-                    previousState = state;
-                    state = 26;
+                    previousPage = page;
+                    page = 26;
                 }
                 // pagina 11 => 'marketplace'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 480 && screenY <= 520)) {
-                    state = 11;
+                    page = 11;
                 }
                 // cambio pagina (1-5) => 'avatar/spacecraft/ 1->5'
                 if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
-                    if ((state >=1 && state < 5) || (state >= 15 && state < 20)) state++;
+                    if ((page >=1 && page < 5) || (page >= 15 && page < 20)) page++;
                 }
                 // cambio pagina (5-1) => 'avatar/spacecraft/ 5->1'
                 if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
-                    if ((state <= 5 && state>1) || (state <= 20 && state>15)) state--;
+                    if ((page <= 5 && page>1) || (page <= 20 && page>15)) page--;
                 }
                 // pagina 7 => 'instructions'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 530 && screenY <= 570)) {
-                    previousState = state;
-                    state = 7;
+                    previousPage = page;
+                    page = 7;
                 }
                 // pagine 21 => 'settings'
                 if ((screenX >= 50 && screenX <=90) && (screenY >= 580 && screenY <=620)) {
-                    previousState = state;
-                    state = 21;
+                    previousPage = page;
+                    page = 21;
                 }
                 // pagina 24 => 'difficulty info classic game'
                 if ((screenX >= 887 && screenX <=917) && (screenY >= 203 && screenY <=233)) {
-                    previousState = state;
-                    state = 24;
+                    previousPage = page;
+                    page = 24;
                 }
                 // pagina 25 => 'profile info'
                 if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
-                    previousState = state;
-                    state = 25;
+                    previousPage = page;
+                    page = 25;
                 }
                 // pagina 22 => 'software infos'
                 if ((screenX >= 110 && screenX <=150) && (screenY >= 580 && screenY <=620)) {
@@ -219,23 +221,30 @@ public class Lobby implements Screen {
                     open23 = true;
                     secondScreen = true;
                 }
+
+                // CONTROLLI PER AVVIARE LE MODALITÀ DI GIOCO //
+                // avvio 'Classic Game'
+                if (page == 6 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+                    previousPage = page;
+                    game.setScreen(new ClassicGame(game)); // apertura nuovo screen
+                }
             }
 
             // chiusura pagina instruction/settings/profile info&difficulty/missions
-            if ((listSecondPages.contains(state)) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
-                state = previousState;
+            if ((listSecondPages.contains(page) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124))) {
+                page = previousPage;
             }
             // cambio pagina (26-32) => 'missions 1-7'
             if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <=642)) {
-                if ((state >=26 && state < 32)) state++;
+                if ((page >=26 && page < 32)) page++;
             }
             // cambio pagina (32-26) => 'missions 7-1'
             if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <=642)) {
-                if ((state <= 32 && state > 26)) state--;
+                if ((page <= 32 && page > 26)) page--;
             }
             // pagina 1 => 'avatar 1'
-            if (state == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
-                state = 1;
+            if (page == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+                page = 1;
             }
             // chiusura software.infos
             if ((secondScreen&&open22) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
@@ -290,30 +299,30 @@ public class Lobby implements Screen {
 
     // creazione oggetti navicella
     public void createSpacecrafts() {
-        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", 0, 1, 0);
-        Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", 5, 0, 0);
-        Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", 1, 0, 0);
-        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", 0, 1, 0);
-        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf.png", 0, 2, 0);
-        Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari.png", 10, 0, 0);
-        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko.png", 0, 0, 2);
-        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia.png", 0, 0, 3);
-        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares.png", 0, 3, 0);
-        Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard.png", 15, 0, 0);
-        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad.png", 0, 1, 1);
-        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc.png", 10, 2, 0);
-        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion.png", 0, 2, 1);
-        Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro.png", 20, 0, 0);
-        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr.png", 0, 4, 1);
-        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix.png", 0, 1, 2);
-        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen.png", 0, 2, 2);
-        Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla.png", 30, 0, 0);
-        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto.png", 0, 1, 4);
-        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron.png", 10, 0, 2);
-        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen.png", 0, 5, 5);
-        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen.png", 50, 5, 0);
-        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", 50, 0, 5);
-        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", 70, 6, 6);
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", "images/lasers/laser_omega.png", 0, 1, 0);
+        Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", "images/lasers/laser_idra.png", 5, 0, 0);
+        Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", "images/lasers/laser_pegaso.png", 1, 0, 0);
+        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", "images/lasers/laser_woka.png", 0, 1, 0);
+        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf.png", "images/lasers/laser_beowulf.png", 0, 2, 0);
+        Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari.png", "images/lasers/laser_andvari.png", 10, 0, 0);
+        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko.png", "images/lasers/laser_siko.png", 0, 0, 2);
+        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia.png", "images/lasers/laser_fenixia.png", 0, 0, 3);
+        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares.png", "images/lasers/laser_ares.png", 0, 3, 0);
+        Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard.png", "images/lasers/laser_asgard.png", 15, 0, 0);
+        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad.png", "images/lasers/laser_galahad.png", 0, 1, 1);
+        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc.png", "images/lasers/laser_malloc.png", 10, 2, 0);
+        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion.png", "images/lasers/laser_orion.png", 0, 2, 1);
+        Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro.png", "images/lasers/laser_centauro.png", 20, 0, 0);
+        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr.png", "images/lasers/laser_zephyr.png", 0, 4, 1);
+        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix.png", "images/lasers/laser_phoenix.png", 0, 1, 2);
+        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 0, 2, 2);
+        Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla.png", "images/lasers/laser_scylla.png", 30, 0, 0);
+        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto.png", "images/lasers/laser_keto.png", 0, 1, 4);
+        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron.png", "images/lasers/laser_efron.png", 10, 0, 2);
+        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 0, 5, 5);
+        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 50, 5, 0);
+        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 50, 0, 5);
+        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", "images/lasers/laser_alpha", 50, 5, 5);
 
         // array oggetti navicella
         Spacecraft[] sArray = {sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, sp10,
@@ -538,15 +547,17 @@ public class Lobby implements Screen {
     public void printCompleteMission(int c) {
         // spostamento lungo y di scritte e immagini ripetitive
         int y=0, y2=0;
+
+
         // array per controllare il completamente delle missioni in pagine 'missions'
-        boolean[] isCompleted = l.checkCompleted(state, matchesCG);
+        boolean[] isCompleted = l.checkCompleted(page, c);
         for (int i=0; i<4; i++) {
-            fontBlue20.draw(screen, formatter.format(c), 620, 412+y);
+            if (page!=31) fontBlue20.draw(screen, formatter.format(c), 620, 412+y);
 
             // spunta completamento missione
-            if (isCompleted[i]) screen.draw(imgComplete, 640, 200+y2);
+            if (isCompleted[i]) screen.draw(imgComplete, 885, 430-y2);
 
-            y2+=30;
+            y2+=103;
             y+=30;
         }
     }
@@ -604,15 +615,15 @@ public class Lobby implements Screen {
 
         // SCHERMATE //
         // disegno schermo principale
-        screen.draw(mapLobby.get(state), 0, 0);
+        screen.draw(mapLobby.get(page), 0, 0);
 
         // stampa avatar
-        if (!listSecondPages.contains(state)) {
+        if (!listSecondPages.contains(page)) {
             screen.draw(mapAvatar.get(avatar), 870, 557);
         }
 
         // stampa TESTI e IMMAGINI variabili //
-        switch (state) {
+        switch (page) {
             // pagina 'classic game'
             case 6:
                 // testi //
@@ -744,6 +755,16 @@ public class Lobby implements Screen {
             case 30:
                 printCompleteMission(points);
                 break;
+
+            // pagina 'missions 6'
+            case 31:
+                printCompleteMission(level);
+                break;
+
+            // pagina 'missions 7'
+            case 32:
+                printCompleteMission(credits);
+                break;
         }
 
         // disegno schermo sovrapposto (chiusura gioco/software infos)
@@ -754,6 +775,11 @@ public class Lobby implements Screen {
 
         // chiusura screen
         screen.end();
+    }
+
+    // GETTER //
+    public static int getDiffCG() {
+        return diffCG;
     }
 
     // metodo per rilasciare le risorse

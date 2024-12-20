@@ -3,13 +3,13 @@
 package com.biga.astroinvasion;
 
 public class Logic {
-    private int cont=0;
+    public int contCM=0;
 
     public Logic(){
 
     }
 
-    // metodo per controllare il completamento delle missioni nella pagina 'Missions'
+    // metodo per contare il completamento delle missioni nella pagina 'Missions'
     public boolean[] checkCompleted(int state, int check) {
         boolean[] isCompleted = {false, false, false, false};
         switch (state) {
@@ -22,7 +22,7 @@ public class Logic {
 
 
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 2'
@@ -32,7 +32,7 @@ public class Logic {
                 if (check >= 800) isCompleted[2] = true;
                 if (check >= 1000) isCompleted[3] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 3'
@@ -42,7 +42,7 @@ public class Logic {
                 if (check >= 70) isCompleted[2] = true;
                 if (check >= 100) isCompleted[3] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 4'
@@ -52,7 +52,7 @@ public class Logic {
                 if (check >= 70) isCompleted[2] = true;
                 if (check >= 100) isCompleted[3] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 5'
@@ -62,7 +62,7 @@ public class Logic {
                 if (check >= 700000) isCompleted[2] = true;
                 if (check >= 1000000) isCompleted[3] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 6'
@@ -72,7 +72,7 @@ public class Logic {
                 if (check >= 30) isCompleted[2] = true;
                 if (check >= 40) isCompleted[3] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
                 break;
 
             // pagina 'missions 7'
@@ -81,8 +81,8 @@ public class Logic {
                 if (check >= 5000) isCompleted[1] = true;
                 if (check >= 10000) isCompleted[2] = true;
                 // conteggio missioni completate
-                for(int i = 0; i<4; i++) if(isCompleted[i]) cont++;
-                if (cont==27) isCompleted[3] = true;
+                for(int i = 0; i<4; i++) if(isCompleted[i]) contCM++;
+                if (contCM==27) isCompleted[3] = true;
                 break;
         }
 
