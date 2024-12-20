@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
@@ -229,6 +230,16 @@ public class ClassicGame implements Screen {
         Array<Rectangle> lasersToRemove = new Array<>();
         Array<Alien> aliensToRemove = new Array<>();
 
+        Array<TextureRegion> collisionFrames = new Array<>();
+        float animationDuration = 0.5f; // Durata totale dell'animazione
+        float frameDuration = animationDuration / 5; // Supponendo 5 frame
+        final float[] animationTimer = {0}; // Timer per l'animazione
+
+        // Carica i frame
+        for (int i = 0; i <= 31; i++) {
+            collisionFrames.add(new TextureRegion(new Texture("images/collision_explosion/expl_06_00" + i + ".png")));
+        }
+
         for (Rectangle laser : lasers) {
             for (Alien alien : aliens) {
                 if (laser.overlaps(alien.getAlienRect())) {
@@ -239,7 +250,23 @@ public class ClassicGame implements Screen {
                     Lobby.points += scoreInc; // incremento punteggio ogni alieno colpito
                     aliensHit++; // incremento alieni colpiti
 
-                    if (aliensHit%5==0) Lobby.credits += creditsInc; // incremento crediti ogni 5 alieni colpiti
+                    if (aliensHit % 5 == 0) Lobby.credits += creditsInc; // incremento crediti ogni 5 alieni colpiti
+
+                    // Avvia animazione collisione
+                    float x = alien.getAlienRect().x;
+                    float y = alien.getAlienRect().y;
+
+                    // Disegna l'animazione nel ciclo di rendering
+                    Gdx.app.postRunnable(() -> {
+                        animationTimer[0] += Gdx.graphics.getDeltaTime();
+                        if (animationTimer[0] < animationDuration) {
+                            int frameIndex = (int) (animationTimer[0] / frameDuration);
+                            screen.begin();
+                            screen.draw(collisionFrames.get(frameIndex), x, y);
+                            screen.end();
+                        }
+                    });
+
                     break;
                 }
             }
@@ -247,6 +274,7 @@ public class ClassicGame implements Screen {
 
         lasers.removeAll(lasersToRemove, true);
         aliens.removeAll(aliensToRemove, true);
+
 
         for (Rectangle laser : lasersToRemove) {
             laserPool.free(laser);
