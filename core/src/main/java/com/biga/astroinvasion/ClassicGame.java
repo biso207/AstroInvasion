@@ -1,276 +1,311 @@
 package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.Pool;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ClassicGame implements Screen {
-    private final Main game; // variabile di riferimento tipo gioco
-    // dichiarazione screen
+    private final Main game;
     private final SpriteBatch screen;
-    private final Texture spaceshipTexture, backgroundTexture, laserTexture;
-    private final Rectangle spaceship, laser;
-    private float backgroundY1, backgroundY2; // Posizioni verticali dei due sfondi
-    private float backgroundSpeed = 100; // Velocità dello sfondo
-    private final ArrayList<Alien> aliens;
-    private final ArrayList<Rectangle> lasers;
+    private final Texture spaceshipTexture, backgroundTexture;
+    private final Texture[] alienTextures;
+    private final Rectangle spaceship;
+    private float backgroundY1, backgroundY2;
+    private final Array<Rectangle> lasers = new Array<>();
+    private final Array<Alien> aliens = new Array<>();
+    private final Pool<Rectangle> laserPool;
 
-    // velocità di movimento oggetti
-    private int spacecraftSpeed = 0; // navicella
-    private int laserSpeed = 0; // laser
-    private int alienSpeed = 0; // alieni
+    // valori in gioco
+    private float spacecraftSpeed, laserSpeed, alienSpeed;
+    private float laserCooldownTimer = 0;
+    private final float laserCooldown = 0.3f;
+    private float spawnTimer = 0;
+    private float spawnInterval;
 
-    // tempi per il laser
-    private float laserCooldownTimer = 0; // timer per il cooldown dello sparo
-    private float laserCooldown = 0.3f; // tempo minimo tra due spari
+    // statistiche
+    private int lives, aliensHit;
 
-    // bottini in gioco
-    private int lifes = 0; // vite in gioco
-    private int incPoints = 0; // incremento punti
-    private int incCredits = 0; // incremento crediti
-    private int bonusPoints = 0; // bonus di punti
+    // valori di incremento punti e crediti
+    private int scoreInc, creditsInc;
 
-    private float spawnTimer = 0; // timer per lo spawn di nuovi alieni
-    private double spawnInterval = 0; // tempo di spawn del singolo alieno
-    private final String[] alienTextures; // array per le immagini degli alieni
+    // dichiarazione font
+    private BitmapFont font;
+    private BitmapFont fontWhite20;
 
     // costruttore
-    ClassicGame(Main game) {
+    public ClassicGame(Main game) {
         this.game = game;
-        // init dello screen
         this.screen = game.screen;
 
-        // navicella utente
-        Spacecraft spacecraft = Lobby.selectedSp;
-        // navicella (immagine)
-        spaceshipTexture = new Texture(spacecraft.getPathImg());
-        // laser navicella (immagine)
-        laserTexture = new Texture(spacecraft.getPathLaser());
+        // immagine navicella
+        spaceshipTexture = new Texture(Lobby.selectedSp.getPathImg());
+        // sfondo in gioco
+        backgroundTexture = new Texture("images/bgInGame.png");
+        // init delle immagini degli alieni
+        alienTextures = new Texture[] {
+            new Texture("images/aliens/Alien_Blue.png"),
+            new Texture("images/aliens/Alien_Green.png"),
+            new Texture("images/aliens/Alien_Pink.png"),
+            new Texture("images/aliens/Alien_Red.png"),
+            new Texture("images/aliens/Alien_White.png"),
+            new Texture("images/aliens/Alien_Yellow.png")
+        };
 
-        // array per le immagini degli alieni
-        alienTextures = new String[]{"images/aliens/Alien_Blue.png", "images/aliens/Alien_Green.png", "images/aliens/Alien_Pink.png",
-        "images/aliens/Alien_Red.png", "images/aliens/Alien_White.png", "images/aliens/Alien_Yellow.png"};
-
-        // stampa iniziale della navicella
+        // rettangolo che rappresenta la navicella
         spaceship = new Rectangle(400, 20, 64, 64);
-        // init del laser (invisibile)
-        laser = new Rectangle(0, 0, 16, 32);
-        // init arraylist per gli alieni
-        aliens = new ArrayList<>();
-        // init arraylist per i laser
-        lasers = new ArrayList<>();
 
-        // difficoltà in gioco
-        int d = Lobby.getDiffCG();
-        // valori di base di movimento in base alla difficoltà
-        switch (d) {
+        // init parametri in base alla difficoltà di gioco
+        int difficulty = Lobby.getDiffCG();
+        setupGameParameters(difficulty);
+
+        // posizione y dello sfondo dinamico
+        backgroundY1 = 0;
+        backgroundY2 = backgroundTexture.getHeight();
+
+        // pooling del laser
+        laserPool = new Pool<>() {
+            @Override
+            protected Rectangle newObject() {
+                return new Rectangle();
+            }
+        };
+
+        // init alieni colpiti
+        aliensHit = 0;
+
+        // caricamento font
+        loadFont();
+    }
+
+    // -------------------- //
+    // GRAFICA DELLA CLASSE //
+    // -------------------- //
+
+    // caricamento e creazione font per le scritte
+    private void loadFont() {
+        // dichiarazione font
+        try {
+            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
+        } catch (Exception e) {
+            font = new BitmapFont(); // font di default (arial)
+            font.setColor(Color.valueOf("#151A3B")); // colore blu
+        }
+    }
+
+    // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
+    private void setupGameParameters(int difficulty) {
+        switch (difficulty) {
             case 1:
-                spacecraftSpeed = 12;
-                laserSpeed = 7;
-                alienSpeed = 3;
-                spawnInterval = 0.7;
-                lifes = 4;
-                incPoints = 50;
-                incCredits = 4;
+                spacecraftSpeed = 1200;
+                laserSpeed = 700;
+                alienSpeed = 300;
+                spawnInterval = 0.7f;
+                lives = 4;
+                scoreInc = 50;
+                creditsInc = 4;
                 break;
             case 2:
-                spacecraftSpeed = 14;
-                laserSpeed = 8;
-                alienSpeed = 4;
-                spawnInterval = 0.6;
-                lifes = 3;
-                incPoints = 100;
-                incCredits = 7;
+                spacecraftSpeed = 1400;
+                laserSpeed = 800;
+                alienSpeed = 400;
+                spawnInterval = 0.6f;
+                lives = 3;
+                scoreInc = 100;
+                creditsInc = 7;
                 break;
             case 3:
-                spacecraftSpeed = 16;
-                laserSpeed = 10;
-                alienSpeed = 4;
-                spawnInterval = 0.5;
-                lifes = 2;
-                incPoints = 200;
-                incCredits = 10;
+                spacecraftSpeed = 1600;
+                laserSpeed = 1000;
+                alienSpeed = 400;
+                spawnInterval = 0.5f;
+                lives = 2;
+                scoreInc = 200;
+                creditsInc = 10;
                 break;
         }
 
-        // moltiplicazione di 100 per i movimenti così da renderli più fluidi, naturali e veloci
-        spacecraftSpeed*=100;
-        laserSpeed*=100;
-        alienSpeed*=100;
-
-        // incremento valori di movimento in base alla navicella scelta
-        spacecraftSpeed += spacecraft.getSpSpeed(); // velocità navicella
-        laserSpeed += spacecraft.getLaserSpeed(); // velocità laser
-        bonusPoints += spacecraft.getBonusPoint(); // bonus punti
-
-        // immagine di sfondo
-        backgroundTexture = new Texture("images/bgInGame.png");
-        // init posizioni dello sfondo
-        backgroundY1 = 0;
-        backgroundY2 = backgroundTexture.getHeight(); // Il secondo sfondo parte appena sopra il primo
+        spacecraftSpeed += Lobby.selectedSp.getSpSpeed();
+        laserSpeed += Lobby.selectedSp.getLaserSpeed();
     }
 
-    // metodo per controllare gli input utente (movimento navicella + sparo laser)
+    // metodo per controllare l'input
     private void handleInput(float delta) {
-        // incremento tempo per lo sparo
         laserCooldownTimer += delta;
 
-        // movimento navicella verso sx
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        // movimento vs sx
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && spaceship.x > 10) {
             spaceship.x -= spacecraftSpeed * delta;
         }
 
-        // movimento navicella verso dx
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        // movimento vs dx
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && spaceship.x < 890) {
             spaceship.x += spacecraftSpeed * delta;
         }
 
         // sparo del laser
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && (laserCooldownTimer >= laserCooldown)) {
-            // Aggiungi un nuovo laser
-            Rectangle laser = new Rectangle(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 32);
-            lasers.add(laser);
-            laserCooldownTimer = 0; // reset del timer
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && laserCooldownTimer >= laserCooldown) {
+            spawnLaser();
+            laserCooldownTimer = 0;
         }
     }
 
-    // metodo per il movimento dello sfondo
-    private void updateBackground(float delta) {
-        // movimento immagini verso il basso
-        backgroundY1 -= backgroundSpeed * delta;
-        backgroundY2 -= backgroundSpeed * delta;
+    // metodo per generare il laser
+    private void spawnLaser() {
+        Rectangle laser = laserPool.obtain();
+        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 32);
+        lasers.add(laser);
+    }
 
-        // riposizionamento immagine quando raggiungono la fine dello schermo
+    // metodo per muovere i laser sparati
+    private void updateLasers(float delta) {
+        for (Iterator<Rectangle> iterator = lasers.iterator(); iterator.hasNext();) {
+            Rectangle laser = iterator.next();
+            laser.y += laserSpeed * delta;
+            if (laser.y > Gdx.graphics.getHeight()) {
+                iterator.remove();
+                laserPool.free(laser);
+            }
+        }
+    }
+
+    // metodo per aggiornare il movimento dello sfondo
+    private void updateBackground(float delta) {
+        backgroundY1 -= 100 * delta;
+        backgroundY2 -= 100 * delta;
+
         if (backgroundY1 + backgroundTexture.getHeight() <= 0) {
             backgroundY1 = backgroundY2 + backgroundTexture.getHeight();
         }
+
         if (backgroundY2 + backgroundTexture.getHeight() <= 0) {
             backgroundY2 = backgroundY1 + backgroundTexture.getHeight();
         }
     }
 
-    // metodo per la stampa del laser
-    private void updateLasers(float delta) {
-        // movimento laser verso l'alto
-        for (Rectangle laser : lasers) {
-            laser.y += laserSpeed * delta;
-        }
-        // rimozione laser fuori dallo schermo
-        lasers.removeIf(laser -> laser.y > 800);
-    }
-
-    // metodo per la stampa degli alieni
+    // metodo per il movimento degli alieni
     private void updateAliens(float delta) {
-        // init alieno
-        Alien a = new Alien(alienTextures[(int) (Math.random() * 6)], new Rectangle((float) Math.random() * 736, 800, 64, 64));
-
-        // incremento tempo di spawn dell'alieno
         spawnTimer += delta;
 
-        // stampa alieno
         if (spawnTimer >= spawnInterval) {
-            // spawn casuale dell'alieno
-            a = new Alien(alienTextures[(int) (Math.random() * 6)], new Rectangle((float) Math.random() * 736, 800, 64, 64));
-            // aggiunta alieno all'array
-            aliens.add(a);
-
-            // azzeramento tempo di spawn per l'alieno successivo
+            Alien alien = new Alien(
+                alienTextures[MathUtils.random(alienTextures.length - 1)],
+                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 64), Gdx.graphics.getHeight(), 64, 64)
+            );
+            aliens.add(alien);
             spawnTimer = 0;
         }
 
-        // movimento degli alieni
-        for (Alien alien : aliens) {
+        for (Iterator<Alien> iterator = aliens.iterator(); iterator.hasNext();) {
+            Alien alien = iterator.next();
             alien.getAlienRect().y -= alienSpeed * delta;
+            if (alien.getAlienRect().y < 0) {
+                iterator.remove();
+            }
         }
-
-        // rimozione alieni che superano la fine dello schermo
-        Alien finalA = a;
-        aliens.removeIf(alien -> finalA.getAlienRect().y < 0);
     }
 
-    // metodo per controllare le collisioni (navicella-alieno)
+    // metodo per il controllo delle collisioni
     private void checkCollisions() {
-        // arraylist per i laser e alieni da rimuovere
-        ArrayList<Rectangle> lasersToRemove = new ArrayList<>();
-        ArrayList<Alien> aliensToRemove = new ArrayList<>();
+        Array<Rectangle> lasersToRemove = new Array<>();
+        Array<Alien> aliensToRemove = new Array<>();
 
-        // doppio for per controllare la collisione di un determinato laser con uno specifico alieno
         for (Rectangle laser : lasers) {
             for (Alien alien : aliens) {
                 if (laser.overlaps(alien.getAlienRect())) {
-                    lasersToRemove.add(laser); // laser da rimuovere
-                    aliensToRemove.add(alien); // alieno da rimuovere
-                    break; // uscita ciclo alieni per il singolo laser
+                    lasersToRemove.add(laser);
+                    aliensToRemove.add(alien);
+
+                    // Update stats
+                    Lobby.points += scoreInc; // incremento punteggio ogni alieno colpito
+                    aliensHit++; // incremento alieni colpiti
+
+                    if (aliensHit%5==0) Lobby.credits += creditsInc; // incremento crediti ogni 5 alieni colpiti
+                    break;
                 }
             }
         }
 
-        // rimozione laser e alieni che si sono colpiti
-        lasers.removeAll(lasersToRemove);
-        aliens.removeAll(aliensToRemove);
+        lasers.removeAll(lasersToRemove, true);
+        aliens.removeAll(aliensToRemove, true);
+
+        for (Rectangle laser : lasersToRemove) {
+            laserPool.free(laser);
+        }
     }
 
-    // metodo per l'aggiornamento della schermata
+    // metodo per la stampa a monitor di tutte le grafiche aggiornate
     private void renderGame() {
-        // sfondo nero per la pulizia
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
 
-        // immagine sfondo statica
-        ScreenUtils.clear(255, 255, 255, 1);
         // stampa sfondo dinamico
-        screen.draw(backgroundTexture, 0, backgroundY1, 1781, 1000);
-        screen.draw(backgroundTexture, 0, backgroundY2, 1781, 1000);
+        screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
+        screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
-        // stampa dinamica della navicella
-        screen.draw(spaceshipTexture, spaceship.x, spaceship.y, 99, 66);
+        // stampa della navicella
+        screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
 
-        // stampa laser allo sparo
+        // stampa laser sparati
         for (Rectangle laser : lasers) {
-            screen.draw(laserTexture, laser.x, laser.y, laser.width, laser.height);
+            screen.draw(Lobby.selectedSp.getLaserTexture(), laser.x, laser.y);
         }
 
-        // stampa degli alieni generati
+        // stampa alieni
         for (Alien alien : aliens) {
-
-            // disegno dall'alieno a schermo
-            screen.draw(new Texture(alien.getPathImg()), alien.getAlienRect().x, alien.getAlienRect().y, alien.getAlienRect().width, alien.getAlienRect().height);
+            screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
+
+        // scritta statistiche
+        fontWhite20.draw(screen, "Lives: " + lives, 10, Gdx.graphics.getHeight() - 10);
+        fontWhite20.draw(screen, "Credits: " + Lobby.credits, 10, Gdx.graphics.getHeight() - 30);
+        fontWhite20.draw(screen, "Score: " + Lobby.points, 10, Gdx.graphics.getHeight() - 50);
+        fontWhite20.draw(screen, "Aliens Hit: " + aliensHit, 10, Gdx.graphics.getHeight() - 70);
+
         screen.end();
     }
 
     @Override
-    public void show() {
-    }
+    public void show() {}
 
     @Override
     public void render(float delta) {
         handleInput(delta);
         updateBackground(delta);
-        updateAliens(delta);
         updateLasers(delta);
+        updateAliens(delta);
         checkCollisions();
         renderGame();
     }
 
     @Override
     public void resize(int width, int height) {}
+
     @Override
     public void pause() {}
+
     @Override
     public void resume() {}
+
     @Override
     public void hide() {}
+
     @Override
+    // rilascio risorse
     public void dispose() {
         screen.dispose();
         spaceshipTexture.dispose();
-        laserTexture.dispose();
         backgroundTexture.dispose();
+        for (Texture texture : alienTextures) {
+            texture.dispose();
+        }
+        font.dispose();
     }
 }
-

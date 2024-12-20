@@ -299,30 +299,30 @@ public class Lobby implements Screen {
 
     // creazione oggetti navicella
     public void createSpacecrafts() {
-        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", "images/lasers/laser_omega.png", 0, 1, 0);
-        Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", "images/lasers/laser_idra.png", 5, 0, 0);
-        Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", "images/lasers/laser_pegaso.png", 1, 0, 0);
-        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", "images/lasers/laser_woka.png", 0, 1, 0);
-        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf.png", "images/lasers/laser_beowulf.png", 0, 2, 0);
-        Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari.png", "images/lasers/laser_andvari.png", 10, 0, 0);
-        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko.png", "images/lasers/laser_siko.png", 0, 0, 2);
-        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia.png", "images/lasers/laser_fenixia.png", 0, 0, 3);
-        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares.png", "images/lasers/laser_ares.png", 0, 3, 0);
-        Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard.png", "images/lasers/laser_asgard.png", 15, 0, 0);
-        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad.png", "images/lasers/laser_galahad.png", 0, 1, 1);
-        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc.png", "images/lasers/laser_malloc.png", 10, 2, 0);
-        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion.png", "images/lasers/laser_orion.png", 0, 2, 1);
-        Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro.png", "images/lasers/laser_centauro.png", 20, 0, 0);
-        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr.png", "images/lasers/laser_zephyr.png", 0, 4, 1);
-        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix.png", "images/lasers/laser_phoenix.png", 0, 1, 2);
-        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 0, 2, 2);
-        Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla.png", "images/lasers/laser_scylla.png", 30, 0, 0);
-        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto.png", "images/lasers/laser_keto.png", 0, 1, 4);
-        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron.png", "images/lasers/laser_efron.png", 10, 0, 2);
-        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 0, 5, 5);
-        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 50, 5, 0);
-        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", "images/lasers/laser_selen.png", 50, 0, 5);
-        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", "images/lasers/laser_alpha", 50, 5, 5);
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", new Texture("images/lasers/laser_omega.png"), 0, 1, 0);
+        Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", new Texture("images/lasers/laser_idra.png"), 5, 0, 0);
+        Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", new Texture("images/lasers/laser_pegaso.png"), 1, 0, 0);
+        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", new Texture("images/lasers/laser_woka.png"), 0, 1, 0);
+        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf.png", new Texture("images/lasers/laser_beowulf.png"), 0, 2, 0);
+        Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari.png", new Texture("images/lasers/laser_andvari.png"), 10, 0, 0);
+        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko.png", new Texture("images/lasers/laser_siko.png"), 0, 0, 2);
+        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia.png", new Texture("images/lasers/laser_fenixia.png"), 0, 0, 3);
+        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares.png", new Texture("images/lasers/laser_ares.png"), 0, 3, 0);
+        Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard.png", new Texture("images/lasers/laser_asgard.png"), 15, 0, 0);
+        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad.png", new Texture("images/lasers/laser_galahad.png"), 0, 1, 1);
+        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc.png", new Texture("images/lasers/laser_malloc.png"), 10, 2, 0);
+        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion.png", new Texture("images/lasers/laser_orion.png"), 0, 2, 1);
+        Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro.png", new Texture("images/lasers/laser_centauro.png"), 20, 0, 0);
+        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr.png", new Texture("images/lasers/laser_centauro.png"), 0, 4, 1);
+        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix.png", new Texture("images/lasers/laser_phoenix.png"), 0, 1, 2);
+        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen.png", new Texture("images/lasers/laser_centauro.png"), 0, 2, 2);
+        Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla.png", new Texture("images/lasers/laser_centauro.png"), 30, 0, 0);
+        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto.png", new Texture("images/lasers/laser_centauro.png"), 0, 1, 4);
+        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron.png", new Texture("images/lasers/laser_centauro.png"), 10, 0, 2);
+        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen.png", new Texture("images/lasers/laser_centauro.png"), 0, 5, 5);
+        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen.png", new Texture("images/lasers/laser_centauro.png"), 50, 5, 0);
+        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen.png", new Texture("images/lasers/laser_centauro.png"), 50, 0, 5);
+        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", new Texture("images/lasers/laser_alpha.png"), 50, 5, 5);
 
         // array oggetti navicella
         Spacecraft[] sArray = {sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, sp10,

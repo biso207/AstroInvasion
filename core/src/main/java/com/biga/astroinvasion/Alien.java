@@ -1,20 +1,21 @@
 package com.biga.astroinvasion;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Alien {
-    private String pathImg;
+    private Texture img;
     private Rectangle alienRect;
 
     // costruttore
-    Alien(String pathImg, Rectangle alienRect) {
-        this.pathImg = pathImg;
+    Alien(Texture img, Rectangle alienRect) {
+        this.img = img;
         this.alienRect = alienRect;
     }
 
     // getter percorso immagine
-    public String getPathImg() {
-        return pathImg;
+    public Texture getImg() {
+        return img;
     }
 
     // getter rettangolo alieno

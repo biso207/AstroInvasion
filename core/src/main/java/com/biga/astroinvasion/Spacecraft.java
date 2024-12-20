@@ -2,16 +2,19 @@
 
 package com.biga.astroinvasion;
 
+import com.badlogic.gdx.graphics.Texture;
+
 public class Spacecraft {
     // attributi
-    private final String name, pathImg, pathLaser;
+    private final String name, pathImg;
     private final int bonusPoint, spSpeed, laserSpeed;
+    private final Texture laserTexture;
 
     // costruttore
-    Spacecraft(String name, String pathImg, String pathLaser, int bonusPoint, int spSpeed, int laserSpeed) {
+    Spacecraft(String name, String pathImg, Texture laserTexture, int bonusPoint, int spSpeed, int laserSpeed) {
         this.name = name;
         this.pathImg = pathImg;
-        this.pathLaser = pathLaser;
+        this.laserTexture = laserTexture;
         this.bonusPoint = bonusPoint;
         this.spSpeed = spSpeed;
         this.laserSpeed = laserSpeed;
@@ -30,8 +33,8 @@ public class Spacecraft {
     }
 
     // getter del percorso dell'immagine del laser
-    public String getPathLaser() {
-        return pathLaser;
+    public Texture getLaserTexture() {
+        return laserTexture;
     }
 
     // getter della percentuale punti bonus
