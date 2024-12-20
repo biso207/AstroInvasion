@@ -3,6 +3,7 @@ package com.biga.astroinvasion;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ClassicGame implements Screen {
@@ -22,10 +24,16 @@ public class ClassicGame implements Screen {
     private final Texture[] alienTextures;
     private final Rectangle spaceship;
     private float backgroundY1, backgroundY2;
-    private final Array<Rectangle> lasers = new Array<>();
-    private final Array<Alien> aliens = new Array<>();
-    private final Array<CollisionAnimation> activeAnimations = new Array<>();
+    private final ArrayList<Rectangle> lasers = new ArrayList<>();
+    private final ArrayList<Alien> aliens = new ArrayList<>();
+    private final Array<TextureRegion> collisionFrames = new Array<>();
+    private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
+    private Texture blurTexture;
+
+    // immagini delle vite
+    private Texture life1, life2, life3, life4;
+
 
     // valori in gioco
     private float spacecraftSpeed, laserSpeed, alienSpeed;
@@ -40,9 +48,11 @@ public class ClassicGame implements Screen {
     // valori di incremento punti e crediti
     private int scoreInc, creditsInc;
 
+    //ShapeRender
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
+
     // dichiarazione font
     private BitmapFont font;
-    private BitmapFont fontWhite20;
 
     // musica di sottofondo
     Music soundtrack;
@@ -85,11 +95,22 @@ public class ClassicGame implements Screen {
             }
         };
 
+        // caricamento frame per l'animazione
+        for (int i = 0; i <= 31; i++) {
+            collisionFrames.add(new TextureRegion(new Texture("images/collision_explosion/expl_06_00" + i + ".png"), 80, 80));
+        }
+
         // init alieni colpiti
         aliensHit = 0;
 
         // caricamento font
         loadFont();
+
+        // caricamento zona sfocata per le scritte
+        createBlurredBackground();
+
+        // caricamento immagini
+        loadImages();
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
@@ -101,14 +122,22 @@ public class ClassicGame implements Screen {
     // GRAFICA DELLA CLASSE //
     // -------------------- //
 
+    // caricamento immagini
+    private void loadImages() {
+        life1 = new Texture("images/lives/vita1.png");
+        life2 = new Texture("images/lives/vita2.png");
+        life3 = new Texture("images/lives/vita3.png");
+        life4 = new Texture("images/lives/vita4.png");
+    }
+
     // caricamento e creazione font per le scritte
     private void loadFont() {
         // dichiarazione font
         try {
-            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
+            font = new BitmapFont(Gdx.files.internal("font/inter/regular_black_25.fnt")); // inter regular black 25
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
-            font.setColor(Color.valueOf("#151A3B")); // colore blu
+            font.setColor(Color.valueOf("000000")); // colore black
         }
     }
 
@@ -116,9 +145,9 @@ public class ClassicGame implements Screen {
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
             case 1:
-                spacecraftSpeed = 1000;
-                laserSpeed = 400;
-                alienSpeed = 200;
+                spacecraftSpeed = 300;
+                laserSpeed = 100;
+                alienSpeed = 100;
                 spawnInterval = 0.8f;
                 laserCooldown = 0.4f;
                 lives = 4;
@@ -126,9 +155,9 @@ public class ClassicGame implements Screen {
                 creditsInc = 4;
                 break;
             case 2:
-                spacecraftSpeed = 1000;
-                laserSpeed = 400;
-                alienSpeed = 200;
+                spacecraftSpeed = 400;
+                laserSpeed = 150;
+                alienSpeed = 150;
                 spawnInterval = 0.7f;
                 laserCooldown = 0.3f;
                 lives = 3;
@@ -137,7 +166,7 @@ public class ClassicGame implements Screen {
                 break;
             case 3:
                 spacecraftSpeed = 500;
-                laserSpeed = 300;
+                laserSpeed = 200;
                 alienSpeed = 200;
                 spawnInterval = 0.6f;
                 laserCooldown = 0.2f;
@@ -193,8 +222,8 @@ public class ClassicGame implements Screen {
 
     // metodo per aggiornare il movimento dello sfondo
     private void updateBackground(float delta) {
-        backgroundY1 -= 100 * delta;
-        backgroundY2 -= 100 * delta;
+        backgroundY1 -= 50 * delta;
+        backgroundY2 -= 50 * delta;
 
         if (backgroundY1 + backgroundTexture.getHeight() <= 0) {
             backgroundY1 = backgroundY2 + backgroundTexture.getHeight();
@@ -209,38 +238,32 @@ public class ClassicGame implements Screen {
     private void updateAliens(float delta) {
         spawnTimer += delta;
 
+        // spawn alieni di colore casuale
         if (spawnTimer >= spawnInterval) {
             Alien alien = new Alien(
-                alienTextures[MathUtils.random(alienTextures.length - 1)],
-                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 100), Gdx.graphics.getHeight(), 100, 100)
+                alienTextures[MathUtils.random(5)],
+                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 40), Gdx.graphics.getHeight(), 40, 40)
             );
+            // aggiunta alieno creato all'arraylist
             aliens.add(alien);
             spawnTimer = 0;
         }
 
+        // iterazione per muovere gli alieni
         for (Iterator<Alien> iterator = aliens.iterator(); iterator.hasNext();) {
             Alien alien = iterator.next();
             alien.getAlienRect().y -= alienSpeed * delta;
             if (alien.getAlienRect().y < 0) {
                 iterator.remove();
+                lives-=1;
             }
         }
     }
 
     // metodo per il controllo delle collisioni
     private void checkCollisions() {
-        Array<Rectangle> lasersToRemove = new Array<>();
-        Array<Alien> aliensToRemove = new Array<>();
-
-        // Carica i frame di animazione (se non già caricati)
-        Array<TextureRegion> collisionFrames = new Array<>();
-        for (int i = 0; i <= 31; i++) {
-            collisionFrames.add(new TextureRegion(new Texture("images/collision_explosion/expl_06_00" + i + ".png")));
-        }
-
-
-
-
+        ArrayList<Rectangle> lasersToRemove = new ArrayList<>();
+        ArrayList<Alien> aliensToRemove = new ArrayList<>();
 
         for (Rectangle laser : lasers) {
             for (Alien alien : aliens) {
@@ -248,32 +271,45 @@ public class ClassicGame implements Screen {
                     lasersToRemove.add(laser);
                     aliensToRemove.add(alien);
 
-                    // Update stats
                     Lobby.points += scoreInc;
                     aliensHit++;
-
-                    if (aliensHit % 5 == 0) Lobby.credits += creditsInc;
+                    if (aliensHit % 5 == 0) {
+                        Lobby.credits += creditsInc;
+                    }
 
                     // Avvia l'animazione di collisione
                     activeAnimations.add(new CollisionAnimation(
-                        alien.getAlienRect().x, alien.getAlienRect().y, collisionFrames));
+                        alien.getAlienRect().x, alien.getAlienRect().y - 5, collisionFrames));
 
                     break;
                 }
             }
         }
 
-        lasers.removeAll(lasersToRemove, true);
-        aliens.removeAll(aliensToRemove, true);
+        lasers.removeAll(lasersToRemove);
+        aliens.removeAll(aliensToRemove);
 
         for (Rectangle laser : lasersToRemove) {
             laserPool.free(laser);
         }
     }
 
+    private void createBlurredBackground() {
+        Pixmap pixmap = new Pixmap(300, 100, Pixmap.Format.RGBA8888);
+        pixmap.setColor(255, 255, 255, 0.5f); // semi-trasparente
+        pixmap.fillRectangle(0, 0, 300, 50);
+        blurTexture = new Texture(pixmap);
+        pixmap.dispose();
+    }
+
+    private void renderBlurredBackground() {
+        screen.draw(blurTexture, 0, Gdx.graphics.getHeight() - 120);
+    }
+
 
     // metodo per la stampa a monitor di tutte le grafiche aggiornate
     private void renderGame() {
+
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
 
@@ -306,18 +342,63 @@ public class ClassicGame implements Screen {
             }
         }
 
+        renderBlurredBackground();
+
+        // stampa vite rimanenti
+        switch(Lobby.getDiffCG()) {
+            case 1:
+                switch(lives) {
+                    case 1:
+                        screen.draw(life4, 20, 600, 50, 90);
+                        break;
+                    case 2:
+                        screen.draw(life3, 20, 600, 50, 90);
+                        break;
+                    case 3:
+                        screen.draw(life2, 20, 600, 50, 90);
+                        break;
+                    case 4:
+                        screen.draw(life1, 20, 600, 50, 90);
+                        break;
+                }
+                break;
+            case 2:
+                switch(lives) {
+                    case 1:
+                        screen.draw(life4, 20, 600, 50, 90);
+                        break;
+                    case 2:
+                        screen.draw(life3, 20, 600, 50, 90);
+                        break;
+                    case 3:
+                        screen.draw(life1, 20, 600, 50, 90);
+                        break;
+                }
+                break;
+            case 3:
+                switch(lives) {
+                    case 1:
+                        screen.draw(life3, 20, 600, 50, 90);
+                        break;
+                    case 2:
+                        screen.draw(life1, 20, 600, 50, 90);
+                        break;
+                }
+                break;
+
+        }
+
         // Stampa statistiche
-        fontWhite20.draw(screen, "Lives: " + lives, 10, Gdx.graphics.getHeight() - 10);
-        fontWhite20.draw(screen, "Credits: " + Lobby.credits, 10, Gdx.graphics.getHeight() - 30);
-        fontWhite20.draw(screen, "Score: " + Lobby.points, 10, Gdx.graphics.getHeight() - 50);
-        fontWhite20.draw(screen, "Aliens Hit: " + aliensHit, 10, Gdx.graphics.getHeight() - 70);
+        font.draw(screen, "Credits: " + Lobby.credits, 10, Gdx.graphics.getHeight() - 30);
+        font.draw(screen, "Score: " + Lobby.points, 10, Gdx.graphics.getHeight() - 50);
+        font.draw(screen, "Aliens Hit: " + aliensHit, 10, Gdx.graphics.getHeight() - 70);
 
         screen.end();
     }
 
 
-    //Metodo per i frame delle esplosioni
-    private class CollisionAnimation {
+    // classe per le animazioni
+    private static class CollisionAnimation {
         float x, y;
         float timer;
         final float duration = 0.5f; // Durata totale dell'animazione
@@ -351,6 +432,11 @@ public class ClassicGame implements Screen {
         updateLasers(delta);
         updateAliens(delta);
         checkCollisions();
+
+        // Disegna il numero sopra il cuore
+        screen.begin();
+        font.draw(screen, String.valueOf(lives), 150, 150);  // Modifica la posizione in base alle tue necessità
+        screen.end();
         renderGame();
     }
 
