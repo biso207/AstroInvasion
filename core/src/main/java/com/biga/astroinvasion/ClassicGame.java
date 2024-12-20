@@ -126,17 +126,17 @@ public class ClassicGame implements Screen {
                 spacecraftSpeed = 1000;
                 laserSpeed = 400;
                 alienSpeed = 200;
-                spawnInterval = 0.7f;
+                spawnInterval = 0.3f;
                 laserCooldown = 0.3f;
                 lives = 3;
                 scoreInc = 200;
                 creditsInc = 7;
                 break;
             case 3:
-                spacecraftSpeed = 700;
+                spacecraftSpeed = 500;
                 laserSpeed = 300;
                 alienSpeed = 200;
-                spawnInterval = 0.7f;
+                spawnInterval = 0.2f;
                 laserCooldown = 0.2f;
                 lives = 2;
                 scoreInc = 200;
