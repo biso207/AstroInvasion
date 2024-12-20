@@ -12,11 +12,11 @@ public class ClassicGame implements Screen {
     private final Main game; // variabile di riferimento tipo gioco
     // dichiarazione screen
     private final SpriteBatch screen;
-    private final Texture spaceshipTexture;
-    private final Texture laserTexture;
-    private Texture alienTexture;
+    private final Texture spaceshipTexture, backgroundTexture, laserTexture;
     private final Rectangle spaceship, laser;
-    private final ArrayList<Rectangle> aliens;
+    private float backgroundY1, backgroundY2; // Posizioni verticali dei due sfondi
+    private float backgroundSpeed = 100; // Velocità dello sfondo
+    private final ArrayList<Alien> aliens;
     private final ArrayList<Rectangle> lasers;
 
     // velocità di movimento oggetti
@@ -33,9 +33,6 @@ public class ClassicGame implements Screen {
     private int incPoints = 0; // incremento punti
     private int incCredits = 0; // incremento crediti
     private int bonusPoints = 0; // bonus di punti
-
-    // controllo per lo spawn del nuovo alieno
-    private boolean laserFired = false; // spawn alieni
 
     private float spawnTimer = 0; // timer per lo spawn di nuovi alieni
     private double spawnInterval = 0; // tempo di spawn del singolo alieno
@@ -109,10 +106,19 @@ public class ClassicGame implements Screen {
         spacecraftSpeed += spacecraft.getSpSpeed(); // velocità navicella
         laserSpeed += spacecraft.getLaserSpeed(); // velocità laser
         bonusPoints += spacecraft.getBonusPoint(); // bonus punti
+
+        // immagine di sfondo
+        backgroundTexture = new Texture("images/bgInGame.png");
+        // init posizioni dello sfondo
+        backgroundY1 = 0;
+        backgroundY2 = backgroundTexture.getHeight(); // Il secondo sfondo parte appena sopra il primo
     }
 
     // metodo per controllare gli input utente (movimento navicella + sparo laser)
     private void handleInput(float delta) {
+        // incremento tempo per lo sparo
+        laserCooldownTimer += delta;
+
         // movimento navicella verso sx
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             spaceship.x -= spacecraftSpeed * delta;
@@ -124,42 +130,51 @@ public class ClassicGame implements Screen {
         }
 
         // sparo del laser
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && laserCooldownTimer >= laserCooldown) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && (laserCooldownTimer >= laserCooldown)) {
             // Aggiungi un nuovo laser
             Rectangle laser = new Rectangle(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 32);
             lasers.add(laser);
-            laserCooldownTimer = 0; // Resetta il timer
+            laserCooldownTimer = 0; // reset del timer
         }
+    }
 
-        // movimento laser
-        if (laserFired) {
-            laser.y += laserSpeed * delta;
-            if (laser.y > 800) {
-                laserFired = false; // reset laser quando esce dallo schermo
-            }
+    // metodo per il movimento dello sfondo
+    private void updateBackground(float delta) {
+        // movimento immagini verso il basso
+        backgroundY1 -= backgroundSpeed * delta;
+        backgroundY2 -= backgroundSpeed * delta;
+
+        // riposizionamento immagine quando raggiungono la fine dello schermo
+        if (backgroundY1 + backgroundTexture.getHeight() <= 0) {
+            backgroundY1 = backgroundY2 + backgroundTexture.getHeight();
+        }
+        if (backgroundY2 + backgroundTexture.getHeight() <= 0) {
+            backgroundY2 = backgroundY1 + backgroundTexture.getHeight();
         }
     }
 
     // metodo per la stampa del laser
     private void updateLasers(float delta) {
-        // Muove i laser verso l'alto
+        // movimento laser verso l'alto
         for (Rectangle laser : lasers) {
             laser.y += laserSpeed * delta;
         }
-        // Rimuove i laser fuori dallo schermo
+        // rimozione laser fuori dallo schermo
         lasers.removeIf(laser -> laser.y > 800);
     }
 
     // metodo per la stampa degli alieni
     private void updateAliens(float delta) {
-        Rectangle a = new Rectangle((float) Math.random() * 736, 800, 64, 64);
+        // init alieno
+        Alien a = new Alien(alienTextures[(int) (Math.random() * 6)], new Rectangle((float) Math.random() * 736, 800, 64, 64));
+
+        // incremento tempo di spawn dell'alieno
         spawnTimer += delta;
 
         // stampa alieno
         if (spawnTimer >= spawnInterval) {
-            // spawn alieno in x casuale
-            a = new Rectangle((float) Math.random() * 736, 800, 64, 64);
-
+            // spawn casuale dell'alieno
+            a = new Alien(alienTextures[(int) (Math.random() * 6)], new Rectangle((float) Math.random() * 736, 800, 64, 64));
             // aggiunta alieno all'array
             aliens.add(a);
 
@@ -168,25 +183,25 @@ public class ClassicGame implements Screen {
         }
 
         // movimento degli alieni
-        for (Rectangle alien : aliens) {
-            alien.y -= alienSpeed * delta;
+        for (Alien alien : aliens) {
+            alien.getAlienRect().y -= alienSpeed * delta;
         }
 
         // rimozione alieni che superano la fine dello schermo
-        Rectangle finalA = a;
-        aliens.removeIf(alien -> finalA.y < 0);
+        Alien finalA = a;
+        aliens.removeIf(alien -> finalA.getAlienRect().y < 0);
     }
 
     // metodo per controllare le collisioni (navicella-alieno)
     private void checkCollisions() {
         // arraylist per i laser e alieni da rimuovere
         ArrayList<Rectangle> lasersToRemove = new ArrayList<>();
-        ArrayList<Rectangle> aliensToRemove = new ArrayList<>();
+        ArrayList<Alien> aliensToRemove = new ArrayList<>();
 
         // doppio for per controllare la collisione di un determinato laser con uno specifico alieno
         for (Rectangle laser : lasers) {
-            for (Rectangle alien : aliens) {
-                if (laser.overlaps(alien)) {
+            for (Alien alien : aliens) {
+                if (laser.overlaps(alien.getAlienRect())) {
                     lasersToRemove.add(laser); // laser da rimuovere
                     aliensToRemove.add(alien); // alieno da rimuovere
                     break; // uscita ciclo alieni per il singolo laser
@@ -205,27 +220,25 @@ public class ClassicGame implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
 
-        // stampa immagine di sfondo
-        screen.draw(new Texture("images/bgInGame.png"), 0, 0);
+        // immagine sfondo statica
+        ScreenUtils.clear(255, 255, 255, 1);
+        // stampa sfondo dinamico
+        screen.draw(backgroundTexture, 0, backgroundY1, 1781, 1000);
+        screen.draw(backgroundTexture, 0, backgroundY2, 1781, 1000);
 
         // stampa dinamica della navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y, 99, 66);
 
         // stampa laser allo sparo
-        if (laserFired) {
-            // stampa del laser sparato
-            screen.draw(laserTexture, laser.x, laser.y);
+        for (Rectangle laser : lasers) {
+            screen.draw(laserTexture, laser.x, laser.y, laser.width, laser.height);
         }
 
-        // immagine alieno casuale
-        int numTexture = (int) (Math.random() * 6);
         // stampa degli alieni generati
-        for (Rectangle alien : aliens) {
-            // texture dell'immagine alieno
-            alienTexture = new Texture(alienTextures[numTexture]);
+        for (Alien alien : aliens) {
 
             // disegno dall'alieno a schermo
-            screen.draw(alienTexture, alien.x, alien.y, alien.width, alien.height);
+            screen.draw(new Texture(alien.getPathImg()), alien.getAlienRect().x, alien.getAlienRect().y, alien.getAlienRect().width, alien.getAlienRect().height);
         }
         screen.end();
     }
@@ -237,6 +250,7 @@ public class ClassicGame implements Screen {
     @Override
     public void render(float delta) {
         handleInput(delta);
+        updateBackground(delta);
         updateAliens(delta);
         updateLasers(delta);
         checkCollisions();
@@ -256,7 +270,7 @@ public class ClassicGame implements Screen {
         screen.dispose();
         spaceshipTexture.dispose();
         laserTexture.dispose();
-        alienTexture.dispose();
+        backgroundTexture.dispose();
     }
 }
 
