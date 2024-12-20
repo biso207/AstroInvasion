@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
@@ -23,6 +24,7 @@ public class ClassicGame implements Screen {
     private float backgroundY1, backgroundY2;
     private final Array<Rectangle> lasers = new Array<>();
     private final Array<Alien> aliens = new Array<>();
+    private final Array<CollisionAnimation> activeAnimations = new Array<>();
     private final Pool<Rectangle> laserPool;
 
     // valori in gioco
@@ -230,15 +232,15 @@ public class ClassicGame implements Screen {
         Array<Rectangle> lasersToRemove = new Array<>();
         Array<Alien> aliensToRemove = new Array<>();
 
+        // Carica i frame di animazione (se non già caricati)
         Array<TextureRegion> collisionFrames = new Array<>();
-        float animationDuration = 0.5f; // Durata totale dell'animazione
-        float frameDuration = animationDuration / 5; // Supponendo 5 frame
-        final float[] animationTimer = {0}; // Timer per l'animazione
-
-        // Carica i frame
         for (int i = 0; i <= 31; i++) {
             collisionFrames.add(new TextureRegion(new Texture("images/collision_explosion/expl_06_00" + i + ".png")));
         }
+
+
+
+
 
         for (Rectangle laser : lasers) {
             for (Alien alien : aliens) {
@@ -247,25 +249,14 @@ public class ClassicGame implements Screen {
                     aliensToRemove.add(alien);
 
                     // Update stats
-                    Lobby.points += scoreInc; // incremento punteggio ogni alieno colpito
-                    aliensHit++; // incremento alieni colpiti
+                    Lobby.points += scoreInc;
+                    aliensHit++;
 
-                    if (aliensHit % 5 == 0) Lobby.credits += creditsInc; // incremento crediti ogni 5 alieni colpiti
+                    if (aliensHit % 5 == 0) Lobby.credits += creditsInc;
 
-                    // Avvia animazione collisione
-                    float x = alien.getAlienRect().x;
-                    float y = alien.getAlienRect().y;
-
-                    // Disegna l'animazione nel ciclo di rendering
-                    Gdx.app.postRunnable(() -> {
-                        animationTimer[0] += Gdx.graphics.getDeltaTime();
-                        if (animationTimer[0] < animationDuration) {
-                            int frameIndex = (int) (animationTimer[0] / frameDuration);
-                            screen.begin();
-                            screen.draw(collisionFrames.get(frameIndex), x, y);
-                            screen.end();
-                        }
-                    });
+                    // Avvia l'animazione di collisione
+                    activeAnimations.add(new CollisionAnimation(
+                        alien.getAlienRect().x, alien.getAlienRect().y, collisionFrames));
 
                     break;
                 }
@@ -275,35 +266,47 @@ public class ClassicGame implements Screen {
         lasers.removeAll(lasersToRemove, true);
         aliens.removeAll(aliensToRemove, true);
 
-
         for (Rectangle laser : lasersToRemove) {
             laserPool.free(laser);
         }
     }
+
 
     // metodo per la stampa a monitor di tutte le grafiche aggiornate
     private void renderGame() {
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
 
-        // stampa sfondo dinamico
+        // Stampa sfondo
         screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
-        // stampa della navicella
+        // Stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
 
-        // stampa laser sparati
+        // Stampa laser
         for (Rectangle laser : lasers) {
             screen.draw(Lobby.selectedSp.getLaserTexture(), laser.x, laser.y);
         }
 
-        // stampa alieni
+        // Stampa alieni
         for (Alien alien : aliens) {
             screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
 
-        // scritta statistiche
+        // Stampa animazioni di collisione
+        Iterator<CollisionAnimation> iterator = activeAnimations.iterator();
+        while (iterator.hasNext()) {
+            CollisionAnimation animation = iterator.next();
+            if (animation.isFinished()) {
+                iterator.remove();
+            } else {
+                screen.draw(animation.getCurrentFrame(), animation.x, animation.y);
+                animation.timer += Gdx.graphics.getDeltaTime();
+            }
+        }
+
+        // Stampa statistiche
         fontWhite20.draw(screen, "Lives: " + lives, 10, Gdx.graphics.getHeight() - 10);
         fontWhite20.draw(screen, "Credits: " + Lobby.credits, 10, Gdx.graphics.getHeight() - 30);
         fontWhite20.draw(screen, "Score: " + Lobby.points, 10, Gdx.graphics.getHeight() - 50);
@@ -311,6 +314,32 @@ public class ClassicGame implements Screen {
 
         screen.end();
     }
+
+
+    //Metodo per i frame delle esplosioni
+    private class CollisionAnimation {
+        float x, y;
+        float timer;
+        final float duration = 0.5f; // Durata totale dell'animazione
+        Array<TextureRegion> frames;
+
+        public CollisionAnimation(float x, float y, Array<TextureRegion> frames) {
+            this.x = x;
+            this.y = y;
+            this.timer = 0;
+            this.frames = frames;
+        }
+
+        public boolean isFinished() {
+            return timer >= duration;
+        }
+
+        public TextureRegion getCurrentFrame() {
+            int frameIndex = (int) ((timer / duration) * frames.size);
+            return frames.get(Math.min(frameIndex, frames.size - 1));
+        }
+    }
+
 
     @Override
     public void show() {}
