@@ -1,6 +1,7 @@
 package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -26,7 +27,7 @@ public class ClassicGame implements Screen {
     // valori in gioco
     private float spacecraftSpeed, laserSpeed, alienSpeed;
     private float laserCooldownTimer = 0;
-    private final float laserCooldown = 0.3f;
+    private float laserCooldown;
     private float spawnTimer = 0;
     private float spawnInterval;
 
@@ -39,6 +40,9 @@ public class ClassicGame implements Screen {
     // dichiarazione font
     private BitmapFont font;
     private BitmapFont fontWhite20;
+
+    // musica di sottofondo
+    Music soundtrack;
 
     // costruttore
     public ClassicGame(Main game) {
@@ -83,6 +87,11 @@ public class ClassicGame implements Screen {
 
         // caricamento font
         loadFont();
+
+        // musica di sottofondo
+        soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
+        soundtrack.setLooping(true); // true=loop music; false=no loop
+        soundtrack.play(); // avvio musica
     }
 
     // -------------------- //
@@ -104,28 +113,31 @@ public class ClassicGame implements Screen {
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
             case 1:
-                spacecraftSpeed = 1200;
-                laserSpeed = 700;
-                alienSpeed = 300;
+                spacecraftSpeed = 1000;
+                laserSpeed = 400;
+                alienSpeed = 200;
                 spawnInterval = 0.7f;
+                laserCooldown = 0.4f;
                 lives = 4;
                 scoreInc = 50;
                 creditsInc = 4;
                 break;
             case 2:
-                spacecraftSpeed = 1400;
-                laserSpeed = 800;
-                alienSpeed = 400;
-                spawnInterval = 0.6f;
+                spacecraftSpeed = 1000;
+                laserSpeed = 400;
+                alienSpeed = 200;
+                spawnInterval = 0.7f;
+                laserCooldown = 0.3f;
                 lives = 3;
-                scoreInc = 100;
+                scoreInc = 200;
                 creditsInc = 7;
                 break;
             case 3:
-                spacecraftSpeed = 1600;
-                laserSpeed = 1000;
-                alienSpeed = 400;
-                spawnInterval = 0.5f;
+                spacecraftSpeed = 700;
+                laserSpeed = 300;
+                alienSpeed = 200;
+                spawnInterval = 0.7f;
+                laserCooldown = 0.2f;
                 lives = 2;
                 scoreInc = 200;
                 creditsInc = 10;
@@ -197,7 +209,7 @@ public class ClassicGame implements Screen {
         if (spawnTimer >= spawnInterval) {
             Alien alien = new Alien(
                 alienTextures[MathUtils.random(alienTextures.length - 1)],
-                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 64), Gdx.graphics.getHeight(), 64, 64)
+                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 100), Gdx.graphics.getHeight(), 100, 100)
             );
             aliens.add(alien);
             spawnTimer = 0;
