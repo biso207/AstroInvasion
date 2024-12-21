@@ -48,8 +48,8 @@ public class ClassicGame implements Screen {
     // valori di incremento punti e crediti
     private int scoreInc, creditsInc;
 
-    //ShapeRender
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
+    // quadrtree per le collisione
+    private QuadTree quadTree;
 
     // dichiarazione font
     private BitmapFont font;
@@ -112,6 +112,9 @@ public class ClassicGame implements Screen {
         // caricamento immagini
         loadImages();
 
+        // creazione del quadtree per le collisioni
+        quadTree = new QuadTree(0, new Rectangle(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
@@ -145,9 +148,9 @@ public class ClassicGame implements Screen {
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
             case 1:
-                spacecraftSpeed = 300;
-                laserSpeed = 100;
-                alienSpeed = 100;
+                spacecraftSpeed = 400;
+                laserSpeed = 150;
+                alienSpeed = 80;
                 spawnInterval = 0.8f;
                 laserCooldown = 0.4f;
                 lives = 4;
@@ -155,8 +158,8 @@ public class ClassicGame implements Screen {
                 creditsInc = 4;
                 break;
             case 2:
-                spacecraftSpeed = 400;
-                laserSpeed = 150;
+                spacecraftSpeed = 450;
+                laserSpeed = 200;
                 alienSpeed = 150;
                 spawnInterval = 0.7f;
                 laserCooldown = 0.3f;
@@ -166,8 +169,8 @@ public class ClassicGame implements Screen {
                 break;
             case 3:
                 spacecraftSpeed = 500;
-                laserSpeed = 200;
-                alienSpeed = 200;
+                laserSpeed = 250;
+                alienSpeed = 220;
                 spawnInterval = 0.6f;
                 laserCooldown = 0.2f;
                 lives = 2;
@@ -185,17 +188,17 @@ public class ClassicGame implements Screen {
         laserCooldownTimer += delta;
 
         // movimento vs sx
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && spaceship.x > 10) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A) && spaceship.x > 10) {
             spaceship.x -= spacecraftSpeed * delta;
         }
 
         // movimento vs dx
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && spaceship.x < 890) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && spaceship.x < 890) {
             spaceship.x += spacecraftSpeed * delta;
         }
 
         // sparo del laser
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && laserCooldownTimer >= laserCooldown) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
             laserCooldownTimer = 0;
         }
@@ -204,7 +207,7 @@ public class ClassicGame implements Screen {
     // metodo per generare il laser
     private void spawnLaser() {
         Rectangle laser = laserPool.obtain();
-        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 32);
+        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 40);
         lasers.add(laser);
     }
 
@@ -262,15 +265,40 @@ public class ClassicGame implements Screen {
 
     // metodo per il controllo delle collisioni
     private void checkCollisions() {
-        ArrayList<Rectangle> lasersToRemove = new ArrayList<>();
-        ArrayList<Alien> aliensToRemove = new ArrayList<>();
+        // Inizializza o pulisci il QuadTree
+        QuadTree quadTree = new QuadTree(0, new Rectangle(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        quadTree.clear();
 
-        for (Rectangle laser : lasers) {
-            for (Alien alien : aliens) {
-                if (laser.overlaps(alien.getAlienRect())) {
-                    lasersToRemove.add(laser);
-                    aliensToRemove.add(alien);
+        // Popola il QuadTree con i rettangoli degli alieni
+        for (Alien alien : aliens) {
+            quadTree.insert(alien.getAlienRect());
+        }
 
+        // Controlla le collisioni per ogni laser
+        Iterator<Rectangle> laserIterator = lasers.iterator();
+        while (laserIterator.hasNext()) {
+            Rectangle laser = laserIterator.next();
+
+            // Ottieni i potenziali rettangoli in collisione
+            Array<Rectangle> potentialCollisions = new Array<>();
+            quadTree.retrieve(potentialCollisions, laser);
+
+            for (Rectangle alienRect : potentialCollisions) {
+                if (laser.overlaps(alienRect)) {
+                    // Rimuovi il laser
+                    laserIterator.remove();
+                    laserPool.free(laser);
+
+                    // Rimuovi l'alieno
+                    for (Iterator<Alien> alienIterator = aliens.iterator(); alienIterator.hasNext();) {
+                        Alien alien = alienIterator.next();
+                        if (alien.getAlienRect() == alienRect) {
+                            alienIterator.remove();
+                            break;
+                        }
+                    }
+
+                    // Aggiorna statistiche
                     Lobby.points += scoreInc;
                     aliensHit++;
                     if (aliensHit % 5 == 0) {
@@ -279,18 +307,11 @@ public class ClassicGame implements Screen {
 
                     // Avvia l'animazione di collisione
                     activeAnimations.add(new CollisionAnimation(
-                        alien.getAlienRect().x, alien.getAlienRect().y - 5, collisionFrames));
+                        alienRect.x, alienRect.y - 5, collisionFrames));
 
-                    break;
+                    break; // Esci dal ciclo dei rettangoli vicini
                 }
             }
-        }
-
-        lasers.removeAll(lasersToRemove);
-        aliens.removeAll(aliensToRemove);
-
-        for (Rectangle laser : lasersToRemove) {
-            laserPool.free(laser);
         }
     }
 
@@ -432,11 +453,6 @@ public class ClassicGame implements Screen {
         updateLasers(delta);
         updateAliens(delta);
         checkCollisions();
-
-        // Disegna il numero sopra il cuore
-        screen.begin();
-        font.draw(screen, String.valueOf(lives), 150, 150);  // Modifica la posizione in base alle tue necessità
-        screen.end();
         renderGame();
     }
 

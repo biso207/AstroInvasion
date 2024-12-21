@@ -226,6 +226,7 @@ public class Lobby implements Screen {
                 // avvio 'Classic Game'
                 if (page == 6 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
                     previousPage = page;
+                    page=0;
                     soundtrack.stop();
                     game.setScreen(new ClassicGame(game)); // apertura nuovo screen
                 }
