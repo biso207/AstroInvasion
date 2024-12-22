@@ -3,19 +3,19 @@ package com.biga.astroinvasion;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class ClassicGame implements Screen {
     private final Main game;
@@ -24,16 +24,17 @@ public class ClassicGame implements Screen {
     private final Texture[] alienTextures;
     private final Rectangle spaceship;
     private float backgroundY1, backgroundY2;
-    private final ArrayList<Rectangle> lasers = new ArrayList<>();
-    private final ArrayList<Alien> aliens = new ArrayList<>();
+    private final Array<Rectangle> lasers = new Array<>();
+    private final Array<Alien> aliens = new Array<>();
     private final Array<TextureRegion> collisionFrames = new Array<>();
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
-    private Texture blurTexture;
 
     // immagini delle vite
-    private Texture life1, life2, life3, life4;
+    private Texture life1, life2, life3, life4, goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg;
 
+    // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
+    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // valori in gioco
     private float spacecraftSpeed, laserSpeed, alienSpeed;
@@ -43,16 +44,16 @@ public class ClassicGame implements Screen {
     private float spawnInterval;
 
     // statistiche
-    private int lives, aliensHit;
+    private int lives, aliensHit, spaceshipHit, points, credits;
 
     // valori di incremento punti e crediti
     private int scoreInc, creditsInc;
 
-    // quadrtree per le collisione
-    private QuadTree quadTree;
+    // stato del gioco (pausa/in gioco)
+    private boolean isPaused = false;
 
     // dichiarazione font
-    private BitmapFont font;
+    private BitmapFont font, fontGold;
 
     // musica di sottofondo
     Music soundtrack;
@@ -77,7 +78,7 @@ public class ClassicGame implements Screen {
         };
 
         // rettangolo che rappresenta la navicella
-        spaceship = new Rectangle(400, 20, 64, 64);
+        spaceship = new Rectangle(400, 20, 70, 64);
 
         // init parametri in base alla difficoltà di gioco
         int difficulty = Lobby.getDiffCG();
@@ -101,19 +102,13 @@ public class ClassicGame implements Screen {
         }
 
         // init alieni colpiti
-        aliensHit = 0;
+        aliensHit = points = credits = 0;
 
         // caricamento font
         loadFont();
 
-        // caricamento zona sfocata per le scritte
-        createBlurredBackground();
-
         // caricamento immagini
         loadImages();
-
-        // creazione del quadtree per le collisioni
-        quadTree = new QuadTree(0, new Rectangle(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
@@ -127,20 +122,36 @@ public class ClassicGame implements Screen {
 
     // caricamento immagini
     private void loadImages() {
-        life1 = new Texture("images/lives/vita1.png");
-        life2 = new Texture("images/lives/vita2.png");
-        life3 = new Texture("images/lives/vita3.png");
-        life4 = new Texture("images/lives/vita4.png");
+        // cuori delle vite
+        life1 = new Texture("images/lives/heart 100%.png");
+        life2 = new Texture("images/lives/heart 75%.png");
+        life3 = new Texture("images/lives/heart 50%.png");
+        life4 = new Texture("images/lives/heart 25%.png");
+        goldHeartImg = new Texture("images/lives/gold heart.png");
+
+        // barra in alto alla schermata di gioco
+        topBar = new Texture("images/top_bar_classic_game.png");
+
+        // pause/resume
+        playImg = new Texture("images/play.png");
+        stopImg = new Texture("images/stop.png");
+
+        // scudo
+        shieldImg = new Texture("images/spacecrafts/_shield.png");
+        brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
+        // super laser
+        superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
     }
 
     // caricamento e creazione font per le scritte
     private void loadFont() {
         // dichiarazione font
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/regular_black_25.fnt")); // inter regular black 25
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter bold white 35
+            fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter bold gold 35
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
-            font.setColor(Color.valueOf("000000")); // colore black
+            font.setColor(Color.valueOf("FFFFFF")); // colore white
         }
     }
 
@@ -148,44 +159,52 @@ public class ClassicGame implements Screen {
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
             case 1:
-                spacecraftSpeed = 400;
-                laserSpeed = 150;
-                alienSpeed = 80;
-                spawnInterval = 0.8f;
-                laserCooldown = 0.4f;
+                spacecraftSpeed = 300;
+                laserSpeed = 100;
+                alienSpeed = 100;
+                spawnInterval = 0.6f;
+                laserCooldown = 0.3f;
                 lives = 4;
                 scoreInc = 50;
                 creditsInc = 4;
                 break;
             case 2:
-                spacecraftSpeed = 450;
-                laserSpeed = 200;
-                alienSpeed = 150;
-                spawnInterval = 0.7f;
-                laserCooldown = 0.3f;
-                lives = 3;
-                scoreInc = 200;
+                spacecraftSpeed = 400;
+                laserSpeed = 150;
+                alienSpeed = 170;
+                spawnInterval = 0.5f;
+                laserCooldown = 0.2f;
+                lives = 4;
+                scoreInc = 100;
                 creditsInc = 7;
                 break;
             case 3:
                 spacecraftSpeed = 500;
-                laserSpeed = 250;
-                alienSpeed = 220;
-                spawnInterval = 0.6f;
-                laserCooldown = 0.2f;
-                lives = 2;
+                laserSpeed = 200;
+                alienSpeed = 240;
+                spawnInterval = 0.4f;
+                laserCooldown = 0.1f;
+                lives = 4;
                 scoreInc = 200;
                 creditsInc = 10;
                 break;
         }
 
-        spacecraftSpeed += Lobby.selectedSp.getSpSpeed();
-        laserSpeed += Lobby.selectedSp.getLaserSpeed();
+        spacecraftSpeed += Lobby.selectedSp.getSpSpeed()*100;
+        laserSpeed += Lobby.selectedSp.getLaserSpeed()*100;
     }
 
     // metodo per controllare l'input
     private void handleInput(float delta) {
         laserCooldownTimer += delta;
+
+        // gioco in pausa
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            isPaused = !isPaused;
+        }
+
+        // gioco in pausa => nessun altro input può essere preso
+        if (isPaused) return;
 
         // movimento vs sx
         if (Gdx.input.isKeyPressed(Input.Keys.A) && spaceship.x > 10) {
@@ -207,17 +226,46 @@ public class ClassicGame implements Screen {
     // metodo per generare il laser
     private void spawnLaser() {
         Rectangle laser = laserPool.obtain();
-        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 16, 40);
+        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 30, 40);
         lasers.add(laser);
     }
 
     // metodo per muovere i laser sparati
     private void updateLasers(float delta) {
-        for (Iterator<Rectangle> iterator = lasers.iterator(); iterator.hasNext();) {
-            Rectangle laser = iterator.next();
-            laser.y += laserSpeed * delta;
+        for (int i = lasers.size - 1; i >= 0; i--) {
+            Rectangle laser = lasers.get(i);
+            float remainingDistance = laserSpeed * delta;
+
+            while (remainingDistance > 0) {
+                float step = Math.min(remainingDistance, 10); // Sotto-passo di massimo 10 pixel
+                float previousY = laser.y;
+                laser.y += step;
+                remainingDistance -= step;
+
+                // Controlla collisioni per ogni sotto-passo
+                for (int j = aliens.size - 1; j >= 0; j--) {
+                    Alien alien = aliens.get(j);
+                    if (laserPathIntersects(previousY, laser.y, laser.x, alien.getAlienRect())) {
+                        lasers.removeIndex(i);
+                        aliens.removeIndex(j);
+                        laserPool.free(laser);
+
+                        // aggiornamento statistiche
+                        points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
+                        aliensHit++; // incremento alieni colpiti
+                        if (aliensHit % 5 == 0) credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+
+                        activeAnimations.add(new CollisionAnimation(
+                            alien.getAlienRect().x, alien.getAlienRect().y - 5, collisionFrames));
+
+                        break; // Esci dal ciclo degli alieni
+                    }
+                }
+            }
+
+            // Rimuovi laser fuori dallo schermo
             if (laser.y > Gdx.graphics.getHeight()) {
-                iterator.remove();
+                lasers.removeIndex(i);
                 laserPool.free(laser);
             }
         }
@@ -241,29 +289,42 @@ public class ClassicGame implements Screen {
     private void updateAliens(float delta) {
         spawnTimer += delta;
 
-        // spawn alieni di colore casuale
         if (spawnTimer >= spawnInterval) {
             Alien alien = new Alien(
-                alienTextures[MathUtils.random(5)],
-                new Rectangle(MathUtils.random(0, Gdx.graphics.getWidth() - 40), Gdx.graphics.getHeight(), 40, 40)
+                alienTextures[MathUtils.random(alienTextures.length - 1)],
+                new Rectangle(MathUtils.random(20, Gdx.graphics.getWidth() - 84), 700, 64, 64)
             );
-            // aggiunta alieno creato all'arraylist
             aliens.add(alien);
             spawnTimer = 0;
         }
 
-        // iterazione per muovere gli alieni
-        for (Iterator<Alien> iterator = aliens.iterator(); iterator.hasNext();) {
-            Alien alien = iterator.next();
+        for (int i = aliens.size - 1; i >= 0; i--) {
+            Alien alien = aliens.get(i);
             alien.getAlienRect().y -= alienSpeed * delta;
+
+            // collisione alieno-navicella
+            if (alien.getAlienRect().overlaps(spaceship)) {
+                spaceshipHit++;
+                // disattivazione "scudo" dopo 10 volte che la navicella viene colpita
+                if (spaceshipHit==10) Lobby.shield = false;
+
+                aliens.removeIndex(i);
+                if (!Lobby.shield) lives--;
+
+                if ((lives == 0 && !Lobby.goldHeart) || (Lobby.goldHeart && lives == -1)) {
+                    // caso game over
+                    gameOver();
+                    return; // uscita
+                }
+            }
+
             if (alien.getAlienRect().y < 0) {
-                iterator.remove();
-                lives-=1;
+                aliens.removeIndex(i);
             }
         }
     }
 
-    // metodo per il controllo delle collisioni
+    // metodo per il controllo delle collisioni (by chatGPT)
     private void checkCollisions() {
         // Inizializza o pulisci il QuadTree
         QuadTree quadTree = new QuadTree(0, new Rectangle(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -278,16 +339,23 @@ public class ClassicGame implements Screen {
         Iterator<Rectangle> laserIterator = lasers.iterator();
         while (laserIterator.hasNext()) {
             Rectangle laser = laserIterator.next();
+            float previousY = laser.y; // Posizione precedente del laser
+            float step = laserSpeed * Gdx.graphics.getDeltaTime(); // Movimento del laser
+
+            laser.y += step;
 
             // Ottieni i potenziali rettangoli in collisione
             Array<Rectangle> potentialCollisions = new Array<>();
             quadTree.retrieve(potentialCollisions, laser);
 
             for (Rectangle alienRect : potentialCollisions) {
-                if (laser.overlaps(alienRect)) {
-                    // Rimuovi il laser
-                    laserIterator.remove();
-                    laserPool.free(laser);
+                // Verifica la collisione lungo il percorso del laser
+                if (laserPathIntersects(previousY, laser.y, laser.x, alienRect)) {
+                    // rimozione laser
+                    if (!Lobby.superLaser) {
+                        laserIterator.remove();
+                        laserPool.free(laser);
+                    }
 
                     // Rimuovi l'alieno
                     for (Iterator<Alien> alienIterator = aliens.iterator(); alienIterator.hasNext();) {
@@ -298,12 +366,10 @@ public class ClassicGame implements Screen {
                         }
                     }
 
-                    // Aggiorna statistiche
-                    Lobby.points += scoreInc;
-                    aliensHit++;
-                    if (aliensHit % 5 == 0) {
-                        Lobby.credits += creditsInc;
-                    }
+                    // aggiornamento statistiche
+                    points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
+                    aliensHit++; // incremento alieni colpiti
+                    if (aliensHit % 5 == 0) credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
 
                     // Avvia l'animazione di collisione
                     activeAnimations.add(new CollisionAnimation(
@@ -312,111 +378,40 @@ public class ClassicGame implements Screen {
                     break; // Esci dal ciclo dei rettangoli vicini
                 }
             }
-        }
-    }
 
-    private void createBlurredBackground() {
-        Pixmap pixmap = new Pixmap(300, 100, Pixmap.Format.RGBA8888);
-        pixmap.setColor(255, 255, 255, 0.5f); // semi-trasparente
-        pixmap.fillRectangle(0, 0, 300, 50);
-        blurTexture = new Texture(pixmap);
-        pixmap.dispose();
-    }
-
-    private void renderBlurredBackground() {
-        screen.draw(blurTexture, 0, Gdx.graphics.getHeight() - 120);
-    }
-
-
-    // metodo per la stampa a monitor di tutte le grafiche aggiornate
-    private void renderGame() {
-
-        ScreenUtils.clear(0, 0, 0, 1);
-        screen.begin();
-
-        // Stampa sfondo
-        screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
-        screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
-
-        // Stampa navicella
-        screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
-
-        // Stampa laser
-        for (Rectangle laser : lasers) {
-            screen.draw(Lobby.selectedSp.getLaserTexture(), laser.x, laser.y);
-        }
-
-        // Stampa alieni
-        for (Alien alien : aliens) {
-            screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
-        }
-
-        // Stampa animazioni di collisione
-        Iterator<CollisionAnimation> iterator = activeAnimations.iterator();
-        while (iterator.hasNext()) {
-            CollisionAnimation animation = iterator.next();
-            if (animation.isFinished()) {
-                iterator.remove();
-            } else {
-                screen.draw(animation.getCurrentFrame(), animation.x, animation.y);
-                animation.timer += Gdx.graphics.getDeltaTime();
+            // Rimuovi il laser se è uscito dallo schermo
+            if (laser.y > Gdx.graphics.getHeight()) {
+                laserIterator.remove();
+                laserPool.free(laser);
             }
         }
-
-        renderBlurredBackground();
-
-        // stampa vite rimanenti
-        switch(Lobby.getDiffCG()) {
-            case 1:
-                switch(lives) {
-                    case 1:
-                        screen.draw(life4, 20, 600, 50, 90);
-                        break;
-                    case 2:
-                        screen.draw(life3, 20, 600, 50, 90);
-                        break;
-                    case 3:
-                        screen.draw(life2, 20, 600, 50, 90);
-                        break;
-                    case 4:
-                        screen.draw(life1, 20, 600, 50, 90);
-                        break;
-                }
-                break;
-            case 2:
-                switch(lives) {
-                    case 1:
-                        screen.draw(life4, 20, 600, 50, 90);
-                        break;
-                    case 2:
-                        screen.draw(life3, 20, 600, 50, 90);
-                        break;
-                    case 3:
-                        screen.draw(life1, 20, 600, 50, 90);
-                        break;
-                }
-                break;
-            case 3:
-                switch(lives) {
-                    case 1:
-                        screen.draw(life3, 20, 600, 50, 90);
-                        break;
-                    case 2:
-                        screen.draw(life1, 20, 600, 50, 90);
-                        break;
-                }
-                break;
-
-        }
-
-        // Stampa statistiche
-        font.draw(screen, "Credits: " + Lobby.credits, 10, Gdx.graphics.getHeight() - 30);
-        font.draw(screen, "Score: " + Lobby.points, 10, Gdx.graphics.getHeight() - 50);
-        font.draw(screen, "Aliens Hit: " + aliensHit, 10, Gdx.graphics.getHeight() - 70);
-
-        screen.end();
     }
 
+    // metodo per tracciare il percorso dei laser (by chatGPT)
+    private boolean laserPathIntersects(float previousY, float currentY, float x, Rectangle alienRect) {
+        // Aggiungi margini al percorso del laser per garantire la collisione
+        float margin = 5; // Tolleranza aggiuntiva
+        Rectangle laserPath = new Rectangle(
+            x - margin,
+            Math.min(previousY, currentY) - margin,
+            30,
+            Math.abs(currentY - previousY) + 2 * margin
+        );
+        return laserPath.overlaps(alienRect);
+    }
+
+    // metodo per richiamare la schermata del game over
+    private void gameOver() {
+        // Logica per la fine del gioco
+        System.out.println("Game Over!");
+
+        // somma punti e crediti fatti
+        Lobby.points += points;
+        Lobby.credits += credits;
+
+        //game.setScreen(new GameOverScreen(game, score));
+        game.setScreen(new Lobby(game));
+    }
 
     // classe per le animazioni
     private static class CollisionAnimation {
@@ -442,17 +437,102 @@ public class ClassicGame implements Screen {
         }
     }
 
+    // metodo per la stampa di tutte le grafiche aggiornate
+    private void renderGame() {
+
+        ScreenUtils.clear(0, 0, 0, 1);
+        screen.begin();
+
+        // Stampa sfondo
+        screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
+        screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
+
+        // aggiunta scudo
+        if (Lobby.shield && spaceshipHit < 5) screen.draw(shieldImg, spaceship.x-25, spaceship.y);
+        if (Lobby.shield && spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x-25, spaceship.y);
+
+        // Stampa navicella
+        screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
+
+        // Stampa laser
+        for (Rectangle laser : lasers) {
+            if (!Lobby.superLaser) screen.draw(Lobby.selectedSp.getLaserTexture(), laser.x, laser.y);
+            else screen.draw(superLaserImg, laser.x, laser.y);
+        }
+
+        // Stampa alieni
+        for (Alien alien : aliens) {
+            screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
+        }
+
+        // Stampa animazioni di collisione
+        Iterator<CollisionAnimation> iterator = activeAnimations.iterator();
+        while (iterator.hasNext()) {
+            CollisionAnimation animation = iterator.next();
+            if (animation.isFinished()) {
+                iterator.remove();
+            } else {
+                screen.draw(animation.getCurrentFrame(), animation.x, animation.y);
+                animation.timer += Gdx.graphics.getDeltaTime();
+            }
+        }
+
+        // stampa barra in alto
+        screen.draw(topBar, 20, 600);
+
+        // stampa vite rimanenti
+        switch(lives) {
+            case 1:
+                screen.draw(life4, 93, 640);
+                break;
+            case 2:
+                screen.draw(life3, 93, 640);
+                break;
+            case 3:
+                screen.draw(life2, 93, 640);
+                break;
+            case 4:
+                screen.draw(life1, 93, 640);
+                break;
+        }
+
+        if (Lobby.goldHeart && lives == 0) {
+            screen.draw(goldHeartImg, 93, 640);
+        }
+
+        // stampa icona pausa
+        if (isPaused) screen.draw(stopImg, 472, 637);
+        else screen.draw(playImg, 472, 637);
+
+        // Stampa statistiche
+        // crediti
+        font.draw(screen, formatter.format(credits), 610, 670);
+        // punti
+        if (Lobby.doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
+        else font.draw(screen, formatter.format(points), 220, 670);
+        // alieni colpiti
+        font.draw(screen, formatter.format(aliensHit), 800, 670);
+
+        screen.end();
+    }
+
 
     @Override
     public void show() {}
 
     @Override
     public void render(float delta) {
+        if (!isPaused) {
+            delta = Math.min(delta, 1 / 30f);
+        }
+        else delta=0;
+
         handleInput(delta);
         updateBackground(delta);
         updateLasers(delta);
         updateAliens(delta);
         checkCollisions();
+
         renderGame();
     }
 

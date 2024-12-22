@@ -34,6 +34,9 @@ public class Lobby implements Screen {
     private BitmapFont fontRed20;
     private BitmapFont fontBlue15;
 
+    // stato carte speciale
+    public static boolean goldHeart = false, superLaser = false, shield = false, doublePoints = false;
+
     // soundtrack
     Music soundtrack;
 
@@ -122,6 +125,14 @@ public class Lobby implements Screen {
 
         // creazione oggetti "navicella"
         createSpacecrafts();
+
+        // prova carte
+        /*
+        shield = true;
+        superLaser = true;
+        goldHeart = true;
+        doublePoints = true;
+        */
     }
 
     // -------------- //
@@ -301,30 +312,30 @@ public class Lobby implements Screen {
 
     // creazione oggetti navicella
     public void createSpacecrafts() {
-        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", new Texture("images/lasers/laser_omega.png"), 0, 100, 0);
+        Spacecraft sp1 = new Spacecraft("Omega", "images/spacecrafts/_omega.png", new Texture("images/lasers/laser_omega.png"), 0, 1, 0);
         Spacecraft sp2 = new Spacecraft("Idra", "images/spacecrafts/_idra.png", new Texture("images/lasers/laser_idra.png"), 5, 0, 0);
         Spacecraft sp3 = new Spacecraft("Pegaso", "images/spacecrafts/_pegaso.png", new Texture("images/lasers/laser_pegaso.png"), 1, 0, 0);
-        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", new Texture("images/lasers/laser_woka.png"), 0, 100, 0);
-        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf_basic.png", new Texture("images/lasers/laser_beowulf.png"), 0, 200, 0);
+        Spacecraft sp4 = new Spacecraft("Woka", "images/spacecrafts/_woka.png", new Texture("images/lasers/laser_woka.png"), 0, 1, 0);
+        Spacecraft sp5 = new Spacecraft("Beowulf", "images/spacecrafts/_beowulf_basic.png", new Texture("images/lasers/laser_beowulf.png"), 0, 2, 0);
         Spacecraft sp6 = new Spacecraft("Andvari", "images/spacecrafts/_andvari_basic.png", new Texture("images/lasers/laser_andvari.png"), 10, 0, 0);
-        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko_basic.png", new Texture("images/lasers/laser_siko.png"), 0, 0, 200);
-        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia_basic.png", new Texture("images/lasers/laser_fenixia.png"), 0, 0, 300);
-        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares_basic.png", new Texture("images/lasers/laser_ares.png"), 0, 300, 0);
+        Spacecraft sp7 = new Spacecraft("Siko", "images/spacecrafts/_siko_basic.png", new Texture("images/lasers/laser_siko.png"), 0, 0, 2);
+        Spacecraft sp8 = new Spacecraft("Fenixia", "images/spacecrafts/_fenixia_basic.png", new Texture("images/lasers/laser_fenixia.png"), 0, 0, 3);
+        Spacecraft sp9 = new Spacecraft("Ares", "images/spacecrafts/_ares_basic.png", new Texture("images/lasers/laser_ares.png"), 0, 3, 0);
         Spacecraft sp10 = new Spacecraft("Asgard", "images/spacecrafts/_asgard_basic.png", new Texture("images/lasers/laser_asgard.png"), 15, 0, 0);
-        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad_basic.png", new Texture("images/lasers/laser_galahad.png"), 0, 100, 100);
-        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc_basic.png", new Texture("images/lasers/laser_malloc.png"), 10, 200, 0);
-        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion_basic.png", new Texture("images/lasers/laser_orion.png"), 0, 200, 1);
+        Spacecraft sp11 = new Spacecraft("Galahad", "images/spacecrafts/_galahad_basic.png", new Texture("images/lasers/laser_galahad.png"), 0, 1, 1);
+        Spacecraft sp12 = new Spacecraft("Malloc", "images/spacecrafts/_malloc_basic.png", new Texture("images/lasers/laser_malloc.png"), 10, 2, 0);
+        Spacecraft sp13 = new Spacecraft("Orion", "images/spacecrafts/_orion_basic.png", new Texture("images/lasers/laser_orion.png"), 0, 2, 1);
         Spacecraft sp14 = new Spacecraft("Centauro", "images/spacecrafts/_centauro_basic.png", new Texture("images/lasers/laser_centauro.png"), 20, 0, 0);
-        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 400, 100);
-        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix_basic.png", new Texture("images/lasers/laser_phoenix.png"), 0, 100, 200);
-        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 200, 200);
+        Spacecraft sp15 = new Spacecraft("Zephyr", "images/spacecrafts/_zephyr_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 4, 1);
+        Spacecraft sp16 = new Spacecraft("Phoenix", "images/spacecrafts/_phoenix_basic.png", new Texture("images/lasers/laser_phoenix.png"), 0, 1, 2);
+        Spacecraft sp17 = new Spacecraft("Selen", "images/spacecrafts/_selen_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 2, 2);
         Spacecraft sp18 = new Spacecraft("Scylla", "images/spacecrafts/_scylla_basic.png", new Texture("images/lasers/laser_centauro.png"), 30, 0, 0);
-        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 100, 400);
-        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron_basic.png", new Texture("images/lasers/laser_centauro.png"), 10, 0, 200);
-        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_selen_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 500, 500);
-        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_selen_basic.png", new Texture("images/lasers/laser_centauro.png"), 50, 500, 0);
-        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_selen_basic.png", new Texture("images/lasers/laser_centauro.png"), 50, 0, 500);
-        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", new Texture("images/lasers/laser_alpha.png"), 50, 500, 500);
+        Spacecraft sp19 = new Spacecraft("Keto", "images/spacecrafts/_keto_basic.png", new Texture("images/lasers/laser_centauro.png"), 0, 1, 4);
+        Spacecraft sp20 = new Spacecraft("Efron", "images/spacecrafts/_efron_basic.png", new Texture("images/lasers/laser_centauro.png"), 10, 0, 2);
+        Spacecraft sp21 = new Spacecraft("Drakar", "images/spacecrafts/_drakar.png", new Texture("images/lasers/laser_centauro.png"), 0, 5, 5);
+        Spacecraft sp22 = new Spacecraft("Rorik", "images/spacecrafts/_rorik.png", new Texture("images/lasers/laser_centauro.png"), 50, 5, 0);
+        Spacecraft sp23 = new Spacecraft("Astrid", "images/spacecrafts/_astrid.png", new Texture("images/lasers/laser_centauro.png"), 50, 0, 5);
+        Spacecraft sp24 = new Spacecraft("Alpha", "images/spacecrafts/_alpha.png", new Texture("images/lasers/laser_alpha.png"), 50, 5, 5);
 
         // array oggetti navicella
         Spacecraft[] sArray = {sp1, sp2, sp3, sp4, sp5, sp6, sp7, sp8, sp9, sp10,
@@ -336,6 +347,12 @@ public class Lobby implements Screen {
 
         // recupero navicella utente
         selectedSp = mapSpacecrafts.get(spacecraft);
+
+        // attivazione carte in base alla navicella speciale
+        if (spacecraft == 20) doublePoints = true;
+        if (spacecraft == 21) superLaser = true;
+        if (spacecraft == 22) shield = true;
+        if (spacecraft == 23) goldHeart = true;
     }
 
     // metodo per recuperare i progressi utente
@@ -638,7 +655,7 @@ public class Lobby implements Screen {
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
@@ -659,7 +676,7 @@ public class Lobby implements Screen {
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
@@ -679,7 +696,7 @@ public class Lobby implements Screen {
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 140);
+                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
