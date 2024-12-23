@@ -59,7 +59,7 @@ public class ClassicGame implements Screen {
 
     // musiche
     private final Music soundtrack; // sottofondo
-    private final Sound hitSound, shotSound; // suoni
+    private final Sound creditSound, shotSound; // suoni
 
     // costruttore
     public ClassicGame(Main game) {
@@ -121,7 +121,7 @@ public class ClassicGame implements Screen {
         // laser sparato
         shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3")); // file audio
         // alieno colpito
-        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3")); // file audio
+        creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav")); // file audio
     }
 
     // -------------------- //
@@ -262,7 +262,10 @@ public class ClassicGame implements Screen {
                         // aggiornamento statistiche
                         points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
                         aliensHit++; // incremento alieni colpiti
-                        if (aliensHit % 5 == 0) credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+                        if (aliensHit % 5 == 0) {
+                            creditSound.play(); // suono alieno colpito
+                            credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+                        }
 
                         activeAnimations.add(new CollisionAnimation(
                             alien.getAlienRect().x, alien.getAlienRect().y - 5, collisionFrames));
@@ -360,7 +363,6 @@ public class ClassicGame implements Screen {
             for (Rectangle alienRect : potentialCollisions) {
                 // Verifica la collisione lungo il percorso del laser
                 if (laserPathIntersects(previousY, laser.y, laser.x, alienRect)) {
-
                     // rimozione laser
                     if (!Lobby.superLaser) {
                         laserIterator.remove();
@@ -379,7 +381,10 @@ public class ClassicGame implements Screen {
                     // aggiornamento statistiche
                     points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
                     aliensHit++; // incremento alieni colpiti
-                    if (aliensHit % 5 == 0) credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+                    if (aliensHit % 5 == 0) {
+                        creditSound.play(); // suono alieno colpito
+                        credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+                    }
 
                     // Avvia l'animazione di collisione
                     activeAnimations.add(new CollisionAnimation(
@@ -477,7 +482,6 @@ public class ClassicGame implements Screen {
         }
 
         // stampa animazioni di collisione
-        hitSound.play(); // suono alieno colpito
         Iterator<CollisionAnimation> iterator = activeAnimations.iterator();
         while (iterator.hasNext()) {
             CollisionAnimation animation = iterator.next();
