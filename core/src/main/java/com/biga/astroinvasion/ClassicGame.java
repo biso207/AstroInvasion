@@ -255,7 +255,6 @@ public class ClassicGame implements Screen {
                 for (int j = aliens.size - 1; j >= 0; j--) {
                     Alien alien = aliens.get(j);
                     if (laserPathIntersects(previousY, laser.y, laser.x, alien.getAlienRect())) {
-                        hitSound.play(); // suono alieno colpito
                         if (!Lobby.superLaser) lasers.removeIndex(i);
                         aliens.removeIndex(j);
                         laserPool.free(laser);
@@ -361,7 +360,6 @@ public class ClassicGame implements Screen {
             for (Rectangle alienRect : potentialCollisions) {
                 // Verifica la collisione lungo il percorso del laser
                 if (laserPathIntersects(previousY, laser.y, laser.x, alienRect)) {
-                    hitSound.play(); // suono alieno colpito
 
                     // rimozione laser
                     if (!Lobby.superLaser) {
@@ -478,7 +476,8 @@ public class ClassicGame implements Screen {
             screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
 
-        // Stampa animazioni di collisione
+        // stampa animazioni di collisione
+        hitSound.play(); // suono alieno colpito
         Iterator<CollisionAnimation> iterator = activeAnimations.iterator();
         while (iterator.hasNext()) {
             CollisionAnimation animation = iterator.next();
