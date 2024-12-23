@@ -2,6 +2,8 @@ package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -55,8 +57,9 @@ public class ClassicGame implements Screen {
     // dichiarazione font
     private BitmapFont font, fontGold;
 
-    // musica di sottofondo
-    Music soundtrack;
+    // musiche
+    private final Music soundtrack; // sottofondo
+    private final Sound hitSound, shotSound; // suoni
 
     // costruttore
     public ClassicGame(Main game) {
@@ -114,6 +117,11 @@ public class ClassicGame implements Screen {
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
         soundtrack.play(); // avvio musica
+
+        // laser sparato
+        shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3")); // file audio
+        // alieno colpito
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3")); // file audio
     }
 
     // -------------------- //
@@ -219,6 +227,7 @@ public class ClassicGame implements Screen {
         // sparo del laser
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
+            shotSound.play();
             laserCooldownTimer = 0;
         }
     }
@@ -246,7 +255,8 @@ public class ClassicGame implements Screen {
                 for (int j = aliens.size - 1; j >= 0; j--) {
                     Alien alien = aliens.get(j);
                     if (laserPathIntersects(previousY, laser.y, laser.x, alien.getAlienRect())) {
-                        lasers.removeIndex(i);
+                        hitSound.play(); // suono alieno colpito
+                        if (!Lobby.superLaser) lasers.removeIndex(i);
                         aliens.removeIndex(j);
                         laserPool.free(laser);
 
@@ -351,6 +361,8 @@ public class ClassicGame implements Screen {
             for (Rectangle alienRect : potentialCollisions) {
                 // Verifica la collisione lungo il percorso del laser
                 if (laserPathIntersects(previousY, laser.y, laser.x, alienRect)) {
+                    hitSound.play(); // suono alieno colpito
+
                     // rimozione laser
                     if (!Lobby.superLaser) {
                         laserIterator.remove();
@@ -410,6 +422,7 @@ public class ClassicGame implements Screen {
         Lobby.credits += credits;
 
         //game.setScreen(new GameOverScreen(game, score));
+        soundtrack.stop();
         game.setScreen(new Lobby(game));
     }
 

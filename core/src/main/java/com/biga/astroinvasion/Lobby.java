@@ -47,10 +47,10 @@ public class Lobby implements Screen {
     private Texture img, img1, img2, img3, img4, img5, img6, img7,
         img8, img9,img10, img11, img12, img13, img14, img15,
         img16, img17, img18, img19, img20, img21, img22, img23, img24,
-        img25, img26, img27, img28, img29, img30, img31, img32, img_special;
+        img25, img26, img27, img28, img29, img30, img31, img32, img33, img34, img_special;
 
     // dichiarazione immagini secondarie
-    private Texture imgComplete;
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
 
     // dichiarazione immagini avatar
     Texture av1, av2, av3, av4, av5, av6, av7, av8, av9, av10,
@@ -212,10 +212,20 @@ public class Lobby implements Screen {
                     previousPage = page;
                     page = 21;
                 }
-                // pagina 24 => 'difficulty info classic game'
-                if ((screenX >= 887 && screenX <=917) && (screenY >= 203 && screenY <=233)) {
+                // pagina 24 => 'difficulty infos classic game'
+                if (page == 6 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
                     previousPage = page;
                     page = 24;
+                }
+                // pagina 33 => 'difficulty infos space battle'
+                if (page == 13 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
+                    previousPage = page;
+                    page = 33;
+                }
+                // pagina 34 => 'cards infos'
+                if ((page == 13 || page == 6) && (screenX >= 883 && screenX <=913) && (screenY >= 230 && screenY <=260)) {
+                    previousPage = page;
+                    page = 34;
                 }
                 // pagina 25 => 'profile info'
                 if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
@@ -235,7 +245,7 @@ public class Lobby implements Screen {
 
                 // CONTROLLI PER AVVIARE LE MODALITÀ DI GIOCO //
                 // avvio 'Classic Game'
-                if (page == 6 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+                if (page == 6 && (screenX >= 778 && screenX <=928) && (screenY >= 552 && screenY <=592)) {
                     previousPage = page;
                     page=0;
                     soundtrack.stop();
@@ -472,7 +482,7 @@ public class Lobby implements Screen {
         img21 = new Texture("lobby_images/lobby_settings_eng.png");
         img22 = new Texture("lobby_images/lobby_software_info_eng.png");
         img23 = new Texture("lobby_images/lobby_close_game_eng.png");
-        img24 = new Texture("lobby_images/lobby_difficulty_info_eng.png");
+        img24 = new Texture("lobby_images/lobby_difficulty_cg_info_eng.png");
         img25 = new Texture("lobby_images/lobby_profile_info_eng.png");
         img26 = new Texture("lobby_images/lobby_missions1_eng.png");
         img27 = new Texture("lobby_images/lobby_missions2_eng.png");
@@ -481,6 +491,8 @@ public class Lobby implements Screen {
         img30 = new Texture("lobby_images/lobby_missions5_eng.png");
         img31 = new Texture("lobby_images/lobby_missions6_eng.png");
         img32 = new Texture("lobby_images/lobby_missions7_eng.png");
+        img33 = new Texture("lobby_images/lobby_difficulty_sb_info_eng.png");
+        img34 = new Texture("lobby_images/lobby_cards_info_eng.png");
         img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
@@ -538,7 +550,9 @@ public class Lobby implements Screen {
         mapLobby.put(30, img30);
         mapLobby.put(31, img31);
         mapLobby.put(32, img32);
-        mapLobby.put(33, img_special);
+        mapLobby.put(33, img33);
+        mapLobby.put(34, img34);
+        mapLobby.put(35, img_special);
 
         // inserimento pagine secondarie nell'arraylist
         listSecondPages.add(7);
@@ -552,6 +566,8 @@ public class Lobby implements Screen {
         listSecondPages.add(30);
         listSecondPages.add(31);
         listSecondPages.add(32);
+        listSecondPages.add(33);
+        listSecondPages.add(34);
 
         // mappatura avatar
         mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
@@ -559,7 +575,18 @@ public class Lobby implements Screen {
 
     // metodo per caricare immagini generiche
     public void loadImages() {
-        imgComplete = new Texture("images/tick.png");
+        // icona difficoltà classic game
+        diffCG1 = new Texture("images/diff1_classicgame.png");
+        diffCG2 = new Texture("images/diff2_classicgame.png");
+        diffCG3 = new Texture("images/diff3_classicgame.png");
+
+        // icona difficoltà space battle
+        diffSB1 = new Texture("images/diff1_spacebattle.png");
+        diffSB2 = new Texture("images/diff2_spacebattle.png");
+        diffSB3 = new Texture("images/diff3_spacebattle.png");
+
+        // immagine spunta per completamento missione o selezione oggetti
+        tickImg = new Texture("images/tick.png");
     }
 
     // metodo per stampare testi e immagini nelle pagine 'missions'
@@ -574,7 +601,7 @@ public class Lobby implements Screen {
             if (page!=31) fontBlue20.draw(screen, formatter.format(c), 620, 412+y);
 
             // spunta completamento missione
-            if (isCompleted[i]) screen.draw(imgComplete, 885, 430-y2);
+            if (isCompleted[i]) screen.draw(tickImg, 885, 430-y2);
 
             y2+=103;
             y+=30;
@@ -665,6 +692,19 @@ public class Lobby implements Screen {
                 // bonus punti
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
+                // difficoltà
+                switch (diffCG) {
+                    case 1:
+                        screen.draw(diffCG1, 646 ,108);
+                        break;
+                    case 2:
+                        screen.draw(diffCG2, 646 ,108);
+                        break;
+                    case 3:
+                        screen.draw(diffCG3, 646 ,108);
+                        break;
+                }
+
                 break;
 
             // pagina 'space battle'
@@ -685,6 +725,19 @@ public class Lobby implements Screen {
                 if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
                 // bonus punti
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
+
+                // difficoltà
+                switch (diffSB) {
+                    case 1:
+                        screen.draw(diffSB1, 646 ,108);
+                        break;
+                    case 2:
+                        screen.draw(diffSB2, 646 ,108);
+                        break;
+                    case 3:
+                        screen.draw(diffSB3, 646 ,108);
+                        break;
+                }
 
                 break;
 
