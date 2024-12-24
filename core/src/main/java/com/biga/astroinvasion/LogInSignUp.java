@@ -271,10 +271,10 @@ public class LogInSignUp extends ScreenAdapter {
 
     // metodo per caricare le immagini Accesso e Registrazione
     public void operationsScreen() {
-        img1 = new Texture("login_signup_pages/page_1_log_in_eng.png");
-        img2 = new Texture("login_signup_pages/page_1_log_in_eng_error.png");
-        img3 = new Texture("login_signup_pages/page_2_sign_up_eng.png");
-        img4 = new Texture("login_signup_pages/page_2_sign_up_eng_error.png");
+        img1 = new Texture("login_signup_screens/page_1_log_in_eng.png");
+        img2 = new Texture("login_signup_screens/page_1_log_in_eng_error.png");
+        img3 = new Texture("login_signup_screens/page_2_sign_up_eng.png");
+        img4 = new Texture("login_signup_screens/page_2_sign_up_eng_error.png");
 
         enteringNickname = true;
         Gdx.input.setInputProcessor(new MyInputProcessor()); // riattiva l'InputProcessor

@@ -459,41 +459,41 @@ public class Lobby implements Screen {
 
     // metodo per caricare le immagini della Lobby
     public void loadLobbyImages(){
-        img1 = new Texture("lobby_images/lobby_avatars_group1_eng.png");
-        img2 = new Texture("lobby_images/lobby_avatars_group2_eng.png");
-        img3 = new Texture("lobby_images/lobby_avatars_group3_eng.png");
-        img4 = new Texture("lobby_images/lobby_avatars_group4_eng.png");
-        img5 = new Texture("lobby_images/lobby_avatars_special_group_eng.png");
-        img6 = new Texture("lobby_images/lobby_classic_game_eng.png");
-        img7 = new Texture("lobby_images/lobby_instructions_eng.png");
-        img8 = new Texture("lobby_images/lobby_level_up_info_eng.png");
-        img9 = new Texture("lobby_images/lobby_level_up_upgrade1_eng.png");
-        img10 = new Texture("lobby_images/lobby_level_up_upgrade2_eng.png");
-        img11 = new Texture("lobby_images/lobby_marketplace_eng.png");
-        img12 = new Texture("lobby_images/lobby_road_to_glory_eng.png");
-        img13 = new Texture("lobby_images/lobby_space_battle_eng.png");
-        img14 = new Texture("lobby_images/lobby_space_journey_eng.png");
-        img15 = new Texture("lobby_images/lobby_spacecrafts_classic_group_eng.png");
-        img16 = new Texture("lobby_images/lobby_spacecrafts_groupFenixia_eng.png");
-        img17 = new Texture("lobby_images/lobby_spacecrafts_groupMalloc_eng.png");
-        img18 = new Texture("lobby_images/lobby_spacecrafts_groupPhoenix_eng.png");
-        img19 = new Texture("lobby_images/lobby_spacecrafts_groupEfron_eng.png");
-        img20 = new Texture("lobby_images/lobby_spacecrafts_special_group_eng.png");
-        img21 = new Texture("lobby_images/lobby_settings_eng.png");
-        img22 = new Texture("lobby_images/lobby_software_info_eng.png");
-        img23 = new Texture("lobby_images/lobby_close_game_eng.png");
-        img24 = new Texture("lobby_images/lobby_difficulty_cg_info_eng.png");
-        img25 = new Texture("lobby_images/lobby_profile_info_eng.png");
-        img26 = new Texture("lobby_images/lobby_missions1_eng.png");
-        img27 = new Texture("lobby_images/lobby_missions2_eng.png");
-        img28 = new Texture("lobby_images/lobby_missions3_eng.png");
-        img29 = new Texture("lobby_images/lobby_missions4_eng.png");
-        img30 = new Texture("lobby_images/lobby_missions5_eng.png");
-        img31 = new Texture("lobby_images/lobby_missions6_eng.png");
-        img32 = new Texture("lobby_images/lobby_missions7_eng.png");
-        img33 = new Texture("lobby_images/lobby_difficulty_sb_info_eng.png");
-        img34 = new Texture("lobby_images/lobby_cards_info_eng.png");
-        img_special = new Texture("lobby_images/_rect_claim_reward_eng.png");
+        img1 = new Texture("lobby_screens/lobby_avatars_group1_eng.png");
+        img2 = new Texture("lobby_screens/lobby_avatars_group2_eng.png");
+        img3 = new Texture("lobby_screens/lobby_avatars_group3_eng.png");
+        img4 = new Texture("lobby_screens/lobby_avatars_group4_eng.png");
+        img5 = new Texture("lobby_screens/lobby_avatars_special_group_eng.png");
+        img6 = new Texture("lobby_screens/lobby_classic_game_eng.png");
+        img7 = new Texture("lobby_screens/lobby_instructions_eng.png");
+        img8 = new Texture("lobby_screens/lobby_level_up_info_eng.png");
+        img9 = new Texture("lobby_screens/lobby_level_up_upgrade1_eng.png");
+        img10 = new Texture("lobby_screens/lobby_level_up_upgrade2_eng.png");
+        img11 = new Texture("lobby_screens/lobby_marketplace_eng.png");
+        img12 = new Texture("lobby_screens/lobby_road_to_glory_eng.png");
+        img13 = new Texture("lobby_screens/lobby_space_battle_eng.png");
+        img14 = new Texture("lobby_screens/lobby_space_journey_eng.png");
+        img15 = new Texture("lobby_screens/lobby_spacecrafts_classic_group_eng.png");
+        img16 = new Texture("lobby_screens/lobby_spacecrafts_groupFenixia_eng.png");
+        img17 = new Texture("lobby_screens/lobby_spacecrafts_groupMalloc_eng.png");
+        img18 = new Texture("lobby_screens/lobby_spacecrafts_groupPhoenix_eng.png");
+        img19 = new Texture("lobby_screens/lobby_spacecrafts_groupEfron_eng.png");
+        img20 = new Texture("lobby_screens/lobby_spacecrafts_special_group_eng.png");
+        img21 = new Texture("lobby_screens/lobby_settings_eng.png");
+        img22 = new Texture("secondary_screens/lobby_software_info_eng.png");
+        img23 = new Texture("secondary_screens/lobby_close_game_eng.png");
+        img24 = new Texture("lobby_screens/lobby_difficulty_cg_info_eng.png");
+        img25 = new Texture("lobby_screens/lobby_profile_info_eng.png");
+        img26 = new Texture("lobby_screens/lobby_missions1_eng.png");
+        img27 = new Texture("lobby_screens/lobby_missions2_eng.png");
+        img28 = new Texture("lobby_screens/lobby_missions3_eng.png");
+        img29 = new Texture("lobby_screens/lobby_missions4_eng.png");
+        img30 = new Texture("lobby_screens/lobby_missions5_eng.png");
+        img31 = new Texture("lobby_screens/lobby_missions6_eng.png");
+        img32 = new Texture("lobby_screens/lobby_missions7_eng.png");
+        img33 = new Texture("lobby_screens/lobby_difficulty_sb_info_eng.png");
+        img34 = new Texture("lobby_screens/lobby_cards_info_eng.png");
+        img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
 
         // immagini secondarie variabili
 

@@ -1,9 +1,14 @@
+/*
+Astro Invasion - class Lobby -
+This class manages and controls the game mode Classic Game
+Developed by BIGA©. All rights reserved.
+*/
+
 package com.biga.astroinvasion;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -60,6 +65,11 @@ public class ClassicGame implements Screen {
     // musiche
     private final Music soundtrack; // sottofondo
     private final Sound creditSound, shotSound, hitSound; // suoni
+
+    /* modalità di gioco
+       la modalità di gioco definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
+    */
+    private final int mod = 0;
 
     // costruttore
     public ClassicGame(Main game) {
@@ -164,6 +174,10 @@ public class ClassicGame implements Screen {
             font.setColor(Color.valueOf("FFFFFF")); // colore white
         }
     }
+
+    // ------------------- //
+    // LOGICA DELLA CLASSE //
+    // ------------------- //
 
     // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
     private void setupGameParameters(int difficulty) {
@@ -421,16 +435,17 @@ public class ClassicGame implements Screen {
 
     // metodo per richiamare la schermata del game over
     private void gameOver() {
-        // Logica per la fine del gioco
-        System.out.println("Game Over!");
 
-        // somma punti e crediti fatti
+        // somma punti
+        int bonusPoints = Lobby.selectedSp.getBonusPoint();
+        if (bonusPoints > 0) points = (points*bonusPoints)/100; // aggiunta percentuale di bonus
         Lobby.points += points;
+
+        // somma crediti fatti
         Lobby.credits += credits;
 
-        //game.setScreen(new GameOverScreen(game, score));
         soundtrack.stop();
-        game.setScreen(new Lobby(game));
+        game.setScreen(new GameOver(game, mod, points, credits, aliensHit));
     }
 
     // classe per le animazioni
