@@ -104,12 +104,12 @@ public class GameOver implements Screen {
     // metodo per controllare l'input
     private void handleInput() {
 
-        // chiusura partita e ritorno alla lobby
+        // chiusura partita e ritorno alla lobby cliccando ESC
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(new Lobby(game));
         }
 
-        // avvio nuova partita
+        // avvio nuova partita cliccando ENTER
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
@@ -118,6 +118,32 @@ public class GameOver implements Screen {
                 case 1:
                     System.out.println("space battle");
                     break;
+            }
+        }
+
+        // chiusura o avvio nuova partita con il click del mouse
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            // recupero x e y del click
+            int screenX = Gdx.input.getX();
+            int screenY = Gdx.input.getY();
+
+            // I RANGE SONO SBAGLIATI! //
+
+            // click NO => ritorno alla lobby
+            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                game.setScreen(new Lobby(game));
+            }
+
+            // click YES => avvio nuova partita
+            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                switch (mod) {
+                    case 0:
+                        game.setScreen(new ClassicGame(game));
+                        break;
+                    case 1:
+                        System.out.println("space battle");
+                        break;
+                }
             }
         }
     }

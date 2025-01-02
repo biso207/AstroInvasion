@@ -38,7 +38,8 @@ public class ClassicGame implements Screen {
     private final Pool<Rectangle> laserPool;
 
     // immagini delle vite
-    private Texture life1, life2, life3, life4, goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg;
+    private Texture life1, life2, life3, life4, goldHeartImg, shieldImg, brokenShieldImg,
+        superLaserImg, topBar, playImg, stopImg, quitMatch;
 
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -58,6 +59,9 @@ public class ClassicGame implements Screen {
 
     // stato del gioco (pausa/in gioco)
     private boolean isPaused = false;
+
+    // stato quit match per la stampa dell'immagine
+    private boolean quit = false;
 
     // dichiarazione font
     private BitmapFont font, fontGold;
@@ -156,6 +160,9 @@ public class ClassicGame implements Screen {
         playImg = new Texture("images/play.png");
         stopImg = new Texture("images/stop.png");
 
+        // quit match
+        quitMatch = new Texture(Gdx.files.internal("secondary_screens/lobby_quit_match_eng.png"));
+
         // scudo
         shieldImg = new Texture("images/spacecrafts/_shield.png");
         brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
@@ -221,6 +228,33 @@ public class ClassicGame implements Screen {
     // metodo per controllare l'input
     private void handleInput(float delta) {
         laserCooldownTimer += delta;
+
+        // stop partita per chiuderla
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            isPaused = !isPaused;
+            quit = !quit;
+        }
+
+        // chiusura partita
+        if (quit && (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))) {
+
+            // recupero x e y del click
+            int screenX = Gdx.input.getX();
+            int screenY = Gdx.input.getY();
+
+            // click NO => si continua a giocare
+            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                quit = !quit;
+                isPaused = !isPaused;
+            }
+
+            // click YES => interruzione gioco
+            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                gameOver();
+                return; // uscita
+            }
+
+        }
 
         // gioco in pausa
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -538,6 +572,9 @@ public class ClassicGame implements Screen {
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
         else screen.draw(playImg, 472, 637);
+
+        // stampa immagine per chiudere il gioco
+        if (quit) screen.draw(quitMatch, 250, 175);
 
         // Stampa statistiche
         // crediti
