@@ -367,7 +367,6 @@ public class Lobby implements Screen {
 
     // metodo per recuperare i progressi utente
     public void readFiles() {
-        System.out.println(nicknameInput);
         // avatar
         FileHandle readAvatar = Gdx.files.local("data/" + nicknameInput + "/progresses/avatar.txt");
         avatar = Integer.parseInt(readAvatar.readString());
@@ -598,13 +597,14 @@ public class Lobby implements Screen {
         // array per controllare il completamente delle missioni in pagine 'missions'
         boolean[] isCompleted = l.checkCompleted(page, c);
         for (int i=0; i<4; i++) {
-            if (page!=31) fontBlue20.draw(screen, formatter.format(c), 620, 412+y);
+            // testo obiettivo missione
+            if (page!=31) fontBlue20.draw(screen, formatter.format(c), 380, 435+y);
 
             // spunta completamento missione
             if (isCompleted[i]) screen.draw(tickImg, 885, 430-y2);
 
             y2+=103;
-            y+=30;
+            y+=0;
         }
     }
 
@@ -713,6 +713,8 @@ public class Lobby implements Screen {
                 fontBlue20.draw(screen, formatter.format(wonSB), 420, 410); // vittorie
                 fontBlue20.draw(screen, formatter.format(consWonSB), 435, 380); // vittorie consecutive
                 fontBlue20.draw(screen, formatter.format(matchesSB), 420, 350); // partite giocate
+                fontWhite20.draw(screen, formatter.format(numGoldHeart), 715, 385); // numero 'gold heart'
+                fontWhite20.draw(screen, formatter.format(numSuperLaser), 878, 385); // numero 'super laser'
 
                 // navicella //
                 // immagine
