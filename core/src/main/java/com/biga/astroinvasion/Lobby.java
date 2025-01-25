@@ -57,7 +57,7 @@ public class Lobby implements Screen {
     movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
     numSuperLaser, mission, wonSbRtg, matchesCG, matchesSB, consWonSB, wonSB;
 
-    public static int points, credits;
+    public static int points, credits, numAliensHit;
 
     // controllo completamento missione rtg
     boolean isRtgComplete;
@@ -331,7 +331,7 @@ public class Lobby implements Screen {
 
             // selezione carta speciale
 
-            // acquisti nel negozioa
+            // acquisti nel negozio
 
             return true;
         }
@@ -648,7 +648,10 @@ public class Lobby implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        // spegnimento controllo input
+        Gdx.input.setInputProcessor(null);
+    }
 
     @Override
     public void show() {}

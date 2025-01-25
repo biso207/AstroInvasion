@@ -242,6 +242,9 @@ public class LogInSignUp extends ScreenAdapter {
         // numero partite vinte a space battle consecutive per RTG
         FileHandle writeWonSbRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB_RTG.txt");
         writeWonSbRTG.writeString("0", false);
+        // numero alieni colpiti in classic game
+        FileHandle writeNumAliensHit = Gdx.files.local("data/" + nicknameInput + "/progresses/num_aliens_hit.txt");
+        writeWonSbRTG.writeString("0", false);
         // partite classic game
         FileHandle writeMatchesCG = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_CG.txt");
         writeMatchesCG.writeString("0", false);
@@ -328,7 +331,10 @@ public class LogInSignUp extends ScreenAdapter {
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide() {
+        // spegnimento controllo input
+        Gdx.input.setInputProcessor(null);
+    }
 
     // metodo per rilasciare le risorse
     @Override

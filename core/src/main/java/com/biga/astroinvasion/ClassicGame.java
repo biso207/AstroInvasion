@@ -236,7 +236,7 @@ public class ClassicGame implements Screen {
 
         // click esc per chiudere la partita
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            isPaused = !isPaused;
+            if (!isPaused) isPaused = true;
             quit = !quit;
         }
 
@@ -416,17 +416,18 @@ public class ClassicGame implements Screen {
             Array<Rectangle> potentialCollisions = new Array<>();
             quadTree.retrieve(potentialCollisions, laser);
 
-            for (int i=0; i<potentialCollisions.size; i++) {
-                // Verifica la collisione lungo il percorso del laser
+            // for per il controllare le collisioni
+            for (int i = 0; i < potentialCollisions.size; i++) {
                 if (laserPathIntersects(previousY, laser.y, laser.x, potentialCollisions.get(i))) {
-                    hitSound.play();
+                    hitSound.play(); // suono alieno colpito
+
                     // rimozione laser
                     if (!Lobby.superLaser) {
                         laserIterator.remove();
                         laserPool.free(laser);
                     }
 
-                    // Rimuovi l'alieno
+                    // rimozione alieni colpiti/fuori dallo schermo
                     for (Iterator<Alien> alienIterator = aliens.iterator(); alienIterator.hasNext();) {
                         Alien alien = alienIterator.next();
                         if (alien.getAlienRect() == potentialCollisions.get(i)) {
@@ -435,19 +436,20 @@ public class ClassicGame implements Screen {
                         }
                     }
 
-                    // aggiornamento statistiche
-                    points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
-                    aliensHit++; // incremento alieni colpiti
+                    // aggiornamento statistiche partita
+                    points += (Lobby.doublePoints ? scoreInc * 2 : scoreInc);
+                    aliensHit++;
                     if (aliensHit % 5 == 0) {
-                        creditSound.play(); // suono alieno colpito
-                        credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
+                        creditSound.play();
+                        credits += creditsInc;
                     }
 
-                    // Avvia l'animazione di collisione
-                    activeAnimations.add(new CollisionAnimation(
-                        potentialCollisions.get(i).x, potentialCollisions.get(i).y - 5, collisionFrames));
+                    if (i < potentialCollisions.size) { // Check aggiunto
+                        activeAnimations.add(new CollisionAnimation(
+                            potentialCollisions.get(i).x, potentialCollisions.get(i).y - 5, collisionFrames));
+                    }
 
-                    break; // Esci dal ciclo dei rettangoli vicini
+                    break; // esci dal ciclo dei rettangoli vicini
                 }
             }
 
@@ -475,13 +477,9 @@ public class ClassicGame implements Screen {
     // metodo per richiamare la schermata del game over
     private void gameOver() {
 
-        // somma punti
+        // aggiunta bonus punti
         int bonusPoints = Lobby.selectedSp.getBonusPoint();
         if (bonusPoints > 0) points = (points*bonusPoints)/100; // aggiunta percentuale di bonus
-        Lobby.points += points;
-
-        // somma crediti fatti
-        Lobby.credits += credits;
 
         soundtrack.stop();
         game.setScreen(new GameOver(game, mod, points, credits, aliensHit));
@@ -623,7 +621,10 @@ public class ClassicGame implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        // spegnimento controllo input
+        Gdx.input.setInputProcessor(null);
+    }
 
     @Override
     // rilascio risorse

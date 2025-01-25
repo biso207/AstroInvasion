@@ -1,7 +1,6 @@
 package com.biga.astroinvasion;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Main extends Game {
@@ -10,7 +9,6 @@ public class Main extends Game {
     @Override
     public void create() {
         screen = new SpriteBatch();
-        Gdx.input.setInputProcessor(new MyInputProcessor()); // imposta MyInputProcessor per gestire gli input
 
         this.setScreen(new LoadingScreen(this)); // schermata di caricamento
     }

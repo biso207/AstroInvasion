@@ -9,6 +9,7 @@ package com.biga.astroinvasion;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -66,6 +67,7 @@ public class GameOver implements Screen {
         // switch delle modalità di gioco
         switch (mod) {
             case 0:
+                writeFileCG();
                 // schermata base
                 screen.draw(gameOver0, 0, 0);
 
@@ -148,6 +150,24 @@ public class GameOver implements Screen {
         }
     }
 
+    // salvataggio progressi utente
+    public void writeFileCG() {
+        // incremento progressi
+        Lobby.numAliensHit += aliensHit;
+        Lobby.points += points;
+        Lobby.credits += credits;
+
+        // file
+        FileHandle f1 = new FileHandle("data/" + LogInSignUp.nickname + "/progresses/credits.txt");
+        FileHandle f2 = new FileHandle("data/" + LogInSignUp.nickname + "/progresses/points.txt");
+        FileHandle f3 = new FileHandle("data/" + LogInSignUp.nickname + "/progresses/num_aliens_hit.txt");
+
+        // scrittura
+        f1.writeString(String.valueOf(Lobby.credits), false);
+        f2.writeString(String.valueOf(Lobby.points), false);
+        f3.writeString(String.valueOf(Lobby.numAliensHit), false);
+    }
+
     @Override
     public void show() {}
 
@@ -168,7 +188,10 @@ public class GameOver implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {}
+    public void hide() {
+        // spegnimento controllo input
+        Gdx.input.setInputProcessor(null);
+    }
 
     @Override
     // rilascio risorse
