@@ -178,10 +178,16 @@ public class LogInSignUp extends ScreenAdapter {
 
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
                 state = 1;
-            } else state = 4;
-        }catch(Exception e){
+            }
+            else {
+                // caricamento progresso utenti nell'hashmap
+                state = 4;
+            }
+        }
+        catch(Exception e){
             state = 1;
         }
+
         nickname = String.valueOf(nicknameInput);
         password = String.valueOf(passwordInput);
     }
