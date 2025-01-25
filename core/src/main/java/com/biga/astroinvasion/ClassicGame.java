@@ -6,6 +6,7 @@ Developed by BIGA©. All rights reserved.
 
 package com.biga.astroinvasion;
 
+// import librerie
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -225,11 +226,15 @@ public class ClassicGame implements Screen {
         laserSpeed += Lobby.selectedSp.getLaserSpeed()*100;
     }
 
+    // -------------- //
+    // GESTIONE INPUT //
+    // -------------- //
+
     // metodo per controllare l'input
     private void handleInput(float delta) {
         laserCooldownTimer += delta;
 
-        // stop partita per chiuderla
+        // click esc per chiudere la partita
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             isPaused = !isPaused;
             quit = !quit;
@@ -394,8 +399,8 @@ public class ClassicGame implements Screen {
         quadTree.clear();
 
         // Popola il QuadTree con i rettangoli degli alieni
-        for (Alien alien : aliens) {
-            quadTree.insert(alien.getAlienRect());
+        for (int i=0; i<aliens.size; i++) {
+            quadTree.insert(aliens.get(i).getAlienRect());
         }
 
         // Controlla le collisioni per ogni laser
@@ -411,9 +416,9 @@ public class ClassicGame implements Screen {
             Array<Rectangle> potentialCollisions = new Array<>();
             quadTree.retrieve(potentialCollisions, laser);
 
-            for (Rectangle alienRect : potentialCollisions) {
+            for (int i=0; i<potentialCollisions.size; i++) {
                 // Verifica la collisione lungo il percorso del laser
-                if (laserPathIntersects(previousY, laser.y, laser.x, alienRect)) {
+                if (laserPathIntersects(previousY, laser.y, laser.x, potentialCollisions.get(i))) {
                     hitSound.play();
                     // rimozione laser
                     if (!Lobby.superLaser) {
@@ -424,7 +429,7 @@ public class ClassicGame implements Screen {
                     // Rimuovi l'alieno
                     for (Iterator<Alien> alienIterator = aliens.iterator(); alienIterator.hasNext();) {
                         Alien alien = alienIterator.next();
-                        if (alien.getAlienRect() == alienRect) {
+                        if (alien.getAlienRect() == potentialCollisions.get(i)) {
                             alienIterator.remove();
                             break;
                         }
@@ -440,7 +445,7 @@ public class ClassicGame implements Screen {
 
                     // Avvia l'animazione di collisione
                     activeAnimations.add(new CollisionAnimation(
-                        alienRect.x, alienRect.y - 5, collisionFrames));
+                        potentialCollisions.get(i).x, potentialCollisions.get(i).y - 5, collisionFrames));
 
                     break; // Esci dal ciclo dei rettangoli vicini
                 }

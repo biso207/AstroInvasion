@@ -52,10 +52,6 @@ public class Lobby implements Screen {
     // dichiarazione immagini secondarie
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
 
-    // dichiarazione immagini avatar
-    Texture av1, av2, av3, av4, av5, av6, av7, av8, av9, av10,
-        av11, av12, av13, av14, av15, av16, av17, av18, av19, av20;
-
     // dichiarazione variabili attributi utente
     private static int avatar, diffCG, diffSB, idMission, level,
     movType, shotType, spacecraft, numDoublePoints, numGoldHeart, numShield,
@@ -127,12 +123,12 @@ public class Lobby implements Screen {
         createSpacecrafts();
 
         // prova carte
-        /*
-        shield = true;
-        superLaser = true;
-        goldHeart = true;
+
+        shield = false;
+        superLaser = false;
+        goldHeart = false;
         doublePoints = true;
-        */
+
     }
 
     // -------------- //
@@ -148,6 +144,7 @@ public class Lobby implements Screen {
                 open23 = true;
                 secondScreen = true;
             }
+
             // click tasto esc per annullare il logout
             else if (keycode == Input.Keys.ESCAPE && (secondScreen&&open23)) {
                 secondScreen = open23 = false;
@@ -156,7 +153,7 @@ public class Lobby implements Screen {
             return true;
         }
 
-        // metodo recuperare il click del mouse, crea inizialmente costruttore hash map che contenga interi e Texture, quando poi carico le immagini le abbino con l'has map; 1--> img1;
+        // metodo recuperare il click del mouse
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             /*
@@ -164,79 +161,99 @@ public class Lobby implements Screen {
             di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
             Esempio: l'utente NON può aprire la pagina 'classic game' dalla pagina 'instructions'
             */
+
+            // ......................... //
+            // CAMBIO PAGINE DALLA LOBBY //
+            // ......................... //
             if (!listSecondPages.contains(page) && !open22 && !open23) {
                 // pagina 6 => 'classic game'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 180 && screenY <= 220)) {
                     page = 6;
                 }
+
                 // pagina 13 => 'space battle'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 230 && screenY <= 270)) {
                     page = 13;
                 }
+
                 // pagina 14 => 'space journey'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 280 && screenY <= 320)) {
                     page = 14;
                 }
+
                 // pagina 12 => 'road to glory'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 330 && screenY <= 370)) {
                     page = 12;
                 }
+
                 // pagina 15 => 'spacecrafts 1'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 380 && screenY <= 420)) {
                     page = 15;
                 }
+
                 // pagina 26 => 'missions 1'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 430 && screenY <= 470)) {
                     previousPage = page;
                     page = 26;
                 }
+
                 // pagina 11 => 'marketplace'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 480 && screenY <= 520)) {
                     page = 11;
                 }
+
                 // cambio pagina (1-5) => 'avatar/spacecraft/ 1->5'
                 if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
                     if ((page >=1 && page < 5) || (page >= 15 && page < 20)) page++;
                 }
+
                 // cambio pagina (5-1) => 'avatar/spacecraft/ 5->1'
                 if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
                     if ((page <= 5 && page>1) || (page <= 20 && page>15)) page--;
                 }
+
                 // pagina 7 => 'instructions'
                 if ((screenX >= 50 && screenX <= 270) && (screenY >= 530 && screenY <= 570)) {
                     previousPage = page;
                     page = 7;
                 }
+
                 // pagine 21 => 'settings'
                 if ((screenX >= 50 && screenX <=90) && (screenY >= 580 && screenY <=620)) {
                     previousPage = page;
                     page = 21;
                 }
+
                 // pagina 24 => 'difficulty infos classic game'
                 if (page == 6 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
                     previousPage = page;
                     page = 24;
                 }
+
                 // pagina 33 => 'difficulty infos space battle'
                 if (page == 13 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
                     previousPage = page;
                     page = 33;
                 }
+
                 // pagina 34 => 'cards infos'
                 if ((page == 13 || page == 6) && (screenX >= 883 && screenX <=913) && (screenY >= 230 && screenY <=260)) {
                     previousPage = page;
                     page = 34;
                 }
+
                 // pagina 25 => 'profile info'
                 if ((screenX >= 870 && screenX <=950) && (screenY >= 66 && screenY <=146)) {
                     previousPage = page;
                     page = 25;
                 }
+
                 // pagina 22 => 'software infos'
                 if ((screenX >= 110 && screenX <=150) && (screenY >= 580 && screenY <=620)) {
                     open22 = true;
                     secondScreen = true;
                 }
+
                 // pagina 23 => 'logout'
                 if ((screenX >= 170 && screenX <=210) && (screenY >= 580 && screenY <=620)) {
                     open23 = true;
@@ -253,35 +270,68 @@ public class Lobby implements Screen {
                 }
             }
 
+            // ............... //
+            // CHIUSURA PAGINE //
+            // ............... //
+
             // chiusura pagina instruction/settings/profile info&difficulty/missions
             if ((listSecondPages.contains(page) && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124))) {
                 page = previousPage;
             }
-            // cambio pagina (26-32) => 'missions 1-7'
-            if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <=642)) {
-                if ((page >=26 && page < 32)) page++;
-            }
-            // cambio pagina (32-26) => 'missions 7-1'
-            if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <=642)) {
-                if ((page <= 32 && page > 26)) page--;
-            }
-            // pagina 1 => 'avatar 1'
-            if (page == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
-                page = 1;
-            }
+
             // chiusura software.infos
             if ((secondScreen&&open22) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
                 secondScreen = open22 = false;
             }
+
             // chiusura (annullamento) logout
             if ((secondScreen&&open23) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 secondScreen = open23 = false;
             }
+
             // back to LogInSignUp => YES logout
             if ((secondScreen&&open23) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 soundtrack.stop();
                 game.setScreen(new LogInSignUp(game));
             }
+
+            // ........................ //
+            // CAMBIO PAGINE SECONDARIE //
+            // ........................ //
+
+            // cambio pagina (26-32) => 'missions 1-7'
+            if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <=642)) {
+                if ((page >=26 && page < 32)) page++;
+            }
+
+            // cambio pagina (32-26) => 'missions 7-1'
+            if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <=642)) {
+                if ((page <= 32 && page > 26)) page--;
+            }
+
+            // APERTURA 'avatar page' DA 'profile infos' //
+            // pagina 1 => 'avatar 1'
+            if (page == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+                page = 1;
+            }
+
+            // .................. //
+            // CLICK NELLE PAGINE //
+            // .................. //
+
+            // selezione/cambio navicella
+
+            // selezione/cambio avatar
+
+            // cambio difficoltà (classic game e space battle)
+
+            // setting impostazioni
+
+            // selezione galassia/livello
+
+            // selezione carta speciale
+
+            // acquisti nel negozioa
 
             return true;
         }
@@ -496,28 +546,6 @@ public class Lobby implements Screen {
 
         // immagini secondarie variabili
 
-        // immagini avatar
-        av1 = new Texture("images/avatars/av (1).png");
-        av2 = new Texture("images/avatars/av (2).png");
-        av3 = new Texture("images/avatars/av (3).png");
-        av4 = new Texture("images/avatars/av (4).png");
-        av5 = new Texture("images/avatars/av (5).png");
-        av6 = new Texture("images/avatars/av (6).png");
-        av7 = new Texture("images/avatars/av (7).png");
-        av8 = new Texture("images/avatars/av (8).png");
-        av9 = new Texture("images/avatars/av (9).png");
-        av10 = new Texture("images/avatars/av (10).png");
-        av11 = new Texture("images/avatars/av (11).png");
-        av12 = new Texture("images/avatars/av (12).png");
-        av13 = new Texture("images/avatars/av (13).png");
-        av14 = new Texture("images/avatars/av (14).png");
-        av15 = new Texture("images/avatars/av (15).png");
-        av16 = new Texture("images/avatars/av (16).png");
-        av17 = new Texture("images/avatars/av (17).png");
-        av18 = new Texture("images/avatars/av (18).png");
-        av19 = new Texture("images/avatars/av (19).png");
-        av20 = new Texture("images/avatars/av (20).png");
-
         // mappatura mapLobby
         mapLobby.put(1, img1);
         mapLobby.put(2, img2);
@@ -568,11 +596,13 @@ public class Lobby implements Screen {
         listSecondPages.add(33);
         listSecondPages.add(34);
 
-        // mappatura avatar
-        mapping(mapAvatar, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10, av11, av12, av13, av14, av15, av16, av17, av18, av19, av20);
+        // popolamento mappa avatar
+        for (int i = 1; i < 21; i++) {
+            mapAvatar.put(i, new Texture("images/avatars/av (" + i + ").png"));
+        }
     }
 
-    // metodo per caricare immagini generiche
+    // metodo per caricare le immagini secondarie delle pagine
     public void loadImages() {
         // icona difficoltà classic game
         diffCG1 = new Texture("images/diff1_classicgame.png");
@@ -606,33 +636,6 @@ public class Lobby implements Screen {
             y2+=103;
             y+=0;
         }
-    }
-
-    // metodo per mappare le hashmap
-    private void mapping(HashMap<Integer, Texture> map, Texture img1, Texture img2, Texture img3, Texture img4,
-                 Texture img5, Texture img6, Texture img7, Texture img8, Texture img9, Texture img10,
-                 Texture img11, Texture img12, Texture img13, Texture img14, Texture img15, Texture img16,
-                 Texture img17, Texture img18, Texture img19, Texture img20) {
-        map.put(1, img1);
-        map.put(2, img2);
-        map.put(3, img3);
-        map.put(4, img4);
-        map.put(5, img5);
-        map.put(6, img6);
-        map.put(7, img7);
-        map.put(8, img8);
-        map.put(9, img9);
-        map.put(10, img10);
-        map.put(11, img11);
-        map.put(12, img12);
-        map.put(13, img13);
-        map.put(14, img14);
-        map.put(15, img15);
-        map.put(16, img16);
-        map.put(17, img17);
-        map.put(18, img18);
-        map.put(19, img19);
-        map.put(20, img20);
     }
 
     @Override
