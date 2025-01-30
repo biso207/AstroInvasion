@@ -268,6 +268,13 @@ public class Lobby implements Screen {
                     soundtrack.stop();
                     game.setScreen(new ClassicGame(game)); // apertura nuovo screen
                 }
+
+                if (page==13 && (screenX >= 778 && screenX <=928) && (screenY >= 552 && screenY <=592)) {
+                    previousPage = page;
+                    page=0;
+                    soundtrack.stop();
+                    game.setScreen(new SpaceBattle(game));
+                }
             }
 
             // ............... //
