@@ -98,14 +98,19 @@ public class SpaceBattle implements Screen {
     */
     private final int mod = 0;
 
+    // navicella utente
+    private Spacecraft selectedSp;
+
     // costruttore
-    public SpaceBattle(Main game) {
+    public SpaceBattle(Main game, Spacecraft selectedSp) {
         this.game = game;
         this.screen = game.screen;
         this.enemySpaceship = new Rectangle(400, 600, 70, 64); // Posizionata in alto
 
+        this.selectedSp = selectedSp;
+
         // immagine navicella
-        spaceshipTexture = new Texture(Lobby.selectedSp.getPathImg());
+        spaceshipTexture = new Texture(selectedSp.getPathImg());
         // sfondo in gioco
         backgroundTexture = new Texture("images/bgInGame.png");
 
@@ -230,8 +235,8 @@ public class SpaceBattle implements Screen {
                 break;
         }
 
-        spacecraftSpeed += Lobby.selectedSp.getSpSpeed()*100;
-        laserSpeed += Lobby.selectedSp.getLaserSpeed()*100;
+        spacecraftSpeed += selectedSp.getSpSpeed()*100;
+        laserSpeed += selectedSp.getLaserSpeed()*100;
     }
 
     // -------------- //
@@ -462,11 +467,11 @@ public class SpaceBattle implements Screen {
     private void gameOver() {
 
         // aggiunta bonus punti
-        int bonusPoints = Lobby.selectedSp.getBonusPoint();
+        int bonusPoints = selectedSp.getBonusPoint();
         if (bonusPoints > 0) points = (points*bonusPoints)/100; // aggiunta percentuale di bonus
 
         soundtrack.stop();
-        game.setScreen(new GameOver(game, mod, points, credits, 0));
+        game.setScreen(new GameOver(game, selectedSp, mod, points, credits, 0));
     }
 
     // classe per le animazioni
@@ -512,7 +517,7 @@ public class SpaceBattle implements Screen {
 
         // Stampa laser
         for (Rectangle laser : lasers) {
-            if (!Lobby.superLaser) screen.draw(Lobby.selectedSp.getLaserTexture(), laser.x, laser.y);
+            if (!Lobby.superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
             else screen.draw(superLaserImg, laser.x, laser.y);
         }
 

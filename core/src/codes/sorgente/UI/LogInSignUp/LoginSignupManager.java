@@ -26,15 +26,12 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final SpriteBatch screen;
 
     // istanza classe algoritmi
-    AuthAlgorithms alg;
+    private final AuthAlgorithms alg;
 
     // font
     private BitmapFont font;
     // immagini
     private Texture img1, img2, img3, img4;
-
-    // array di immagini+
-    Texture[] bgs;
 
     /* pagina di riferimento
         0 = LogIn
@@ -84,18 +81,16 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         img4 = new Texture("login_signup_screens/page_2_sign_up_eng_error.png");
 
         alg.enteringNickname = true;
-        Gdx.input.setInputProcessor(alg); // riattiva l'InputProcessor
     }
 
     // ********************************* //
     // METODI DELLA CLASSE ScreenAdapter //
     // ********************************* //
-    @Override
-    public void show() {}
-
     // metodo per aggiornare lo schermo
-    @Override
-    public void render(float delta) {
+    @Override public void render(float delta) {
+        // attivazione controllo input
+        Gdx.input.setInputProcessor(alg);
+
         screen.begin();
 
         switch (state) {
@@ -131,22 +126,21 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         }
         screen.end();
     }
-
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
+    // spegnimento controllo input
     @Override public void hide() {
-        // spegnimento controllo input
         Gdx.input.setInputProcessor(null);
     }
-
     // rilascio delle risorse
-    @Override
-    public void dispose() {
+    @Override public void dispose() {
         if (font != null) font.dispose();
         img1.dispose();
         img2.dispose();
         img3.dispose();
         img4.dispose();
     }
+
+    @Override public void show() {}
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 }

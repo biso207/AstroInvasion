@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import sorgente.UI.Lobby.LobbyManager;
 import com.biga.astroinvasion.QuadTree;
 import sorgente.Main;
 
@@ -37,7 +36,7 @@ public class ClassicGame implements Screen {
     private final Rectangle spaceship;
     private float backgroundY1, backgroundY2;
     private final Array<Rectangle> lasers = new Array<>();
-    private final Array<sorgente.GameMods.Alien> aliens = new Array<>();
+    private final Array<Alien> aliens = new Array<>();
     private final Array<TextureRegion> collisionFrames = new Array<>();
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
@@ -84,7 +83,7 @@ public class ClassicGame implements Screen {
     private boolean doublePoints=false, superLaser=false, shield=false, goldHeart=false;
 
     // navicella utente
-    Spacecraft selectedSp;
+    private final Spacecraft selectedSp;
 
     // costruttore
     public ClassicGame(Main game, Spacecraft selectedSp) {
@@ -503,7 +502,7 @@ public class ClassicGame implements Screen {
         if (bonusPoints > 0) points = (points*bonusPoints)/100; // aggiunta percentuale di bonus
 
         soundtrack.stop();
-        game.setScreen(new GameOver(game, mod, points, credits, aliensHit));
+        game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit));
     }
 
     // classe per le animazioni

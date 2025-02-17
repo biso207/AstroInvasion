@@ -1,10 +1,16 @@
-// Classe 'CheckMissions' per controllare il completamento delle missioni nella pagina Missions
+/*
+Astro Invasion - class CheckMissions -
+Controlla il completamente delle missioni generali di gioco
+Developed by BIGA©. All rights reserved.
+*/
 
+// package di appartenenza
 package sorgente.Missions;
 
 public class CheckMissions {
     public int contCM=0;
 
+    // costruttore
     public CheckMissions() {}
 
     // istanza di CheckMissions

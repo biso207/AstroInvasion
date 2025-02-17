@@ -58,7 +58,6 @@ public class UIManager implements ResourceLoader {
         this.mapSpacecrafts = new HashMap<>();
     }
 
-
     // ******************* //
     // CARICAMENTO RISORSE //
     // ******************* //
@@ -156,9 +155,9 @@ public class UIManager implements ResourceLoader {
         return selectedSp;
     }
 
-    // ************** //
-    // METODI GRAFICI //
-    // ************** //
+    // **************** //
+    // GESTIONE GRAFICA //
+    // **************** //
 
     public String createMissions() {
         // creazione oggetti
@@ -208,21 +207,21 @@ public class UIManager implements ResourceLoader {
     }
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
-    public void showItems(SpriteBatch screen, int page, boolean secondScreen, boolean open22) {
+    public void showItems(SpriteBatch screen) {
         // background principale
-        screen.draw(mapLobby.get(page), 0, 0);
+        screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa avatar
-        if (!listSecondPages.contains(page)) {
+        if (!listSecondPages.contains(InputManager.page)) {
             screen.draw(mapAvatar.get((int) DataUserManager.getProgress("avatar")), 870, 557);
         }
 
         // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
-        if (secondScreen) {
-            screen.draw(open22 ? softInfos : closeGame, 250, 175);
+        if (InputManager.secondScreen) {
+            screen.draw(InputManager.open22 ? softInfos : closeGame, 250, 175);
         }
 
-        switch (page) {
+        switch (InputManager.page) {
             // pagina 'classic game'
             case 6:
                 // testi //
@@ -358,39 +357,39 @@ public class UIManager implements ResourceLoader {
             // pagina 'missions 1'
             case 26:
                 // testi e immagini //
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("matches_CG"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_CG"));
                 break;
 
             // pagina 'missions 2'
             case 27:
                 // testi e immagini //
-                printCompleteMission(screen, page, 100000000);
+                printCompleteMission(screen, InputManager.page, 100000000);
                 break;
 
             // pagina 'missions 3'
             case 28:
                 // testi e immagini //
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("matches_SB"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_SB"));
                 break;
 
             // pagina 'missions 4'
             case 29:
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("won_SB"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("won_SB"));
                 break;
 
             // pagina 'missions 5'
             case 30:
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("points"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("points"));
                 break;
 
             // pagina 'missions 6'
             case 31:
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("level"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("level"));
                 break;
 
             // pagina 'missions 7'
             case 32:
-                printCompleteMission(screen, page, (int)DataUserManager.getProgress("credits"));
+                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("credits"));
                 break;
         }
     }

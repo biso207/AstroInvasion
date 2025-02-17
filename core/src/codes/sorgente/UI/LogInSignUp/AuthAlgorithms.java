@@ -17,12 +17,12 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
     // variabili di controllo digitazione
     protected boolean enteringNickname, enteringPassword;
     // variabili per recuperare nick e psw utente
-    protected static String nickname, password;
+    public String nickname, password;
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
 
     // costruttore
-    AuthAlgorithms() {
+    public AuthAlgorithms() {
         // digitazione attiva
         this.enteringNickname = true;
         this.enteringPassword = true;

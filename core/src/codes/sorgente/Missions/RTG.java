@@ -1,7 +1,13 @@
-// Classe 'RTG' per creare e gestire le missioni del Road To Glory (RTG)
+/*
+Astro Invasion - class RTG (RoadToGlory) -
+Crea la missione corrente della modalità Road To Glory
+Developed by BIGA©. All rights reserved.
+*/
 
+// package di appartenenza
 package sorgente.Missions;
 
+// import librerie e codici
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -18,6 +24,7 @@ public class RTG {
         this.objMission = objMission;
     }
 
+    // metodo per costruire la stringa della missione da completare
     public String printMission(double numMission) {
         double molt = numMission/4;  // moltiplicatore valore base missione
         molt = Math.ceil(molt); // arrotondamento per eccesso del risultato

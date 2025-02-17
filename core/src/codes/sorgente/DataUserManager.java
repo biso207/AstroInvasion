@@ -1,5 +1,5 @@
 /*
-Astro Invasion - class AuthAlgorithms -
+Astro Invasion - class DataUserManager -
 Gestisce i progressi utente
 Developed by BIGA©. All rights reserved.
 */
@@ -27,13 +27,13 @@ import org.json.JSONObject;
 
 public class DataUserManager {
     // percorso dei file
-    private final String percorsoFile;
+    private static String percorsoFile;
     // hashmap dei progressi
     private static final Map<String, Object> progressi = new HashMap<>();
 
     // costruttore
     public DataUserManager(String percorsoFile) {
-        this.percorsoFile = percorsoFile;
+        DataUserManager.percorsoFile = percorsoFile;
         loadProgresses();
     }
 
@@ -58,13 +58,13 @@ public class DataUserManager {
     }
 
     // metodo per aggiornare un singolo progresso nell'HashMap e aggiornare il json
-    public void setProgress(String nome, Object valore) {
+    public static void setProgress(String nome, Object valore) {
         progressi.put(nome, valore); // aggiornamento HashMap
         saveProgresses(); // aggiornamento del json
     }
 
     // metodo per scrivere i progressi sul json
-    private void saveProgresses() {
+    private static void saveProgresses() {
         try (FileWriter file = new FileWriter(percorsoFile)) {
             file.write(new JSONObject(progressi).toString(4)); // indenta per leggibilità
         } catch (IOException e) {
