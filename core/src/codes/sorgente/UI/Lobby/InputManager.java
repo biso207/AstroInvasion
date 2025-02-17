@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class InputManager implements InputHandler, InputProcessor {
     // attributi
-    private Map<Integer, Hitbox> hitboxes = new HashMap<>();
+    private final Map<Integer, Hitbox> hitBoxes = new HashMap<>();
 
     // variabili per gestire certi input
     protected static boolean secondScreen, open22, open23;
@@ -32,7 +32,7 @@ public class InputManager implements InputHandler, InputProcessor {
     // costruttore
     public InputManager() {
         secondScreen = open22 = open23 = false;
-        // set immagine di default (classic LobbyManager.game)
+        // set immagine di default
         page = previousPage = 6;
 
         // definizione delle aree cliccabili
@@ -41,23 +41,24 @@ public class InputManager implements InputHandler, InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitboxes.put(6, new Hitbox(50, 180, 270, 220, 6, false));  // 'classic LobbyManager.game'
-        hitboxes.put(13, new Hitbox(50, 230, 270, 270, 13, false)); // 'space battle'
-        hitboxes.put(14, new Hitbox(50, 280, 270, 320, 14, false)); // 'space journey'
-        hitboxes.put(12, new Hitbox(50, 330, 270, 370, 12, false)); // 'road to glory'
-        hitboxes.put(15, new Hitbox(50, 380, 270, 420, 15, false)); // 'spacecrafts 1'
-        hitboxes.put(26, new Hitbox(50, 430, 270, 470, 26, true));  // 'missions 1'
-        hitboxes.put(11, new Hitbox(50, 480, 270, 520, 11, false)); // 'marketplace'
+        hitBoxes.put(6, new Hitbox(50, 180, 270, 220, 6, false));  // 'classic LobbyManager.game'
+        hitBoxes.put(13, new Hitbox(50, 230, 270, 270, 13, false)); // 'space battle'
+        hitBoxes.put(14, new Hitbox(50, 280, 270, 320, 14, false)); // 'space journey'
+        hitBoxes.put(12, new Hitbox(50, 330, 270, 370, 12, false)); // 'road to glory'
+        hitBoxes.put(15, new Hitbox(50, 380, 270, 420, 15, false)); // 'spacecrafts 1'
+        hitBoxes.put(26, new Hitbox(50, 430, 270, 470, 26, true));  // 'missions 1'
+        hitBoxes.put(11, new Hitbox(50, 480, 270, 520, 11, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitboxes.put(7, new Hitbox(50, 270, 530, 570, 7, true));   // 'instructions'
-        hitboxes.put(21, new Hitbox(50, 90, 580, 620, 21, true));  // 'settings'
-        hitboxes.put(25, new Hitbox(870, 950, 66, 146, 25, true));  // 'profile info'
+        hitBoxes.put(7, new Hitbox(50, 270, 530, 570, 7, true));   // 'instructions'
+        hitBoxes.put(21, new Hitbox(50, 90, 580, 620, 21, true));  // 'settings'
+        hitBoxes.put(25, new Hitbox(870, 950, 66, 146, 25, true));  // 'profile info'
     }
 
     // ************************************ //
     // METODI DELL'INTERFACCIA InputHandler //
     // ************************************ //
 
+    // metodo per controllare gli input da tastiera
     @Override
     public boolean keyTyped(char character) {
         // click tasto esc
@@ -72,9 +73,9 @@ public class InputManager implements InputHandler, InputProcessor {
         }
         return false;
     }
-
+    // metodo per controllare i click del mouse
     @Override
-    public boolean touchDown(int screenX, int screenY) {
+    public boolean mouseClick(int screenX, int screenY) {
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
         di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
@@ -85,13 +86,14 @@ public class InputManager implements InputHandler, InputProcessor {
         // CAMBIO PAGINE DALLA LOBBY //
         // ......................... //
         if (!listSecondPages.contains(page) && !open22 && !open23) {
-            for (Map.Entry<Integer, Hitbox> entry : hitboxes.entrySet()) {
+            for (Map.Entry<Integer, Hitbox> entry : hitBoxes.entrySet()) {
                 Hitbox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.remembersPrevious) previousPage = page;
                     page = hb.targetPage;
                     return true;
                 }
+                System.out.println("ciao");
             }
 
             // pagina 24 => 'difficulty infos classic LobbyManager.game'

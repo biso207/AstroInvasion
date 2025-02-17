@@ -1,13 +1,16 @@
 /*
-Astro Invasion - class Lobby -
-This class manages and controls the game mode Classic Game
+Astro Invasion - class ClassicGame -
+Controlla e gestisce la modalità di gioco Classic Game
 Developed by BIGA©. All rights reserved.
 */
 
+// package di appartenenza
 package sorgente.GameMods;
 
-// import librerie
+// import librerie e codici
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -20,15 +23,21 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.biga.astroinvasion.QuadTree;
+import com.badlogic.gdx.utils.ScreenUtils;
+import sorgente.DataUserManager;
+import sorgente.InputHandler;
 import sorgente.Main;
+import sorgente.UI.Lobby.InputManager;
+import sorgente.UI.Lobby.LobbyManager;
+import sorgente.UI.LogInSignUp.LoginSignupManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
-public class ClassicGame implements Screen {
+public class ClassicGame implements Screen, InputHandler, InputProcessor {
     private final Main game;
     private final SpriteBatch screen;
     private final Texture spaceshipTexture, backgroundTexture;
@@ -111,7 +120,7 @@ public class ClassicGame implements Screen {
         spaceship = new Rectangle(400, 20, 70, 64);
 
         // init parametri in base alla difficoltà di gioco
-        int difficulty = Lobby.getDiffCG();
+        int difficulty = (int) DataUserManager.getProgress("diff_classic_game");
         setupGameParameters(difficulty);
 
         // posizione y dello sfondo dinamico
@@ -158,54 +167,8 @@ public class ClassicGame implements Screen {
         if (selectedSp.getName().equals("Astrid")) goldHeart = true;
         if (selectedSp.getName().equals("Alpha")) doublePoints = true;
 
-        /// Se si voglio provare le carte basta settare tutte le variabili a 'true' qui sotto
+        /// Per provare le carte basta settare tutte le variabili a 'true' qui sotto
     }
-
-    // -------------------- //
-    // GRAFICA DELLA CLASSE //
-    // -------------------- //
-
-    // caricamento immagini
-    private void loadImages() {
-        // cuori delle vite
-        life1 = new Texture("images/lives/heart 100%.png");
-        life2 = new Texture("images/lives/heart 75%.png");
-        life3 = new Texture("images/lives/heart 50%.png");
-        life4 = new Texture("images/lives/heart 25%.png");
-        goldHeartImg = new Texture("images/lives/gold heart.png");
-
-        // barra in alto alla schermata di gioco
-        topBar = new Texture("images/top_bar_classic_game.png");
-
-        // pause/resume
-        playImg = new Texture("images/play.png");
-        stopImg = new Texture("images/stop.png");
-
-        // quit match
-        quitMatch = new Texture(Gdx.files.internal("secondary_screens/lobby_quit_match_eng.png"));
-
-        // scudo
-        shieldImg = new Texture("images/spacecrafts/_shield.png");
-        brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
-        // super laser
-        superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
-    }
-
-    // caricamento e creazione font per le scritte
-    private void loadFont() {
-        // dichiarazione font
-        try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter bold white 35
-            fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter bold gold 35
-        } catch (Exception e) {
-            font = new BitmapFont(); // font di default (arial)
-            font.setColor(Color.valueOf("FFFFFF")); // colore white
-        }
-    }
-
-    // ------------------- //
-    // LOGICA DELLA CLASSE //
-    // ------------------- //
 
     // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
     private void setupGameParameters(int difficulty) {
@@ -246,9 +209,53 @@ public class ClassicGame implements Screen {
         laserSpeed += selectedSp.getLaserSpeed()*100;
     }
 
-    // -------------- //
-    // GESTIONE INPUT //
-    // -------------- //
+    // ******************* //
+    // CARICAMENTO RISORSE //
+    // ******************* //
+
+    // caricamento immagini
+    private void loadImages() {
+        // cuori delle vite
+        life1 = new Texture("images/lives/heart 100%.png");
+        life2 = new Texture("images/lives/heart 75%.png");
+        life3 = new Texture("images/lives/heart 50%.png");
+        life4 = new Texture("images/lives/heart 25%.png");
+        goldHeartImg = new Texture("images/lives/gold heart.png");
+
+        // barra in alto alla schermata di gioco
+        topBar = new Texture("images/top_bar_classic_game.png");
+
+        // pause/resume
+        playImg = new Texture("images/play.png");
+        stopImg = new Texture("images/stop.png");
+
+        // quit match
+        quitMatch = new Texture(Gdx.files.internal("secondary_screens/lobby_quit_match_eng.png"));
+
+        // scudo
+        shieldImg = new Texture("images/spacecrafts/_shield.png");
+        brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
+        // super laser
+        superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
+    }
+
+    // caricamento e creazione font per le scritte
+    private void loadFont() {
+        // dichiarazione font
+        try {
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter bold white 35
+            fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter bold gold 35
+        } catch (Exception e) {
+            font = new BitmapFont(); // font di default (arial)
+            font.setColor(Color.valueOf("FFFFFF")); // colore white
+        }
+    }
+
+    /// TODO: implementare i metodi dell'interfaccia InputHandler partendo dal metodo handleInput
+
+    // ************************************ //
+    // METODI DELL'INTERFACCIA InputHandler //
+    // ************************************ //
 
     // metodo per controllare l'input
     private void handleInput(float delta) {
@@ -306,6 +313,34 @@ public class ClassicGame implements Screen {
             laserCooldownTimer = 0;
         }
     }
+
+    // metodo per controllare gli input da tastiera
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+    // metodo per controllare i click del mouse
+    @Override
+    public boolean mouseClick(int screenX, int screenY) {
+        return false;
+    }
+
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
+    @Override public boolean keyDown(int keycode) { return false; }
+    @Override public boolean keyUp(int keycode) { return false; }
+    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
+    @Override public boolean scrolled(float amountX, float amountY) { return false; }
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
+    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
+    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
+
+    /// TODO: controllare e, se necessario, migliorare i metodi sotto la Gestione Grafica
+    // **************** //
+    // GESTIONE GRAFICA //
+    // **************** //
 
     // metodo per generare il laser
     private void spawnLaser() {
@@ -603,7 +638,7 @@ public class ClassicGame implements Screen {
         // crediti
         font.draw(screen, formatter.format(credits), 610, 670);
         // punti
-        if (Lobby.doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
+        if (doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
         else font.draw(screen, formatter.format(points), 220, 670);
         // alieni colpiti
         font.draw(screen, formatter.format(aliensHit), 800, 670);
@@ -611,12 +646,12 @@ public class ClassicGame implements Screen {
         screen.end();
     }
 
+    // ****************************** //
+    // METODI DELL'INTERFACCIA Screen //
+    // ****************************** //
 
-    @Override
-    public void show() {}
-
-    @Override
-    public void render(float delta) {
+    // aggiornamento grafica
+    @Override public void render(float delta) {
         if (!isPaused) {
             delta = Math.min(delta, 1 / 30f);
         }
@@ -630,25 +665,12 @@ public class ClassicGame implements Screen {
 
         renderGame();
     }
-
-    @Override
-    public void resize(int width, int height) {}
-
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void hide() {
-        // spegnimento controllo input
+    // spegnimento controllo input
+    @Override public void hide() {
         Gdx.input.setInputProcessor(null);
     }
-
-    @Override
     // rilascio risorse
-    public void dispose() {
+    @Override public void dispose() {
         screen.dispose();
         spaceshipTexture.dispose();
         backgroundTexture.dispose();
@@ -657,4 +679,9 @@ public class ClassicGame implements Screen {
         }
         font.dispose();
     }
+
+    @Override public void resize(int width, int height) {}
+    @Override public void show() {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 }

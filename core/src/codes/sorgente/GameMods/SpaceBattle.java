@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool;
+import sorgente.DataUserManager;
 import sorgente.Main;
 
 import java.text.NumberFormat;
@@ -101,6 +102,9 @@ public class SpaceBattle implements Screen {
     // navicella utente
     private Spacecraft selectedSp;
 
+    // boolean per le carte speciali
+    private boolean goldHeart=false, superLaser=false;
+
     // costruttore
     public SpaceBattle(Main game, Spacecraft selectedSp) {
         this.game = game;
@@ -113,15 +117,12 @@ public class SpaceBattle implements Screen {
         spaceshipTexture = new Texture(selectedSp.getPathImg());
         // sfondo in gioco
         backgroundTexture = new Texture("images/bgInGame.png");
-
-        //Navicella nemico
+        // navicella nemico
         enemyTexture = new Texture("images/spacecrafts/_alpha.png");
-
         // rettangolo che rappresenta la navicella
         spaceship = new Rectangle(400, 20, 70, 64);
-
-        // init parametri in base alla difficoltà di gioco
-        int difficulty = Lobby.getDiffCG();
+        // difficoltà di gioco
+        int difficulty = (int) DataUserManager.getProgress("diff_space_battle");
         setupGameParameters(difficulty);
 
         // posizione y dello sfondo dinamico
@@ -158,6 +159,9 @@ public class SpaceBattle implements Screen {
         hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3"));
         // raccolta monete
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
+
+        if (selectedSp.getName().equals("Rorik")) superLaser = true;
+        if (selectedSp.getName().equals("Astrid")) goldHeart = true;
     }
 
     // -------------------- //
@@ -410,7 +414,7 @@ public class SpaceBattle implements Screen {
                     hitSound.play(); // suono alieno colpito
 
                     // rimozione laser
-                    if (!Lobby.superLaser) {
+                    if (!superLaser) {
                         laserIterator.remove();
                         laserPool.free(laser);
                     }
@@ -508,16 +512,12 @@ public class SpaceBattle implements Screen {
         screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
-        // aggiunta scudo
-        if (Lobby.shield) screen.draw(shieldImg, spaceship.x-25, spaceship.y);
-        if (Lobby.shield) screen.draw(brokenShieldImg, spaceship.x-25, spaceship.y);
-
         // Stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
 
         // Stampa laser
         for (Rectangle laser : lasers) {
-            if (!Lobby.superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
+            if (!superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
             else screen.draw(superLaserImg, laser.x, laser.y);
         }
 
@@ -556,7 +556,7 @@ public class SpaceBattle implements Screen {
                 break;
         }
 
-        if (Lobby.goldHeart && lives == 0) {
+        if (goldHeart && lives == 0) {
             screen.draw(goldHeartImg, 93, 640);
         }
 
@@ -571,19 +571,17 @@ public class SpaceBattle implements Screen {
         // crediti
         font.draw(screen, formatter.format(credits), 610, 670);
         // punti
-        if (Lobby.doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
-        else font.draw(screen, formatter.format(points), 220, 670);
-        // alieni colpiti
+        font.draw(screen, formatter.format(points), 220, 670);
 
         screen.end();
     }
 
+    // ****************************** //
+    // METODI DELL'INTERFACCIA Screen //
+    // ****************************** //
 
-    @Override
-    public void show() {}
-
-    @Override
-    public void render(float delta) {
+    // aggiornamento grafica
+    @Override public void render(float delta) {
         if (!isPaused) {
             delta = Math.min(delta, 1 / 30f);
         }
@@ -597,28 +595,20 @@ public class SpaceBattle implements Screen {
 
         renderGame();
     }
-
-    @Override
-    public void resize(int width, int height) {}
-
-    @Override
-    public void pause() {}
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void hide() {
-        // spegnimento controllo input
+    // spegnimento controllo input
+    @Override public void hide() {
         Gdx.input.setInputProcessor(null);
     }
-
-    @Override
     // rilascio risorse
-    public void dispose() {
+    @Override public void dispose() {
         screen.dispose();
         spaceshipTexture.dispose();
         backgroundTexture.dispose();
         font.dispose();
     }
+
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void show() {}
 }

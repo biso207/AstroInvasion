@@ -9,5 +9,5 @@ package sorgente;
 
 public interface InputHandler {
     boolean keyTyped(char character);  // gestisce la digitazione da tastiera
-    boolean touchDown(int screenX, int screenY);  // gestisce il click del mouse
+    boolean mouseClick(int screenX, int screenY);  // gestisce il click del mouse
 }

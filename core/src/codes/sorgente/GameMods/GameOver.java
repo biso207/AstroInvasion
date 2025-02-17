@@ -21,7 +21,6 @@ import sorgente.InputHandler;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import sorgente.UI.Lobby.LobbyManager;
-import sorgente.UI.LogInSignUp.LoginSignupManager;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -45,7 +44,7 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
     private final Spacecraft selectedSp;
 
     // costruttore
-    GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit) {
+    public GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit) {
         // set gioco
         this.game = game;
 
@@ -64,6 +63,14 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
 
         // caricamento immagini di base
         loadImages();
+    }
+
+    // salvataggio progressi utente
+    public void writeFileCG() {
+        // salvataggio progressi
+        DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
+        DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
+        DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
     }
 
     // ************************************** //
@@ -110,32 +117,32 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
         screen.end();
     }
 
-    // ************** //
-    // GESTIONE INPUT //
-    // ************** //
+    // ************************************ //
+    // METODI DELL'INTERFACCIA InputHandler //
+    // ************************************ //
 
-    // metodo per controllare l'input
-    public void handleInput() {
-
-        // chiusura partita e ritorno alla lobby cliccando ESC
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+    // metodo per controllare gli input da tastiera
+    @Override
+    public boolean keyTyped(char character) {
+        // click ESC (ritorno alla lobby)
+        if ((int) character == Input.Keys.ESCAPE) {
             game.setScreen(new LobbyManager(game));
         }
 
-        // avvio nuova partita cliccando ENTER
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        // click ENTER (avvio nuova partita)
+        if ((int) character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
                     game.setScreen(new ClassicGame(game, selectedSp));
                     break;
                 case 1:
-                    System.out.println("space battle");
+                    game.setScreen(new SpaceBattle(game, selectedSp));
                     break;
             }
         }
 
-        // chiusura o avvio nuova partita con il click del mouse
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        // click sx del mouse
+        if ((int) character == (Input.Buttons.LEFT)) {
             // recupero x e y del click
             int screenX = Gdx.input.getX();
             int screenY = Gdx.input.getY();
@@ -154,75 +161,18 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
                         game.setScreen(new ClassicGame(game, selectedSp));
                         break;
                     case 1:
-                        System.out.println("space battle");
+                        game.setScreen(new SpaceBattle(game, selectedSp));
                         break;
                 }
             }
         }
-    }
-
-    // salvataggio progressi utente
-    public void writeFileCG() {
-        // recupero progressi
-        int a = (int) DataUserManager.getProgress("num_aliens_hit");
-        int p = (int) DataUserManager.getProgress("points");
-        int c = (int) DataUserManager.getProgress("credits");
-
-        // incremento progressi
-        a += aliensHit;
-        p += points;
-        c += credits;
-
-        // salvataggio progressi
-        DataUserManager.setProgress("num_aliens_hit", a);
-        DataUserManager.setProgress("points", p);
-        DataUserManager.setProgress("credits", c);
-    }
-
-    /// TODO: implementare i metodi dell'interfaccia InputHandler in base al metodo handleInput sopra.
-
-    // ************************************ //
-    // METODI DELL'INTERFACCIA InputHandler //
-    // ************************************ //
-
-    // metodo per controllare gli input da tastiera
-    @Override
-    public boolean keyTyped(char character) {
-        // scelta del campo da modificare
-        StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
-
-        // ENTER terminare la digitazione
-        if ((character == '\n' || character == '\r') && currentInput.length() >= 1) {
-            if (enteringNickname) enteringNickname = false;
-            else enteringPassword = false;
-        }
-        // BACKSPACE per cancellare un carattere
-        else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
-            // controllo digitazione caratteri validi
-        else if (character >= 32 && character < 127 && currentInput.length() <= 20) currentInput.append(character);
-
-        // aggiornamento nickname e password
-        nickname = nicknameInput.toString();
-        password = passwordInput.toString();
 
         return true;
     }
     // metodo per controllare i click del mouse
     @Override
-    public boolean touchDown(int screenX, int screenY) {
-        // cambio pagina - accesso => registrazione
-        if ((LoginSignupManager.state == 0 || LoginSignupManager.state == 1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
-            LoginSignupManager.state = 2;
-        }
-        // cambio pagina - registrazione => accesso
-        if ((LoginSignupManager.state == 2 || LoginSignupManager.state == 3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
-            LoginSignupManager.state = 0; // cambio stato per pagina di accesso
-        }
-        // click per accedere o registrarsi
-        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
-            processLoginOrSignup();
-        }
-        return true;
+    public boolean mouseClick(int screenX, int screenY) {
+        return false;
     }
 
     // ************************************** //

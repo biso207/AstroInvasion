@@ -18,7 +18,6 @@ import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.GameMods.Spacecraft;
-
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -143,14 +142,13 @@ public class UIManager implements ResourceLoader {
         };
 
         // popolamento della mappa navicelle
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 23; i++) {
             mapSpacecrafts.put(i, new Spacecraft(names[i], imagePaths[i], new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
         }
 
         // recupero navicella utente
-        Object s = DataUserManager.getProgress("spacecraft");
-        int spacecraft = (int)s; // casting sull'oggetto navicella
-        selectedSp = mapSpacecrafts.get(spacecraft); // navicella utente
+        Object spacecraft = DataUserManager.getProgress("spacecraft");
+        selectedSp = mapSpacecrafts.get((int) spacecraft); // navicella utente
 
         return selectedSp;
     }

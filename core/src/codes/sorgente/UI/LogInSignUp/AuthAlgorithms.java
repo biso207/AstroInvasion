@@ -220,14 +220,15 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
     }
     // metodo per controllare i click del mouse
     @Override
-    public boolean touchDown(int screenX, int screenY) {
+    public boolean mouseClick(int screenX, int screenY) {
+        if ((screenX >= 0 && screenX <= 1000) && (screenY >= 0 && screenY <= 700)) System.out.println("click");
         // cambio pagina - accesso => registrazione
         if ((LoginSignupManager.state == 0 || LoginSignupManager.state == 1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
             LoginSignupManager.state = 2;
         }
         // cambio pagina - registrazione => accesso
         if ((LoginSignupManager.state == 2 || LoginSignupManager.state == 3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
-            LoginSignupManager.state = 0; // cambio stato per pagina di accesso
+            LoginSignupManager.state = 0;
         }
         // click per accedere o registrarsi
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {

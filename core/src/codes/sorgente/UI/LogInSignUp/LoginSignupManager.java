@@ -108,7 +108,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 break;
             case 4:
                 // caricamento risorse utente
-                new DataUserManager("data/" + alg.nicknameInput + "/progresses/progresses.json");
+                new DataUserManager("data/" + alg.nickname + "/progresses/progresses.json");
                 // apertura lobby
                 game.setScreen(new LobbyManager(game));
                 break;

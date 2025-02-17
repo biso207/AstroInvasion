@@ -28,8 +28,6 @@ public class LobbyManager implements Screen {
 
     // istanze altre classi
     private final UIManager ui;
-    private final InputManager input;
-
 
     // costruttore
     public LobbyManager(Main game) {
@@ -39,8 +37,6 @@ public class LobbyManager implements Screen {
 
         // istanza di UIManager
         ui = new UIManager();
-        // istanza di InputManager
-        input = new InputManager();
 
         // caricamento risorse
         ui.loadLobbyImages(); // schermate lobby
@@ -60,9 +56,8 @@ public class LobbyManager implements Screen {
 
     // metodo per aggiornare lo schermo
     @Override public void render(float delta) {
-
         // attivazione controllo input
-        Gdx.input.setInputProcessor(input);
+        Gdx.input.setInputProcessor(new InputManager());
 
         screen.begin();
 

@@ -91,7 +91,7 @@ public class LoadingScreen implements Screen {
     // metodo per arrotondare gli angoli della barra di caricamento
     private void drawRoundedRectangle(ShapeRenderer shapeRenderer, float width) {
         float x = 305;
-        float y = 40;
+        float y = 48;
         float height = 20;
         float radius = 10;
 
