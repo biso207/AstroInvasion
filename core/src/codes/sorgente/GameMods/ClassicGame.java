@@ -542,7 +542,7 @@ public class ClassicGame implements Screen, InputProcessor {
         // stampa immagine per chiudere il gioco
         if (quit) screen.draw(quitMatch, 250, 175);
 
-        // Stampa statistiche
+        // stampa statistiche
         // crediti
         font.draw(screen, formatter.format(credits), 610, 670);
         // punti
