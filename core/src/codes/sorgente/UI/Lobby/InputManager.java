@@ -26,13 +26,12 @@ public class InputManager implements InputProcessor {
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(5, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
-    protected static int page, previousPage;
+    protected static int page = 6;
+    private int previousPage = 6;
 
     // costruttore
     public InputManager() {
         secondScreen = open22 = open23 = false;
-        // set immagine di default
-        page = previousPage = 6;
 
         // definizione delle aree cliccabili
         hitAreas();
@@ -40,7 +39,7 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(6, new Hitbox(50, 180, 270, 220, 6, false));  // 'classic LobbyManager.game'
+        hitBoxes.put(6, new Hitbox(50, 180, 270, 220, 6, false));  // 'classic game'
         hitBoxes.put(13, new Hitbox(50, 230, 270, 270, 13, false)); // 'space battle'
         hitBoxes.put(14, new Hitbox(50, 280, 270, 320, 14, false)); // 'space journey'
         hitBoxes.put(12, new Hitbox(50, 330, 270, 370, 12, false)); // 'road to glory'
@@ -58,16 +57,17 @@ public class InputManager implements InputProcessor {
     // ************************************** //
     // metodo per rilevare il click della tastiera
     @Override public boolean keyTyped(char character) {
-        // click tasto esc
-        if ((int) character == Input.Keys.ESCAPE && (page!=7 && page!=21 && !open22 && !open23 && page!=24 && page!=25)) {
+        // click tasto esc per il logout
+        if (character == Input.Keys.ESCAPE && (page!=7 && page!=21 && !open22 && !open23 && page!=24 && page!=25)) {
             open23 = true;
             secondScreen = true;
         }
 
         // click tasto esc per annullare il logout
-        else if ((int) character == Input.Keys.ESCAPE && (secondScreen&&open23)) {
+        if (character == Input.Keys.ESCAPE && (secondScreen&&open23)) {
             secondScreen = open23 = false;
         }
+
         return true;
     }
     // metodo per controllare i click del mouse
@@ -87,7 +87,7 @@ public class InputManager implements InputProcessor {
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.remembersPrevious) previousPage = page;
                     page = hb.targetPage;
-                    return true;
+                        return true;
                 }
             }
 
@@ -133,10 +133,9 @@ public class InputManager implements InputProcessor {
 
             // controllo per avviare le modalità di gioco
             if ((page == 6 || page == 13) && (screenX >= 778 && screenX <=928) && (screenY >= 552 && screenY <=592)) {
-                previousPage = page;
-                page=0;
                 LobbyManager.soundtrack.stop();
 
+                // avvio modalità di gioco
                 if (page==6) LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, LobbyManager.selectedSp)); // avvio classic LobbyManager.game
                 else LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, LobbyManager.selectedSp)); // avvio space battle
             }

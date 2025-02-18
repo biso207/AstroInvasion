@@ -245,85 +245,6 @@ public class ClassicGame implements Screen, InputProcessor {
         }
     }
 
-    /// TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
-    // ************************************** //
-    // METODI DELL'INTERFACCIA InputProcessor //
-    // ************************************** //
-    // metodo per controllare l'input
-    private void handleInput(float delta) {
-        laserCooldownTimer += delta;
-
-        // click esc per chiudere la partita
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (!isPaused) isPaused = true;
-            quit = !quit;
-        }
-
-        // chiusura partita
-        if (quit && (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))) {
-
-            // recupero x e y del click
-            int screenX = Gdx.input.getX();
-            int screenY = Gdx.input.getY();
-
-            // click NO => si continua a giocare
-            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
-                quit = !quit;
-                isPaused = !isPaused;
-            }
-
-            // click YES => interruzione gioco
-            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                gameOver();
-                return; // uscita
-            }
-
-        }
-
-        // gioco in pausa
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            isPaused = !isPaused;
-        }
-
-        // gioco in pausa => nessun altro input può essere preso
-        if (isPaused) return;
-
-        // movimento vs sx
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && spaceship.x > 10) {
-            spaceship.x -= spacecraftSpeed * delta;
-        }
-
-        // movimento vs dx
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && spaceship.x < 890) {
-            spaceship.x += spacecraftSpeed * delta;
-        }
-
-        // sparo del laser
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && laserCooldownTimer >= laserCooldown) {
-            spawnLaser();
-            shotSound.play();
-            laserCooldownTimer = 0;
-        }
-    }
-
-    // metodo per controllare i click del mouse
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return true;
-    }
-    // metodo per controllare gli input da tastiera
-    @Override public boolean keyTyped(char character) {
-        return true;
-    }
-
-    // altri metodi
-    @Override public boolean keyDown(int keycode) { return false; }
-    @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-
     /// TODO: controllare e, se necessario, migliorare i metodi sotto la Gestione Grafica
     // **************** //
     // GESTIONE GRAFICA //
@@ -632,6 +553,85 @@ public class ClassicGame implements Screen, InputProcessor {
 
         screen.end();
     }
+
+    /// TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
+    // metodo per controllare l'input
+    private void handleInput(float delta) {
+        laserCooldownTimer += delta;
+
+        // click esc per chiudere la partita
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (!isPaused) isPaused = true;
+            quit = !quit;
+        }
+
+        // chiusura partita
+        if (quit && (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))) {
+
+            // recupero x e y del click
+            int screenX = Gdx.input.getX();
+            int screenY = Gdx.input.getY();
+
+            // click NO => si continua a giocare
+            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                quit = !quit;
+                isPaused = !isPaused;
+            }
+
+            // click YES => interruzione gioco
+            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                gameOver();
+                return; // uscita
+            }
+
+        }
+
+        // gioco in pausa
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            isPaused = !isPaused;
+        }
+
+        // gioco in pausa => nessun altro input può essere preso
+        if (isPaused) return;
+
+        // movimento vs sx
+        if (Gdx.input.isKeyPressed(Input.Keys.A) && spaceship.x > 10) {
+            spaceship.x -= spacecraftSpeed * delta;
+        }
+
+        // movimento vs dx
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && spaceship.x < 890) {
+            spaceship.x += spacecraftSpeed * delta;
+        }
+
+        // sparo del laser
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && laserCooldownTimer >= laserCooldown) {
+            spawnLaser();
+            shotSound.play();
+            laserCooldownTimer = 0;
+        }
+    }
+
+    // metodo per controllare i click del mouse
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return true;
+    }
+    // metodo per controllare gli input da tastiera
+    @Override public boolean keyTyped(char character) {
+        return true;
+    }
+
+    // altri metodi
+    @Override public boolean keyDown(int keycode) { return false; }
+    @Override public boolean keyUp(int keycode) { return false; }
+    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
+    @Override public boolean scrolled(float amountX, float amountY) { return false; }
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
+    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
+    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
     // ****************************** //
     // METODI DELL'INTERFACCIA Screen //

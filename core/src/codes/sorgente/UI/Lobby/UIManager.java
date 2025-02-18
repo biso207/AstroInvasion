@@ -25,7 +25,9 @@ import java.util.Set;
 
 public class UIManager implements ResourceLoader {
     // istanza della classe missioni RTG
-    RTG m;
+    private RTG m;
+    // istanze altre classi
+    private final InputManager input;
 
     // dichiarazione icone difficoltà e spunta completamento
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
@@ -55,6 +57,8 @@ public class UIManager implements ResourceLoader {
         this.mapLobby = new HashMap<>();
         this.mapAvatar = new HashMap<>();
         this.mapSpacecrafts = new HashMap<>();
+
+        input = new InputManager();
     }
 
     // ******************* //
@@ -99,6 +103,7 @@ public class UIManager implements ResourceLoader {
         Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
 
+        /// TODO: rinominare tutti i file con un elenco coerente e controllare InputManager e lo switch di page sotto.
         // popolamento mappa lobby
         for (int i = 0; i < 33; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
 
@@ -207,6 +212,7 @@ public class UIManager implements ResourceLoader {
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         // background principale
+        System.out.println(InputManager.page);
         screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa avatar
