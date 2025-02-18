@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
-import sorgente.InputHandler;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import sorgente.UI.Lobby.LobbyManager;
@@ -25,7 +24,7 @@ import sorgente.UI.Lobby.LobbyManager;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class GameOver implements Screen, InputHandler, InputProcessor, ResourceLoader {
+public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // gioco principale
     private final Main game;
     // schermo
@@ -117,20 +116,18 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
         screen.end();
     }
 
-    // ************************************ //
-    // METODI DELL'INTERFACCIA InputHandler //
-    // ************************************ //
-
-    // metodo per controllare gli input da tastiera
-    @Override
-    public boolean keyTyped(char character) {
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
+    // metodo per rilevare il click da tastiera
+    @Override public boolean keyTyped(char character) {
         // click ESC (ritorno alla lobby)
-        if ((int) character == Input.Keys.ESCAPE) {
+        if (character == Input.Keys.ESCAPE) {
             game.setScreen(new LobbyManager(game));
         }
 
         // click ENTER (avvio nuova partita)
-        if ((int) character == (Input.Keys.ENTER)) {
+        if (character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
                     game.setScreen(new ClassicGame(game, selectedSp));
@@ -142,7 +139,7 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
         }
 
         // click sx del mouse
-        if ((int) character == (Input.Buttons.LEFT)) {
+        if (character == (Input.Buttons.LEFT)) {
             // recupero x e y del click
             int screenX = Gdx.input.getX();
             int screenY = Gdx.input.getY();
@@ -170,21 +167,15 @@ public class GameOver implements Screen, InputHandler, InputProcessor, ResourceL
         return true;
     }
     // metodo per controllare i click del mouse
-    @Override
-    public boolean mouseClick(int screenX, int screenY) {
-        return false;
-    }
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
 
-    // ************************************** //
-    // METODI DELL'INTERFACCIA InputProcessor //
-    // ************************************** //
+    // altri metodi
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
     // ****************************** //

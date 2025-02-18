@@ -33,14 +33,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     // immagini
     private Texture img1, img2, img3, img4;
 
-    /* pagina di riferimento
-        0 = LogIn
-        1 = errore LogIn
-        2 = SignUp
-        3 = errore SignUp
-    */
-    protected static int state = 0;
-
     // costruttore
     public LoginSignupManager(Main game) {
         this.game = game;
@@ -93,7 +85,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
         screen.begin();
 
-        switch (state) {
+        switch (alg.state) {
             case 0:
                 screen.draw(img1, 0, 0);
                 break;
@@ -138,9 +130,4 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         img3.dispose();
         img4.dispose();
     }
-
-    @Override public void show() {}
-    @Override public void resize(int width, int height) {}
-    @Override public void pause() {}
-    @Override public void resume() {}
 }

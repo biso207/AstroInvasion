@@ -12,13 +12,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
-import sorgente.InputHandler;
 import sorgente.UI.LogInSignUp.LoginSignupManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class InputManager implements InputHandler, InputProcessor {
+public class InputManager implements InputProcessor {
     // attributi
     private final Map<Integer, Hitbox> hitBoxes = new HashMap<>();
 
@@ -54,13 +53,11 @@ public class InputManager implements InputHandler, InputProcessor {
         hitBoxes.put(25, new Hitbox(870, 950, 66, 146, 25, true));  // 'profile info'
     }
 
-    // ************************************ //
-    // METODI DELL'INTERFACCIA InputHandler //
-    // ************************************ //
-
-    // metodo per controllare gli input da tastiera
-    @Override
-    public boolean keyTyped(char character) {
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
+    // metodo per rilevare il click della tastiera
+    @Override public boolean keyTyped(char character) {
         // click tasto esc
         if ((int) character == Input.Keys.ESCAPE && (page!=7 && page!=21 && !open22 && !open23 && page!=24 && page!=25)) {
             open23 = true;
@@ -71,11 +68,10 @@ public class InputManager implements InputHandler, InputProcessor {
         else if ((int) character == Input.Keys.ESCAPE && (secondScreen&&open23)) {
             secondScreen = open23 = false;
         }
-        return false;
+        return true;
     }
     // metodo per controllare i click del mouse
-    @Override
-    public boolean mouseClick(int screenX, int screenY) {
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
         di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
@@ -93,7 +89,6 @@ public class InputManager implements InputHandler, InputProcessor {
                     page = hb.targetPage;
                     return true;
                 }
-                System.out.println("ciao");
             }
 
             // pagina 24 => 'difficulty infos classic LobbyManager.game'
@@ -213,16 +208,13 @@ public class InputManager implements InputHandler, InputProcessor {
         return true;
     }
 
-    // ************************************** //
-    // METODI DELL'INTERFACCIA InputProcessor //
-    // ************************************** //
-    @Override public boolean keyDown(int keycode) { return false; }
+    // altri metodi
+    @Override public boolean keyDown(int var1) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
     /*

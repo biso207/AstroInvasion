@@ -8,6 +8,5 @@ Developed by BIGA©. All rights reserved.
 package sorgente;
 
 public interface InputHandler {
-    boolean keyTyped(char character);  // gestisce la digitazione da tastiera
-    boolean mouseClick(int screenX, int screenY);  // gestisce il click del mouse
+    boolean keyboard(char character);  // gestisce la digitazione da tastiera
 }

@@ -11,15 +11,22 @@ package sorgente.UI.LogInSignUp;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
-import sorgente.InputHandler;
 
-public class AuthAlgorithms implements InputHandler, InputProcessor {
+public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
     protected boolean enteringNickname, enteringPassword;
     // variabili per recuperare nick e psw utente
     public String nickname, password;
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
+
+    /* pagina di riferimento
+        0 = LogIn
+        1 = errore LogIn
+        2 = SignUp
+        3 = errore SignUp
+    */
+    protected int state = 0;
 
     // costruttore
     public AuthAlgorithms() {
@@ -41,16 +48,16 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
         FileHandle checkUser = Gdx.files.local("data/is_user.txt");
         if (!checkUser.exists()) {
             checkUser.writeString("exists", false);
-            LoginSignupManager.state = 2; // apertura schermata di registrazione
+            state = 2; // apertura schermata di registrazione
         } else {
             String isUser = checkUser.readString();
-            LoginSignupManager.state = 0; // apertura schermata login
+            state = 0; // apertura schermata login
         }
     }
 
     // metodo per direzione all'algoritmo di registrazione o accesso
     public void processLoginOrSignup() {
-        if (LoginSignupManager.state == 0 || LoginSignupManager.state == 1) {
+        if (state == 0 || state == 1) {
             LogInAlg();
         } else {
             SignUpAlg();
@@ -87,10 +94,10 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
                 // creazione file utente
                 createFiles();
 
-                LoginSignupManager.state = 4;
+                state = 4;
             }
             else if ((generalFolder.exists() && dataFolder.exists()) && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
-                LoginSignupManager.state = 3;
+                state = 3;
             }
         }
         catch (Exception ignored) {
@@ -107,20 +114,21 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
             String fileNickname = readNick.readString();
 
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
-                LoginSignupManager.state = 1;
+                state = 1;
             }
             else {
-                LoginSignupManager.state = 4;
+                state = 4;
             }
         }
         catch(Exception e){
-            LoginSignupManager.state = 1;
+            state = 1;
         }
 
         nickname = String.valueOf(nicknameInput);
         password = String.valueOf(passwordInput);
     }
 
+    /// TODO: implementare il nuovo metodo per creare i file alla creazione utente. Deve creare un json.
     // metodo per creare i file per i progressi utente
     public void createFiles() {
         // avatar
@@ -192,13 +200,11 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
 
     }
 
-    // ************************************ //
-    // METODI DELL'INTERFACCIA InputHandler //
-    // ************************************ //
-
-    // metodo per controllare gli input da tastiera
-    @Override
-    public boolean keyTyped(char character) {
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
+    // metodo per rilevare il click da tastiera
+    @Override public boolean keyTyped(char character) {
         // scelta del campo da modificare
         StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
 
@@ -209,7 +215,7 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
         }
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
-        // controllo digitazione caratteri validi
+            // controllo digitazione caratteri validi
         else if (character >= 32 && character < 127 && currentInput.length() <= 20) currentInput.append(character);
 
         // aggiornamento nickname e password
@@ -219,16 +225,14 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
         return true;
     }
     // metodo per controllare i click del mouse
-    @Override
-    public boolean mouseClick(int screenX, int screenY) {
-        if ((screenX >= 0 && screenX <= 1000) && (screenY >= 0 && screenY <= 700)) System.out.println("click");
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
-        if ((LoginSignupManager.state == 0 || LoginSignupManager.state == 1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
-            LoginSignupManager.state = 2;
+        if ((state == 0 || state == 1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
+            state = 2;
         }
         // cambio pagina - registrazione => accesso
-        if ((LoginSignupManager.state == 2 || LoginSignupManager.state == 3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
-            LoginSignupManager.state = 0;
+        if ((state == 2 || state == 3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
+            state = 0;
         }
         // click per accedere o registrarsi
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
@@ -237,15 +241,12 @@ public class AuthAlgorithms implements InputHandler, InputProcessor {
         return true;
     }
 
-    // ************************************** //
-    // METODI DELL'INTERFACCIA InputProcessor //
-    // ************************************** //
+    // altri metodi
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 }

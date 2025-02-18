@@ -25,19 +25,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.DataUserManager;
-import sorgente.InputHandler;
 import sorgente.Main;
-import sorgente.UI.Lobby.InputManager;
-import sorgente.UI.Lobby.LobbyManager;
-import sorgente.UI.LogInSignUp.LoginSignupManager;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 
-public class ClassicGame implements Screen, InputHandler, InputProcessor {
+public class ClassicGame implements Screen, InputProcessor {
     private final Main game;
     private final SpriteBatch screen;
     private final Texture spaceshipTexture, backgroundTexture;
@@ -251,12 +245,10 @@ public class ClassicGame implements Screen, InputHandler, InputProcessor {
         }
     }
 
-    /// TODO: implementare i metodi dell'interfaccia InputHandler partendo dal metodo handleInput
-
-    // ************************************ //
-    // METODI DELL'INTERFACCIA InputHandler //
-    // ************************************ //
-
+    /// TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
     // metodo per controllare l'input
     private void handleInput(float delta) {
         laserCooldownTimer += delta;
@@ -314,27 +306,22 @@ public class ClassicGame implements Screen, InputHandler, InputProcessor {
         }
     }
 
-    // metodo per controllare gli input da tastiera
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
     // metodo per controllare i click del mouse
-    @Override
-    public boolean mouseClick(int screenX, int screenY) {
-        return false;
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return true;
+    }
+    // metodo per controllare gli input da tastiera
+    @Override public boolean keyTyped(char character) {
+        return true;
     }
 
-    // ************************************** //
-    // METODI DELL'INTERFACCIA InputProcessor //
-    // ************************************** //
+    // altri metodi
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
     /// TODO: controllare e, se necessario, migliorare i metodi sotto la Gestione Grafica
