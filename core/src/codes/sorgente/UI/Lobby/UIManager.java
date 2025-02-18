@@ -98,14 +98,14 @@ public class UIManager implements ResourceLoader {
 
     // metodo per caricare le immagini della Lobby
     public void loadLobbyImages(){
-        // "pulsante" raccolta premio
-        Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
-        mapLobby.put(35, img_special);
-
         // popolamento mappa lobby
         for (int i = 0; i < 30; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i < 20; i++) mapAvatar.put(i, new Texture("images/avatars/av (" + i + ").png"));
+
+        // "pulsante" raccolta premio
+        Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
+        mapLobby.put(35, img_special);
 
         // immagini in sovra impressione
         closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
