@@ -20,6 +20,9 @@ public class AuthAlgorithms implements InputProcessor {
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
 
+    // variabile per nascondere/mostrare la password
+    protected boolean showPS = true;
+
     /* pagina di riferimento
         0 = LogIn
         1 = errore LogIn
@@ -238,6 +241,8 @@ public class AuthAlgorithms implements InputProcessor {
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
             processLoginOrSignup();
         }
+        // click per nascondere la password
+        /// TODO: aggiungere il controllo per nascondere/mostrare la password, settare poi a true showPS
         return true;
     }
 

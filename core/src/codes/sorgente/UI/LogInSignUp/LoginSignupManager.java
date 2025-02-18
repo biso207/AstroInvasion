@@ -112,7 +112,10 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
             font.draw(screen, alg.nicknameInput, 265, 358);
         } else if (alg.enteringPassword) {
             font.draw(screen, alg.nicknameInput, 265, 358);
-            font.draw(screen, alg.passwordInput, 265, 260);
+
+            // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
+            if (alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 260);
+            else font.draw(screen, alg.passwordInput, 265, 260);
         } else {
             alg.processLoginOrSignup();
         }
