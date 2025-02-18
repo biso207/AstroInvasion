@@ -44,7 +44,7 @@ public class UIManager implements ResourceLoader {
     private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(5, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24);
+    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 29);
 
     // navicella utente
     Spacecraft selectedSp;
@@ -102,9 +102,8 @@ public class UIManager implements ResourceLoader {
         Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
 
-        /// TODO: rinominare tutti i file con un elenco coerente e controllare InputManager e lo switch di page sotto.
         // popolamento mappa lobby
-        for (int i = 0; i < 33; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 30; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i < 20; i++) mapAvatar.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
@@ -211,22 +210,19 @@ public class UIManager implements ResourceLoader {
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         // background principale
-        System.out.println(InputManager.page);
-        screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        //screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        screen.draw(mapLobby.get(29), 0, 0);
 
         // stampa avatar
         if (!listSecondPages.contains(InputManager.page)) {
+            // stampa avatar
             screen.draw(mapAvatar.get((int) DataUserManager.getProgress("avatar")), 870, 557);
         }
 
-        // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
-        if (InputManager.secondScreen) {
-            screen.draw(InputManager.open22 ? softInfos : closeGame, 250, 175);
-        }
-
+        // switch delle pagine per stampare i vari elementi
         switch (InputManager.page) {
             // pagina 'classic game'
-            case 6:
+            case 0:
                 // testi //
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 395, 410); // punti totali
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 420, 380); // partite giocate
@@ -263,7 +259,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'space battle'
-            case 13:
+            case 1:
                 // testi //
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 420, 410); // vittorie
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 435, 380); // vittorie consecutive
@@ -299,7 +295,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'space journey'
-            case 14:
+            case 2:
                 // testi //
                 fontBlue20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
                 fontBlue20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
@@ -319,7 +315,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'rtg'
-            case 12:
+            case 3:
                 // testi //
                 fontBlue20.draw(screen, createMissions(), 515, 370); // missione da completare
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
@@ -330,14 +326,14 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'marketplace'
-            case 11:
+            case 18:
                 // testi //
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 540, 490); // numero totale crediti
 
                 break;
 
             // pagina 'profile info'
-            case 25:
+            case 24:
                 // testi //
                 // scritte a sx
                 /// TODO: recuperare i valori di nick e psw utente qui sotto e togliere i commenti
@@ -347,7 +343,7 @@ public class UIManager implements ResourceLoader {
                 // scritte a dx
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 620, 412); // punti
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 610, 372); // livello
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("mission")), 630, 332); // numero missione
+                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 630, 332); // numero missione
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 630, 292); // crediti
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 690, 252); // partite classic game
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 690, 212); // partite space battle
@@ -358,42 +354,47 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'missions 1'
-            case 26:
+            case 10:
                 // testi e immagini //
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_CG"));
                 break;
 
             // pagina 'missions 2'
-            case 27:
+            case 11:
                 // testi e immagini //
                 printCompleteMission(screen, InputManager.page, 100000000);
                 break;
 
             // pagina 'missions 3'
-            case 28:
+            case 12:
                 // testi e immagini //
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_SB"));
                 break;
 
             // pagina 'missions 4'
-            case 29:
+            case 13:
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("won_SB"));
                 break;
 
             // pagina 'missions 5'
-            case 30:
+            case 14:
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("points"));
                 break;
 
             // pagina 'missions 6'
-            case 31:
+            case 15:
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("level"));
                 break;
 
             // pagina 'missions 7'
-            case 32:
+            case 16:
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("credits"));
                 break;
+        }
+
+        // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
+        if (InputManager.secondScreen) {
+            screen.draw(InputManager.open22 ? softInfos : closeGame, 250, 175);
         }
     }
 }

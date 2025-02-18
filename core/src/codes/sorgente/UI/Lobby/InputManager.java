@@ -24,9 +24,9 @@ public class InputManager implements InputProcessor {
     // variabili per gestire certi input
     protected static boolean secondScreen, open22, open23;
     // lista delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(5, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24);
+    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 29);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
-    protected static int page = 6;
+    protected static int page = 0;
     private int previousPage = 6;
 
     // costruttore
@@ -39,17 +39,17 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(6, new Hitbox(50, 180, 270, 220, 6, false));  // 'classic game'
-        hitBoxes.put(13, new Hitbox(50, 230, 270, 270, 13, false)); // 'space battle'
-        hitBoxes.put(14, new Hitbox(50, 280, 270, 320, 14, false)); // 'space journey'
-        hitBoxes.put(12, new Hitbox(50, 330, 270, 370, 12, false)); // 'road to glory'
-        hitBoxes.put(15, new Hitbox(50, 380, 270, 420, 15, false)); // 'spacecrafts 1'
-        hitBoxes.put(26, new Hitbox(50, 430, 270, 470, 26, true));  // 'missions 1'
-        hitBoxes.put(11, new Hitbox(50, 480, 270, 520, 11, false)); // 'marketplace'
+        hitBoxes.put(0, new Hitbox(50, 180, 270, 220, 0, false));  // 'classic game'
+        hitBoxes.put(1, new Hitbox(50, 230, 270, 270, 1, false)); // 'space battle'
+        hitBoxes.put(2, new Hitbox(50, 280, 270, 320, 2, false)); // 'space journey'
+        hitBoxes.put(3, new Hitbox(50, 330, 270, 370, 3, false)); // 'road to glory'
+        hitBoxes.put(4, new Hitbox(50, 380, 270, 420, 4, false)); // 'spacecrafts 1'
+        hitBoxes.put(10, new Hitbox(50, 430, 270, 470, 10, true));  // 'missions 1'
+        hitBoxes.put(18, new Hitbox(50, 480, 270, 520, 18, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(7, new Hitbox(50, 270, 530, 570, 7, true));   // 'instructions'
-        hitBoxes.put(21, new Hitbox(50, 90, 580, 620, 21, true));  // 'settings'
-        hitBoxes.put(25, new Hitbox(870, 950, 66, 146, 25, true));  // 'profile info'
+        hitBoxes.put(24, new Hitbox(870, 65, 950, 145, 24, true));  // 'instructions'
+        hitBoxes.put(28, new Hitbox(50, 270, 530, 570, 28, true));   // 'profile infos'
+        hitBoxes.put(29, new Hitbox(50, 90, 580, 620, 29, true));  // 'settings'
     }
 
     // ************************************** //
@@ -58,7 +58,7 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyTyped(char character) {
         // click tasto esc per il logout
-        if (character == Input.Keys.ESCAPE && (page!=7 && page!=21 && !open22 && !open23 && page!=24 && page!=25)) {
+        if (character == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23)) {
             open23 = true;
             secondScreen = true;
         }
@@ -82,61 +82,62 @@ public class InputManager implements InputProcessor {
         // CAMBIO PAGINE DALLA LOBBY //
         // ......................... //
         if (!listSecondPages.contains(page) && !open22 && !open23) {
+            System.out.println("sono qui");
             for (Map.Entry<Integer, Hitbox> entry : hitBoxes.entrySet()) {
                 Hitbox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.remembersPrevious) previousPage = page;
                     page = hb.targetPage;
-                        return true;
+                    break;
                 }
             }
 
-            // pagina 24 => 'difficulty infos classic LobbyManager.game'
-            if (page == 6 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
+            // pagina 26 => 'difficulty infos classic game'
+            if (page == 0 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
                 previousPage = page;
-                page = 24;
+                page = 26;
             }
 
-            // pagina 33 => 'difficulty infos space battle'
-            if (page == 13 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
+            // pagina 27 => 'difficulty infos space battle'
+            if (page == 1 && (screenX >= 623 && screenX <=703) && (screenY >= 552 && screenY <=592)) {
                 previousPage = page;
-                page = 33;
+                page = 27;
             }
 
-            // pagina 34 => 'cards infos'
-            if ((page == 13 || page == 6) && (screenX >= 883 && screenX <=913) && (screenY >= 230 && screenY <=260)) {
+            // pagina 25 => 'cards infos'
+            if ((page == 0 || page == 1) && (screenX >= 883 && screenX <=913) && (screenY >= 230 && screenY <=260)) {
                 previousPage = page;
-                page = 34;
+                page = 25;
             }
 
-            // pagina 22 => 'software infos'
+            // pagina 'software infos'
             if ((screenX >= 110 && screenX <=150) && (screenY >= 580 && screenY <=620)) {
                 open22 = true;
                 secondScreen = true;
             }
 
-            // pagina 23 => 'logout'
+            // pagina 'logout'
             if ((screenX >= 170 && screenX <=210) && (screenY >= 580 && screenY <=620)) {
                 open23 = true;
                 secondScreen = true;
             }
 
-            // cambio pagina (1-5) => 'avatar/spacecraft/ 1->5'
+            // cambio pagina (19-23) => 'avatar/spacecraft/ 1->5'
             if ((screenX >= 873 && screenX <=913) && (screenY >= 553 && screenY <=593)) {
-                if ((page >=1 && page < 5) || (page >= 15 && page < 20)) page++;
+                if ((page>=19 && page<23) || (page>=4 && page<9)) page++;
             }
 
-            // cambio pagina (5-1) => 'avatar/spacecraft/ 5->1'
+            // cambio pagina (23-19) => 'avatar/spacecraft/ 5->1'
             if ((screenX >= 343 && screenX <=373) && (screenY >= 553 && screenY <=593)) {
-                if ((page <= 5 && page>1) || (page <= 20 && page>15)) page--;
+                if ((page<=23 && page>19) || (page<=9 && page>4)) page--;
             }
 
             // controllo per avviare le modalità di gioco
-            if ((page == 6 || page == 13) && (screenX >= 778 && screenX <=928) && (screenY >= 552 && screenY <=592)) {
+            if ((page == 0 || page == 1) && (screenX >= 778 && screenX <=928) && (screenY >= 552 && screenY <=592)) {
                 LobbyManager.soundtrack.stop();
 
                 // avvio modalità di gioco
-                if (page==6) LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, LobbyManager.selectedSp)); // avvio classic LobbyManager.game
+                if (page==0) LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, LobbyManager.selectedSp)); // avvio classic LobbyManager.game
                 else LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, LobbyManager.selectedSp)); // avvio space battle
             }
         }
@@ -170,20 +171,20 @@ public class InputManager implements InputProcessor {
         // CAMBIO PAGINE SECONDARIE //
         // ........................ //
 
-        // cambio pagina (26-32) => 'missions 1-7'
+        // cambio pagina (10-17) => 'missions 1-7'
         if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <=642)) {
-            if ((page >=26 && page < 32)) page++;
+            if ((page >=10 && page<17)) page++;
         }
 
-        // cambio pagina (32-26) => 'missions 7-1'
+        // cambio pagina (17-10) => 'missions 7-1'
         if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <=642)) {
-            if ((page <= 32 && page > 26)) page--;
+            if ((page <=17 && page>10)) page--;
         }
 
         // APERTURA 'avatar page' DA 'profile infos' //
-        // pagina 1 => 'avatar 1'
-        if (page == 25 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
-            page = 1;
+        // pagina 19 => 'avatar 1'
+        if (page == 24 && (screenX >= 459 && screenX <=537) && (screenY >= 110 && screenY <=188)) {
+            page = 19;
         }
 
         // .................. //

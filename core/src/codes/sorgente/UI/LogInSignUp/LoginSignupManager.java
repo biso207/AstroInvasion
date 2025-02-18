@@ -29,9 +29,9 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final AuthAlgorithms alg;
 
     // font
-    private BitmapFont font;
+    private BitmapFont font, fontRed20;
     // immagini
-    private Texture img1, img2, img3, img4;
+    private Texture img1, img2, showPS, coverPS;
 
     // costruttore
     public LoginSignupManager(Main game) {
@@ -56,23 +56,23 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     @Override
     public void loadFont() {
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // font personalizzato (inter)
-            font.setColor(Color.valueOf("#151A3B")); // colore blu
+            font = new BitmapFont(Gdx.files.internal("font/inter/Inter-Regular.fnt")); // inter regular blue 20
+            fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
-            font.setColor(Color.valueOf("#151A3B")); // colore blu
         }
+        font.setColor(Color.valueOf("#151A3B")); // colore blu
     }
 
     // metodo per caricare le immagini delle pagine di Accesso e Registrazione
     @Override
     public void loadImages() {
         img1 = new Texture("login_signup_screens/page_1_log_in_eng.png");
-        img2 = new Texture("login_signup_screens/page_1_log_in_eng_error.png");
-        img3 = new Texture("login_signup_screens/page_2_sign_up_eng.png");
-        img4 = new Texture("login_signup_screens/page_2_sign_up_eng_error.png");
+        img2 = new Texture("login_signup_screens/page_2_sign_up_eng.png");
+        showPS = new Texture("images/showPS.png");
+        coverPS = new Texture("images/coverPS.png");
 
-        alg.enteringNickname = true;
+        alg.enteringNickname = true; // digitazione nickname attivata
     }
 
     // ********************************* //
@@ -88,17 +88,13 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         switch (alg.state) {
             case 0:
                 screen.draw(img1, 0, 0);
+                if (alg.error) fontRed20.draw(screen, "Nickname or Password wrong",362,72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);
+                if (alg.error) fontRed20.draw(screen, "Nickname already in use",388,72);
                 break;
             case 2:
-                screen.draw(img3, 0, 0);
-                break;
-            case 3:
-                screen.draw(img4, 0, 0);
-                break;
-            case 4:
                 // caricamento risorse utente
                 new DataUserManager("data/" + alg.nickname + "/progresses/progresses.json");
                 // apertura lobby
@@ -108,13 +104,16 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 break;
         }
 
+        if (alg.showPS) screen.draw(showPS, 700,233);
+        else screen.draw(coverPS, 700,233);
+
         if (alg.enteringNickname) {
             font.draw(screen, alg.nicknameInput, 265, 358);
         } else if (alg.enteringPassword) {
             font.draw(screen, alg.nicknameInput, 265, 358);
 
             // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
-            if (alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 260);
+            if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 260);
             else font.draw(screen, alg.passwordInput, 265, 260);
         } else {
             alg.processLoginOrSignup();
@@ -128,9 +127,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     // rilascio delle risorse
     @Override public void dispose() {
         if (font != null) font.dispose();
+        if (fontRed20 != null) fontRed20.dispose();
         img1.dispose();
         img2.dispose();
-        img3.dispose();
-        img4.dispose();
     }
 }

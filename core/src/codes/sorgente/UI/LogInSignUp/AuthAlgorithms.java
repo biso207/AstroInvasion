@@ -21,13 +21,13 @@ public class AuthAlgorithms implements InputProcessor {
     protected final StringBuilder nicknameInput, passwordInput;
 
     // variabile per nascondere/mostrare la password
-    protected boolean showPS = true;
+    protected boolean showPS = false;
+    // variabile per controllare l'errore nel nick o psw
+    protected boolean error = false;
 
     /* pagina di riferimento
         0 = LogIn
-        1 = errore LogIn
-        2 = SignUp
-        3 = errore SignUp
+        1 = SignUp
     */
     protected int state = 0;
 
@@ -51,7 +51,7 @@ public class AuthAlgorithms implements InputProcessor {
         FileHandle checkUser = Gdx.files.local("data/is_user.txt");
         if (!checkUser.exists()) {
             checkUser.writeString("exists", false);
-            state = 2; // apertura schermata di registrazione
+            state = 1; // apertura schermata di registrazione
         } else {
             String isUser = checkUser.readString();
             state = 0; // apertura schermata login
@@ -60,7 +60,7 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per direzione all'algoritmo di registrazione o accesso
     public void processLoginOrSignup() {
-        if (state == 0 || state == 1) {
+        if (state == 0) {
             LogInAlg();
         } else {
             SignUpAlg();
@@ -97,10 +97,10 @@ public class AuthAlgorithms implements InputProcessor {
                 // creazione file utente
                 createFiles();
 
-                state = 4;
+                state = 2;
             }
             else if ((generalFolder.exists() && dataFolder.exists()) && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
-                state = 3;
+                error = true;
             }
         }
         catch (Exception ignored) {
@@ -117,14 +117,14 @@ public class AuthAlgorithms implements InputProcessor {
             String fileNickname = readNick.readString();
 
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
-                state = 1;
+                error = true;
             }
             else {
-                state = 4;
+                state = 2;
             }
         }
         catch(Exception e){
-            state = 1;
+            error = true;
         }
 
         nickname = String.valueOf(nicknameInput);
@@ -230,19 +230,21 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
-        if ((state == 0 || state == 1) && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
-            state = 2;
+        if (state == 0 && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
+            state = 1;
         }
         // cambio pagina - registrazione => accesso
-        if ((state == 2 || state == 3) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
+        if (state == 1 && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
             state = 0;
         }
         // click per accedere o registrarsi
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
             processLoginOrSignup();
         }
-        // click per nascondere la password
-        /// TODO: aggiungere il controllo per nascondere/mostrare la password, settare poi a true showPS
+        // click per nascondere/mostrare la password
+        if ((screenX >= 700 && screenX <= 730) && (screenY >= 435 && screenY <= 465)) {
+            showPS = !showPS;
+        }
         return true;
     }
 
