@@ -26,8 +26,6 @@ import java.util.Set;
 public class UIManager implements ResourceLoader {
     // istanza della classe missioni RTG
     private RTG m;
-    // istanze altre classi
-    private final InputManager input;
 
     // dichiarazione icone difficoltà e spunta completamento
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
@@ -35,8 +33,10 @@ public class UIManager implements ResourceLoader {
     // immagini in sovra impressione
     private Texture closeGame, softInfos;
 
-    // dichiarazione font
-    private BitmapFont font, fontBlue15, fontBlue20, fontWhite20, fontRed20;
+    private BitmapFont fontBlue15;
+    private BitmapFont fontBlue20;
+    private BitmapFont fontWhite20;
+    //private BitmapFont fontRed20;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -57,8 +57,6 @@ public class UIManager implements ResourceLoader {
         this.mapLobby = new HashMap<>();
         this.mapAvatar = new HashMap<>();
         this.mapSpacecrafts = new HashMap<>();
-
-        input = new InputManager();
     }
 
     // ******************* //
@@ -73,9 +71,10 @@ public class UIManager implements ResourceLoader {
             fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
-            fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
+            //fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
-            font = new BitmapFont(); // font di default (arial)
+            // dichiarazione font
+            BitmapFont font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("#151A3B")); // colore blu
         }
     }
@@ -106,7 +105,6 @@ public class UIManager implements ResourceLoader {
         /// TODO: rinominare tutti i file con un elenco coerente e controllare InputManager e lo switch di page sotto.
         // popolamento mappa lobby
         for (int i = 0; i < 33; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
-
         // popolamento mappa avatar
         for (int i = 0; i < 20; i++) mapAvatar.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
@@ -193,7 +191,8 @@ public class UIManager implements ResourceLoader {
     // metodo per stampare testi e immagini nelle pagine 'missions'
     public void printCompleteMission(SpriteBatch screen, int page, int c) {
         // spostamento lungo y di scritte e immagini ripetitive
-        int y=0, y2=0;
+        //int y=0;
+        int y2=0;
 
         // array per controllare il completamente delle missioni in pagine 'missions'
         boolean[] isCompleted = CheckMissions.getInstance().checkCompleted(page, c);
@@ -205,7 +204,7 @@ public class UIManager implements ResourceLoader {
             if (isCompleted[i]) screen.draw(tickImg, 885, 430-y2);
 
             y2+=103;
-            y+=0;
+            //y+=0;
         }
     }
 
