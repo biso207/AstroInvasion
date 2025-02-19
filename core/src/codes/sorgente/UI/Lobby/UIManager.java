@@ -244,6 +244,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // difficoltà
+                System.out.println((int)DataUserManager.getProgress("diff_classic_game"));
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
                         screen.draw(diffCG1, 646 ,108);

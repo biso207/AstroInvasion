@@ -10,6 +10,7 @@ package sorgente.UI.Lobby;
 // import librerie e codici
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import sorgente.DataUserManager;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.UI.LogInSignUp.LoginSignupManager;
@@ -35,6 +36,10 @@ public class InputManager implements InputProcessor {
     public static boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
     // nome navicella
     private final String nameSp = selectedSp.getName();
+
+    // difficoltà classic game e space battle
+    private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
+    private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
 
     // costruttore
     public InputManager() {
@@ -83,9 +88,10 @@ public class InputManager implements InputProcessor {
 
         return true;
     }
+
+    /// TODO: capire perché quando si chiude una pagina secondaria si passa sempre alla page 0 e non a quella precedente...
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("TOUCHDOWN START -> page: " + page + ", previousPage: " + previousPage);
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
         di altre pagine dove non è possibile e poter cambiare le schermate della Lobby.
@@ -100,7 +106,6 @@ public class InputManager implements InputProcessor {
                 Hitbox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.remembersPrevious) previousPage = page;
-                    System.out.println("AGGIORNAMENTO -> previousPage: " + previousPage);
                     page = hb.targetPage;
                     break;
                 }
@@ -153,9 +158,7 @@ public class InputManager implements InputProcessor {
 
         // chiusura pagina instruction/settings/profile info&difficulty/missions
         if ((listSecondPages.contains(page) && (screenX>=908 && screenX<=948) && (screenY>=84 && screenY<=124))) {
-            System.out.println("CHIUSURA -> page: " + page + ", previousPage PRIMA della chiusura: " + previousPage);
             page = previousPage;
-            System.out.println("CHIUSURA -> page: " + page + ", previousPage PRIMA della chiusura: " + previousPage);
         }
 
         // chiusura software infos
@@ -210,7 +213,34 @@ public class InputManager implements InputProcessor {
 
         // selezione avatar
 
-        // cambio difficoltà (classic game o space battle)
+        // cambio difficoltà classic game
+        System.out.println(screenX + " " + screenY);
+        if (page==0 && (screenX>=718 && screenX<=738) && (screenY>=562 && screenY<=584)) {
+            if (diffCG<3) {
+                diffCG++;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
+            }
+        }
+        if (page==0 && (screenX>=595 && screenX<=615) && (screenY>=562 && screenY<=584)) {
+            if (diffCG>1) {
+                diffCG--;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
+            }
+        }
+
+        // cambio difficoltà space battle
+        if (page==1 && (screenX>=718 && screenX<=738) && (screenY>=562 && screenY<=584)) {
+            if (diffSB<3) {
+                diffSB++;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
+            }
+        }
+        if (page==1 && (screenX>=595 && screenX<=615) && (screenY>=562 && screenY<=584)) {
+            if (diffSB>1) {
+                diffSB--;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
+            }
+        }
 
         // setting impostazioni
 
@@ -248,7 +278,7 @@ public class InputManager implements InputProcessor {
 
 
         // acquisti nel negozio
-        System.out.println("TOUCHDOWN FINISHED -> page: " + page + ", previousPage: " + previousPage + "\n");
+
         return true;
     }
 
