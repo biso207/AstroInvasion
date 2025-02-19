@@ -451,7 +451,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // aggiunta bonus punti
         int bonusPoints = selectedSp.getBonusPoint();
-        if (bonusPoints > 0) points = (points*bonusPoints)/100; // aggiunta percentuale di bonus
+        if (bonusPoints > 0) points = points+((points*bonusPoints)/100); // aggiunta percentuale di bonus
 
         soundtrack.stop();
         game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit));

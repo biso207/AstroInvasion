@@ -87,7 +87,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     public void loadFont() {
         // dichiarazione font
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/regular_white_40.fnt")); // inter white 40
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -100,14 +100,16 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // switch delle modalità di gioco
         switch (mod) {
             case 0:
+                // aggiornamento progressi di gioco
                 writeFileCG();
+
                 // schermata base
                 screen.draw(gameOver0, 0, 0);
 
                 // scritte progressi partita
-                font.draw(screen, formatter.format(points), 300, 300);
-                font.draw(screen, formatter.format(credits), 300, 400);
-                font.draw(screen, formatter.format(aliensHit), 300, 500);
+                font.draw(screen, formatter.format(points), 200, 456);
+                font.draw(screen, formatter.format(credits), 210, 397);
+                font.draw(screen, formatter.format(aliensHit), 240, 339);
                 break;
             case 1:
                 System.out.println("space battle");
@@ -121,12 +123,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // ************************************** //
     // metodo per rilevare il click da tastiera
     @Override public boolean keyDown(int character) {
-        // click ESC (ritorno alla lobby)
+        // click ESC => ritorno alla lobby
         if (character == Input.Keys.ESCAPE) {
             game.setScreen(new LobbyManager(game));
         }
 
-        // click ENTER (avvio nuova partita)
+        // click ENTER => avvio nuova partita
         if (character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
@@ -138,36 +140,28 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             }
         }
 
-        // click sx del mouse
-        if (character == (Input.Buttons.LEFT)) {
-            // recupero x e y del click
-            int screenX = Gdx.input.getX();
-            int screenY = Gdx.input.getY();
-
-            /// TODO: correggere i range che sono sbagliati.
-
-            // click NO => ritorno alla lobby
-            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
-                game.setScreen(new LobbyManager(game));
-            }
-
-            // click YES => avvio nuova partita
-            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                switch (mod) {
-                    case 0:
-                        game.setScreen(new ClassicGame(game, selectedSp));
-                        break;
-                    case 1:
-                        game.setScreen(new SpaceBattle(game, selectedSp));
-                        break;
-                }
-            }
-        }
-
         return true;
     }
     // metodo per controllare i click del mouse
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // click NO => ritorno alla Lobby
+        if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+            game.setScreen(new LobbyManager(game));
+        }
+
+        // click YES => avvio nuova partita
+        if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+            switch (mod) {
+                case 0:
+                    game.setScreen(new ClassicGame(game, selectedSp));
+                    break;
+                case 1:
+                    game.setScreen(new SpaceBattle(game, selectedSp));
+                    break;
+            }
+        }
+        return true;
+    }
 
     // altri metodi
     @Override public boolean keyTyped(char character) { return false; }
