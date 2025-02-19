@@ -120,7 +120,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
     // metodo per rilevare il click da tastiera
-    @Override public boolean keyTyped(char character) {
+    @Override public boolean keyDown(int character) {
         // click ESC (ritorno alla lobby)
         if (character == Input.Keys.ESCAPE) {
             game.setScreen(new LobbyManager(game));
@@ -170,7 +170,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
 
     // altri metodi
-    @Override public boolean keyDown(int keycode) { return false; }
+    @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }

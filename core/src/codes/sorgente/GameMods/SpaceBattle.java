@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.DataUserManager;
 import sorgente.Main;
+import sorgente.UI.Lobby.InputManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -160,8 +161,12 @@ public class SpaceBattle implements Screen {
         // raccolta monete
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
 
+        if (selectedSp.getName().equals("Alpha")) goldHeart = true;
         if (selectedSp.getName().equals("Rorik")) superLaser = true;
-        if (selectedSp.getName().equals("Astrid")) goldHeart = true;
+
+        // recupero stato attivazione carta speciale dall'InputManager della Lobby
+        if (InputManager.goldHeart) goldHeart = true;
+        if (InputManager.superLaser) superLaser = true;
     }
 
     // -------------------- //

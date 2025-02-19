@@ -10,7 +10,7 @@
     "diff_classic_game": 3,
     "shot_type": 1,
     "matches_CG": 5000,
-    "spacecraft": 20,
+    "spacecraft": 23,
     "completed_rtg": "false",
     "num_aliens_hit": 2739,
     "num_double_points": 100,

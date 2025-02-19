@@ -232,10 +232,12 @@ public class AuthAlgorithms implements InputProcessor {
         // cambio pagina - accesso => registrazione
         if (state == 0 && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
             state = 1;
+            error = false;
         }
         // cambio pagina - registrazione => accesso
         if (state == 1 && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
             state = 0;
+            error = false;
         }
         // click per accedere o registrarsi
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {

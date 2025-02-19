@@ -135,7 +135,7 @@ public class UIManager implements ResourceLoader {
             "images/lasers/laser_orion.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
             "images/lasers/laser_phoenix.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
             "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
-            "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
+            "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
         // potenze delle navicelle
         int[][] attributes = {
             {0, 1, 0}, {5, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 2, 0}, {10, 0, 0}, {0, 0, 2}, {0, 0, 3}, {0, 3, 0},
@@ -144,7 +144,7 @@ public class UIManager implements ResourceLoader {
         };
 
         // popolamento della mappa navicelle
-        for (int i = 0; i < 23; i++) {
+        for (int i = 0; i < 24; i++) {
             mapSpacecrafts.put(i, new Spacecraft(names[i], imagePaths[i], new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
         }
 
@@ -210,8 +210,8 @@ public class UIManager implements ResourceLoader {
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         // background principale
-        //screen.draw(mapLobby.get(InputManager.page), 0, 0);
-        screen.draw(mapLobby.get(29), 0, 0);
+        screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        //screen.draw(mapLobby.get(29), 0, 0);
 
         // stampa avatar
         if (!listSecondPages.contains(InputManager.page)) {
@@ -256,6 +256,12 @@ public class UIManager implements ResourceLoader {
                         break;
                 }
 
+                // spunta selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
+                if (InputManager.shield) screen.draw(tickImg, 874, 330);
+                if (InputManager.superLaser) screen.draw(tickImg, 712, 174);
+                if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
+
                 break;
 
             // pagina 'space battle'
@@ -291,6 +297,10 @@ public class UIManager implements ResourceLoader {
                         screen.draw(diffSB3, 646 ,108);
                         break;
                 }
+
+                // spunta selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
+                if (InputManager.superLaser) screen.draw(tickImg, 874, 330);
 
                 break;
 
@@ -394,7 +404,8 @@ public class UIManager implements ResourceLoader {
 
         // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
         if (InputManager.secondScreen) {
-            screen.draw(InputManager.open22 ? softInfos : closeGame, 250, 175);
+            if (InputManager.open23) screen.draw(closeGame, 250, 175);
+            else screen.draw(softInfos, 250, 175);
         }
     }
 }

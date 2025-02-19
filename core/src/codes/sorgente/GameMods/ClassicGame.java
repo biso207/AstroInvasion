@@ -26,6 +26,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.DataUserManager;
 import sorgente.Main;
+import sorgente.UI.Lobby.InputManager;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -156,10 +158,16 @@ public class ClassicGame implements Screen, InputProcessor {
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
 
         // attivazione carte utente
-        if (selectedSp.getName().equals("Drakar")) shield = true;
+        if (selectedSp.getName().equals("Drakar")) doublePoints = true;
         if (selectedSp.getName().equals("Rorik")) superLaser = true;
-        if (selectedSp.getName().equals("Astrid")) goldHeart = true;
-        if (selectedSp.getName().equals("Alpha")) doublePoints = true;
+        if (selectedSp.getName().equals("Astrid")) shield = true;
+        if (selectedSp.getName().equals("Alpha")) goldHeart = true;
+
+        // recupero stato attivazione carta speciale dall'InputManager della Lobby
+        if (InputManager.goldHeart) goldHeart = true;
+        if (InputManager.shield) shield = true;
+        if (InputManager.superLaser) superLaser = true;
+        if (InputManager.doublePoints) doublePoints = true;
 
         /// Per provare le carte basta settare tutte le variabili a 'true' qui sotto
     }
@@ -416,7 +424,8 @@ public class ClassicGame implements Screen, InputProcessor {
                 }
             }
 
-            // Rimuovi il laser se è uscito dallo schermo
+            /// TODO: capire perché certe volte crasha a "laserIterator.remove()" dando "index -1 out of bounds 16"..
+            // rimozione laser fuori dallo schermo
             if (laser.y > Gdx.graphics.getHeight()) {
                 laserIterator.remove();
                 laserPool.free(laser);
@@ -478,7 +487,7 @@ public class ClassicGame implements Screen, InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
 
-        // Stampa sfondo
+        // stampa sfondo
         screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
@@ -486,16 +495,16 @@ public class ClassicGame implements Screen, InputProcessor {
         if (shield && spaceshipHit < 5) screen.draw(shieldImg, spaceship.x-25, spaceship.y);
         if (shield && spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x-25, spaceship.y);
 
-        // Stampa navicella
+        // stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
 
-        // Stampa laser
+        // stampa laser
         for (Rectangle laser : lasers) {
             if (!superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
             else screen.draw(superLaserImg, laser.x, laser.y);
         }
 
-        // Stampa alieni
+        // stampa alieni
         for (Alien alien : aliens) {
             screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
@@ -531,6 +540,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 break;
         }
 
+        // stampa cuore d'oro se attivato
         if (goldHeart && lives == 0) {
             screen.draw(goldHeartImg, 93, 640);
         }
