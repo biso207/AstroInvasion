@@ -79,7 +79,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // caricamento schermate di base
     @Override
     public void loadImages() {
-        gameOver0 = new Texture(Gdx.files.internal("secondary_screens/lobby_game_over_cg_eng.png"));
+        gameOver0 = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
     }
 
     // caricamento e creazione font per le scritte

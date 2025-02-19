@@ -10,6 +10,8 @@ package sorgente.UI.Lobby;
 // import codici e librerie
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -52,11 +54,22 @@ public class UIManager implements ResourceLoader {
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
+    // mouse
+    protected static Pixmap mouse, mouseOver; // immagini
+    protected static Cursor cursor, cursorOver; // oggetto cursore
+
     // costruttore
     public UIManager() {
         this.mapLobby = new HashMap<>();
         this.mapAvatar = new HashMap<>();
         this.mapSpacecrafts = new HashMap<>();
+
+        // mouse
+        mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
+        mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
+
+        cursor = Gdx.graphics.newCursor(mouse, 0, 0);
+        cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
     }
 
     // ******************* //
@@ -244,7 +257,6 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // difficoltà
-                System.out.println((int)DataUserManager.getProgress("diff_classic_game"));
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
                         screen.draw(diffCG1, 646 ,108);

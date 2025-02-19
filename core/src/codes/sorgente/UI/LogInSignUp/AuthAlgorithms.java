@@ -11,6 +11,8 @@ package sorgente.UI.LogInSignUp;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
@@ -31,6 +33,10 @@ public class AuthAlgorithms implements InputProcessor {
     */
     protected int state = 0;
 
+    // mouse
+    private final Pixmap mouse, mouseOver; // immagini
+    private final Cursor cursor, cursorOver; // oggetto cursore
+
     // costruttore
     public AuthAlgorithms() {
         // digitazione attiva
@@ -40,6 +46,12 @@ public class AuthAlgorithms implements InputProcessor {
         // dichiarazione dei stringBuilder
         nicknameInput = new StringBuilder();
         passwordInput = new StringBuilder();
+
+        mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
+        mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
+
+        cursor = Gdx.graphics.newCursor(mouse, 0, 0);
+        cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
     }
 
     // ************************** //
@@ -229,31 +241,49 @@ public class AuthAlgorithms implements InputProcessor {
     }
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        System.out.println(screenX + " " + screenY);
         // cambio pagina - accesso => registrazione
-        if (state == 0 && (screenX >= 288 && screenX <= 479) && (screenY >= 525 && screenY <= 565)) {
+        if (state == 0 && (screenX >= 275 && screenX <= 480) && (screenY >= 525 && screenY <= 565)) {
             state = 1;
             error = false;
         }
         // cambio pagina - registrazione => accesso
-        if (state == 1 && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
+        if (state == 1 && (screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
             state = 0;
             error = false;
         }
         // click per accedere o registrarsi
-        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 520 && screenX <= 710) && (screenY >= 525 && screenY <= 565)) {
+        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
             processLoginOrSignup();
         }
         // click per nascondere/mostrare la password
-        if ((screenX >= 700 && screenX <= 730) && (screenY >= 435 && screenY <= 465)) {
+        if ((screenX >= 692 && screenX <= 722) && (screenY >= 435 && screenY <= 465)) {
             showPS = !showPS;
         }
+        return true;
+    }
+
+    // cambio icona mouse al passaggio sugli elementi
+    @Override public boolean mouseMoved(int screenX, int screenY) {
+        if ((screenX >= 0 && screenX <= 1000) && (screenY >= 0 && screenY <= 700)) {
+            Gdx.graphics.setCursor(cursor);
+        }
+        if ((screenX >= 275 && screenX <= 480) && (screenY >= 525 && screenY <= 565)) {
+            Gdx.graphics.setCursor(cursorOver);
+        }
+        if ((screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
+            Gdx.graphics.setCursor(cursorOver);
+        }
+        if ((screenX >= 692 && screenX <= 722) && (screenY >= 435 && screenY <= 465)) {
+            Gdx.graphics.setCursor(cursorOver);
+        }
+
         return true;
     }
 
     // altri metodi
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }

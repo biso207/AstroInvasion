@@ -8,12 +8,17 @@ Developed by BIGA©. All rights reserved.
 package sorgente.UI.Lobby;
 
 // import librerie e codici
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Cursor;
+import com.badlogic.gdx.graphics.Pixmap;
 import sorgente.DataUserManager;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.UI.LogInSignUp.LoginSignupManager;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +26,7 @@ import java.util.Set;
 import static sorgente.UI.Lobby.LobbyManager.selectedSp;
 
 public class InputManager implements InputProcessor {
-    // attributi
+    // mappa dei range
     private final Map<Integer, Hitbox> hitBoxes = new HashMap<>();
 
     // variabili per gestire certi input
@@ -41,6 +46,7 @@ public class InputManager implements InputProcessor {
     private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
     private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
 
+
     // costruttore
     public InputManager() {
         // definizione delle aree cliccabili
@@ -55,16 +61,16 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(0, new Hitbox(50, 180, 270, 220, 0, false));  // 'classic game'
-        hitBoxes.put(1, new Hitbox(50, 230, 270, 270, 1, false)); // 'space battle'
-        hitBoxes.put(2, new Hitbox(50, 280, 270, 320, 2, false)); // 'space journey'
-        hitBoxes.put(3, new Hitbox(50, 330, 270, 370, 3, false)); // 'road to glory'
-        hitBoxes.put(4, new Hitbox(50, 380, 270, 420, 4, false)); // 'spacecrafts 1'
-        hitBoxes.put(10, new Hitbox(50, 430, 270, 470, 10, true));  // 'missions 1'
-        hitBoxes.put(18, new Hitbox(50, 480, 270, 520, 18, false)); // 'marketplace'
+        hitBoxes.put(0, new Hitbox(50, 182, 270, 200, 0, false));  // 'classic game'
+        hitBoxes.put(1, new Hitbox(50, 232, 270, 250, 1, false)); // 'space battle'
+        hitBoxes.put(2, new Hitbox(50, 285, 270, 303, 2, false)); // 'space journey'
+        hitBoxes.put(3, new Hitbox(50, 336, 270, 354, 3, false)); // 'road to glory'
+        hitBoxes.put(4, new Hitbox(50, 389, 270, 407, 4, false)); // 'spacecrafts 1'
+        hitBoxes.put(10, new Hitbox(50, 444, 270, 462, 10, true));  // 'missions 1'
+        hitBoxes.put(18, new Hitbox(50, 496, 270, 514, 18, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(24, new Hitbox(870, 65, 950, 145, 24, true));  // 'profile infos'
-        hitBoxes.put(28, new Hitbox(50, 530, 270, 570, 28, true));   // 'instructions'
+        hitBoxes.put(28, new Hitbox(50, 550, 270, 568, 28, true));   // 'instructions'
         hitBoxes.put(29, new Hitbox(50, 600, 90, 630, 29, true));  // 'settings'
     }
 
@@ -102,6 +108,7 @@ public class InputManager implements InputProcessor {
         // CAMBIO PAGINE DALLA LOBBY //
         // ......................... //
         if (!listSecondPages.contains(page) && !open22 && !open23) {
+            // for-each per iterare i vari range e controllare i cambi pagina
             for (Map.Entry<Integer, Hitbox> entry : hitBoxes.entrySet()) {
                 Hitbox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
@@ -215,13 +222,13 @@ public class InputManager implements InputProcessor {
 
         // cambio difficoltà classic game
         System.out.println(screenX + " " + screenY);
-        if (page==0 && (screenX>=718 && screenX<=738) && (screenY>=562 && screenY<=584)) {
+        if (page==0 && (screenX>=710 && screenX<=730) && (screenY>=560 && screenY<=584)) {
             if (diffCG<3) {
                 diffCG++;
                 DataUserManager.setProgress("diff_classic_game", diffCG);
             }
         }
-        if (page==0 && (screenX>=595 && screenX<=615) && (screenY>=562 && screenY<=584)) {
+        if (page==0 && (screenX>=587 && screenX<=607) && (screenY>=560 && screenY<=584)) {
             if (diffCG>1) {
                 diffCG--;
                 DataUserManager.setProgress("diff_classic_game", diffCG);
@@ -229,13 +236,13 @@ public class InputManager implements InputProcessor {
         }
 
         // cambio difficoltà space battle
-        if (page==1 && (screenX>=718 && screenX<=738) && (screenY>=562 && screenY<=584)) {
+        if (page==1 && (screenX>=710 && screenX<=730) && (screenY>=560 && screenY<=584)) {
             if (diffSB<3) {
                 diffSB++;
                 DataUserManager.setProgress("diff_space_battle", diffSB);
             }
         }
-        if (page==1 && (screenX>=595 && screenX<=615) && (screenY>=562 && screenY<=584)) {
+        if (page==1 && (screenX>=587 && screenX<=607) && (screenY>=560 && screenY<=584)) {
             if (diffSB>1) {
                 diffSB--;
                 DataUserManager.setProgress("diff_space_battle", diffSB);
@@ -282,10 +289,17 @@ public class InputManager implements InputProcessor {
         return true;
     }
 
+    // cambio icona mouse al passaggio sugli elementi
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        // cursore normale se non è sopra un pulsante
+        Gdx.graphics.setCursor(UIManager.cursor);
+        return false;
+    }
+
     // altri metodi
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
@@ -296,7 +310,7 @@ public class InputManager implements InputProcessor {
     | CLASSE INNER Hitbox |
     +---------------------+
     */
-    // classe inner per stabilire il range cliccabile
+    // classe inner per stabilire il range cliccabile, serve per controllare in maniera più pulita il click su un range
     private static class Hitbox {
         int x1, y1, x2, y2;
         int targetPage;
