@@ -41,9 +41,7 @@ public class UIManager implements ResourceLoader {
     // immagini in sovra impressione
     private Texture closeGame, softInfos, warning;
 
-    private BitmapFont fontBlue15;
-    private BitmapFont fontBlue20;
-    private BitmapFont fontWhite20;
+    private BitmapFont fontBlue15, fontBlue20, fontWhite20, fontBoldWhite15, fontItalicBoldWhite15;
     //private BitmapFont fontRed20;
 
     // hashmap per le diverse texture
@@ -92,6 +90,8 @@ public class UIManager implements ResourceLoader {
             fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
+            fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter bold white 15
+            fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter italic bold white 15
             //fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
             // dichiarazione font
@@ -118,6 +118,8 @@ public class UIManager implements ResourceLoader {
 
         avatars = new Texture[20];
         avatarsCovered = new Texture[20];
+
+        /// TODO: cambiare l'avatar di Luke...
 
         // caricamento avatar base
         for (int i = 0; i < 20; i++) {
@@ -156,23 +158,23 @@ public class UIManager implements ResourceLoader {
     // **************** //
     // metodo per creare gli avatar
     public void createAvatars() {
-        mapAvatars.put(0, new Avatar("Omega Commander", null));
-        mapAvatars.put(1, new Avatar("Idra Commander", null));
-        mapAvatars.put(2, new Avatar("Pegaso Commander", null));
-        mapAvatars.put(3, new Avatar("Woka Commander", null));
+        mapAvatars.put(0, new Avatar("Cap. Omega", null));
+        mapAvatars.put(1, new Avatar("Cap. Idra", null));
+        mapAvatars.put(2, new Avatar("Cap. Pegaso", null));
+        mapAvatars.put(3, new Avatar("Cap. Woka", null));
         mapAvatars.put(4, new Avatar("Cooper", "Complete Level 12"));
         mapAvatars.put(5, new Avatar("Jessica", "Complete Level 14"));
-        mapAvatars.put(6, new Avatar("Matthew", "Complete Level 16"));
+        mapAvatars.put(6, new Avatar("Scot", "Complete Level 16"));
         mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 18"));
-        mapAvatars.put(8, new Avatar("Zhao", "Complete Level 21"));
-        mapAvatars.put(9, new Avatar("Chloe", "Complete Level 22"));
-        mapAvatars.put(10, new Avatar("Jonathan", "Complete Level 25"));
+        mapAvatars.put(8, new Avatar("Amin", "Complete Level 21"));
+        mapAvatars.put(9, new Avatar("Samira", "Complete Level 22"));
+        mapAvatars.put(10, new Avatar("Abdul", "Complete Level 25"));
         mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 28"));
         mapAvatars.put(12, new Avatar("Chen", "Complete Level 34"));
         mapAvatars.put(13, new Avatar("Lin", "Complete Level 36"));
-        mapAvatars.put(14, new Avatar("Lucas", "Complete Level 38"));
+        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 38"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
-        mapAvatars.put(16, new Avatar("Colin", "Claim 1K Credits"));
+        mapAvatars.put(16, new Avatar("Matthew", "Claim 1K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "Claim 5K Credits"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 1M Points"));
         mapAvatars.put(19, new Avatar("Emma", "Win 100 Space Battles"));
@@ -469,8 +471,14 @@ public class UIManager implements ResourceLoader {
                 int x=143; int y=410;
                 for (int i=0; i<=19; i++) {
                     // stampa immagine avatar
-                    if (!Avatar.isAchieved(i)) screen.draw(avatarsCovered[i], x, y);
-                    else screen.draw(avatars[i], x, y);
+                    if (!Avatar.isAchieved(i)) {
+                        fontItalicBoldWhite15.draw(screen, mapAvatars.get(i).getMissione(), x, y-15);
+                        screen.draw(avatarsCovered[i], x, y);
+                    }
+                    else {
+                        fontBoldWhite15.draw(screen, mapAvatars.get(i).getNome(), x, y-15);
+                        screen.draw(avatars[i], x, y);
+                    }
 
                     // riquadro selezione
                     if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-2, y-2);

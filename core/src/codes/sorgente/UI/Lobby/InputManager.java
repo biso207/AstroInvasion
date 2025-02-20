@@ -179,7 +179,7 @@ public class InputManager implements InputProcessor {
             secondScreen = open23 = false;
         }
 
-        // chiusura (annullamento) warning
+        // OK warning => close warning and back to lobby
         if ((secondScreen&&open24) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
             secondScreen = open24 = false;
         }
@@ -190,7 +190,7 @@ public class InputManager implements InputProcessor {
             LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
         }
 
-        // OK warning => play classic game
+        // PLAY warning => play classic game
         if ((secondScreen&&open24) && (screenX>=519 && screenX<=719) && (screenY>=417 && screenY<=497)) {
             secondScreen = open24 = false;
             LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
@@ -221,14 +221,15 @@ public class InputManager implements InputProcessor {
 
         // controllo per avviare le modalità di gioco
         if ((page == 0 || page == 1) && (screenX>=778 && screenX<=928) && (screenY>=552 && screenY<=592)) {
-            LobbyManager.soundtrack.stop();
-
             // avvio modalità di gioco
             if (page==0) {
                 if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG==3d) {
                     secondScreen = open24 = true;
                 }
-                else LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+                else {
+                    LobbyManager.soundtrack.stop();
+                    LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+                }
             }
             else LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
         }
