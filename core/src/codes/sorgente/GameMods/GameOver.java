@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
+import Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -62,6 +63,16 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // caricamento immagini di base
         loadImages();
+
+        // aggiornamento progressi di gioco. DA NON METTERE DENTRO METODI CHE VENGONO RIPETUTI
+        switch (mod) {
+            case 0:
+                writeFileCG();
+                break;
+            case 1:
+                System.out.println("salvataggio space battle");
+                break;
+        }
     }
 
     // salvataggio progressi utente
@@ -100,9 +111,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // switch delle modalità di gioco
         switch (mod) {
             case 0:
-                // aggiornamento progressi di gioco
-                writeFileCG();
-
                 // schermata base
                 screen.draw(gameOver0, 0, 0);
 

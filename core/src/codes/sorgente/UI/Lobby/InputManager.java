@@ -32,7 +32,7 @@ public class InputManager implements InputProcessor {
     // variabili per gestire certi input
     protected static boolean secondScreen=false, open22=false, open23=false;
     // lista delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 29);
+    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
     protected static int page = 0;
     private int previousPage;
@@ -67,11 +67,11 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(3, new Hitbox(50, 336, 270, 354, 3, false)); // 'road to glory'
         hitBoxes.put(4, new Hitbox(50, 389, 270, 407, 4, false)); // 'spacecrafts 1'
         hitBoxes.put(10, new Hitbox(50, 444, 270, 462, 10, true));  // 'missions 1'
-        hitBoxes.put(18, new Hitbox(50, 496, 270, 514, 18, false)); // 'marketplace'
+        hitBoxes.put(18, new Hitbox(50, 496, 270, 514, 17, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(24, new Hitbox(870, 65, 950, 145, 24, true));  // 'profile infos'
-        hitBoxes.put(28, new Hitbox(50, 550, 270, 568, 28, true));   // 'instructions'
-        hitBoxes.put(29, new Hitbox(50, 600, 90, 630, 29, true));  // 'settings'
+        hitBoxes.put(24, new Hitbox(870, 65, 950, 145, 20, true));  // 'profile infos'
+        hitBoxes.put(28, new Hitbox(50, 550, 270, 568, 24, true));   // 'instructions'
+        hitBoxes.put(29, new Hitbox(50, 600, 90, 630, 18, true));  // 'settings'
     }
 
     // ************************************** //
@@ -130,32 +130,32 @@ public class InputManager implements InputProcessor {
                 secondScreen = true;
             }
 
-            // cambio pagina (19-23) => 'avatar/spacecraft/ 1->5'
-            if ((screenX>=873 && screenX<=913) && (screenY>=553 && screenY<=593)) {
-                if ((page>=19 && page<23) || (page>=4 && page<9)) page++;
+            // cambio pagina (19-23) => 'spacecraft 1->5'
+            if ((page>=4 && page<9) && (screenX>=873 && screenX<=913) && (screenY>=553 && screenY<=593)) {
+                page++;
             }
 
-            // cambio pagina (23-19) => 'avatar/spacecraft/ 5->1'
-            if ((screenX>=343 && screenX<=373) && (screenY>=553 && screenY<=593)) {
-                if ((page<=23 && page>19) || (page<=9 && page>4)) page--;
+            // cambio pagina (23-19) => 'spacecraft 5->1'
+            if ((page<=9 && page>4) && (screenX>=343 && screenX<=373) && (screenY>=553 && screenY<=593)) {
+                page--;
             }
 
-            // pagina 0 -> pagina 26 (difficulty infos classic game)
+            // pagina 0 -> pagina 22 (difficulty infos classic game)
             if (page == 0 && (screenX>=623 && screenX<=703) && (screenY>=552 && screenY<=592)) {
                 previousPage = page;
-                page = 26;
+                page = 22;
             }
 
-            // pagina 1 -> pagina 27 (difficulty infos space battle)
+            // pagina 1 -> pagina 23 (difficulty infos space battle)
             if (page == 1 && (screenX>=623 && screenX<=703) && (screenY>=552 && screenY<=592)) {
                 previousPage = page;
-                page = 27;
+                page = 23;
             }
 
-            // pagina 0/1 -> pagina 25 (cards infos)
+            // pagina 0/1 -> pagina 21 (cards infos)
             if ((page == 0 || page == 1) && (screenX>=883 && screenX<=913) && (screenY>=230 && screenY<=260)) {
                 previousPage = page;
-                page = 25;
+                page = 21;
             }
         }
 
@@ -190,12 +190,12 @@ public class InputManager implements InputProcessor {
 
         // cambio pagina (10-17) => 'missions 1-7'
         if ((screenX>=885 && screenX<=925) && (screenY>=622 && screenY<=642)) {
-            if ((page>=10 && page<17)) page++;
+            if ((page>=10 && page<16)) page++;
         }
 
         // cambio pagina (17-10) => 'missions 7-1'
         if ((screenX>=65 && screenX<=105) && (screenY>=622 && screenY<=642)) {
-            if ((page<=17 && page>10)) page--;
+            if ((page<=16 && page>10)) page--;
         }
 
         // .................. //
@@ -203,7 +203,7 @@ public class InputManager implements InputProcessor {
         // .................. //
 
         // pagina 24 -> pagina 19 (avatar 1)
-        if (page == 24 && (screenX>=459 && screenX<=537) && (screenY>=110 && screenY<=188)) {
+        if (page == 20 && (screenX>=459 && screenX<=537) && (screenY>=110 && screenY<=188)) {
             page = 19;
         }
 

@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.UI.Lobby;
 
 // import codici e librerie
+import Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
@@ -19,7 +20,7 @@ import sorgente.DataUserManager;
 import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
-import sorgente.GameMods.Spacecraft;
+import Entities.Spacecraft;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -42,11 +43,12 @@ public class UIManager implements ResourceLoader {
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
-    private final HashMap<Integer, Texture> mapAvatar; // immagini avatar
+    private final HashMap<Integer, Texture> mapAvatarsImgs; // immagini avatar
+    private final HashMap<Integer, Avatar> mapAvatars; // oggetti avatar
     private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 17, 24, 25, 26, 27, 28, 29);
+    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
 
     // navicella utente
     Spacecraft selectedSp;
@@ -61,7 +63,8 @@ public class UIManager implements ResourceLoader {
     // costruttore
     public UIManager() {
         this.mapLobby = new HashMap<>();
-        this.mapAvatar = new HashMap<>();
+        this.mapAvatarsImgs = new HashMap<>();
+        this.mapAvatars = new HashMap<>();
         this.mapSpacecrafts = new HashMap<>();
 
         // mouse
@@ -112,9 +115,9 @@ public class UIManager implements ResourceLoader {
     // metodo per caricare le immagini della Lobby
     public void loadLobbyImages(){
         // popolamento mappa lobby
-        for (int i = 0; i < 30; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 25; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
-        for (int i = 0; i < 20; i++) mapAvatar.put(i, new Texture("images/avatars/av (" + i + ").png"));
+        for (int i = 0; i < 20; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio
         Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
@@ -123,6 +126,33 @@ public class UIManager implements ResourceLoader {
         // immagini in sovra impressione
         closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
         softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
+    }
+
+    // **************** //
+    // GESTIONE GRAFICA //
+    // **************** //
+    // metodo per creare gli avatar
+    public void createAvatars() {
+        mapAvatars.put(1, new Avatar("Omega Commander", null));
+        mapAvatars.put(2, new Avatar("Idra Commander", null));
+        mapAvatars.put(3, new Avatar("Pegaso Commander", null));
+        mapAvatars.put(4, new Avatar("Woka Commander", null));
+        mapAvatars.put(5, new Avatar("Cooper", "Complete Level 12"));
+        mapAvatars.put(6, new Avatar("Jessica", "Complete Level 14"));
+        mapAvatars.put(7, new Avatar("Matthew", "Complete Level 16"));
+        mapAvatars.put(8, new Avatar("Stephanie", "Complete Level 18"));
+        mapAvatars.put(9, new Avatar("Zhao", "Complete Level 21"));
+        mapAvatars.put(10, new Avatar("Chloe", "Complete Level 22"));
+        mapAvatars.put(11, new Avatar("Jonathan", "Complete Level 25"));
+        mapAvatars.put(12, new Avatar("Dorothy", "Complete Level 28"));
+        mapAvatars.put(13, new Avatar("Chen", "Complete Level 34"));
+        mapAvatars.put(14, new Avatar("Lin", "Complete Level 36"));
+        mapAvatars.put(15, new Avatar("Lucas", "Complete Level 38"));
+        mapAvatars.put(16, new Avatar("Sarah", "Complete Level 40"));
+        mapAvatars.put(17, new Avatar("Colin", "Claim 1K Credits"));
+        mapAvatars.put(18, new Avatar("Kiara", "Claim 5K Credits"));
+        mapAvatars.put(19, new Avatar("Luke", "Reach 1M Points"));
+        mapAvatars.put(20, new Avatar("Emma", "Win 100 Space Battles"));
     }
 
     // metodo per creare le navicelle
@@ -167,10 +197,6 @@ public class UIManager implements ResourceLoader {
 
         return selectedSp;
     }
-
-    // **************** //
-    // GESTIONE GRAFICA //
-    // **************** //
 
     public String createMissions() {
         // creazione oggetti
@@ -229,7 +255,7 @@ public class UIManager implements ResourceLoader {
         // stampa avatar
         if (!listSecondPages.contains(InputManager.page)) {
             // stampa avatar
-            screen.draw(mapAvatar.get((int) DataUserManager.getProgress("avatar")), 870, 557);
+            screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
         }
 
         // switch delle pagine per stampare i vari elementi
@@ -356,7 +382,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'profile info'
-            case 24:
+            case 20:
                 // testi //
                 // scritte a sx
                 /// TODO: recuperare i valori di nick e psw utente qui sotto e togliere i commenti
@@ -373,7 +399,7 @@ public class UIManager implements ResourceLoader {
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 690, 172); // vittorie space battle
 
                 // immagini //
-                screen.draw(mapAvatar.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
+                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
                 break;
 
             // pagina 'missions 1'
@@ -413,6 +439,16 @@ public class UIManager implements ResourceLoader {
             case 16:
                 printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("credits"));
                 break;
+
+            // pagina avatars
+            case 19:
+                // stampa immagini
+                int x=150; int y=400;
+                for (int i=0; i<20; i++) {
+                    screen.draw(new Texture("images/avatars/av (" + i + ") mini.png"), x, y);
+                    x-=120;
+                    if (i%5==0) { x=100; y-=100; }
+                }
         }
 
         // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)

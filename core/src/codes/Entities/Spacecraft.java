@@ -1,6 +1,10 @@
-// Classe "Spacecraft" per creare e gestire gli oggetti delle navicelle
+/*
+Astro Invasion - class Spacecraft -
+Crea e gestisce gli oggetti Spacecraft che si rappresentano le navicelle in gioco
+Developed by BIGA©. All rights reserved.
+*/
 
-package sorgente.GameMods;
+package Entities;
 
 import com.badlogic.gdx.graphics.Texture;
 

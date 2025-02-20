@@ -1,10 +1,10 @@
 /*
 Astro Invasion - class Alien -
-This class creates the objects Alien for the game mode Classic Game
+Crea gli oggetti Alien per la modalità Classic Game
 Developed by BIGA©. All rights reserved.
 */
 
-package sorgente.GameMods;
+package Entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,7 +14,7 @@ public class Alien {
     private Rectangle alienRect;
 
     // costruttore
-    Alien(Texture img, Rectangle alienRect) {
+    public Alien(Texture img, Rectangle alienRect) {
         this.img = img;
         this.alienRect = alienRect;
     }
