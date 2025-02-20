@@ -34,7 +34,8 @@ public class Avatar {
             case 0:
             case 1:
             case 2:
-            case 3: return true;
+            case 3:
+                return true;
             case 4: return level > 12;
             case 5: return level > 14;
             case 6: return level > 16;

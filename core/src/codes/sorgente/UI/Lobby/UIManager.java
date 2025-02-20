@@ -33,8 +33,13 @@ public class UIManager implements ResourceLoader {
     // dichiarazione icone difficoltà e spunta completamento
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
 
+    // texture per gli avatar
+    private Texture[] avatars;
+    private Texture[] avatarsCovered;
+    private Texture selectedAvatar;
+
     // immagini in sovra impressione
-    private Texture closeGame, softInfos;
+    private Texture closeGame, softInfos, warning;
 
     private BitmapFont fontBlue15;
     private BitmapFont fontBlue20;
@@ -110,6 +115,23 @@ public class UIManager implements ResourceLoader {
 
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick.png");
+
+        avatars = new Texture[20];
+        avatarsCovered = new Texture[20];
+
+        // caricamento avatar base
+        for (int i = 0; i < 20; i++) {
+            avatars[i] = new Texture("images/avatars/av (" + i + ") mini.png");
+        }
+        // caricamento avatar nascosti
+        for (int i=0; i<4; i++) {
+            avatarsCovered[i] = null; // null per i primi 4 avatar
+        }
+        for (int i=4; i<=19; i++ ) {
+            avatarsCovered[i] = new Texture("images/avatars/av (" + i + ") mini covered.png");
+        }
+
+        selectedAvatar = new Texture("images/avatars/selected_avatar.png");
     }
 
     // metodo per caricare le immagini della Lobby
@@ -126,6 +148,7 @@ public class UIManager implements ResourceLoader {
         // immagini in sovra impressione
         closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
         softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
+        warning = new Texture("secondary_screens/lobby_warning_eng.png");
     }
 
     // **************** //
@@ -445,12 +468,12 @@ public class UIManager implements ResourceLoader {
                 // stampa immagini
                 int x=143; int y=410;
                 for (int i=0; i<=19; i++) {
-                    // immagine avatar
-                    screen.draw(new Texture("images/avatars/av (" + i + ") mini.png"), x, y);
-                    // avatar nascosto
-                    if (!Avatar.isAchieved(i)) screen.draw(new Texture("images/avatars/cover_avatar.png"), x-4, y-4);
+                    // stampa immagine avatar
+                    if (!Avatar.isAchieved(i)) screen.draw(avatarsCovered[i], x, y);
+                    else screen.draw(avatars[i], x, y);
+
                     // riquadro selezione
-                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(new Texture("images/avatars/selected_avatar.png"), x-2, y-2);
+                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-2, y-2);
 
                     // posizione oggetti
                     x+=161;
@@ -461,7 +484,33 @@ public class UIManager implements ResourceLoader {
         // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
         if (InputManager.secondScreen) {
             if (InputManager.open23) screen.draw(closeGame, 250, 175);
-            else screen.draw(softInfos, 250, 175);
+            else if (InputManager.open22) screen.draw(softInfos, 250, 175);
+            else if (InputManager.open24) screen.draw(warning, 250, 175);
         }
+    }
+
+    // metodo per liberare la memoria
+    public void disposeUI() {
+        for (int i = 0; i < 20; i++) {
+            avatars[i].dispose();
+        }
+        for (int i=4; i<=19; i++) {
+            avatarsCovered[i].dispose();
+        }
+        selectedAvatar.dispose();
+
+        for (Texture t : mapAvatarsImgs.values()) t.dispose();
+        for (Texture t : mapLobby.values()) t.dispose();
+
+        tickImg.dispose();
+        diffCG1.dispose();
+        diffCG2.dispose();
+        diffCG3.dispose();
+        diffSB1.dispose();
+        diffSB2.dispose();
+        diffSB3.dispose();
+        closeGame.dispose();
+        softInfos.dispose();
+        warning.dispose();
     }
 }

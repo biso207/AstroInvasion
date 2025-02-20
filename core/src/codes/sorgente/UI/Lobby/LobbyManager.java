@@ -74,6 +74,7 @@ public class LobbyManager implements Screen {
     }
     // metodo per rilasciare le risorse
     @Override public void dispose() {
+        ui.disposeUI();
         screen.dispose();
     }
 

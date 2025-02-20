@@ -14,6 +14,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import sorgente.DataUserManager;
+import sorgente.Entities.Avatar;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.UI.LogInSignUp.LoginSignupManager;
@@ -30,7 +31,7 @@ public class InputManager implements InputProcessor {
     private final Map<Integer, Hitbox> hitBoxes = new HashMap<>();
 
     // variabili per gestire certi input
-    protected static boolean secondScreen=false, open22=false, open23=false;
+    protected static boolean secondScreen=false, open22=false, open23=false, open24=false, open25=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -80,7 +81,7 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23)) {
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23 && !open24)) {
             open23 = true;
             secondScreen = true;
             return true;
@@ -107,7 +108,7 @@ public class InputManager implements InputProcessor {
         // ......................... //
         // CAMBIO PAGINE DALLA LOBBY //
         // ......................... //
-        if (!listSecondPages.contains(page) && !open22 && !open23) {
+        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24) {
             // for-each per iterare i vari range e controllare i cambi pagina
             for (Map.Entry<Integer, Hitbox> entry : hitBoxes.entrySet()) {
                 Hitbox hb = entry.getValue();
@@ -178,10 +179,21 @@ public class InputManager implements InputProcessor {
             secondScreen = open23 = false;
         }
 
+        // chiusura (annullamento) warning
+        if ((secondScreen&&open24) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
+            secondScreen = open24 = false;
+        }
+
         // YES logout => back to Authentication Page
         if ((secondScreen&&open23) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
             LobbyManager.soundtrack.stop();
             LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+        }
+
+        // OK warning => play classic game
+        if ((secondScreen&&open24) && (screenX>=519 && screenX<=719) && (screenY>=417 && screenY<=497)) {
+            secondScreen = open24 = false;
+            LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
         }
 
         // ........................ //
@@ -212,16 +224,37 @@ public class InputManager implements InputProcessor {
             LobbyManager.soundtrack.stop();
 
             // avvio modalità di gioco
-            if (page==0) LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic LobbyManager.game
+            if (page==0) {
+                if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG==3d) {
+                    secondScreen = open24 = true;
+                }
+                else LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+            }
             else LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
         }
 
         // selezione navicella
 
         // selezione avatar
+        if (page == 19) {
+            int x = 133, y = 220; // posizione avatar 1
+            for (int i = 0; i <= 19; i++) {
+                if ((screenX >= x && screenX <= x + 66) && (screenY >= y && screenY <= y + 66)) {
+                    if (Avatar.isAchieved(i)) {
+                        DataUserManager.setProgress("avatar", i);
+                    }
+                }
+
+                // aggiornamento posizione avatar per i possibili click
+                x += 66+95; // 66 larghezza img, 95 distanza di x tra immagini
+                if ((i + 1) % 5 == 0) {
+                    x = 133;
+                    y += 66+45; // 66 larghezza img, 45 distanza di y tra immagini
+                }
+            }
+        }
 
         // cambio difficoltà classic game
-        System.out.println(screenX + " " + screenY);
         if (page==0 && (screenX>=710 && screenX<=730) && (screenY>=560 && screenY<=584)) {
             if (diffCG<3) {
                 diffCG++;
@@ -255,28 +288,28 @@ public class InputManager implements InputProcessor {
 
         // selezione carte speciali //
         // gold heart
-        if ((page==0 || page==1) && (!nameSp.equals("Alpha")) && (screenX>=712 && screenX<=734) && (screenY>=346 && screenY<=368)) {
+        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX>=712 && screenX<=734) && (screenY>=346 && screenY<=368)) {
             goldHeart = !goldHeart;
             shield = false;
             superLaser = false;
             doublePoints = false;
         }
         // shield
-        if ((page==0 || page==1) && (!nameSp.equals("Astrid")) && (screenX>=874 && screenX<=896) && (screenY>=346 && screenY<=368)) {
+        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_shield") > 0 || (int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Astrid")) && (screenX>=874 && screenX<=896) && (screenY>=346 && screenY<=368)) {
             goldHeart = false;
             if (page==0) { shield = !shield; superLaser = false; }
             else { superLaser = !superLaser; shield = false; }
             doublePoints = false;
         }
         // super laser
-        if (page==0 && (!nameSp.equals("Rorik")) && (screenX>=712 && screenX<=734) && (screenY>=504 && screenY<=526)) {
+        if (page==0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX>=712 && screenX<=734) && (screenY>=504 && screenY<=526)) {
             goldHeart = false;
             shield = false;
             superLaser = !superLaser;
             doublePoints = false;
         }
         // double points
-        if (page==0 && (!nameSp.equals("Drakar")) && (screenX>=874 && screenX<=896) && (screenY>=504 && screenY<=526)) {
+        if (page==0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX>=874 && screenX<=896) && (screenY>=504 && screenY<=526)) {
             goldHeart = false;
             shield = false;
             superLaser = false;

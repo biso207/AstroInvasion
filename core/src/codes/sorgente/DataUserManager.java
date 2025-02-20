@@ -52,12 +52,12 @@ public class DataUserManager {
         }
     }
 
-    // metodo per recuperare un progresso specifico
+    // metodo per recuperare un valore/progresso specifico
     public static Object getProgress(String nome) {
         return progressi.getOrDefault(nome, null);
     }
 
-    // metodo per aggiornare un singolo progresso nell'HashMap e aggiornare il json
+    // metodo per aggiornare un singolo valore/progresso nell'HashMap e aggiornare il json
     public static void setProgress(String nome, Object valore) {
         progressi.put(nome, valore); // aggiornamento HashMap
         saveProgresses(); // aggiornamento del json

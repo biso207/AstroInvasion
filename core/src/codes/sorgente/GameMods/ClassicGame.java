@@ -48,9 +48,11 @@ public class ClassicGame implements Screen, InputProcessor {
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
 
-    // immagini delle vite
-    private Texture life1, life2, life3, life4, goldHeartImg, shieldImg, brokenShieldImg,
-        superLaserImg, topBar, playImg, stopImg, quitMatch;
+
+    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg, quitMatch;
+
+    // matrice per le immagini delle vite rimanenti
+    private Texture[][] livesTextures;
 
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -63,7 +65,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private float spawnInterval;
 
     // statistiche
-    private int lives, aliensHit, spaceshipHit, points, credits;
+    private int totalLives, lives, aliensHit, spaceshipHit, points, credits;
 
     // valori di incremento punti e crediti
     private int scoreInc, creditsInc;
@@ -179,33 +181,33 @@ public class ClassicGame implements Screen, InputProcessor {
         switch (difficulty) {
             case 1:
                 spacecraftSpeed = 300;
-                laserSpeed = 100;
-                alienSpeed = 100;
-                spawnInterval = 0.6f;
-                laserCooldown = 0.3f;
-                lives = 4;
+                laserSpeed = 150;
+                alienSpeed = 200;
+                spawnInterval = 0.3f;
+                laserCooldown = 0.2f;
+                lives = totalLives = 4;
                 scoreInc = 50;
-                creditsInc = 4;
+                creditsInc = 1;
                 break;
             case 2:
-                spacecraftSpeed = 400;
-                laserSpeed = 150;
-                alienSpeed = 170;
-                spawnInterval = 0.5f;
+                spacecraftSpeed = 300;
+                laserSpeed = 200;
+                alienSpeed = 250;
+                spawnInterval = 0.3f;
                 laserCooldown = 0.2f;
-                lives = 4;
+                lives = totalLives = 3;
                 scoreInc = 100;
-                creditsInc = 7;
+                creditsInc = 2;
                 break;
             case 3:
-                spacecraftSpeed = 500;
+                spacecraftSpeed = 300;
                 laserSpeed = 200;
-                alienSpeed = 240;
-                spawnInterval = 0.4f;
-                laserCooldown = 0.1f;
-                lives = 4;
+                alienSpeed = 300;
+                spawnInterval = 0.2f;
+                laserCooldown = 0.3f;
+                lives = totalLives = 2;
                 scoreInc = 200;
-                creditsInc = 10;
+                creditsInc = 3;
                 break;
         }
 
@@ -220,11 +222,20 @@ public class ClassicGame implements Screen, InputProcessor {
     // caricamento immagini
     private void loadImages() {
         // cuori delle vite
-        life1 = new Texture("images/lives/heart 100%.png");
-        life2 = new Texture("images/lives/heart 75%.png");
-        life3 = new Texture("images/lives/heart 50%.png");
-        life4 = new Texture("images/lives/heart 25%.png");
+        // immagini delle vite
+        Texture life1 = new Texture("images/lives/heart 100%.png");
+        Texture life2 = new Texture("images/lives/heart 75%.png");
+        Texture life3 = new Texture("images/lives/heart 66%.png");
+        Texture life4 = new Texture("images/lives/heart 50%.png");
+        Texture life5 = new Texture("images/lives/heart 33%.png");
+        Texture life6 = new Texture("images/lives/heart 25%.png");
         goldHeartImg = new Texture("images/lives/gold heart.png");
+
+        livesTextures = new Texture[][]{
+            {life4, life1}, // totalLives = 2
+            {life5, life3, life1}, // totalLives = 3
+            {life6, life4, life2, life1} // totalLives = 4
+        };
 
         // barra in alto alla schermata di gioco
         topBar = new Texture("images/top_bar_classic_game.png");
@@ -494,8 +505,8 @@ public class ClassicGame implements Screen, InputProcessor {
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
         // aggiunta scudo
-        if (shield && spaceshipHit < 5) screen.draw(shieldImg, spaceship.x-25, spaceship.y);
-        if (shield && spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x-25, spaceship.y);
+        if (shield && spaceshipHit < 5) screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
+        if (shield && spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x - 25, spaceship.y);
 
         // stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
@@ -527,19 +538,8 @@ public class ClassicGame implements Screen, InputProcessor {
         screen.draw(topBar, 20, 600);
 
         // stampa vite rimanenti
-        switch(lives) {
-            case 1:
-                screen.draw(life4, 93, 640);
-                break;
-            case 2:
-                screen.draw(life3, 93, 640);
-                break;
-            case 3:
-                screen.draw(life2, 93, 640);
-                break;
-            case 4:
-                screen.draw(life1, 93, 640);
-                break;
+        if (totalLives >= 2 && totalLives <= 4 && lives >= 1 && lives <= totalLives) {
+            screen.draw(livesTextures[totalLives - 2][lives - 1], 93, 640);
         }
 
         // stampa cuore d'oro se attivato
