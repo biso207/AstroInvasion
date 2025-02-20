@@ -8,7 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.UI.Lobby;
 
 // import codici e librerie
-import Entities.Avatar;
+import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
@@ -20,7 +20,7 @@ import sorgente.DataUserManager;
 import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
-import Entities.Spacecraft;
+import sorgente.Entities.Spacecraft;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -117,7 +117,7 @@ public class UIManager implements ResourceLoader {
         // popolamento mappa lobby
         for (int i = 0; i < 25; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
-        for (int i = 0; i < 20; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
+        for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio
         Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
@@ -133,26 +133,26 @@ public class UIManager implements ResourceLoader {
     // **************** //
     // metodo per creare gli avatar
     public void createAvatars() {
-        mapAvatars.put(1, new Avatar("Omega Commander", null));
-        mapAvatars.put(2, new Avatar("Idra Commander", null));
-        mapAvatars.put(3, new Avatar("Pegaso Commander", null));
-        mapAvatars.put(4, new Avatar("Woka Commander", null));
-        mapAvatars.put(5, new Avatar("Cooper", "Complete Level 12"));
-        mapAvatars.put(6, new Avatar("Jessica", "Complete Level 14"));
-        mapAvatars.put(7, new Avatar("Matthew", "Complete Level 16"));
-        mapAvatars.put(8, new Avatar("Stephanie", "Complete Level 18"));
-        mapAvatars.put(9, new Avatar("Zhao", "Complete Level 21"));
-        mapAvatars.put(10, new Avatar("Chloe", "Complete Level 22"));
-        mapAvatars.put(11, new Avatar("Jonathan", "Complete Level 25"));
-        mapAvatars.put(12, new Avatar("Dorothy", "Complete Level 28"));
-        mapAvatars.put(13, new Avatar("Chen", "Complete Level 34"));
-        mapAvatars.put(14, new Avatar("Lin", "Complete Level 36"));
-        mapAvatars.put(15, new Avatar("Lucas", "Complete Level 38"));
-        mapAvatars.put(16, new Avatar("Sarah", "Complete Level 40"));
-        mapAvatars.put(17, new Avatar("Colin", "Claim 1K Credits"));
-        mapAvatars.put(18, new Avatar("Kiara", "Claim 5K Credits"));
-        mapAvatars.put(19, new Avatar("Luke", "Reach 1M Points"));
-        mapAvatars.put(20, new Avatar("Emma", "Win 100 Space Battles"));
+        mapAvatars.put(0, new Avatar("Omega Commander", null));
+        mapAvatars.put(1, new Avatar("Idra Commander", null));
+        mapAvatars.put(2, new Avatar("Pegaso Commander", null));
+        mapAvatars.put(3, new Avatar("Woka Commander", null));
+        mapAvatars.put(4, new Avatar("Cooper", "Complete Level 12"));
+        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 14"));
+        mapAvatars.put(6, new Avatar("Matthew", "Complete Level 16"));
+        mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 18"));
+        mapAvatars.put(8, new Avatar("Zhao", "Complete Level 21"));
+        mapAvatars.put(9, new Avatar("Chloe", "Complete Level 22"));
+        mapAvatars.put(10, new Avatar("Jonathan", "Complete Level 25"));
+        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 28"));
+        mapAvatars.put(12, new Avatar("Chen", "Complete Level 34"));
+        mapAvatars.put(13, new Avatar("Lin", "Complete Level 36"));
+        mapAvatars.put(14, new Avatar("Lucas", "Complete Level 38"));
+        mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
+        mapAvatars.put(16, new Avatar("Colin", "Claim 1K Credits"));
+        mapAvatars.put(17, new Avatar("Kiara", "Claim 5K Credits"));
+        mapAvatars.put(18, new Avatar("Luke", "Reach 1M Points"));
+        mapAvatars.put(19, new Avatar("Emma", "Win 100 Space Battles"));
     }
 
     // metodo per creare le navicelle
@@ -443,11 +443,18 @@ public class UIManager implements ResourceLoader {
             // pagina avatars
             case 19:
                 // stampa immagini
-                int x=150; int y=400;
-                for (int i=0; i<20; i++) {
+                int x=143; int y=410;
+                for (int i=0; i<=19; i++) {
+                    // immagine avatar
                     screen.draw(new Texture("images/avatars/av (" + i + ") mini.png"), x, y);
-                    x-=120;
-                    if (i%5==0) { x=100; y-=100; }
+                    // avatar nascosto
+                    if (!Avatar.isAchieved(i)) screen.draw(new Texture("images/avatars/cover_avatar.png"), x-4, y-4);
+                    // riquadro selezione
+                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(new Texture("images/avatars/selected_avatar.png"), x-2, y-2);
+
+                    // posizione oggetti
+                    x+=161;
+                    if ((i+1)%5==0) { x=143; y-=111; }
                 }
         }
 

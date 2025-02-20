@@ -4,7 +4,7 @@ Crea gli oggetti Alien per la modalità Classic Game
 Developed by BIGA©. All rights reserved.
 */
 
-package Entities;
+package sorgente.Entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;

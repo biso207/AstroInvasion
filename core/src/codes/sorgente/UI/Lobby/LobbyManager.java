@@ -12,7 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import Entities.Spacecraft;
+import sorgente.Entities.Spacecraft;
 import sorgente.Main;
 
 public class LobbyManager implements Screen {

@@ -69,7 +69,7 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(10, new Hitbox(50, 444, 270, 462, 10, true));  // 'missions 1'
         hitBoxes.put(18, new Hitbox(50, 496, 270, 514, 17, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(24, new Hitbox(870, 65, 950, 145, 20, true));  // 'profile infos'
+        hitBoxes.put(24, new Hitbox(862, 62, 950, 145, 20, true));  // 'profile infos'
         hitBoxes.put(28, new Hitbox(50, 550, 270, 568, 24, true));   // 'instructions'
         hitBoxes.put(29, new Hitbox(50, 600, 90, 630, 18, true));  // 'settings'
     }
@@ -203,7 +203,7 @@ public class InputManager implements InputProcessor {
         // .................. //
 
         // pagina 24 -> pagina 19 (avatar 1)
-        if (page == 20 && (screenX>=459 && screenX<=537) && (screenY>=110 && screenY<=188)) {
+        if (page == 20 && (screenX>=453 && screenX<=537) && (screenY>=108 && screenY<=188)) {
             page = 19;
         }
 

@@ -4,7 +4,7 @@ Crea e gestisce gli oggetti Spacecraft che si rappresentano le navicelle in gioc
 Developed by BIGA©. All rights reserved.
 */
 
-package Entities;
+package sorgente.Entities;
 
 import com.badlogic.gdx.graphics.Texture;
 
