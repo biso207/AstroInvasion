@@ -400,7 +400,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'marketplace'
-            case 18:
+            case 17:
                 // testi //
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 540, 490); // numero totale crediti
 

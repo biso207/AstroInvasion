@@ -9,6 +9,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente;
 
 // import codici e librerie
+import com.badlogic.gdx.Gdx;
 import sorgente.UI.LoadingScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,6 +23,9 @@ public class Main extends Game {
 
         // chiamata alla schermata di caricamento
         this.setScreen(new LoadingScreen(this));
+
+        // limite a 60 fps
+        Gdx.graphics.setForegroundFPS(60);
     }
 
     @Override

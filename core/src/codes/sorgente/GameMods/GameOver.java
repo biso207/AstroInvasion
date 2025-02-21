@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.Main;
 import sorgente.ResourceLoader;
+import sorgente.UI.Lobby.InputManager;
 import sorgente.UI.Lobby.LobbyManager;
 
 import java.text.NumberFormat;
@@ -37,11 +38,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // font
     private BitmapFont font;
     // immagini
-    private Texture gameOver0;
+    private Texture gameOver0, rectSelectCard;
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     private final Spacecraft selectedSp;
+
+    // boolean per le carte speciali e disattivazione
+    public boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
 
     // costruttore
     public GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit) {
@@ -54,6 +58,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         this.points = points;
         this.credits = credits;
         this.aliensHit = aliensHit;
+
+        // attivazione carte delle navicelle premium
+        if (selectedSp.getName().equals("Alpha")) goldHeart = true;
+        if (selectedSp.getName().equals("Astrid")) shield = true;
+        if (selectedSp.getName().equals("Rorik")) superLaser = true;
+        if (selectedSp.getName().equals("Drakar")) doublePoints = true;
 
         // init screen
         this.screen = game.screen;
@@ -91,6 +101,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override
     public void loadImages() {
         gameOver0 = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
+        rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
     }
 
     // caricamento e creazione font per le scritte
@@ -115,9 +126,22 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 screen.draw(gameOver0, 0, 0);
 
                 // scritte progressi partita
-                font.draw(screen, formatter.format(points), 200, 456);
-                font.draw(screen, formatter.format(credits), 210, 397);
-                font.draw(screen, formatter.format(aliensHit), 240, 339);
+                font.draw(screen, formatter.format(points), 195, 457);
+                font.draw(screen, formatter.format(credits), 205, 397);
+                font.draw(screen, formatter.format(aliensHit), 235, 339);
+
+                // numero carte speciali
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 388);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 388);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 275);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 275);
+
+                // stampa rettangolo selezione carta
+                if (goldHeart) screen.draw(rectSelectCard, 693, 398);
+                if (shield) screen.draw(rectSelectCard, 831, 398);
+                if (superLaser) screen.draw(rectSelectCard, 693, 285);
+                if (doublePoints) screen.draw(rectSelectCard, 831, 285);
+
                 break;
             case 1:
                 System.out.println("space battle");
@@ -161,6 +185,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             switch (mod) {
                 case 0:
+                    // stato carte speciali
+                    InputManager.goldHeart = goldHeart;
+                    InputManager.shield = shield;
+                    InputManager.superLaser = superLaser;
+                    InputManager.doublePoints = doublePoints;
+
                     game.setScreen(new ClassicGame(game, selectedSp));
                     break;
                 case 1:
@@ -168,7 +198,52 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     break;
             }
         }
+
+        // selezione carte speciali
+        System.out.println(screenX + " " + screenY);
+        selectCard(screenX, screenY);
         return true;
+    }
+
+    // metodo per controllare la selezione delle carte speciali
+    public void selectCard(int screenX, int screenY) {
+        // selezione carta speciale
+        boolean canDisableGoldHeart = (int) DataUserManager.getProgress("num_gold_heart") > 0 && !selectedSp.getName().equals("Alpha");
+        boolean canDisableShield = (int) DataUserManager.getProgress("num_shield") > 0 && !selectedSp.getName().equals("Astrid");
+        boolean canDisableSuperLaser = (int) DataUserManager.getProgress("num_super_laser") > 0 && !selectedSp.getName().equals("Rorik");
+        boolean canDisableDoublePoints = (int) DataUserManager.getProgress("num_double_points") > 0 && !selectedSp.getName().equals("Drakar");
+
+        // gold heart
+        if (canDisableGoldHeart && screenX >= 685 && screenX <= 755 && screenY >= 232 && screenY <= 299) {
+            goldHeart = !goldHeart;
+            if (canDisableShield) shield = false;
+            if (canDisableSuperLaser) superLaser = false;
+            if (canDisableDoublePoints) doublePoints = false;
+        }
+
+        // shield
+        if (canDisableShield && screenX >= 824 && screenX <= 892 && screenY >= 232 && screenY <= 299) {
+            shield = !shield;
+            if (canDisableGoldHeart) goldHeart = false;
+            if (canDisableSuperLaser) superLaser = false;
+            if (canDisableDoublePoints) doublePoints = false;
+        }
+
+        // super laser
+        if (canDisableSuperLaser && screenX >= 685 && screenX <= 755 && screenY >= 344 && screenY <= 412) {
+            superLaser = !superLaser;
+            if (canDisableGoldHeart) goldHeart = false;
+            if (canDisableShield) shield = false;
+            if (canDisableDoublePoints) doublePoints = false;
+        }
+
+        // double points
+        if (canDisableDoublePoints && screenX >= 824 && screenX <= 892 && screenY >= 344 && screenY <= 412) {
+            doublePoints = !doublePoints;
+            if (canDisableGoldHeart) goldHeart = false;
+            if (canDisableShield) shield = false;
+            if (canDisableSuperLaser) superLaser = false;
+        }
     }
 
     // altri metodi

@@ -180,34 +180,34 @@ public class ClassicGame implements Screen, InputProcessor {
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
             case 1:
-                spacecraftSpeed = 300;
-                laserSpeed = 150;
-                alienSpeed = 200;
-                spawnInterval = 0.3f;
+                spacecraftSpeed = 200;
+                laserSpeed = 100;
+                alienSpeed = 150;
+                spawnInterval = 0.4f;
                 laserCooldown = 0.2f;
                 lives = totalLives = 4;
                 scoreInc = 50;
                 creditsInc = 1;
                 break;
             case 2:
-                spacecraftSpeed = 300;
-                laserSpeed = 200;
-                alienSpeed = 250;
+                spacecraftSpeed = 200;
+                laserSpeed = 100;
+                alienSpeed = 200;
                 spawnInterval = 0.3f;
                 laserCooldown = 0.2f;
                 lives = totalLives = 3;
                 scoreInc = 100;
-                creditsInc = 2;
+                creditsInc = 3;
                 break;
             case 3:
-                spacecraftSpeed = 300;
-                laserSpeed = 200;
-                alienSpeed = 300;
+                spacecraftSpeed = 200;
+                laserSpeed = 100;
+                alienSpeed = 250;
                 spawnInterval = 0.2f;
-                laserCooldown = 0.3f;
+                laserCooldown = 0.2f;
                 lives = totalLives = 2;
                 scoreInc = 200;
-                creditsInc = 3;
+                creditsInc = 5;
                 break;
         }
 
@@ -461,6 +461,14 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // metodo per richiamare la schermata del game over
     private void gameOver() {
+        // diminuzione carte speciali
+        if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
+        if (shield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
+        if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
+        if (doublePoints && !selectedSp.getName().equals("Drakar")) DataUserManager.setProgress("num_double_points", (int) DataUserManager.getProgress("num_double_points")-1);
+
+        // incremento partite giocate
+        if (aliensHit >= 20) DataUserManager.setProgress("matches_CG", (int) DataUserManager.getProgress("matches_CG")+1);
 
         // aggiunta bonus punti
         int bonusPoints = selectedSp.getBonusPoint();

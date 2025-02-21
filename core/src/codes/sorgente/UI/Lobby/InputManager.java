@@ -53,7 +53,7 @@ public class InputManager implements InputProcessor {
         // definizione delle aree cliccabili
         hitAreas();
 
-        // attivazione carte speciali se selezionata navicelle premium
+        // attivazione carte speciali se selezionata una navicella premium
         if (nameSp.equals("Alpha")) goldHeart = true;
         if (nameSp.equals("Astrid")) shield = true;
         if (nameSp.equals("Rorik")) superLaser = true;
@@ -193,6 +193,7 @@ public class InputManager implements InputProcessor {
         // PLAY warning => play classic game
         if ((secondScreen&&open24) && (screenX>=519 && screenX<=719) && (screenY>=417 && screenY<=497)) {
             secondScreen = open24 = false;
+            LobbyManager.soundtrack.stop();
             LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
         }
 
@@ -291,30 +292,23 @@ public class InputManager implements InputProcessor {
         // gold heart
         if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX>=712 && screenX<=734) && (screenY>=346 && screenY<=368)) {
             goldHeart = !goldHeart;
-            shield = false;
-            superLaser = false;
-            doublePoints = false;
+            shield = superLaser = doublePoints = false;
         }
         // shield
         if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_shield") > 0 || (int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Astrid")) && (screenX>=874 && screenX<=896) && (screenY>=346 && screenY<=368)) {
-            goldHeart = false;
             if (page==0) { shield = !shield; superLaser = false; }
             else { superLaser = !superLaser; shield = false; }
-            doublePoints = false;
+            goldHeart = doublePoints = false;
         }
         // super laser
         if (page==0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX>=712 && screenX<=734) && (screenY>=504 && screenY<=526)) {
-            goldHeart = false;
-            shield = false;
             superLaser = !superLaser;
-            doublePoints = false;
+            goldHeart = shield = doublePoints = false;
         }
         // double points
         if (page==0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX>=874 && screenX<=896) && (screenY>=504 && screenY<=526)) {
-            goldHeart = false;
-            shield = false;
-            superLaser = false;
             doublePoints = !doublePoints;
+            goldHeart = shield = superLaser = false;
         }
 
 
