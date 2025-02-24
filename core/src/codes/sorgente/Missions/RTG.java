@@ -14,9 +14,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class RTG {
-    public String text1, text2, prize, path;
-    static int objMission;
-    double numObjMission;
+    public final String text1, text2, prize, path;
+    private final int objMission;
 
     // costruttore
     public RTG(String text1, int objMission, String text2, String prize, String path) {
@@ -24,21 +23,20 @@ public class RTG {
         this.text2 = text2;
         this.prize = prize;
         this.path = path;
-        RTG.objMission = objMission;
+        this.objMission = objMission;
     }
 
     // calcolo numObjMission
-    public static int calcNumObjMission() {
+    public int calcNumObjMission() {
         int numMission = (int)DataUserManager.getProgress("num_mission");
-        double molt = (double) numMission/4;  // moltiplicatore valore base missione
-        molt = Math.ceil(molt); // arrotondamento per eccesso del risultato
+        double molt = Math.ceil((double) numMission/4);  // moltiplicatore valore base missione con arrotondamento per eccesso
 
         return (int) (objMission * molt);  // return progresso per la missione corrente
     }
 
     // metodo per costruire la stringa della missione da completare
     public String printMission() {
-        numObjMission = calcNumObjMission();
+        double numObjMission = calcNumObjMission();
 
         // formattazione risultato
         NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US); // formatter per la virgola delle migliaia

@@ -23,6 +23,7 @@ import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.UI.Lobby.InputManager;
 import sorgente.UI.Lobby.LobbyManager;
+import sorgente.UI.Lobby.UIManager;
 
 import javax.xml.crypto.Data;
 import java.text.NumberFormat;
@@ -89,6 +90,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // salvataggio progressi utente
     public void writeFileCG() {
+        // recupero id missione
+        int missionID = (int) DataUserManager.getProgress("mission_id");
+
         // salvataggio progressi
         DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
         DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
@@ -96,17 +100,17 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
 
         // aggiornamento progresso task RTG
-        switch ((int) DataUserManager.getProgress("mission_id")) {
+        switch (missionID) {
             case 1:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", RTG.calcNumObjMission());
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
                 else DataUserManager.setProgress("num_aliens_hit_RTG", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG"));
                 break;
             case 3:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", RTG.calcNumObjMission());
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
                 else DataUserManager.setProgress("points_RTG", points + (int) DataUserManager.getProgress("points_RTG"));
                 break;
             case 4:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", RTG.calcNumObjMission());
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
                 else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
                 break;
         }
@@ -220,7 +224,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // selezione carte speciali
-        System.out.println(screenX + " " + screenY);
         selectCard(screenX, screenY);
         return true;
     }

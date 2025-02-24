@@ -186,6 +186,7 @@ public class InputManager implements InputProcessor {
 
         // YES logout => back to Authentication Page
         if ((secondScreen&&open23) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
+            secondScreen = open23 = false;
             LobbyManager.soundtrack.stop();
             LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
         }
@@ -312,7 +313,6 @@ public class InputManager implements InputProcessor {
         }
 
         // claim reward del RTG
-        System.out.println(screenX + " " + screenY);
         if (page==3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX>=762 && screenX<=898) && (screenY>=561 && screenY<=595)) {
             // missione corrente
             int mission = (int) DataUserManager.getProgress("num_mission");
@@ -349,7 +349,7 @@ public class InputManager implements InputProcessor {
             }
 
             DataUserManager.setProgress("num_mission", mission+1);
-            DataUserManager.setProgress("id_mission", missionID);
+            DataUserManager.setProgress("mission_id", missionID);
             DataUserManager.setProgress("completed_RTG", false); // RTG non più completata
         }
 

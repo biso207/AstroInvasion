@@ -11,6 +11,7 @@ package sorgente.UI.Lobby;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.Entities.Spacecraft;
 import sorgente.Main;
@@ -39,11 +40,7 @@ public class LobbyManager implements Screen {
         ui = new UIManager();
 
         // caricamento risorse
-        ui.loadLobbyImages(); // schermate lobby
-        ui.loadImages(); // altre immagini
-        ui.loadFont(); // font
         selectedSp = ui.createSpacecrafts(); // navicelle e recupero navicella utente
-        ui.createAvatars(); // creazione oggetti avatar
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio

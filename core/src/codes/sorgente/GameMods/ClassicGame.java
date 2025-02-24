@@ -30,6 +30,7 @@ import sorgente.DataUserManager;
 import sorgente.Main;
 import sorgente.Missions.RTG;
 import sorgente.UI.Lobby.InputManager;
+import sorgente.UI.Lobby.UIManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -177,6 +178,7 @@ public class ClassicGame implements Screen, InputProcessor {
         /// Per provare le carte basta settare tutte le variabili a 'true' qui sotto
     }
 
+    /// TODO: modificare i parametri di gioco...
     // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
@@ -220,16 +222,16 @@ public class ClassicGame implements Screen, InputProcessor {
     public boolean checkCompletedRTG() {
         // controllo completamento task rtg
         if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
-            int missionId = (int) DataUserManager.getProgress("mission_id");
-            int progress = switch (missionId) {
+            int missionID = (int) DataUserManager.getProgress("mission_id");
+            int progress = switch (missionID) {
                 case 1 -> aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG");
-                case 2 -> points + (int) DataUserManager.getProgress("points_RTG");
+                case 3 -> points + (int) DataUserManager.getProgress("points_RTG");
                 case 4 -> credits + (int) DataUserManager.getProgress("credits_RTG");
                 default -> -1;
             };
 
             // setting stato task RTG
-            if (progress >= RTG.calcNumObjMission() && progress != -1) {
+            if (progress >= UIManager.RTGs[missionID-1].calcNumObjMission() && progress != -1) {
                 DataUserManager.setProgress("completed_RTG", true);
                 return true;
             }
@@ -399,6 +401,7 @@ public class ClassicGame implements Screen, InputProcessor {
             float step = laserSpeed * Gdx.graphics.getDeltaTime(); // Movimento del laser
 
             laser.y += step;
+            boolean removed = false; // flag di controllo rimozione laser
 
             // Ottieni i potenziali rettangoli in collisione
             Array<Rectangle> potentialCollisions = new Array<>();
@@ -413,6 +416,7 @@ public class ClassicGame implements Screen, InputProcessor {
                     if (!superLaser) {
                         laserIterator.remove();
                         laserPool.free(laser);
+                        removed = true; // laser rimosso
                     }
 
                     // rimozione alieni colpiti/fuori dallo schermo
@@ -443,7 +447,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
             /// TODO: capire perché certe volte crasha a "laserIterator.remove()" dando "index -1 out of bounds 16"..
             // rimozione laser fuori dallo schermo
-            if (laser.y > Gdx.graphics.getHeight()) {
+            if (!removed && laser.y > Gdx.graphics.getHeight()) {
                 laserIterator.remove();
                 laserPool.free(laser);
             }
@@ -576,6 +580,7 @@ public class ClassicGame implements Screen, InputProcessor {
         font.draw(screen, formatter.format(aliensHit), 800, 670);
 
         // stampa messaggio completamento task RTG
+        /// TODO: implementare la notifica e il suono di notifica di completamento task RTG...
         if (checkCompletedRTG()) System.out.println("missione completata");
 
         screen.end();
@@ -603,13 +608,13 @@ public class ClassicGame implements Screen, InputProcessor {
             int screenY = Gdx.input.getY();
 
             // click NO => si continua a giocare
-            if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            if ((screenX >= 513 && screenX <= 713) && (screenY >= 405 && screenY <= 480)) {
                 quit = !quit;
                 isPaused = !isPaused;
             }
 
             // click YES => interruzione gioco
-            if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            if ((screenX >= 270 && screenX <= 470) && (screenY >= 405 && screenY <= 480)) {
                 gameOver();
                 return; // uscita
             }
