@@ -290,27 +290,68 @@ public class InputManager implements InputProcessor {
 
         // selezione carte speciali //
         // gold heart
-        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX>=712 && screenX<=734) && (screenY>=346 && screenY<=368)) {
+        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX>=705 && screenX<=734) && (screenY>=346 && screenY<=368)) {
             goldHeart = !goldHeart;
             shield = superLaser = doublePoints = false;
         }
         // shield
-        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_shield") > 0 || (int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Astrid")) && (screenX>=874 && screenX<=896) && (screenY>=346 && screenY<=368)) {
-            if (page==0) { shield = !shield; superLaser = false; }
-            else { superLaser = !superLaser; shield = false; }
+        if ((page==0 || page==1) && (!nameSp.equals("Astrid")) && (screenX>=867 && screenX<=896) && (screenY>=346 && screenY<=368)) {
+            if (page==0 && ((int) DataUserManager.getProgress("num_shield") > 0)) { shield = !shield; superLaser = false; }
+            else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0)) { superLaser = !superLaser; shield = false; }
             goldHeart = doublePoints = false;
         }
         // super laser
-        if (page==0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX>=712 && screenX<=734) && (screenY>=504 && screenY<=526)) {
+        if (page==0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX>=705 && screenX<=734) && (screenY>=504 && screenY<=526)) {
             superLaser = !superLaser;
             goldHeart = shield = doublePoints = false;
         }
         // double points
-        if (page==0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX>=874 && screenX<=896) && (screenY>=504 && screenY<=526)) {
+        if (page==0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX>=867 && screenX<=896) && (screenY>=504 && screenY<=526)) {
             doublePoints = !doublePoints;
             goldHeart = shield = superLaser = false;
         }
 
+        // claim reward del RTG
+        System.out.println(screenX + " " + screenY);
+        if (page==3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX>=762 && screenX<=898) && (screenY>=561 && screenY<=595)) {
+            // missione corrente
+            int mission = (int) DataUserManager.getProgress("num_mission");
+            // id missione corrente
+            int missionID = (int) DataUserManager.getProgress("mission_id");
+
+            // recupero numero carte e crediti
+            int numGoldHeart = (int) DataUserManager.getProgress("num_gold_heart");
+            int numShield = (int) DataUserManager.getProgress("num_shield");
+            int numSuperLaser = (int) DataUserManager.getProgress("num_super_laser");
+            int credits = (int) DataUserManager.getProgress("credits");
+
+            switch(missionID) {
+                case 1:
+                    DataUserManager.setProgress("num_aliens_hit_RTG", 0); // progressi missione azzerati
+                    DataUserManager.setProgress("num_gold_heart", numGoldHeart+1); // aggiunta carta
+                    missionID++;
+                    break;
+                case 2:
+                    DataUserManager.setProgress("won_SB_RTG", 0); // progressi missione azzerati
+                    DataUserManager.setProgress("num_shield", numShield+1); // aggiunta carta
+                    missionID++;
+                    break;
+                case 3:
+                    DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
+                    DataUserManager.setProgress("credits", credits+100);// aggiunta 100 crediti
+                    missionID++;
+                    break;
+                case 4:
+                    DataUserManager.setProgress("credits_RTG", 0); // progressi missione azzerati
+                    DataUserManager.setProgress("num_super_laser", numSuperLaser+1); // aggiunta carta
+                    missionID=1;
+                    break;
+            }
+
+            DataUserManager.setProgress("num_mission", mission+1);
+            DataUserManager.setProgress("id_mission", missionID);
+            DataUserManager.setProgress("completed_RTG", false); // RTG non più completata
+        }
 
         // acquisti nel negozio
 

@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.DataUserManager;
 import sorgente.Main;
+import sorgente.Missions.RTG;
 import sorgente.UI.Lobby.InputManager;
 
 import java.text.NumberFormat;
@@ -215,6 +216,28 @@ public class ClassicGame implements Screen, InputProcessor {
         laserSpeed += selectedSp.getLaserSpeed()*100;
     }
 
+    // metodo per controllare il completamento della task del 'road to glory' (RTG)
+    public boolean checkCompletedRTG() {
+        // controllo completamento task rtg
+        if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
+            int missionId = (int) DataUserManager.getProgress("mission_id");
+            int progress = switch (missionId) {
+                case 1 -> aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG");
+                case 2 -> points + (int) DataUserManager.getProgress("points_RTG");
+                case 4 -> credits + (int) DataUserManager.getProgress("credits_RTG");
+                default -> -1;
+            };
+
+            // setting stato task RTG
+            if (progress >= RTG.calcNumObjMission() && progress != -1) {
+                DataUserManager.setProgress("completed_RTG", true);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // ******************* //
     // CARICAMENTO RISORSE //
     // ******************* //
@@ -275,49 +298,30 @@ public class ClassicGame implements Screen, InputProcessor {
     private void spawnLaser() {
         Rectangle laser = laserPool.obtain();
         laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 30, 40);
-        lasers.add(laser);
+
+        if (superLaser) {
+            // Assicura che non ci siano più superLaser del previsto
+            if (lasers.size < 2) {
+                lasers.add(laser);
+            } else {
+                laserPool.free(laser); // Se ce ne sono già 2, evita di aggiungerne altri
+            }
+        } else {
+            lasers.add(laser);
+        }
     }
 
     // metodo per muovere i laser sparati
     private void updateLasers(float delta) {
-        for (int i = lasers.size - 1; i >= 0; i--) {
-            Rectangle laser = lasers.get(i);
-            float remainingDistance = laserSpeed * delta;
+        float step = laserSpeed * delta; // step di movimento => velocità frame x frame
 
-            while (remainingDistance > 0) {
-                float step = Math.min(remainingDistance, 10); // Sotto-passo di massimo 10 pixel
-                float previousY = laser.y;
-                laser.y += step;
-                remainingDistance -= step;
+        for (Iterator<Rectangle> iterator = lasers.iterator(); iterator.hasNext();) {
+            Rectangle laser = iterator.next();
+            laser.y += step; // aggiornamento posizione laser (movimento verso l'alto)
 
-                // Controlla collisioni per ogni sotto-passo
-                for (int j = aliens.size - 1; j >= 0; j--) {
-                    Alien alien = aliens.get(j);
-                    if (laserPathIntersects(previousY, laser.y, laser.x, alien.getAlienRect())) {
-                        hitSound.play();
-                        if (!superLaser) lasers.removeIndex(i);
-                        aliens.removeIndex(j);
-                        laserPool.free(laser);
-
-                        // aggiornamento statistiche
-                        points += (doublePoints ? scoreInc * 2 : scoreInc); // incremento punteggio
-                        aliensHit++; // incremento alieni colpiti
-                        if (aliensHit % 5 == 0) {
-                            creditSound.play(); // suono alieno colpito
-                            credits += creditsInc; // aggiunta crediti ogni 5 alieni colpiti
-                        }
-
-                        activeAnimations.add(new CollisionAnimation(
-                            alien.getAlienRect().x, alien.getAlienRect().y - 5, collisionFrames));
-
-                        break; // Esci dal ciclo degli alieni
-                    }
-                }
-            }
-
-            // Rimuovi laser fuori dallo schermo
+            // rimozione laser fuori dallo schermo
             if (laser.y > Gdx.graphics.getHeight()) {
-                lasers.removeIndex(i);
+                iterator.remove();
                 laserPool.free(laser);
             }
         }
@@ -571,6 +575,9 @@ public class ClassicGame implements Screen, InputProcessor {
         // alieni colpiti
         font.draw(screen, formatter.format(aliensHit), 800, 670);
 
+        // stampa messaggio completamento task RTG
+        if (checkCompletedRTG()) System.out.println("missione completata");
+
         screen.end();
     }
 
@@ -635,16 +642,9 @@ public class ClassicGame implements Screen, InputProcessor {
         }
     }
 
-    // metodo per controllare i click del mouse
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return true;
-    }
-    // metodo per controllare gli input da tastiera
-    @Override public boolean keyTyped(char character) {
-        return true;
-    }
-
     // altri metodi
+    @Override public boolean keyTyped(char character) { return true; }
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
@@ -670,6 +670,7 @@ public class ClassicGame implements Screen, InputProcessor {
         updateAliens(delta);
         checkCollisions();
 
+        // aggiornamento globale grafiche
         renderGame();
     }
     // spegnimento controllo input

@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.UI.Lobby;
 
 // import codici e librerie
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -30,18 +31,25 @@ public class UIManager implements ResourceLoader {
     // istanza della classe missioni RTG
     private RTG m;
 
-    // dichiarazione icone difficoltà e spunta completamento
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
+    // renderer per la barra di progresso della task corrente RTG
+    private ShapeRenderer shapeRenderer;
+
+    // dichiarazione icone difficoltà, spunta completamento, premi RTG
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize;
 
     // texture per gli avatar
     private Texture[] avatars;
     private Texture[] avatarsCovered;
     private Texture selectedAvatar;
 
+    // premi RTG
+    private Texture[] RTGPrizes;
+    private RTG[] RTGs;
+
     // immagini in sovra impressione
     private Texture closeGame, softInfos, warning;
 
-    private BitmapFont fontBlue15, fontBlue20, fontWhite20, fontBoldWhite15, fontItalicBoldWhite15;
+    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontWhite20, fontBoldWhite15, fontItalicBoldWhite15;
     //private BitmapFont fontRed20;
 
     // hashmap per le diverse texture
@@ -54,10 +62,10 @@ public class UIManager implements ResourceLoader {
     private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
 
     // navicella utente
-    Spacecraft selectedSp;
+    private Spacecraft selectedSp;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
-    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
+    private NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // mouse
     protected static Pixmap mouse, mouseOver; // immagini
@@ -76,6 +84,10 @@ public class UIManager implements ResourceLoader {
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
         cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
+
+        shapeRenderer = new ShapeRenderer();
+
+        createMissions();
     }
 
     // ******************* //
@@ -89,6 +101,7 @@ public class UIManager implements ResourceLoader {
         try {
             fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
+            fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter regular blue 20
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
             fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter bold white 15
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter italic bold white 15
@@ -113,13 +126,21 @@ public class UIManager implements ResourceLoader {
         diffSB2 = new Texture("images/diff2_spacebattle.png");
         diffSB3 = new Texture("images/diff3_spacebattle.png");
 
+        // immagini dei premi del RTG
+        RTGPrizes = new Texture[4];
+        // load texture
+        for (int i=0; i<4; i++) {
+            RTGPrizes[i] = new Texture("images/cards/mini_card" + (i+1) + ".png");
+        }
+
+        // immagine per raccogliere il premio RTG
+        claimPrize = new Texture("images/rect_claim_reward_eng.png");
+
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick.png");
 
         avatars = new Texture[20];
         avatarsCovered = new Texture[20];
-
-        /// TODO: cambiare l'avatar di Luke...
 
         // caricamento avatar base
         for (int i = 0; i < 20; i++) {
@@ -144,7 +165,7 @@ public class UIManager implements ResourceLoader {
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio
-        Texture img_special = new Texture("lobby_screens/_rect_claim_reward_eng.png");
+        Texture img_special = new Texture("images/rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
 
         // immagini in sovra impressione
@@ -223,32 +244,70 @@ public class UIManager implements ResourceLoader {
         return selectedSp;
     }
 
-    public String createMissions() {
+    public void createMissions() {
+        RTGs = new RTG[4];
+
         // creazione oggetti
-        RTG RTG1 = new RTG("Hit", 10, "aliens in a Classic Game match.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
-        RTG RTG2 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
-        RTG RTG3 = new RTG("Earn", 5000, "points in a single\nClassic Game match.", "100 Credits", "images/cards/card_100_coins.png");
-        RTG RTG4 = new RTG("Earn", 5, "credits.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
+        RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        RTG RTG1 = new RTG("Win", 2, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
+        RTG RTG2 = new RTG("Earn", 5000, "points through the Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
+        RTG RTG3 = new RTG("Earn", 20, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
-        // missione default
-        m = RTG1;
+        RTGs[0] = RTG0;
+        RTGs[1] = RTG1;
+        RTGs[2] = RTG2;
+        RTGs[3] = RTG3;
+    }
 
-        // selezione oggetto in base alla missione corrente
-        switch ((int)DataUserManager.getProgress("mission_id")) {
-            case 1:
-                break;
-            case 2:
-                m = RTG2;
-                break;
-            case 3:
-                m = RTG3;
-                break;
-            case 4:
-                m = RTG4;
-                break;
+    // metodo per disegnare la barra di progresso della task corrente del RTG
+    public void drawPageRTG(SpriteBatch screen) {
+        int missionID = (int)DataUserManager.getProgress("mission_id");
+
+        // immagine premio //
+        screen.draw(RTGPrizes[missionID-1], 660, 100);
+
+        // pulsante raccolta premio //
+        if ((boolean) DataUserManager.getProgress("completed_RTG")) screen.draw(claimPrize, 767, 100);
+
+        // barra di progresso task //
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        int progress, maxProgress;
+
+        progress = switch (missionID) {
+            case 1 -> (int) DataUserManager.getProgress("num_aliens_hit_RTG");
+            case 2 -> (int) DataUserManager.getProgress("won_SB_RTG");
+            case 3 -> (int) DataUserManager.getProgress("points_RTG");
+            case 4 -> (int) DataUserManager.getProgress("credits_RTG");
+            default -> 0;
+        };
+
+        // progresso totale da compiere
+        maxProgress = RTG.calcNumObjMission();
+
+        // lunghezza barra riempita
+        float filledWidth = (progress / (float) maxProgress) * 380;
+
+        if (filledWidth > 0.0) {
+            // dimensioni barra progresso
+            float x = 519;
+            float y = 276;
+            float height = 20;
+            float radius = 10;
+
+            // parte completata (verde #197F23)
+            shapeRenderer.setColor(new Color(0x197F23FF));
+
+            shapeRenderer.rect(x + radius, y, filledWidth - 2 * radius, height); // Corpo centrale
+
+            shapeRenderer.arc(x + radius, y + radius, radius, 180, 90); // Angolo in alto a sinistra
+            shapeRenderer.arc(x + filledWidth - radius, y + radius, radius, 270, 90); // Angolo in alto a destra
+            shapeRenderer.arc(x + filledWidth - radius, y + height - radius, radius, 0, 90); // Angolo in basso a destra
+            shapeRenderer.arc(x + radius, y + height - radius, radius, 90, 90); // Angolo in basso a sinistra
         }
 
-        return m.printMission((int)DataUserManager.getProgress("num_mission"));
+        shapeRenderer.end();
+
     }
 
     // metodo per stampare testi e immagini nelle pagine 'missions'
@@ -390,19 +449,22 @@ public class UIManager implements ResourceLoader {
 
             // pagina 'rtg'
             case 3:
+                int missionID = (int)DataUserManager.getProgress("num_mission");
+                RTG m = RTGs[missionID];
                 // testi //
-                fontBlue20.draw(screen, createMissions(), 515, 370); // missione da completare
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
-                fontBlue20.draw(screen, m.prize, 725, 272); // premio missione
+                fontBlue20.draw(screen, formatter.format(missionID), 565, 403); // numero missione raggiunta
+                fontBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
+                fontBlue20.draw(screen, m.prize, 725, 232); // premio missione
 
-                // immagini //
-                screen.draw(new Texture(m.path), 660, 100);
+                // progresso completamento task corrente
+                drawPageRTG(screen);
+
                 break;
 
             // pagina 'marketplace'
             case 17:
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 540, 490); // numero totale crediti
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 550, 490); // numero totale crediti
 
                 break;
 

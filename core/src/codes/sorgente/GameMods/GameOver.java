@@ -19,10 +19,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.Main;
+import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.UI.Lobby.InputManager;
 import sorgente.UI.Lobby.LobbyManager;
 
+import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -36,7 +38,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private final int mod, points, credits, aliensHit;
 
     // font
-    private BitmapFont font;
+    private BitmapFont font, font2;
     // immagini
     private Texture gameOver0, rectSelectCard;
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
@@ -91,6 +93,23 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
         DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
         DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
+        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
+
+        // aggiornamento progresso task RTG
+        switch ((int) DataUserManager.getProgress("mission_id")) {
+            case 1:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", RTG.calcNumObjMission());
+                else DataUserManager.setProgress("num_aliens_hit_RTG", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG"));
+                break;
+            case 3:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", RTG.calcNumObjMission());
+                else DataUserManager.setProgress("points_RTG", points + (int) DataUserManager.getProgress("points_RTG"));
+                break;
+            case 4:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", RTG.calcNumObjMission());
+                else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
+                break;
+        }
     }
 
     // ************************************** //
@@ -109,7 +128,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     public void loadFont() {
         // dichiarazione font
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter bold white 20
+            font2 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -126,15 +146,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 screen.draw(gameOver0, 0, 0);
 
                 // scritte progressi partita
-                font.draw(screen, formatter.format(points), 195, 457);
-                font.draw(screen, formatter.format(credits), 205, 397);
-                font.draw(screen, formatter.format(aliensHit), 235, 339);
+                font2.draw(screen, formatter.format(points), 195, 457);
+                font2.draw(screen, formatter.format(credits), 205, 397);
+                font2.draw(screen, formatter.format(aliensHit), 235, 337);
 
                 // numero carte speciali
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 388);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 388);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 275);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 275);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 385);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 385);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 272);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 272);
 
                 // stampa rettangolo selezione carta
                 if (goldHeart) screen.draw(rectSelectCard, 693, 398);
