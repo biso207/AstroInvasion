@@ -258,10 +258,10 @@ public class UIManager implements ResourceLoader {
         RTGs = new RTG[4];
 
         // creazione oggetti
-        RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
-        RTG RTG1 = new RTG("Win", 2, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
-        RTG RTG2 = new RTG("Earn", 5000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
-        RTG RTG3 = new RTG("Earn", 20, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
+        RTG RTG0 = new RTG("Hit", 50, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        RTG RTG1 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
+        RTG RTG2 = new RTG("Earn", 2000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
+        RTG RTG3 = new RTG("Earn", 5, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         RTGs[0] = RTG0;
         RTGs[1] = RTG1;

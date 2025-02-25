@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
+import com.badlogic.gdx.utils.Timer;
 import sorgente.Entities.Alien;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
@@ -51,7 +52,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private final Pool<Rectangle> laserPool;
 
 
-    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg, quitMatch;
+    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg, quitMatch, bannerRTG;
 
     // matrice per le immagini delle vite rimanenti
     private Texture[][] livesTextures;
@@ -77,13 +78,15 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // stato quit match per la stampa dell'immagine
     private boolean quit = false;
+    // stato game over per evitare doppie letture progressi
+    private boolean gameClosed = false;
 
     // dichiarazione font
     private BitmapFont font, fontGold;
 
     // musiche
     private final Music soundtrack; // sottofondo
-    private final Sound creditSound, shotSound, hitSound; // suoni
+    private final Sound creditSound, shotSound, hitSound, completedRTGSound; // suoni
 
     /* modalità di gioco
        la modalità di gioco definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
@@ -162,6 +165,9 @@ public class ClassicGame implements Screen, InputProcessor {
         hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3"));
         // raccolta monete
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
+        // task RTG completata
+        completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+
 
         // attivazione carte utente
         if (selectedSp.getName().equals("Drakar")) doublePoints = true;
@@ -184,9 +190,9 @@ public class ClassicGame implements Screen, InputProcessor {
         switch (difficulty) {
             case 1:
                 spacecraftSpeed = 200;
-                laserSpeed = 100;
-                alienSpeed = 150;
-                spawnInterval = 0.4f;
+                laserSpeed = 200;
+                alienSpeed = 200;
+                spawnInterval = 0.3f;
                 laserCooldown = 0.2f;
                 lives = totalLives = 4;
                 scoreInc = 50;
@@ -194,20 +200,20 @@ public class ClassicGame implements Screen, InputProcessor {
                 break;
             case 2:
                 spacecraftSpeed = 200;
-                laserSpeed = 100;
+                laserSpeed = 200;
                 alienSpeed = 200;
-                spawnInterval = 0.3f;
-                laserCooldown = 0.2f;
+                spawnInterval = 0.2f;
+                laserCooldown = 0.25f;
                 lives = totalLives = 3;
                 scoreInc = 100;
                 creditsInc = 3;
                 break;
             case 3:
                 spacecraftSpeed = 200;
-                laserSpeed = 100;
-                alienSpeed = 250;
-                spawnInterval = 0.2f;
-                laserCooldown = 0.2f;
+                laserSpeed = 200;
+                alienSpeed = 300;
+                spawnInterval = 0.15f;
+                laserCooldown = 0.3f;
                 lives = totalLives = 2;
                 scoreInc = 200;
                 creditsInc = 5;
@@ -221,10 +227,10 @@ public class ClassicGame implements Screen, InputProcessor {
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
     public boolean checkCompletedRTG() {
         // controllo completamento task rtg
-        if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
+        if (!(boolean) DataUserManager.getProgress("completed_RTG") && !gameClosed) {
             int missionID = (int) DataUserManager.getProgress("mission_id");
             int progress = switch (missionID) {
-                case 1 -> aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG");
+                case 1 -> aliensHit + ((int) DataUserManager.getProgress("num_aliens_hit_RTG"));
                 case 3 -> points + (int) DataUserManager.getProgress("points_RTG");
                 case 4 -> credits + (int) DataUserManager.getProgress("credits_RTG");
                 default -> -1;
@@ -277,6 +283,9 @@ public class ClassicGame implements Screen, InputProcessor {
         brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
         // super laser
         superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
+
+        // notifica completamente RTG
+        bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
     }
 
     // caricamento e creazione font per le scritte
@@ -581,7 +590,11 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // stampa messaggio completamento task RTG
         /// TODO: implementare la notifica e il suono di notifica di completamento task RTG...
-        if (checkCompletedRTG()) System.out.println("missione completata");
+        if (checkCompletedRTG()) {
+            completedRTGSound.play(); // suono notifica
+            screen.draw(bannerRTG, 400, 120);
+            System.out.println("missione completata");
+        }
 
         screen.end();
     }
@@ -616,6 +629,7 @@ public class ClassicGame implements Screen, InputProcessor {
             // click YES => interruzione gioco
             if ((screenX >= 270 && screenX <= 470) && (screenY >= 405 && screenY <= 480)) {
                 gameOver();
+                gameClosed = true;
                 return; // uscita
             }
 
