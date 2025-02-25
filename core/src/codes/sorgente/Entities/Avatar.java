@@ -48,8 +48,8 @@ public class Avatar {
             case 13: return level > 36;
             case 14: return level > 38;
             case 15: return level == 40;
-            case 16: return total_credits >= 1000;
-            case 17: return total_credits >= 5000;
+            case 16: return total_credits >= 10000;
+            case 17: return total_credits >= 50000;
             case 18: return points >= 1000000;
             case 19: return winSB >= 100;
         }

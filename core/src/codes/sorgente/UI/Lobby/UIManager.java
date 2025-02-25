@@ -205,8 +205,8 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(13, new Avatar("Lin", "Complete Level 36"));
         mapAvatars.put(14, new Avatar("Marcus", "Complete Level 38"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
-        mapAvatars.put(16, new Avatar("Matthew", "Claim 1K Credits"));
-        mapAvatars.put(17, new Avatar("Kiara", "Claim 5K Credits"));
+        mapAvatars.put(16, new Avatar("Matthew", "Claim 10K Credits"));
+        mapAvatars.put(17, new Avatar("Kiara", "Claim 50K Credits"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 1M Points"));
         mapAvatars.put(19, new Avatar("Emma", "Win 100 Space Battles"));
     }

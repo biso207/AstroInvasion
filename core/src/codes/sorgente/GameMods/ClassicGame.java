@@ -94,7 +94,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private final int mod = 0;
 
     // boolean per le carte speciali
-    private boolean doublePoints=false, superLaser=false, shield=false, goldHeart=false;
+    private boolean doublePoints=false, superLaser=false, shield=false, usedShield=false, goldHeart=false;
 
     // navicella utente
     private final Spacecraft selectedSp;
@@ -168,16 +168,15 @@ public class ClassicGame implements Screen, InputProcessor {
         // task RTG completata
         completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
 
-
         // attivazione carte utente
         if (selectedSp.getName().equals("Drakar")) doublePoints = true;
         if (selectedSp.getName().equals("Rorik")) superLaser = true;
-        if (selectedSp.getName().equals("Astrid")) shield = true;
+        if (selectedSp.getName().equals("Astrid")) { shield = true; usedShield = true; }
         if (selectedSp.getName().equals("Alpha")) goldHeart = true;
 
         // recupero stato attivazione carta speciale dall'InputManager della Lobby
         if (InputManager.goldHeart) goldHeart = true;
-        if (InputManager.shield) shield = true;
+        if (InputManager.shield) { shield = true; usedShield = true; }
         if (InputManager.superLaser) superLaser = true;
         if (InputManager.doublePoints) doublePoints = true;
 
@@ -381,6 +380,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 if ((lives == 0 && !goldHeart) || (goldHeart && lives == -1)) {
                     // caso game over
                     gameOver();
+                    gameClosed = true;
                     return; // uscita
                 }
             }
@@ -480,7 +480,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private void gameOver() {
         // diminuzione carte speciali
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
-        if (shield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
+        if (usedShield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
         if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
         if (doublePoints && !selectedSp.getName().equals("Drakar")) DataUserManager.setProgress("num_double_points", (int) DataUserManager.getProgress("num_double_points")-1);
 
