@@ -55,15 +55,7 @@ public class LobbyManager implements Screen {
     // metodo per aggiornare lo schermo
     @Override public void render(float delta) {
         // attivazione controllo input
-        Gdx.input.setInputProcessor(new InputManager());
-
-        screen.begin();
-
-        // stampa degli elementi nelle singole pagine
-        ui.showItems(screen);
-
-        // chiusura screen
-        screen.end();
+        handleInput();
     }
     // spegnimento controllo input
     @Override public void hide() {
