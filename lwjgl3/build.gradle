@@ -29,7 +29,7 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
-  implementation "org.json:json:20210307"
+  implementation group: 'org.json', name: 'json', version: '20250107'
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
   implementation project(':core')

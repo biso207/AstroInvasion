@@ -5,20 +5,19 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI.LogInSignUp;
+package sorgente.LogInSignUp;
 
 // import codici e librerie
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.Main;
 import sorgente.ResourceLoader;
-import sorgente.UI.Lobby.LobbyManager;
+import sorgente.Lobby.LobbyManager;
 
 public class LoginSignupManager extends ScreenAdapter implements ResourceLoader {
     // variabile di riferimento al gioco

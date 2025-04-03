@@ -19,13 +19,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.Main;
-import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
-import sorgente.UI.Lobby.InputManager;
-import sorgente.UI.Lobby.LobbyManager;
-import sorgente.UI.Lobby.UIManager;
+import sorgente.Lobby.InputManager;
+import sorgente.Lobby.LobbyManager;
+import sorgente.Lobby.UIManager;
 
-import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.Locale;
 

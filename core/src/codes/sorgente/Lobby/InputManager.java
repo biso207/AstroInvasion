@@ -5,26 +5,23 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI.Lobby;
+package sorgente.Lobby;
 
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.Pixmap;
 import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
-import sorgente.UI.LogInSignUp.LoginSignupManager;
+import sorgente.LogInSignUp.LoginSignupManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static sorgente.UI.Lobby.LobbyManager.selectedSp;
+import static sorgente.Lobby.LobbyManager.selectedSp;
 
 public class InputManager implements InputProcessor {
     // mappa dei range

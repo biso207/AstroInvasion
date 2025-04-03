@@ -22,7 +22,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.DataUserManager;
 import sorgente.Main;
-import sorgente.UI.Lobby.InputManager;
+import sorgente.Lobby.InputManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

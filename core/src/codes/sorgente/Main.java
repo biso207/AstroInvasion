@@ -10,7 +10,6 @@ package sorgente;
 
 // import codici e librerie
 import com.badlogic.gdx.Gdx;
-import sorgente.UI.LoadingScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 

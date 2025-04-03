@@ -1,5 +1,5 @@
 /*
-Astro Invasion - class Level -
+Astro Invasion - class ProgressManager -
 Gestisce i progressi compiuti nella modalità a livelli (galassie sbloccate, accessibilità livelli)
 Developed by BIGA©. All rights reserved.
 */

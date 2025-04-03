@@ -5,10 +5,9 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI;
+package sorgente;
 
 // import codici e librerie
-import sorgente.Main;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -17,7 +16,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import sorgente.UI.LogInSignUp.LoginSignupManager;
+import sorgente.LogInSignUp.LoginSignupManager;
 
 import java.util.Random;
 

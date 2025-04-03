@@ -9,7 +9,7 @@ package sorgente.GameMods.SpaceJourney;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import sorgente.Main;
-import sorgente.UI.Lobby.LobbyManager;
+import sorgente.Lobby.LobbyManager;
 import java.util.ArrayList;
 import java.util.List;
 

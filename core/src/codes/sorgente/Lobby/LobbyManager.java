@@ -5,13 +5,12 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI.Lobby;
+package sorgente.Lobby;
 
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.Entities.Spacecraft;
 import sorgente.Main;
@@ -29,6 +28,7 @@ public class LobbyManager implements Screen {
 
     // istanze altre classi
     private final UIManager ui;
+    private final InputManager input;
 
     // costruttore
     public LobbyManager(Main game) {
@@ -38,9 +38,11 @@ public class LobbyManager implements Screen {
 
         // istanza di UIManager
         ui = new UIManager();
-
-        // caricamento risorse
+        // caricamento navicella utente
         selectedSp = ui.createSpacecrafts(); // navicelle e recupero navicella utente
+
+        // istanza di InputManager
+        input = new InputManager();
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
@@ -55,7 +57,14 @@ public class LobbyManager implements Screen {
     // metodo per aggiornare lo schermo
     @Override public void render(float delta) {
         // attivazione controllo input
-        handleInput();
+        //handleInput();?
+        Gdx.input.setInputProcessor(input);
+
+        screen.begin();
+        // mostra elementi a schermo
+        ui.showItems(screen);
+        screen.end();
+
     }
     // spegnimento controllo input
     @Override public void hide() {

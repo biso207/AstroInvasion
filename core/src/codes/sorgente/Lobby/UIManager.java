@@ -5,7 +5,7 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI.Lobby;
+package sorgente.Lobby;
 
 // import codici e librerie
 import com.badlogic.gdx.graphics.*;
@@ -25,11 +25,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
 
-public class UIManager implements ResourceLoader {
-    // renderer per la barra di progresso della task corrente RTG
-    private ShapeRenderer shapeRenderer;
-
-    // dichiarazione icone difficoltà, spunta completamento, premi RTG
+public class UIManager implements ResourceLoader {    // dichiarazione icone difficoltà, spunta completamento, premi RTG
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
@@ -82,8 +78,6 @@ public class UIManager implements ResourceLoader {
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
         cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
-
-        shapeRenderer = new ShapeRenderer();
 
         // caricamento risorse
         createMissions();

@@ -8,7 +8,6 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
-import com.badlogic.gdx.utils.Timer;
 import sorgente.Entities.Alien;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
@@ -29,9 +28,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.DataUserManager;
 import sorgente.Main;
-import sorgente.Missions.RTG;
-import sorgente.UI.Lobby.InputManager;
-import sorgente.UI.Lobby.UIManager;
+import sorgente.Lobby.InputManager;
+import sorgente.Lobby.UIManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

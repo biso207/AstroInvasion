@@ -5,7 +5,7 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.UI.LogInSignUp;
+package sorgente.LogInSignUp;
 
 // import librerie
 import com.badlogic.gdx.Gdx;
