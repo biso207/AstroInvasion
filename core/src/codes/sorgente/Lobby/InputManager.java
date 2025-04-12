@@ -11,12 +11,14 @@ package sorgente.Lobby;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
+import sorgente.GameMods.SpaceJourney.ProgressManager;
+import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +27,7 @@ import static sorgente.Lobby.LobbyManager.selectedSp;
 
 public class InputManager implements InputProcessor {
     // mappa dei range
-    private final Map<Integer, Hitbox> hitBoxes = new HashMap<>();
+    private final Map<Integer, HitBox> hitBoxes = new HashMap<>();
 
     // variabili per gestire certi input
     protected static boolean secondScreen=false, open22=false, open23=false, open24=false, open25=false;
@@ -59,17 +61,17 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(0, new Hitbox(50, 182, 270, 200, 0, false));  // 'classic game'
-        hitBoxes.put(1, new Hitbox(50, 232, 270, 250, 1, false)); // 'space battle'
-        hitBoxes.put(2, new Hitbox(50, 285, 270, 303, 2, false)); // 'space journey'
-        hitBoxes.put(3, new Hitbox(50, 336, 270, 354, 3, false)); // 'road to glory'
-        hitBoxes.put(4, new Hitbox(50, 389, 270, 407, 4, false)); // 'spacecrafts 1'
-        hitBoxes.put(10, new Hitbox(50, 444, 270, 462, 10, true));  // 'missions 1'
-        hitBoxes.put(18, new Hitbox(50, 496, 270, 514, 17, false)); // 'marketplace'
+        hitBoxes.put(0, new HitBox(50, 182, 270, 200, 0, false));  // 'classic game'
+        hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
+        hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
+        hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
+        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, false)); // 'spacecrafts 1'
+        hitBoxes.put(10, new HitBox(50, 444, 270, 462, 10, true));  // 'missions 1'
+        hitBoxes.put(18, new HitBox(50, 496, 270, 514, 17, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(24, new Hitbox(862, 62, 950, 145, 20, true));  // 'profile infos'
-        hitBoxes.put(28, new Hitbox(50, 550, 270, 568, 24, true));   // 'instructions'
-        hitBoxes.put(29, new Hitbox(50, 600, 90, 630, 18, true));  // 'settings'
+        hitBoxes.put(24, new HitBox(862, 62, 950, 145, 20, true));  // 'profile infos'
+        hitBoxes.put(28, new HitBox(50, 550, 270, 568, 24, true));   // 'instructions'
+        hitBoxes.put(29, new HitBox(50, 600, 90, 630, 18, true));  // 'settings'
     }
 
     // ************************************** //
@@ -107,8 +109,8 @@ public class InputManager implements InputProcessor {
         // ......................... //
         if (!listSecondPages.contains(page) && !open22 && !open23 && !open24) {
             // for-each per iterare i vari range e controllare i cambi pagina
-            for (Map.Entry<Integer, Hitbox> entry : hitBoxes.entrySet()) {
-                Hitbox hb = entry.getValue();
+            for (Map.Entry<Integer, HitBox> entry : hitBoxes.entrySet()) {
+                HitBox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.remembersPrevious) previousPage = page;
                     page = hb.targetPage;
@@ -219,20 +221,20 @@ public class InputManager implements InputProcessor {
         }
 
         // controllo per avviare le modalità di gioco
-        if ((page == 0 || page == 1) && (screenX>=778 && screenX<=928) && (screenY>=552 && screenY<=592)) {
+        if ((screenX>=778 && screenX<=928) && (screenY>=552 && screenY<=592)) {
             // avvio modalità di gioco
-            if (page==0) {
-                if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG==3d) {
+            if (page == 0) {
+                // controllo per l'avviso difficoltà
+                if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
                     secondScreen = open24 = true;
-                }
-                else {
+                } else {
                     LobbyManager.soundtrack.stop();
                     LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
                 }
             }
-            else LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
+            else if (page == 1) LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
+            else if (page == 2) LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
         }
-
         // selezione navicella
 
         // selezione avatar
@@ -246,37 +248,37 @@ public class InputManager implements InputProcessor {
                 }
 
                 // aggiornamento posizione avatar per i possibili click
-                x += 66+95; // 66 larghezza img, 95 distanza di x tra immagini
+                x += 66 + 95; // 66 larghezza img, 95 distanza di x tra immagini
                 if ((i + 1) % 5 == 0) {
                     x = 133;
-                    y += 66+45; // 66 larghezza img, 45 distanza di y tra immagini
+                    y += 66 + 45; // 66 larghezza img, 45 distanza di y tra immagini
                 }
             }
         }
 
         // cambio difficoltà classic game
-        if (page==0 && (screenX>=710 && screenX<=730) && (screenY>=560 && screenY<=584)) {
-            if (diffCG<3) {
+        if (page == 0 && (screenX >= 710 && screenX <= 730) && (screenY >= 560 && screenY <= 584)) {
+            if (diffCG < 3) {
                 diffCG++;
                 DataUserManager.setProgress("diff_classic_game", diffCG);
             }
         }
-        if (page==0 && (screenX>=587 && screenX<=607) && (screenY>=560 && screenY<=584)) {
-            if (diffCG>1) {
+        if (page == 0 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584)) {
+            if (diffCG > 1) {
                 diffCG--;
                 DataUserManager.setProgress("diff_classic_game", diffCG);
             }
         }
 
         // cambio difficoltà space battle
-        if (page==1 && (screenX>=710 && screenX<=730) && (screenY>=560 && screenY<=584)) {
-            if (diffSB<3) {
+        if (page == 1 && (screenX >= 710 && screenX <= 730) && (screenY >= 560 && screenY <= 584)) {
+            if (diffSB < 3) {
                 diffSB++;
                 DataUserManager.setProgress("diff_space_battle", diffSB);
             }
         }
-        if (page==1 && (screenX>=587 && screenX<=607) && (screenY>=560 && screenY<=584)) {
-            if (diffSB>1) {
+        if (page == 1 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584)) {
+            if (diffSB > 1) {
                 diffSB--;
                 DataUserManager.setProgress("diff_space_battle", diffSB);
             }
@@ -288,29 +290,34 @@ public class InputManager implements InputProcessor {
 
         // selezione carte speciali //
         // gold heart
-        if ((page==0 || page==1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX>=705 && screenX<=734) && (screenY>=346 && screenY<=368)) {
+        if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX >= 705 && screenX <= 734) && (screenY >= 346 && screenY <= 368)) {
             goldHeart = !goldHeart;
             shield = superLaser = doublePoints = false;
         }
         // shield
-        if ((page==0 || page==1) && (!nameSp.equals("Astrid")) && (screenX>=867 && screenX<=896) && (screenY>=346 && screenY<=368)) {
-            if (page==0 && ((int) DataUserManager.getProgress("num_shield") > 0)) { shield = !shield; superLaser = false; }
-            else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0)) { superLaser = !superLaser; shield = false; }
+        if ((page == 0 || page == 1) && (!nameSp.equals("Astrid")) && (screenX >= 867 && screenX <= 896) && (screenY >= 346 && screenY <= 368)) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0)) {
+                shield = !shield;
+                superLaser = false;
+            } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0)) {
+                superLaser = !superLaser;
+                shield = false;
+            }
             goldHeart = doublePoints = false;
         }
         // super laser
-        if (page==0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX>=705 && screenX<=734) && (screenY>=504 && screenY<=526)) {
+        if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX >= 705 && screenX <= 734) && (screenY >= 504 && screenY <= 526)) {
             superLaser = !superLaser;
             goldHeart = shield = doublePoints = false;
         }
         // double points
-        if (page==0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX>=867 && screenX<=896) && (screenY>=504 && screenY<=526)) {
+        if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX >= 867 && screenX <= 896) && (screenY >= 504 && screenY <= 526)) {
             doublePoints = !doublePoints;
             goldHeart = shield = superLaser = false;
         }
 
         // claim reward del RTG
-        if (page==3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX>=762 && screenX<=898) && (screenY>=561 && screenY<=595)) {
+        if (page == 3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) {
             // missione corrente
             int mission = (int) DataUserManager.getProgress("num_mission");
             // id missione corrente
@@ -322,36 +329,35 @@ public class InputManager implements InputProcessor {
             int numSuperLaser = (int) DataUserManager.getProgress("num_super_laser");
             int credits = (int) DataUserManager.getProgress("credits");
 
-            switch(missionID) {
+            switch (missionID) {
                 case 1:
                     DataUserManager.setProgress("num_aliens_hit_RTG", 0); // progressi missione azzerati
-                    DataUserManager.setProgress("num_gold_heart", numGoldHeart+1); // aggiunta carta
+                    DataUserManager.setProgress("num_gold_heart", numGoldHeart + 1); // aggiunta carta
                     missionID++;
                     break;
                 case 2:
                     DataUserManager.setProgress("won_SB_RTG", 0); // progressi missione azzerati
-                    DataUserManager.setProgress("num_shield", numShield+1); // aggiunta carta
+                    DataUserManager.setProgress("num_shield", numShield + 1); // aggiunta carta
                     missionID++;
                     break;
                 case 3:
                     DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
-                    DataUserManager.setProgress("credits", credits+100);// aggiunta 100 crediti
+                    DataUserManager.setProgress("credits", credits + 100);// aggiunta 100 crediti
                     missionID++;
                     break;
                 case 4:
                     DataUserManager.setProgress("credits_RTG", 0); // progressi missione azzerati
-                    DataUserManager.setProgress("num_super_laser", numSuperLaser+1); // aggiunta carta
-                    missionID=1;
+                    DataUserManager.setProgress("num_super_laser", numSuperLaser + 1); // aggiunta carta
+                    missionID = 1;
                     break;
             }
 
-            DataUserManager.setProgress("num_mission", mission+1);
+            DataUserManager.setProgress("num_mission", mission + 1);
             DataUserManager.setProgress("mission_id", missionID);
             DataUserManager.setProgress("completed_RTG", false); // RTG non più completata
         }
 
         // acquisti nel negozio
-
         return true;
     }
 
@@ -373,17 +379,17 @@ public class InputManager implements InputProcessor {
 
     /*
     +---------------------+
-    | CLASSE INNER Hitbox |
+    | CLASSE INNER HitBox |
     +---------------------+
     */
     // classe inner per stabilire il range cliccabile, serve per controllare in maniera più pulita il click su un range
-    private static class Hitbox {
+    private static class HitBox {
         int x1, y1, x2, y2;
         int targetPage;
         boolean remembersPrevious;
 
         // costruttore
-        Hitbox(int x1, int y1, int x2, int y2, int targetPage, boolean remembersPrevious) {
+        HitBox(int x1, int y1, int x2, int y2, int targetPage, boolean remembersPrevious) {
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;

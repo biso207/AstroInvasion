@@ -6,29 +6,40 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.GameMods.SpaceJourney;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpaceJourney {
-    private Main game;
-    private List<Galaxy> galaxies;
+public class SpaceJourney implements Screen {
+    private final Main game;
+    // dichiarazione screen
+    private final SpriteBatch screen;
+
+    private final List<Galaxy> galaxies;
     private int currentGalaxy = 0;
     private int[] unlockCosts = {1000, 3000, 5000, 7000};
 
-    private ProgressManager progressManager;
+    private final ProgressManager progressManager = new ProgressManager();
+
+    private final SpaceJourneyUI ui;
 
     // costruttore
-    public SpaceJourney(Main game, ProgressManager progressManager) {
+    public SpaceJourney(Main game) {
         this.game = game;
-        this.progressManager = progressManager;
+        // init dello screen
+        this.screen = game.screen;
+
         this.galaxies = new ArrayList<>();
 
         // init galassie e livelli
         setupGalaxies();
+
+        // setup grafica
+        ui = new SpaceJourneyUI(currentGalaxy); /// TODO: recuperare la galassia corrente...
     }
 
     // metodo per inizializzare livelli e galassie
@@ -67,10 +78,14 @@ public class SpaceJourney {
             }
         }
 
-        // controllo pagina per tornare indietro
+        // controllo pagina per tornare indietro: 0 => Lobby; 4<=numGalaxy<=1 => currentGalaxy=0
         if (isBackButtonClicked(touchPos)) {
-            if (currentGalaxy == -1) game.setScreen(new LobbyManager(game));
-            else currentGalaxy = -1;
+            if (currentGalaxy == 0) game.setScreen(new LobbyManager(game));
+            else currentGalaxy = 0;
+        }
+
+        if (isHomeIconClicked(touchPos) && currentGalaxy == 0) {
+            game.setScreen(new LobbyManager(game));
         }
     }
 
@@ -79,7 +94,17 @@ public class SpaceJourney {
         double screenX = touchPos.x;
         double screenY = touchPos.y;
 
-        return (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124);
+        System.out.println(screenX + " " + screenY);
+
+        return ((screenX >= 904 && screenX <= 936) && (screenY >= 582 && screenY <= 615));
+    }
+
+    // metodo per tornare alla lobby cliccando sull'icona della terra
+    private boolean isHomeIconClicked(Vector2 touchPos) {
+        double screenX = touchPos.x;
+        double screenY = touchPos.y;
+
+        return ((screenX >= 25 && screenX <= 122) && (screenY >= 182 && screenY <= 283));
     }
 
     // metodo per controllare se l'area di una galassia è stata cliccata
@@ -93,5 +118,45 @@ public class SpaceJourney {
         // Implementare logica di clic sui livelli
         return false;
     }
+
+    // ****************************** //
+    // METODI DELL'INTERFACCIA Screen //
+    // ****************************** //
+
+    // aggiornamento grafica
+    @Override public void render(float delta) {
+        // init screen
+        screen.begin();
+
+        // mostra elementi a schermo
+        ui.createGalaxyUI(screen);
+
+        // chiusura screen
+        screen.end();
+    }
+
+    // metodo usato per il controllo degli input
+    @Override public void show() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                float correctedY = Gdx.graphics.getHeight() - screenY;
+                Vector2 touchPos = new Vector2(screenX, correctedY);
+                handleInput(touchPos);
+                return true;
+            }
+        });
+    }
+
+    // spegnimento controllo input
+    @Override public void hide() {
+        Gdx.input.setInputProcessor(null);
+    }
+    // rilascio risorse
+    @Override public void dispose() {}
+
+    @Override public void resize(int width, int height) {}
+    @Override public void pause() {}
+    @Override public void resume() {}
 }
 

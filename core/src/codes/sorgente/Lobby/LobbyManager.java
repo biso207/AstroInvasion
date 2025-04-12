@@ -60,9 +60,13 @@ public class LobbyManager implements Screen {
         //handleInput();?
         Gdx.input.setInputProcessor(input);
 
+        // init screen
         screen.begin();
+
         // mostra elementi a schermo
         ui.showItems(screen);
+
+        // chiusura screen
         screen.end();
 
     }

@@ -7,17 +7,16 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods.SpaceJourney;
 
 import sorgente.DataUserManager;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class ProgressManager {
-    private Set<Integer> completedLevels = new HashSet<>(); // Contiene i livelli completati
-    private Set<Integer> unlockedGalaxies = new HashSet<>(); // Contiene le galassie sbloccate
-    private Map<Integer, LevelState> levelStates = new HashMap<>();
-    private int credits;
+    private final Set<Integer> completedLevels = new HashSet<>(); // contiene i livelli completati
+    private final Set<Integer> unlockedGalaxies = new HashSet<>(); // contiene le galassie sbloccate
+    private final Map<Integer, LevelState> levelStates = new HashMap<>();
+    private final int credits;
 
     // costruttore
     public ProgressManager() {
