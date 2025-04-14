@@ -8,6 +8,7 @@ package sorgente.GameMods.SpaceJourney;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sorgente.DataUserManager;
 
 public class SpaceJourneyUI {
     // immagini galassie
@@ -17,14 +18,17 @@ public class SpaceJourneyUI {
     private Texture imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4;
     private Texture imgFlagSeat;
 
-    private int numGalaxy;
+    private final int numGalaxy, numLevel;
 
     // costruttore
     SpaceJourneyUI(int numGalaxy) {
         // caricamento risorse in memoria
         loadResources();
 
+        // numero della galassia corrente
         this.numGalaxy = numGalaxy;
+        // numero livello raggiunto
+        this.numLevel = (int) DataUserManager.getProgress("level");
     }
 
     // metodo per caricare le risorse
@@ -56,8 +60,18 @@ public class SpaceJourneyUI {
         imgFlagSeat = new Texture("images/space_journey_maps/flag_seat_marker.png");
     }
 
-    // metodo per creare la galassia
-    public void createGalaxyUI(SpriteBatch screen) {
+    // metodo per creare la grafica di una galassia
+    public void createGalaxyUI() {
+        int start = numGalaxy*10-9;
+        int finish = numGalaxy*10;
+        for (int i = start; i <= finish; i++) {
+            Level l = new Level(i);
+            System.out.println("livello " + i + " stato: " + l.getState(i));
+        }
+    }
+
+    // metodo per stampare le grafiche
+    public void printUI(SpriteBatch screen) {
         switch (numGalaxy) {
             case 0:
                 screen.draw(imgGalaxy0, 0,0);
@@ -75,5 +89,7 @@ public class SpaceJourneyUI {
                 screen.draw(imgGalaxy4, 0,0);
                 break;
         }
+
+        if (numGalaxy != 0) createGalaxyUI();
     }
 }

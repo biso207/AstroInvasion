@@ -7,12 +7,11 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods.SpaceJourney;
 
 public class Level {
-    private int id;
+    private final int id;
     private LevelState state;
 
-    public Level(int id, LevelState state) {
+    public Level(int id) {
         this.id = id;
-        this.state = state;
     }
 
     // metodo per recuperare l'id del livello
@@ -21,8 +20,14 @@ public class Level {
     }
 
     // metodo per recuperare lo stato di un livello
-    public LevelState getState() {
-        return state;
+    public LevelState getState(int numLevel) {
+        if (id == numLevel) {
+            return LevelState.UNLOCKED; // Il livello corrente è Unlocked
+        } else if (id < numLevel) {
+            return LevelState.COMPLETED; // I livelli precedenti sono Completed
+        } else {
+            return LevelState.LOCKED; // I livelli successivi sono Locked
+        }
     }
 
     // metodo per settare il livello ad sbloccato

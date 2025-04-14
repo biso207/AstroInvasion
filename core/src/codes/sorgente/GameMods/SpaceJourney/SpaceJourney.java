@@ -57,7 +57,7 @@ public class SpaceJourney implements Screen {
             List<Level> levels = new ArrayList<>();
             for (int j = 1; j <= 10; j++) {
                 int levelId = (i - 1) * 10 + j; // livelli da 1 a 40
-                levels.add(new Level(levelId, LevelState.LOCKED)); // tutti i livelli bloccati
+                levels.add(new Level(levelId)); // tutti i livelli bloccati
             }
             // alla mappa viene aggiunto un'ID e la sua lista di livelli
             galaxies.add(new Galaxy(i, progressManager.isGalaxyUnlocked(i), levels));
@@ -142,7 +142,7 @@ public class SpaceJourney implements Screen {
         screen.begin();
 
         // mostra elementi a schermo
-        ui.createGalaxyUI(screen);
+        ui.printUI(screen);
 
         // chiusura screen
         screen.end();
