@@ -228,12 +228,18 @@ public class InputManager implements InputProcessor {
                 if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
                     secondScreen = open24 = true;
                 } else {
-                    LobbyManager.soundtrack.stop();
+                    LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
                 }
             }
-            else if (page == 1) LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
-            else if (page == 2) LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
+            else if (page == 1) {
+                LobbyManager.soundtrack.stop(); // interruzione musica
+                LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
+            }
+            else if (page == 2) {
+                LobbyManager.soundtrack.stop(); // interruzione musica
+                LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
+            }
         }
         // selezione navicella
 

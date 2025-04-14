@@ -7,6 +7,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods.SpaceJourney;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import sorgente.Main;
@@ -18,6 +19,9 @@ public class SpaceJourney implements Screen {
     private final Main game;
     // dichiarazione screen
     private final SpriteBatch screen;
+
+    // soundtrack
+    private Music soundtrack;
 
     private final List<Galaxy> galaxies;
     private int currentGalaxy = 0;
@@ -40,6 +44,11 @@ public class SpaceJourney implements Screen {
 
         // setup grafica
         ui = new SpaceJourneyUI(currentGalaxy); /// TODO: recuperare la galassia corrente...
+
+        // musica di sottofondo
+        soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/space_journey_sound.mp3")); // file audio
+        soundtrack.setLooping(true); // true=loop music; false=no loop
+        soundtrack.play(); // avvio musica
     }
 
     // metodo per inizializzare livelli e galassie
@@ -80,12 +89,16 @@ public class SpaceJourney implements Screen {
 
         // controllo pagina per tornare indietro: 0 => Lobby; 4<=numGalaxy<=1 => currentGalaxy=0
         if (isBackButtonClicked(touchPos)) {
-            if (currentGalaxy == 0) game.setScreen(new LobbyManager(game));
+            if (currentGalaxy == 0) {
+                soundtrack.stop(); // stop della musica
+                game.setScreen(new LobbyManager(game)); // back to lobby
+            }
             else currentGalaxy = 0;
         }
 
         if (isHomeIconClicked(touchPos) && currentGalaxy == 0) {
-            game.setScreen(new LobbyManager(game));
+            soundtrack.stop(); // stop della musica
+            game.setScreen(new LobbyManager(game)); // back to lobby
         }
     }
 
