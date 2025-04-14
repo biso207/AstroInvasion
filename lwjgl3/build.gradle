@@ -15,8 +15,7 @@ plugins {
 }
 apply plugin: 'io.github.fourlastor.construo'
 
-
-//import io.github.fourlastor.construo.Target
+import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'com.biga.astroinvasion.lwjgl3.Lwjgl3Launcher'
@@ -29,10 +28,9 @@ if (JavaVersion.current().isJava9Compatible()) {
 }
 
 dependencies {
-  //implementation group: 'org.json', name: 'json', version: '20250107'
+  implementation project(':core')
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-  implementation project(':core')
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
