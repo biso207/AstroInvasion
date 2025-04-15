@@ -1,8 +1,17 @@
-plugins {
-  id 'java'
+java {
+  sourceCompatibility = JavaVersion.VERSION_14
+  targetCompatibility = JavaVersion.VERSION_14
+}
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src/codes']
+    }
+  }
 }
 
 dependencies {
-  // solo librerie di utilità generiche
-  implementation group: 'org.json', name: 'json', version: '20220320' // più stabile e leggera
+  implementation group: 'org.json', name: 'json', version: '20220320' // x i JSON, stabile e leggera ma con vulnerabilità
+  implementation "com.badlogicgames.gdx:gdx:$gdxVersion" // per i pacchetti di libGDX
 }
