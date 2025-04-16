@@ -27,20 +27,20 @@ import org.json.JSONObject;
 
 public class DataUserManager {
     // percorso dei file
-    private static String percorsoFile;
+    private static String filePath;
     // hashmap dei progressi
     private static final Map<String, Object> progressi = new HashMap<>();
 
     // costruttore
-    public DataUserManager(String percorsoFile) {
-        DataUserManager.percorsoFile = percorsoFile;
+    public DataUserManager(String path) {
+        DataUserManager.filePath = path;
         loadProgresses();
     }
 
     // metodo per caricare tutti i progressi in memoria (HashMap)
     private void loadProgresses() {
         try {
-            String contenuto = Files.readString(Path.of(percorsoFile));
+            String contenuto = Files.readString(Path.of(filePath));
             JSONObject json = new JSONObject(contenuto); // istanza di un json
 
             // for-each per recuperare i vari valori
@@ -48,7 +48,7 @@ public class DataUserManager {
                 progressi.put(key, json.get(key)); // qualunque tipo di dato è ammesso
             }
         } catch (IOException e) {
-            System.err.println("Errore nella lettura del file: " + percorsoFile);
+            System.err.println("Errore nella lettura del file: " + filePath);
         }
     }
 
@@ -63,12 +63,12 @@ public class DataUserManager {
         saveProgresses(); // aggiornamento del json
     }
 
-    // metodo per scrivere i progressi sul json
+    // metodo per aggiornare il json
     private static void saveProgresses() {
-        try (FileWriter file = new FileWriter(percorsoFile)) {
+        try (FileWriter file = new FileWriter(filePath)) {
             file.write(new JSONObject(progressi).toString(4)); // indenta per leggibilità
         } catch (IOException e) {
-            System.err.println("Errore nel salvataggio del file: " + percorsoFile);
+            System.err.println("Errore nel salvataggio del file: " + filePath);
         }
     }
 }

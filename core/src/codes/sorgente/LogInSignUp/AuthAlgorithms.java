@@ -13,6 +13,16 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.ObjectMap;
+import org.json.JSONObject;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
@@ -89,19 +99,9 @@ public class AuthAlgorithms implements InputProcessor {
         try {
             // percorsi nuovo utente
             FileHandle generalFolder = Gdx.files.local("data/" + nicknameInput);
-            FileHandle dataFolder = Gdx.files.local("data/" + nicknameInput + "/data_user");
 
-            if (!generalFolder.exists() && !dataFolder.exists()) {
+            if (!generalFolder.exists()) {
                 generalFolder.mkdirs();
-                dataFolder.mkdirs();
-
-                // scrittura del nickname digitato
-                FileHandle writeNick = Gdx.files.local("data/" + nicknameInput + "/data_user/nickname.txt");
-                writeNick.writeString(String.valueOf(nicknameInput), false);  // `false` sovrascrive il file se già esiste
-
-                // scrittura della password digitata
-                FileHandle writePass = Gdx.files.local("data/" + nicknameInput + "/data_user/password.txt");
-                writePass.writeString(String.valueOf(passwordInput), false);  // `false` sovrascrive il file se già esiste
 
                 nickname = String.valueOf(nicknameInput);
                 password = String.valueOf(passwordInput);
@@ -111,7 +111,7 @@ public class AuthAlgorithms implements InputProcessor {
 
                 state = 2;
             }
-            else if ((generalFolder.exists() && dataFolder.exists()) && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
+            else if (generalFolder.exists() && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
                 error = true;
             }
         }
@@ -123,11 +123,17 @@ public class AuthAlgorithms implements InputProcessor {
     public void LogInAlg() {
         try {
             // lettura password nickname e password dai file
-            FileHandle readPass = Gdx.files.internal("data/" + nicknameInput + "/data_user/password.txt");
-            FileHandle readNick = Gdx.files.internal("data/" + nicknameInput + "/data_user/nickname.txt");
-            String filePassword = readPass.readString();
-            String fileNickname = readNick.readString();
+            String filePath = "data/" + nicknameInput + "/userData.json"; // percorso file json
+            FileHandle fileHandle = Gdx.files.local(filePath); // creazione oggetto fileHandle
 
+            String contenuto = fileHandle.readString();
+            JSONObject json = new JSONObject(contenuto); // oggetto json per la lettura dei valori
+
+            // lettura delle due chiavi - nick e psw
+            String fileNickname = json.getString("nickname");
+            String filePassword = json.getString("password");
+
+            // controllo correttezza digitazione nick e psw
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
                 error = true;
             }
@@ -137,82 +143,72 @@ public class AuthAlgorithms implements InputProcessor {
         }
         catch(Exception e){
             error = true;
+            System.out.println("Errore: " + e.getMessage());
         }
 
         nickname = String.valueOf(nicknameInput);
         password = String.valueOf(passwordInput);
     }
 
-    /// TODO: implementare il nuovo metodo per creare i file alla creazione utente. Deve creare un json.
     // metodo per creare i file per i progressi utente
     public void createFiles() {
-        // avatar
-        FileHandle fileAvatar = Gdx.files.local("data/" + nicknameInput + "/progresses/avatar.txt");
-        fileAvatar.writeString("1", false);
-        // monete
-        FileHandle writeCredits = Gdx.files.local("data/" + nicknameInput + "/progresses/credits.txt");
-        writeCredits.writeString("100", false);
-        // completamento missione RoadToGlory
-        FileHandle writeRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/completed_rtg.txt");
-        writeRTG.writeString("false", false);
-        // difficoltà classic game
-        FileHandle writeDiffCG = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_classic_game.txt");
-        writeDiffCG.writeString("1", false);
-        // difficoltà space battle
-        FileHandle writeDiffSB = Gdx.files.local("data/" + nicknameInput + "/progresses/diff_space_battle.txt");
-        writeDiffSB.writeString("1", false);
-        // id missione (1-4)
-        FileHandle writeID = Gdx.files.local("data/" + nicknameInput + "/progresses/mission_id.txt");
-        writeID.writeString("1", false);
-        // livello
-        FileHandle writeLevel = Gdx.files.local("data/" + nicknameInput + "/progresses/level.txt");
-        writeLevel.writeString("1", false);
-        // tipo di movimento
-        FileHandle writeMovement = Gdx.files.local("data/" + nicknameInput + "/progresses/movement_type.txt");
-        writeMovement.writeString("1", false);
-        // tipo di sparo
-        FileHandle writeShot = Gdx.files.local("data/" + nicknameInput + "/progresses/shot_type.txt");
-        writeShot.writeString("1", false);
-        // navicella
-        FileHandle writeSpacecraft = Gdx.files.local("data/" + nicknameInput + "/progresses/spacecraft.txt");
-        writeSpacecraft.writeString("1", false);
-        // numero carte double points
-        FileHandle writeNumCards1 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_double_points.txt");
-        writeNumCards1.writeString("3", false);
-        // numero carte gold heart
-        FileHandle writeNumCards2 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_gold_heart.txt");
-        writeNumCards2.writeString("3", false);
-        // numero carte shield
-        FileHandle writeNumCards3 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_shield.txt");
-        writeNumCards3.writeString("3", false);
-        // numero carte super laser
-        FileHandle writeNumCards4 = Gdx.files.local("data/" + nicknameInput + "/progresses/num_super_laser.txt");
-        writeNumCards4.writeString("3", false);
-        // numero missione raggiunta
-        FileHandle writeMission = Gdx.files.local("data/" + nicknameInput + "/progresses/num_mission.txt");
-        writeMission.writeString("1", false);
-        // numero partite vinte a space battle consecutive per RTG
-        FileHandle writeWonSbRTG = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB_RTG.txt");
-        writeWonSbRTG.writeString("0", false);
-        // numero alieni colpiti in classic game
-        FileHandle writeNumAliensHit = Gdx.files.local("data/" + nicknameInput + "/progresses/num_aliens_hit.txt");
-        writeWonSbRTG.writeString("0", false);
-        // partite classic game
-        FileHandle writeMatchesCG = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_CG.txt");
-        writeMatchesCG.writeString("0", false);
-        // partite space battle
-        FileHandle writeMatchesSB = Gdx.files.local("data/" + nicknameInput + "/progresses/matches_SB.txt");
-        writeMatchesSB.writeString("0", false);
-        // vittorie space battle
-        FileHandle writeWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/won_SB.txt");
-        writeWonSB.writeString("0", false);
-        // vittorie consecutive space battle
-        FileHandle writeConsWonSB = Gdx.files.local("data/" + nicknameInput + "/progresses/cons_won_SB.txt");
-        writeConsWonSB.writeString("0", false);
-        // punteggio utente
-        FileHandle writePoints = Gdx.files.local("data/" + nicknameInput + "/progresses/points.txt");
-        writePoints.writeString("0", false);
+        // mappa per i dati utente
+        JSONObject userData = new JSONObject();
 
+        // aggiunta nick e psw del nuovo utente creato
+        userData.put("nickname", nickname);
+        userData.put("password", password);
+
+        // oggetti per salvare giorno di creazione profilo
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
+        String creationDate = LocalDate.now().format(formatter); // recupero giorno creazione profilo
+        userData.put("date", creationDate);
+
+        // scrittura del JSON
+        Path filePath1 = Paths.get("data/" + nicknameInput + "/", "userData.json");
+        try (FileWriter fileWriter = new FileWriter(filePath1.toString())) {
+            // indentazione di 4
+            fileWriter.write(userData.toString(4));
+        } catch (IOException e) {
+            System.err.println("Errore durante la scrittura del file: " + e.getMessage());
+        }
+
+        // -------------------------- //
+        // mappa per i progressi utente
+        JSONObject gameProgresses = new JSONObject();
+        /// Le seguenti variabili possono avere dei valori alti per testare il gioco
+        gameProgresses.put("avatar", 0);
+        gameProgresses.put("credits", 100);
+        gameProgresses.put("total_credits", 100);
+        gameProgresses.put("completed_RTG", false);
+        gameProgresses.put("diff_classic_game", 1);
+        gameProgresses.put("diff_space_battle", 1);
+        gameProgresses.put("mission_id", 1);
+        gameProgresses.put("level", 1);
+        gameProgresses.put("movement_type", 1);
+        gameProgresses.put("shot_type", 1);
+        gameProgresses.put("spacecraft", 1);
+        gameProgresses.put("num_double_points", 3);
+        gameProgresses.put("num_gold_heart", 3);
+        gameProgresses.put("num_shield", 3);
+        gameProgresses.put("num_super_laser", 3);
+        gameProgresses.put("num_mission", 1);
+        gameProgresses.put("won_SB_RTG", 0);
+        gameProgresses.put("num_aliens_hit", 0);
+        gameProgresses.put("matches_CG", 0);
+        gameProgresses.put("matches_SB", 0);
+        gameProgresses.put("won_SB", 0);
+        gameProgresses.put("cons_won_SB", 0);
+        gameProgresses.put("points", 0);
+
+        // scrittura del JSON
+        Path filePath2 = Paths.get("data/" + nicknameInput + "/", "gameProgresses.json");
+        try (FileWriter fileWriter = new FileWriter(filePath2.toString())) {
+            // indentato di 4
+            fileWriter.write(gameProgresses.toString(4));
+        } catch (IOException e) {
+            System.err.println("Errore durante la scrittura del file: " + e.getMessage());
+        }
     }
 
     // ************************************** //
@@ -239,6 +235,7 @@ public class AuthAlgorithms implements InputProcessor {
 
         return true;
     }
+
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         System.out.println(screenX + " " + screenY);
