@@ -92,7 +92,7 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23 && !open24)) {
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25)) {
             open23 = true;
             secondScreen = true;
             return true;
@@ -119,7 +119,7 @@ public class InputManager implements InputProcessor {
         // ......................... //
         // CAMBIO PAGINE DALLA LOBBY //
         // ......................... //
-        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24) {
+        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25) {
             // for-each per iterare i vari range e controllare i cambi pagina
             for (Map.Entry<Integer, HitBox> entry : hitBoxes.entrySet()) {
                 HitBox hb = entry.getValue();
@@ -196,18 +196,18 @@ public class InputManager implements InputProcessor {
             secondScreen = open24 = false;
         }
 
-        // YES logout => back to Authentication Page
-        if ((secondScreen&&open23) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
-            secondScreen = open23 = false;
-            LobbyManager.soundtrack.stop();
-            LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
-        }
-
         // PLAY warning => play classic game
         if ((secondScreen&&open24) && (screenX>=519 && screenX<=719) && (screenY>=417 && screenY<=497)) {
             secondScreen = open24 = false;
             LobbyManager.soundtrack.stop();
             LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+        }
+
+        // YES logout => back to the Authentication Page
+        if ((secondScreen&&open23) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
+            secondScreen = open23 = false;
+            LobbyManager.soundtrack.stop();
+            LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
         }
 
         // ........................ //
@@ -228,7 +228,7 @@ public class InputManager implements InputProcessor {
         // CLICK NELLE PAGINE //
         // .................. //
 
-        // pagina 19 'avatar'
+        // apertura pagina 19 'avatar'
         if (page == 20 && (screenX>=453 && screenX<=537) && (screenY>=108 && screenY<=188)) {
             page = 19;
         }
@@ -376,7 +376,7 @@ public class InputManager implements InputProcessor {
         }
 
         // acquisti nel negozio
-        if (page == 17) {
+        if (page == 17 && !secondScreen) {
             // rimozione prodotto
             if ((screenX >= 344 && screenX <= 364 && screenY >= 385 && screenY <= 405) && item1>0) { // item 1
                 item1--;
@@ -420,11 +420,11 @@ public class InputManager implements InputProcessor {
                 item4++;
                 currentCredit -= 200;
             }
-            if ((screenX >= 506 && screenX <= 526 && screenY >= 538 && screenY <= 558) && (currentCredit-20000>=0 && item5<1)) { // item 5
+            if ((screenX >= 506 && screenX <= 526 && screenY >= 538 && screenY <= 558) && (currentCredit-20000>=0 && item5<1 && !((boolean) DataUserManager.getProgress("state_product_5")))) { // item 5
                 item5++;
                 currentCredit -= 20000;
             }
-            if ((screenX >= 752 && screenX <= 772 && screenY >= 538 && screenY <= 558) && (currentCredit-30000>=0 && item6<1)) { // item 6
+            if ((screenX >= 752 && screenX <= 772 && screenY >= 538 && screenY <= 558) && (currentCredit-30000>=0 && item6<1 && !((boolean) DataUserManager.getProgress("state_product_6")))) { // item 6
                 item6++;
                 currentCredit -= 30000;
             }
@@ -439,22 +439,41 @@ public class InputManager implements InputProcessor {
             System.out.println(screenX + " " + screenY);
             // pulsante per confermare l'acquisto
             if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize>0) {
-                // salvataggio crediti rimasti
-                DataUserManager.setProgress("credits", currentCredit);
-
-                // aggiornamento numero carte
-                DataUserManager.setProgress("num_gold_heart", ((int)DataUserManager.getProgress("num_gold_heart")+item1));
-                DataUserManager.setProgress("num_shield", ((int)DataUserManager.getProgress("num_shield")+item2));
-                DataUserManager.setProgress("num_super_laser", ((int)DataUserManager.getProgress("num_super_laser")+item3));
-                DataUserManager.setProgress("num_double_points", ((int)DataUserManager.getProgress("num_double_points")+item4));
-
-                item1=item2=item3=item4=item5=item6=0; // reset item 1-6
-                finalPrize=0; // reset final prize
+                secondScreen=open25=true;
             }
 
             // prezzo finale
             finalPrize = ((int) DataUserManager.getProgress("credits")) - currentCredit;
         }
+
+        // YES => conferma acquisto
+        if ((secondScreen&&open25) && (screenX>=281 && screenX<=481) && (screenY>=417 && screenY<=497)) {
+            // salvataggio crediti rimasti
+            DataUserManager.setProgress("credits", currentCredit);
+
+            // aggiornamento numero carte
+            DataUserManager.setProgress("num_gold_heart", ((int)DataUserManager.getProgress("num_gold_heart")+item1));
+            DataUserManager.setProgress("num_shield", ((int)DataUserManager.getProgress("num_shield")+item2));
+            DataUserManager.setProgress("num_super_laser", ((int)DataUserManager.getProgress("num_super_laser")+item3));
+            DataUserManager.setProgress("num_double_points", ((int)DataUserManager.getProgress("num_double_points")+item4));
+
+            // aggiornamento stato prodotto 5
+            if (item5 == 1) DataUserManager.setProgress("state_product_5", true);
+            // aggiornamento stato prodotto 6
+            if (item6 == 1) DataUserManager.setProgress("state_product_6", true);
+
+            item1=item2=item3=item4=item5=item6=0; // reset item 1-6
+            finalPrize=0; // reset final prize
+
+            // chiusura schermata in sovra impressione
+            secondScreen=open25=false;
+        }
+
+        // NO => annulla acquisto
+        if ((secondScreen&&open25) && (screenX>=519 && screenX<=719) && (screenY>=417 && screenY<=497)) {
+            secondScreen=open25=false;
+        }
+
         return true;
     }
 

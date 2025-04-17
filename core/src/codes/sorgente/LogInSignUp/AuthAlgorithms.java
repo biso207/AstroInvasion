@@ -198,6 +198,8 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("won_SB", 0);
         gameProgresses.put("cons_won_SB", 0);
         gameProgresses.put("points", 0);
+        gameProgresses.put("state_product_5", false);
+        gameProgresses.put("state_product_6", false);
 
         // scrittura del JSON
         Path filePath2 = Paths.get("data/" + nicknameInput + "/", "gameProgresses.json");

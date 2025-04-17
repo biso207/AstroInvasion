@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class UIManager implements ResourceLoader {    // dichiarazione icone difficoltà, spunta completamento, premi RTG
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG, notifyCompletedRTG;
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -41,7 +41,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     public static RTG[] RTGs;
 
     // immagini in sovra impressione
-    private Texture closeGame, softInfos, warning;
+    private Texture closeGame, softInfos, warning, confirmBuy;
 
     private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
     //private BitmapFont fontRed20;
@@ -81,8 +81,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
         // caricamento risorse
         createMissions();
-        loadLobbyImages(); // schermate lobby
-        loadImages(); // altre immagini
+        loadImages(); // immagini lobby
         loadFont(); // font
         createAvatars(); // creazione oggetti avatar
 
@@ -115,9 +114,27 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         }
     }
 
-    // metodo per caricare le immagini delle pagine di Accesso e Registrazione
+    // metodo per caricare le immagini della Lobby
     @Override
     public void loadImages() {
+        // popolamento mappa lobby
+        for (int i = 0; i < 25; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        // popolamento mappa avatar
+        for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
+
+        // "pulsante" raccolta premio RTG
+        Texture img_special = new Texture("images/rect_claim_reward_eng.png");
+        mapLobby.put(35, img_special);
+
+        // immagini in sovra impressione
+        closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
+        softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
+        warning = new Texture("secondary_screens/lobby_warning_eng.png");
+        confirmBuy = new Texture("secondary_screens/lobby_confirm_buy_eng.png");
+
+        // testo "SOLD OUT" per il marketplace
+        txtSoldOut = new Texture("images/sold_item_txt.png");
+
         // icona difficoltà classic game
         diffCG1 = new Texture("images/diff1_classicgame.png");
         diffCG2 = new Texture("images/diff2_classicgame.png");
@@ -147,6 +164,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         progressRTG = new Texture("images/progress.png");
         progressBarRegion = new TextureRegion(progressRTG);
 
+        // array per gli avatar
         avatars = new Texture[20];
         avatarsCovered = new Texture[20];
 
@@ -162,24 +180,8 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             avatarsCovered[i] = new Texture("images/avatars/av (" + i + ") mini covered.png");
         }
 
+        // quadrato avatar selezionato
         selectedAvatar = new Texture("images/avatars/selected_avatar.png");
-    }
-
-    // metodo per caricare le immagini della Lobby
-    public void loadLobbyImages(){
-        // popolamento mappa lobby
-        for (int i = 0; i < 25; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
-        // popolamento mappa avatar
-        for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
-
-        // "pulsante" raccolta premio
-        Texture img_special = new Texture("images/rect_claim_reward_eng.png");
-        mapLobby.put(35, img_special);
-
-        // immagini in sovra impressione
-        closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
-        softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
-        warning = new Texture("secondary_screens/lobby_warning_eng.png");
     }
 
     // **************** //
@@ -470,6 +472,11 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
                 // prezzo finale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 530, 108); // prezzo d'acquisto finale
+
+                // testi "sold out" per specificare che i prodotti non sono disponibili
+                if ((boolean) DataUserManager.getProgress("state_product_5")) screen.draw(txtSoldOut, 435, 160);
+                if ((boolean) DataUserManager.getProgress("state_product_6")) screen.draw(txtSoldOut, 680, 160);
+
                 break;
 
             // pagina 'profile info'
@@ -560,6 +567,11 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             if (InputManager.open23) screen.draw(closeGame, 250, 175);
             else if (InputManager.open22) screen.draw(softInfos, 250, 175);
             else if (InputManager.open24) screen.draw(warning, 250, 175);
+            else if (InputManager.open25) {
+                screen.draw(confirmBuy, 250, 175);
+                // testo prezzo totale
+                fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
+            }
         }
     }
 
