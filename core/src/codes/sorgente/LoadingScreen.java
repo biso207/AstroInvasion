@@ -32,7 +32,7 @@ public class LoadingScreen implements Screen {
     private Texture background; // immagine di sfondo
 
     // array dei colori della barra di caricamento
-    private final String[] colorsLoader =  {"#620616", "#7B0D0E", "#151E51", "#2A1535"};
+    private final String[] colorsLoader =  {"#FF3030", "#620616", "#7B0D0E", "#151E51", "#2A1535"};
 
 
     public LoadingScreen(Main game) {
@@ -106,10 +106,10 @@ public class LoadingScreen implements Screen {
     public void selectScreen() {
         // numero random della schermata
         Random r = new Random();
-        bg = r.nextInt(4);
+        bg = r.nextInt(5); // 0->4
 
         // array dei percorsi delle immagini di caricamento
-        String[] bgPaths = {"loading_screens/loading_screen_1.png", "loading_screens/loading_screen_2.png",
+        String[] bgPaths = {"loading_screens/loading_screen_0.png", "loading_screens/loading_screen_1.png", "loading_screens/loading_screen_2.png",
             "loading_screens/loading_screen_3.png", "loading_screens/loading_screen_4.png"};
 
         // immagine di sfondo

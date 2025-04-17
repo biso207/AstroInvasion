@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sorgente.DataUserManager;
 import sorgente.Entities.Spacecraft;
 import sorgente.Main;
 
@@ -42,7 +43,8 @@ public class LobbyManager implements Screen {
         selectedSp = ui.createSpacecrafts(); // navicelle e recupero navicella utente
 
         // istanza di InputManager
-        input = new InputManager();
+        int credits = (int) DataUserManager.getProgress("credits");
+        input = new InputManager(credits);
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio

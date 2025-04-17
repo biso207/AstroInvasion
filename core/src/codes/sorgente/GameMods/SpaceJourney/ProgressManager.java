@@ -63,6 +63,7 @@ public class ProgressManager {
         // sblocco galassia
         if (credits >= cost && !unlockedGalaxies.contains(galaxy)) {
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
+            DataUserManager.setProgress("total_credits", credits - cost); // aggiornamento crediti utente totali
             unlockedGalaxies.add(galaxy); // aggiunta alla lista delle galassie sbloccate quella nuova
             return true;
         }
@@ -78,6 +79,7 @@ public class ProgressManager {
         // sblocco livello
         if (credits >= cost && getLevelState(levelId) == LevelState.LOCKED) {
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
+            DataUserManager.setProgress("total_credits", credits - cost); // aggiornamento crediti utente totali
             levelStates.put(levelId, LevelState.UNLOCKED); // cambio stato accessibilità del livello
             return true;
         }

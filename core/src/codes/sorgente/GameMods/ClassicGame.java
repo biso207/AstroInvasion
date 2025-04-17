@@ -87,9 +87,8 @@ public class ClassicGame implements Screen, InputProcessor {
     // dichiarazione font
     private BitmapFont font, fontGold;
 
-    // musiche
-    private final Music soundtrack; // sottofondo
-    private final Sound creditSound, shotSound, hitSound, completedRTGSound; // suoni
+    // audio di gioco
+    private final Sound creditSound, shotSound, hitSound, completedRTGSound;
 
     /* modalità di gioco
        la modalità di gioco definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
@@ -156,11 +155,6 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // caricamento immagini
         loadImages();
-
-        // musica di sottofondo
-        soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3")); // file audio
-        soundtrack.setLooping(true); // true=loop music; false=no loop
-        soundtrack.play(); // avvio musica
 
         // laser sparato
         shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
@@ -492,7 +486,7 @@ public class ClassicGame implements Screen, InputProcessor {
         int bonusPoints = selectedSp.getBonusPoint();
         if (bonusPoints > 0) points = points+((points*bonusPoints)/100); // aggiunta percentuale di bonus
 
-        soundtrack.stop();
+        // apertura pagina di game over
         game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit));
     }
 
@@ -588,14 +582,11 @@ public class ClassicGame implements Screen, InputProcessor {
         font.draw(screen, formatter.format(aliensHit), 800, 670);
 
         // stampa messaggio completamento task RTG
-        /// TODO: implementare il suono di notifica di completamento task RTG...
         checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
-        if (completedRTG && elapsedTime <= 5f) {
+        if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
             // conteggio tempo per mostrare la notifica
             elapsedTime += delta;
-
-            //completedRTGSound.play(); // suono notifica
-            screen.draw(bannerRTG, 400, 580); // banner di notifica
+            screen.draw(bannerRTG, 400, 515); // banner di notifica
         }
 
         screen.end();

@@ -17,6 +17,8 @@ import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
+
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +46,16 @@ public class InputManager implements InputProcessor {
     private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
     private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
 
+    // oggetti negozio
+    protected static int item1, item2, item3, item4, item5, item6;
+    // prezzo finale negozio
+    protected static int finalPrize=0;
+    // crediti utente
+    protected static int currentCredit;
+
 
     // costruttore
-    public InputManager() {
+    public InputManager(int credits) {
         // definizione delle aree cliccabili
         hitAreas();
 
@@ -55,6 +64,11 @@ public class InputManager implements InputProcessor {
         if (nameSp.equals("Astrid")) shield = true;
         if (nameSp.equals("Rorik")) superLaser = true;
         if (nameSp.equals("Drakar")) doublePoints = true;
+
+        // init numero prodotti
+        item1=item2=item3=item4=item5=item6=0;
+        // recupero crediti
+        currentCredit = credits;
     }
 
     // metodo per definire le aree di gioco cliccabili
@@ -346,6 +360,7 @@ public class InputManager implements InputProcessor {
                 case 3:
                     DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
                     DataUserManager.setProgress("credits", credits + 100);// aggiunta 100 crediti
+                    DataUserManager.setProgress("total_credits", credits + 100);// aggiunta 100 crediti totali
                     missionID++;
                     break;
                 case 4:
@@ -361,6 +376,85 @@ public class InputManager implements InputProcessor {
         }
 
         // acquisti nel negozio
+        if (page == 17) {
+            // rimozione prodotto
+            if ((screenX >= 344 && screenX <= 364 && screenY >= 385 && screenY <= 405) && item1>0) { // item 1
+                item1--;
+                currentCredit += 50;
+            }
+            if ((screenX >= 494 && screenX <= 514 && screenY >= 385 && screenY <= 405) && item2>0) { // item 2
+                item2--;
+                currentCredit += 75;
+            }
+            if ((screenX >= 644 && screenX <= 664 && screenY >= 385 && screenY <= 405) && item3>0) { // item 3
+                item3--;
+                currentCredit += 100;
+            }
+            if ((screenX >= 794 && screenX <= 814 && screenY >= 385 && screenY <= 405) && item4>0) { // item 4
+                item4--;
+                currentCredit += 200;
+            }
+            if ((screenX >= 442 && screenX <= 462 && screenY >= 538 && screenY <= 558) && item5>0) { // item 5
+                item5--;
+                currentCredit += 20000;
+            }
+            if ((screenX >= 688 && screenX <= 708 && screenY >= 538 && screenY <= 558) && item6>0) { // item 6
+                item6--;
+                currentCredit += 30000;
+            }
+
+            // aggiunta prodotto
+            if ((screenX >= 409 && screenX <= 429 && screenY >= 385 && screenY <= 405) && (currentCredit-50>=0)) { // item 1
+                item1++;
+                currentCredit -= 50;
+            }
+            if ((screenX >= 559 && screenX <= 579 && screenY >= 385 && screenY <= 405) && (currentCredit-75>=0)) { // item 2
+                item2++;
+                currentCredit -= 75;
+            }
+            if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit-100>=0)) { // item 3
+                item3++;
+                currentCredit -= 100;
+            }
+            if ((screenX >= 859 && screenX <= 879 && screenY >= 385 && screenY <= 405) && (currentCredit-200>=0)) { // item 4
+                item4++;
+                currentCredit -= 200;
+            }
+            if ((screenX >= 506 && screenX <= 526 && screenY >= 538 && screenY <= 558) && (currentCredit-20000>=0 && item5<1)) { // item 5
+                item5++;
+                currentCredit -= 20000;
+            }
+            if ((screenX >= 752 && screenX <= 772 && screenY >= 538 && screenY <= 558) && (currentCredit-30000>=0 && item6<1)) { // item 6
+                item6++;
+                currentCredit -= 30000;
+            }
+
+            // pulsante reset
+            if (screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624) {
+                item1=item2=item3=item4=item5=item6=0; // reset item 1-6
+                finalPrize=0; // reset final prize
+                currentCredit = ((int) DataUserManager.getProgress("credits")); // reset crediti
+            }
+
+            System.out.println(screenX + " " + screenY);
+            // pulsante per confermare l'acquisto
+            if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize>0) {
+                // salvataggio crediti rimasti
+                DataUserManager.setProgress("credits", currentCredit);
+
+                // aggiornamento numero carte
+                DataUserManager.setProgress("num_gold_heart", ((int)DataUserManager.getProgress("num_gold_heart")+item1));
+                DataUserManager.setProgress("num_shield", ((int)DataUserManager.getProgress("num_shield")+item2));
+                DataUserManager.setProgress("num_super_laser", ((int)DataUserManager.getProgress("num_super_laser")+item3));
+                DataUserManager.setProgress("num_double_points", ((int)DataUserManager.getProgress("num_double_points")+item4));
+
+                item1=item2=item3=item4=item5=item6=0; // reset item 1-6
+                finalPrize=0; // reset final prize
+            }
+
+            // prezzo finale
+            finalPrize = ((int) DataUserManager.getProgress("credits")) - currentCredit;
+        }
         return true;
     }
 

@@ -28,7 +28,7 @@ public class RTG {
 
     // calcolo numObjMission
     public int calcNumObjMission() {
-        int numMission = (int)DataUserManager.getProgress("num_mission");
+        int numMission = (int)DataUserManager.getProgress("num_mission"); // recupero numero missione completate
         double molt = Math.ceil((double) numMission/4);  // moltiplicatore valore base missione con arrotondamento per eccesso
 
         return (int) (objMission * molt);  // return progresso per la missione corrente

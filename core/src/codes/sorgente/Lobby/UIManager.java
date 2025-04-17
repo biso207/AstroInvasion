@@ -43,7 +43,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     // immagini in sovra impressione
     private Texture closeGame, softInfos, warning;
 
-    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontWhite20, fontBoldWhite15, fontBoldWhite20, fontItalicBoldWhite15;
+    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
     //private BitmapFont fontRed20;
 
     // hashmap per le diverse texture
@@ -98,13 +98,15 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     public void loadFont() {
         // dichiarazione font
         try {
-            fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter regular blue 15
-            fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter regular blue 20
-            fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter regular blue 20
-            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter regular white 20
-            fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter bold white 15
-            fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter bold white 20
-            fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter italic bold white 15
+            fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter-regular blue 15
+            fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter-regular blue 20
+            fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
+            fontBoldDarkRed25 = new BitmapFont(Gdx.files.internal("font/inter/bold_darkRed_25.fnt")); // inter-regular blue 20
+            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter-regular white 20
+            fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter-bold white 15
+            fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
+            fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
+            fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
             //fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
             // dichiarazione font
@@ -139,7 +141,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         notifyCompletedRTG = new Texture("images/notify_completed_RTG.png");
 
         // immagine spunta per completamento missione o selezione oggetti
-        tickImg = new Texture("images/tick.png");
+        tickImg = new Texture("images/tick2.png");
 
         // immagine di progresso missione RTG
         progressRTG = new Texture("images/progress.png");
@@ -296,7 +298,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         // progresso road to glory => percentuale o stampa progresso?
         int percentage = (int) Math.ceil((progress / (float) maxProgress)*100);
         //fontBoldWhite20.draw(screen, percentage+"%", 525, 294);
-        fontBoldWhite20.draw(screen, progress + "/" + maxProgress, 525, 294);
+        fontBoldWhite20.draw(screen, formatter.format(progress) + "/" + formatter.format(maxProgress), 525, 294);
     }
 
     // metodo per stampare testi e immagini nelle pagine 'missions'
@@ -456,8 +458,18 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             // pagina 'marketplace'
             case 17:
                 // testi //
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 550, 490); // numero totale crediti
+                fontBoldDarkRed25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
 
+                // numero prodotti da acquistare
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item1), 384, 310); // item 1
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item2), 533, 310); // item 2
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item3), 683, 310); // item 3
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item4), 833, 310); // item 4
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item5), 487, 157); // item 5
+                fontBoldWhite15.draw(screen, formatter.format(InputManager.item6), 730, 157); // item 6
+
+                // prezzo finale
+                fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 530, 108); // prezzo d'acquisto finale
                 break;
 
             // pagina 'profile info'
