@@ -161,9 +161,10 @@ public class InputManager implements InputProcessor {
         // CHIUSURA PAGINE //
         // ............... //
 
-        // chiusura pagina instruction/settings/profile info&difficulty/missions
+        // chiusura pagina instruction/settings/profile info&difficulty/missions/avatar
         if ((listSecondPages.contains(page) && (screenX>=908 && screenX<=948) && (screenY>=84 && screenY<=124))) {
-            page = previousPage;
+            if (page == 19) page = 20;
+            else page = previousPage;
         }
 
         // chiusura software infos
@@ -213,7 +214,7 @@ public class InputManager implements InputProcessor {
         // CLICK NELLE PAGINE //
         // .................. //
 
-        // pagina 24 -> pagina 19 (avatar 1)
+        // pagina 19 'avatar'
         if (page == 20 && (screenX>=453 && screenX<=537) && (screenY>=108 && screenY<=188)) {
             page = 19;
         }
@@ -289,8 +290,6 @@ public class InputManager implements InputProcessor {
         }
 
         // setting impostazioni
-
-        // selezione galassia/livello
 
         // selezione carte speciali //
         // gold heart

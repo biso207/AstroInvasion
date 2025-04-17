@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
 import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
@@ -25,7 +26,7 @@ import java.util.Locale;
 import java.util.Set;
 
 public class UIManager implements ResourceLoader {    // dichiarazione icone difficoltà, spunta completamento, premi RTG
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG;
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG, notifyCompletedRTG;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -134,6 +135,8 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
         // immagine per raccogliere il premio RTG
         claimPrize = new Texture("images/rect_claim_reward_eng.png");
+        // icona di notifica del completamento della missione RTG
+        notifyCompletedRTG = new Texture("images/notify_completed_RTG.png");
 
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick.png");
@@ -290,9 +293,10 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             screen.draw(progressBarRegion, 519, 276, filledWidth, 20);
         }
 
-        // progresso in percentuale
+        // progresso road to glory => percentuale o stampa progresso?
         int percentage = (int) Math.ceil((progress / (float) maxProgress)*100);
-        fontBoldWhite20.draw(screen, percentage+"%", 525, 294);
+        //fontBoldWhite20.draw(screen, percentage+"%", 525, 294);
+        fontBoldWhite20.draw(screen, progress + "/" + maxProgress, 525, 294);
     }
 
     // metodo per stampare testi e immagini nelle pagine 'missions'
@@ -311,7 +315,6 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             if (isCompleted[i]) screen.draw(tickImg, 885, 430-y2);
 
             y2+=103;
-            //y+=0;
         }
     }
 
@@ -321,10 +324,12 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         screen.draw(mapLobby.get(InputManager.page), 0, 0);
         //screen.draw(mapLobby.get(29), 0, 0);
 
-        // stampa avatar
+        // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
-            // stampa avatar
+            // avatar
             screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
+            // icona notifica completamento RTG
+            if ((boolean) DataUserManager.getProgress("completed_RTG")) screen.draw(notifyCompletedRTG, 27, 338);
         }
 
         // switch delle pagine per stampare i vari elementi
@@ -458,12 +463,12 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
             // pagina 'profile info'
             case 20:
                 // testi //
-                // scritte a sx
-                /// TODO: recuperare i valori di nick e psw utente qui sotto e togliere i commenti
-                //fontBlue20.draw(screen, LogInSignUp.nickname, 172, 412); // nickname
-                //fontBlue20.draw(screen, LogInSignUp.password, 172, 372); // password
+                // SCRITTE A SX
+                fontBlue20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
+                fontBlue20.draw(screen, AuthAlgorithms.password, 172, 372); // password
+                fontBlue20.draw(screen, AuthAlgorithms.date, 185, 332); // data registrazione
 
-                // scritte a dx
+                // SCRITTE A DX
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 620, 412); // punti
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 610, 372); // livello
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 630, 332); // numero missione

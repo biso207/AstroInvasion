@@ -7,28 +7,25 @@ Developed by BIGA©. All rights reserved.
 // package di appartenenza
 package sorgente.LogInSignUp;
 
-// import librerie
+// import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.utils.ObjectMap;
 import org.json.JSONObject;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
     protected boolean enteringNickname, enteringPassword;
     // variabili per recuperare nick e psw utente
-    public String nickname, password;
+    public static String nickname, password, date;
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
 
@@ -132,6 +129,7 @@ public class AuthAlgorithms implements InputProcessor {
             // lettura delle due chiavi - nick e psw
             String fileNickname = json.getString("nickname");
             String filePassword = json.getString("password");
+            date = json.getString("date");
 
             // controllo correttezza digitazione nick e psw
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
@@ -161,8 +159,8 @@ public class AuthAlgorithms implements InputProcessor {
 
         // oggetti per salvare giorno di creazione profilo
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
-        String creationDate = LocalDate.now().format(formatter); // recupero giorno creazione profilo
-        userData.put("date", creationDate);
+        date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
+        userData.put("date", date);
 
         // scrittura del JSON
         Path filePath1 = Paths.get("data/" + nicknameInput + "/", "userData.json");
@@ -226,7 +224,7 @@ public class AuthAlgorithms implements InputProcessor {
         }
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
-            // controllo digitazione caratteri validi
+        // controllo digitazione caratteri validi
         else if (character >= 32 && character < 127 && currentInput.length() <= 20) currentInput.append(character);
 
         // aggiornamento nickname e password

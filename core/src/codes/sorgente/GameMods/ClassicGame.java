@@ -74,10 +74,15 @@ public class ClassicGame implements Screen, InputProcessor {
     // stato del gioco (pausa/in gioco)
     private boolean isPaused = false;
 
+    // tempo per mostrare la notifica di completamento RTG
+    private float elapsedTime = 0;
+
     // stato quit match per la stampa dell'immagine
     private boolean quit = false;
     // stato game over per evitare doppie letture progressi
     private boolean gameClosed = false;
+    // stato completamento missione RTG
+    private boolean completedRTG = false;
 
     // dichiarazione font
     private BitmapFont font, fontGold;
@@ -222,7 +227,7 @@ public class ClassicGame implements Screen, InputProcessor {
     }
 
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
-    public boolean checkCompletedRTG() {
+    public void checkCompletedRTG() {
         // controllo completamento task rtg
         if (!(boolean) DataUserManager.getProgress("completed_RTG") && !gameClosed) {
             int missionID = (int) DataUserManager.getProgress("mission_id");
@@ -233,14 +238,12 @@ public class ClassicGame implements Screen, InputProcessor {
                 default -> -1;
             };
 
-            // setting stato task RTG
+            // setting stato task RTG a true (completato)
             if (progress >= UIManager.RTGs[missionID-1].calcNumObjMission() && progress != -1) {
                 DataUserManager.setProgress("completed_RTG", true);
-                return true;
+                completedRTG = true;
             }
         }
-
-        return false;
     }
 
     // ******************* //
@@ -518,7 +521,7 @@ public class ClassicGame implements Screen, InputProcessor {
     }
 
     // metodo per la stampa di tutte le grafiche aggiornate
-    private void renderGame() {
+    private void renderGame(float delta) {
 
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
@@ -566,9 +569,7 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // stampa cuore d'oro se attivato
-        if (goldHeart && lives == 0) {
-            screen.draw(goldHeartImg, 93, 640);
-        }
+        if (goldHeart && lives == 0) screen.draw(goldHeartImg, 93, 640);
 
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
@@ -587,11 +588,14 @@ public class ClassicGame implements Screen, InputProcessor {
         font.draw(screen, formatter.format(aliensHit), 800, 670);
 
         // stampa messaggio completamento task RTG
-        /// TODO: implementare la notifica e il suono di notifica di completamento task RTG...
-        if (checkCompletedRTG()) {
-            completedRTGSound.play(); // suono notifica
-            screen.draw(bannerRTG, 400, 120);
-            System.out.println("missione completata");
+        /// TODO: implementare il suono di notifica di completamento task RTG...
+        checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
+        if (completedRTG && elapsedTime <= 5f) {
+            // conteggio tempo per mostrare la notifica
+            elapsedTime += delta;
+
+            //completedRTGSound.play(); // suono notifica
+            screen.draw(bannerRTG, 400, 580); // banner di notifica
         }
 
         screen.end();
@@ -634,9 +638,7 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // gioco in pausa
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            isPaused = !isPaused;
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) isPaused = !isPaused;
 
         // gioco in pausa => nessun altro input può essere preso
         if (isPaused) return;
@@ -688,7 +690,7 @@ public class ClassicGame implements Screen, InputProcessor {
         checkCollisions();
 
         // aggiornamento globale grafiche
-        renderGame();
+        renderGame(delta);
     }
     // spegnimento controllo input
     @Override public void hide() {
