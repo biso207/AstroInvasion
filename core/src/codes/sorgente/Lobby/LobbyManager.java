@@ -43,8 +43,7 @@ public class LobbyManager implements Screen {
         selectedSp = ui.createSpacecrafts(); // navicelle e recupero navicella utente
 
         // istanza di InputManager
-        int credits = (int) DataUserManager.getProgress("credits");
-        input = new InputManager(credits);
+        input = new InputManager();
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio

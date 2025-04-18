@@ -49,7 +49,6 @@ public class ClassicGame implements Screen, InputProcessor {
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
 
-
     private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg, quitMatch, bannerRTG;
 
     // matrice per le immagini delle vite rimanenti
@@ -89,6 +88,9 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // audio di gioco
     private final Sound creditSound, shotSound, hitSound, completedRTGSound;
+
+    // movimento in gioco
+    public int moveLeftKey, moveRightKey, shootKey;
 
     /* modalità di gioco
        la modalità di gioco definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
@@ -152,10 +154,10 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // caricamento font
         loadFont();
-
         // caricamento immagini
         loadImages();
 
+        // SUONI
         // laser sparato
         shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
         // alieno colpito
@@ -164,6 +166,19 @@ public class ClassicGame implements Screen, InputProcessor {
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
         // task RTG completata
         completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+
+        // setting comando di movimento
+        if (((int) DataUserManager.getProgress("movement_type")) == 1) {
+            moveLeftKey = Input.Keys.A;
+            moveRightKey = Input.Keys.D;
+        }
+        else {
+            moveLeftKey = Input.Keys.LEFT;
+            moveRightKey = Input.Keys.RIGHT;
+        }
+        // setting comando di sparo
+        if (((int)DataUserManager.getProgress("shot_type")) == 1) shootKey = Input.Buttons.LEFT;
+        else shootKey = Input.Keys.SPACE;
 
         // attivazione carte utente
         if (selectedSp.getName().equals("Drakar")) doublePoints = true;
@@ -635,17 +650,22 @@ public class ClassicGame implements Screen, InputProcessor {
         if (isPaused) return;
 
         // movimento vs sx
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && spaceship.x > 10) {
+        if (Gdx.input.isKeyPressed(moveLeftKey) && spaceship.x > 10) {
             spaceship.x -= spacecraftSpeed * delta;
         }
 
         // movimento vs dx
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && spaceship.x < 890) {
+        if (Gdx.input.isKeyPressed(moveRightKey) && spaceship.x < 890) {
             spaceship.x += spacecraftSpeed * delta;
         }
 
         // sparo del laser
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && laserCooldownTimer >= laserCooldown) {
+        boolean shootPressed;
+
+        if (shootKey == Input.Buttons.LEFT) shootPressed = Gdx.input.isButtonJustPressed(shootKey);
+        else shootPressed = Gdx.input.isKeyJustPressed(shootKey);
+
+        if (shootPressed && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
             shotSound.play();
             laserCooldownTimer = 0;

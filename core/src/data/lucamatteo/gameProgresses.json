@@ -1,7 +1,7 @@
 {
     "diff_space_battle": 3,
     "state_product_6": false,
-    "total_credits": 684,
+    "total_credits": 7500,
     "mission_id": 1,
     "state_product_5": false,
     "cons_won_SB": 0,
@@ -10,11 +10,12 @@
     "spacecraft": 18,
     "completed_RTG": false,
     "num_double_points": 19,
+    "music_volume": 0.275,
     "num_mission": 49,
-    "credits": 684,
+    "credits": 634,
     "matches_SB": 0,
     "credits_RTG": 0,
-    "num_gold_heart": 19,
+    "num_gold_heart": 20,
     "num_aliens_hit_RTG": 37,
     "points_RTG": 0,
     "level": 1,
@@ -25,6 +26,7 @@
     "matches_CG": 88,
     "num_aliens_hit": 7841,
     "movement_type": 1,
+    "sound_volume": 0.54,
     "won_SB": 0,
     "num_super_laser": 20
 }

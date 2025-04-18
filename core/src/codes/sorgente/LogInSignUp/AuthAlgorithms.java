@@ -177,6 +177,7 @@ public class AuthAlgorithms implements InputProcessor {
         /// Le seguenti variabili possono avere dei valori alti per testare il gioco
         gameProgresses.put("avatar", 0);
         gameProgresses.put("credits", 100);
+        gameProgresses.put("credits_RTG", 0);
         gameProgresses.put("total_credits", 100);
         gameProgresses.put("completed_RTG", false);
         gameProgresses.put("diff_classic_game", 1);
@@ -193,13 +194,17 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("num_mission", 1);
         gameProgresses.put("won_SB_RTG", 0);
         gameProgresses.put("num_aliens_hit", 0);
+        gameProgresses.put("num_aliens_hit_RTG", 0);
         gameProgresses.put("matches_CG", 0);
         gameProgresses.put("matches_SB", 0);
         gameProgresses.put("won_SB", 0);
         gameProgresses.put("cons_won_SB", 0);
         gameProgresses.put("points", 0);
+        gameProgresses.put("points_RTG", 0);
         gameProgresses.put("state_product_5", false);
         gameProgresses.put("state_product_6", false);
+        gameProgresses.put("sound_volume", 0.5);
+        gameProgresses.put("music_volume", 0.5);
 
         // scrittura del JSON
         Path filePath2 = Paths.get("data/" + nicknameInput + "/", "gameProgresses.json");

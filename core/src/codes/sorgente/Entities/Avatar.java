@@ -30,30 +30,26 @@ public class Avatar {
         int winSB = (int) DataUserManager.getProgress("won_SB");
 
         // return dello sblocco avatar
-        switch (id) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                return true;
-            case 4: return level > 12;
-            case 5: return level > 14;
-            case 6: return level > 16;
-            case 7: return level > 18;
-            case 8: return level > 21;
-            case 9: return level > 22;
-            case 10: return level > 25;
-            case 11: return level > 28;
-            case 12: return level > 34;
-            case 13: return level > 36;
-            case 14: return level > 38;
-            case 15: return level == 40;
-            case 16: return total_credits >= 10000;
-            case 17: return total_credits >= 50000;
-            case 18: return points >= 1000000;
-            case 19: return winSB >= 100;
-        }
-        return false;
+        return switch (id) {
+            case 0, 1, 2, 3 -> true;
+            case 4 -> level > 12;
+            case 5 -> level > 14;
+            case 6 -> level > 16;
+            case 7 -> level > 18;
+            case 8 -> level > 21;
+            case 9 -> level > 22;
+            case 10 -> level > 25;
+            case 11 -> level > 28;
+            case 12 -> level > 34;
+            case 13 -> level > 36;
+            case 14 -> level > 38;
+            case 15 -> level == 40;
+            case 16 -> total_credits >= 10000;
+            case 17 -> total_credits >= 50000;
+            case 18 -> points >= 1000000;
+            case 19 -> winSB >= 100;
+            default -> false;
+        };
     }
 
     // getter nome

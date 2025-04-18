@@ -10,6 +10,7 @@ package sorgente.Lobby;
 // import codici e librerie
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -26,7 +27,9 @@ import java.util.Locale;
 import java.util.Set;
 
 public class UIManager implements ResourceLoader {    // dichiarazione icone difficoltà, spunta completamento, premi RTG
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut;
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3,
+        claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
+        volumeState;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -41,10 +44,13 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     public static RTG[] RTGs;
 
     // immagini in sovra impressione
-    private Texture closeGame, softInfos, warning, confirmBuy;
+    private Texture closeGame, softInfos, warning, confirmBuy, settings;
 
     private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
-    //private BitmapFont fontRed20;
+
+    // variabili per il setting dell'audio
+    private float volumeBarWidth, maxBarWidth=200f;
+    private String volumePercentageText;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -118,7 +124,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     @Override
     public void loadImages() {
         // popolamento mappa lobby
-        for (int i = 0; i < 25; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 24; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
@@ -131,15 +137,26 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
         warning = new Texture("secondary_screens/lobby_warning_eng.png");
         confirmBuy = new Texture("secondary_screens/lobby_confirm_buy_eng.png");
+        settings = new Texture("secondary_screens/lobby_settings_eng.png");
 
         // testo "SOLD OUT" per il marketplace
         txtSoldOut = new Texture("images/sold_item_txt.png");
+
+        // icone suoni
+        soundOn = new Texture("images/icoSoundOn.png");
+        soundOff = new Texture("images/icoSoundOff.png");
+        musicOn = new Texture("images/icoMusicOn.png");
+        musicOff = new Texture("images/icoMusicOff.png");
+        // volume suoni
+        volumeState = new Texture("images/barAudioValue.png");
+        // selezione impostazione
+        selectedSetting = new Texture("images/selected_setting.png");
+
 
         // icona difficoltà classic game
         diffCG1 = new Texture("images/diff1_classicgame.png");
         diffCG2 = new Texture("images/diff2_classicgame.png");
         diffCG3 = new Texture("images/diff3_classicgame.png");
-
         // icona difficoltà space battle
         diffSB1 = new Texture("images/diff1_spacebattle.png");
         diffSB2 = new Texture("images/diff2_spacebattle.png");
@@ -303,6 +320,19 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         fontBoldWhite20.draw(screen, formatter.format(progress) + "/" + formatter.format(maxProgress), 525, 294);
     }
 
+    // metodo per disegnare la barra del volume dell'audio
+    public void setSoundVolume(float percent) {
+        //this.soundVolume = percent; // usato per disegnare barra e icona
+        // Qui aggiorni la barra rossa dinamicamente in base a soundVolume
+        // Esempio: redBarLength = maxWidth * soundVolume;
+    }
+    // metodo per disegnare la barra del volume della musica
+    public void setMusicVolume(float percent) {
+        //this.musicVolume = percent;
+        // Aggiorna barra rossa per la musica
+    }
+
+
     // metodo per stampare testi e immagini nelle pagine 'missions'
     public void printCompleteMission(SpriteBatch screen, int page, int c) {
         // spostamento lungo y di scritte e immagini ripetitive
@@ -326,7 +356,6 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     public void showItems(SpriteBatch screen) {
         // background principale
         screen.draw(mapLobby.get(InputManager.page), 0, 0);
-        //screen.draw(mapLobby.get(29), 0, 0);
 
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
@@ -480,7 +509,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 break;
 
             // pagina 'profile info'
-            case 20:
+            case 19:
                 // testi //
                 // SCRITTE A SX
                 fontBlue20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
@@ -539,7 +568,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 break;
 
             // pagina avatars
-            case 19:
+            case 18:
                 // stampa immagini
                 int x=143; int y=410;
                 for (int i=0; i<=19; i++) {
@@ -562,15 +591,42 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 }
         }
 
-        // disegno eventuale schermo sovrapposto (chiusura gioco/software infos)
+        // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
-            if (InputManager.open23) screen.draw(closeGame, 250, 175);
-            else if (InputManager.open22) screen.draw(softInfos, 250, 175);
-            else if (InputManager.open24) screen.draw(warning, 250, 175);
-            else if (InputManager.open25) {
+            if (InputManager.open22) screen.draw(softInfos, 250, 175); // info software
+            else if (InputManager.open23) screen.draw(closeGame, 250, 175); // chiusura gioco
+            else if (InputManager.open24) screen.draw(warning, 250, 175); // avviso difficoltà elevata
+            else if (InputManager.open25) { // conferma acquisto
                 screen.draw(confirmBuy, 250, 175);
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
+            }
+            else if (InputManager.open26) { // impostazioni di gioco
+                screen.draw(settings, 175, 25);
+
+                // comandi movimento navicella
+                if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
+                else screen.draw(selectedSetting, 268, 332);
+                // comando sparo laser
+                if ((int)DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
+                else screen.draw(selectedSetting, 558, 332);
+
+                // disegno icone musica/suono
+                //System.out.println(InputManager.musicPercent);
+                if (InputManager.soundPercent==0f) screen.draw(soundOff, 230, 215);
+                else screen.draw(soundOn, 230, 215);
+                if (InputManager.musicPercent==0f) screen.draw(musicOff, 230, 145);
+                else screen.draw(musicOn, 230, 145);
+
+                // disegno barre volume
+                float filledWidth1 = (InputManager.soundPercent) * 390;
+                float filledWidth2 = (InputManager.musicPercent) * 390;
+                if (filledWidth1 > 0.0) screen.draw(volumeState, 300, 228, filledWidth1, 25);
+                if (filledWidth2 > 0.0) screen.draw(volumeState, 300, 157, filledWidth2, 25);
+
+                // testo percentuale volumi
+                fontBoldWhite20.draw(screen, Math.round(InputManager.soundPercent*100)+"%", 705, 250);
+                fontBoldWhite20.draw(screen, Math.round(InputManager.musicPercent*100)+"%", 705, 177);
             }
         }
     }
@@ -598,5 +654,8 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         closeGame.dispose();
         softInfos.dispose();
         warning.dispose();
+        confirmBuy.dispose();
+        settings.dispose();
+        selectedSetting.dispose();
     }
 }
