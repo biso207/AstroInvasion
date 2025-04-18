@@ -38,7 +38,7 @@ public class InputManager implements InputProcessor {
     private int previousPage;
 
     // boolean per le carte speciali
-    public static boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
+    public static boolean goldHeart, shield, superLaser, doublePoints;
     // nome navicella
     private final String nameSp = selectedSp.getName();
 
@@ -58,6 +58,9 @@ public class InputManager implements InputProcessor {
     public InputManager(int credits) {
         // definizione delle aree cliccabili
         hitAreas();
+
+        // reset stato carte speciali
+        goldHeart=shield=superLaser=doublePoints=false;
 
         // attivazione carte speciali se selezionata una navicella premium
         if (nameSp.equals("Alpha")) goldHeart = true;
