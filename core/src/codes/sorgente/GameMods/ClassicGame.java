@@ -429,7 +429,7 @@ public class ClassicGame implements Screen, InputProcessor {
             // for per il controllare le collisioni
             for (int i = 0; i < potentialCollisions.size; i++) {
                 if (laserPathIntersects(previousY, laser.y, laser.x, potentialCollisions.get(i))) {
-                    hitSound.play(); // suono alieno colpito
+                    hitSound.play(InputManager.soundPercent); // suono alieno colpito
 
                     // rimozione laser
                     if (!superLaser) {
@@ -451,7 +451,7 @@ public class ClassicGame implements Screen, InputProcessor {
                     points += (doublePoints ? scoreInc * 2 : scoreInc);
                     aliensHit++;
                     if (aliensHit % 5 == 0) {
-                        creditSound.play();
+                        creditSound.play(InputManager.soundPercent);
                         credits += creditsInc;
                     }
 
@@ -667,7 +667,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
         if (shootPressed && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
-            shotSound.play();
+            shotSound.play(InputManager.soundPercent);
             laserCooldownTimer = 0;
         }
     }

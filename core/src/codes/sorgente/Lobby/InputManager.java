@@ -59,7 +59,7 @@ public class InputManager implements InputProcessor {
     private boolean draggingMusic = false;
 
     // percentuale audio
-    protected static float soundPercent, musicPercent;
+    public static float soundPercent, musicPercent;
 
 
     // costruttore
@@ -81,8 +81,8 @@ public class InputManager implements InputProcessor {
         // recupero crediti
         currentCredit = (int) DataUserManager.getProgress("credits");
         // recupero volume audio
-        soundPercent = ((BigDecimal) DataUserManager.getProgress("sound_volume")).floatValue();
-        musicPercent = ((BigDecimal) DataUserManager.getProgress("music_volume")).floatValue();
+        soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
+        musicPercent = ((Number) DataUserManager.getProgress("music_volume")).floatValue();
     }
 
     // metodo per definire le aree di gioco cliccabili

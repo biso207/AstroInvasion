@@ -16,6 +16,8 @@ import sorgente.DataUserManager;
 import sorgente.Entities.Spacecraft;
 import sorgente.Main;
 
+import java.math.BigDecimal;
+
 public class LobbyManager implements Screen {
     protected static Main game; // variabile di riferimento tipo gioco
     // dichiarazione screen
@@ -58,7 +60,6 @@ public class LobbyManager implements Screen {
     // metodo per aggiornare lo schermo
     @Override public void render(float delta) {
         // attivazione controllo input
-        //handleInput();?
         Gdx.input.setInputProcessor(input);
 
         // init screen
@@ -66,6 +67,13 @@ public class LobbyManager implements Screen {
 
         // mostra elementi a schermo
         ui.showItems(screen);
+
+        /*
+        setting del volume di sottofondo
+        fondamentale che sia qui perché in caso di cambiamento durante una sessione di gioco
+        il volume deve cambiare dinamicamente
+        */
+        soundtrack.setVolume(InputManager.musicPercent); // volume musica
 
         // chiusura screen
         screen.end();

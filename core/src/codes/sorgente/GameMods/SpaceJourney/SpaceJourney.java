@@ -10,6 +10,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import sorgente.Lobby.InputManager;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class SpaceJourney implements Screen {
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/space_journey_sound.mp3")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
+        soundtrack.setVolume(InputManager.musicPercent);
         soundtrack.play(); // avvio musica
     }
 

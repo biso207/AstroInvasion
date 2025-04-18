@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import sorgente.Lobby.InputManager;
 import sorgente.LogInSignUp.LoginSignupManager;
 
 import java.util.Random;
