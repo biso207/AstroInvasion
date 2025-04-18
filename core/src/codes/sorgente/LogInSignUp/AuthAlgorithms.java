@@ -29,8 +29,8 @@ public class AuthAlgorithms implements InputProcessor {
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
 
-    // variabile per nascondere/mostrare la password
-    protected boolean showPS = false;
+    // variabile per nascondere/mostrare la password e cambiare stile pulsanti
+    protected boolean showPS=false, isHover1=false, isHover2=false;
     // variabile per controllare l'errore nel nick o psw
     protected boolean error = false;
 
@@ -42,7 +42,7 @@ public class AuthAlgorithms implements InputProcessor {
 
     // mouse
     private final Pixmap mouse, mouseOver; // immagini
-    private final Cursor cursor, cursorOver; // oggetto cursore
+    private final Cursor cursor; // oggetto cursore
 
     // costruttore
     public AuthAlgorithms() {
@@ -58,7 +58,6 @@ public class AuthAlgorithms implements InputProcessor {
         mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
-        cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
     }
 
     // ************************** //
@@ -245,21 +244,17 @@ public class AuthAlgorithms implements InputProcessor {
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         System.out.println(screenX + " " + screenY);
         // cambio pagina - accesso => registrazione
-        if (state == 0 && (screenX >= 275 && screenX <= 480) && (screenY >= 525 && screenY <= 565)) {
-            state = 1;
+        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+            if (state==0) state = 1;
+            else state=0;
             error = false;
         }
-        // cambio pagina - registrazione => accesso
-        if (state == 1 && (screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
-            state = 0;
-            error = false;
-        }
-        // click per accedere o registrarsi
-        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
+        // click per avviare il gioco
+        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             processLoginOrSignup();
         }
         // click per nascondere/mostrare la password
-        if ((screenX >= 692 && screenX <= 722) && (screenY >= 435 && screenY <= 465)) {
+        if ((screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
             showPS = !showPS;
         }
         return true;
@@ -267,17 +262,20 @@ public class AuthAlgorithms implements InputProcessor {
 
     // cambio icona mouse al passaggio sugli elementi
     @Override public boolean mouseMoved(int screenX, int screenY) {
+        // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
+        isHover1=isHover2=false;
+
+        // schermo intero per icona mouse
         if ((screenX >= 0 && screenX <= 1000) && (screenY >= 0 && screenY <= 700)) {
             Gdx.graphics.setCursor(cursor);
         }
-        if ((screenX >= 275 && screenX <= 480) && (screenY >= 525 && screenY <= 565)) {
-            Gdx.graphics.setCursor(cursorOver);
+        // pulsante accesso gioco
+        if ((screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
+            isHover1=true;
         }
-        if ((screenX >= 495 && screenX <= 700) && (screenY >= 525 && screenY <= 565)) {
-            Gdx.graphics.setCursor(cursorOver);
-        }
-        if ((screenX >= 692 && screenX <= 722) && (screenY >= 435 && screenY <= 465)) {
-            Gdx.graphics.setCursor(cursorOver);
+        // pulsante cambio pagina
+        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+            isHover2=true;
         }
 
         return true;
