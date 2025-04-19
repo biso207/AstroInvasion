@@ -636,6 +636,9 @@ public class ClassicGame implements Screen, InputProcessor {
 
             // click YES => interruzione gioco
             if ((screenX >= 270 && screenX <= 470) && (screenY >= 405 && screenY <= 480)) {
+                // perdita completa dei progressi di gioco
+                points=credits=aliensHit=0;
+
                 gameOver();
                 gameClosed = true;
                 return; // uscita

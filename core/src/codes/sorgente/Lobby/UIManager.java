@@ -9,6 +9,7 @@ package sorgente.Lobby;
 
 // import codici e librerie
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import sorgente.Entities.Avatar;
@@ -46,11 +47,10 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     // immagini in sovra impressione
     private Texture closeGame, softInfos, warning, confirmBuy, settings;
 
-    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+    // pulsanti + scuri al passaggio del mouse
+    private Texture[] buttonsOver;
 
-    // variabili per il setting dell'audio
-    private float volumeBarWidth, maxBarWidth=200f;
-    private String volumePercentageText;
+    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -77,6 +77,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         this.mapSpacecrafts = new HashMap<>();
+        this.buttonsOver = new Texture[10];
 
         // mouse
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
@@ -152,6 +153,10 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         // selezione impostazione
         selectedSetting = new Texture("images/selected_setting.png");
 
+        // pulsanti "hover"
+        for (int i = 0; i < 10; i++) {
+            buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
+        }
 
         // icona difficoltà classic game
         diffCG1 = new Texture("images/diff1_classicgame.png");
@@ -287,7 +292,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     }
 
     // metodo per disegnare la barra di progresso della task corrente del RTG
-    public void drawPageRTG(SpriteBatch screen, int missionID) {
+    public void drawRTGPage(SpriteBatch screen, int missionID) {
         // immagine premio //
         screen.draw(RTGPrizes[missionID-1], 660, 100);
 
@@ -318,18 +323,38 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         int percentage = (int) Math.ceil((progress / (float) maxProgress)*100);
         //fontBoldWhite20.draw(screen, percentage+"%", 525, 294);
         fontBoldWhite20.draw(screen, formatter.format(progress) + "/" + formatter.format(maxProgress), 525, 294);
+
+        // button start hover
+        if (InputManager.isBtnClaimHover) screen.draw(buttonsOver[3], 767, 100);
     }
 
-    // metodo per disegnare la barra del volume dell'audio
-    public void setSoundVolume(float percent) {
-        //this.soundVolume = percent; // usato per disegnare barra e icona
-        // Qui aggiorni la barra rossa dinamicamente in base a soundVolume
-        // Esempio: redBarLength = maxWidth * soundVolume;
-    }
-    // metodo per disegnare la barra del volume della musica
-    public void setMusicVolume(float percent) {
-        //this.musicVolume = percent;
-        // Aggiorna barra rossa per la musica
+    // metodo per disegnare la pagina delle impostazioni
+    public void drawSettingsPage(SpriteBatch screen) {
+        screen.draw(settings, 175, 25);
+
+        // comandi movimento navicella
+        if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
+        else screen.draw(selectedSetting, 268, 332);
+        // comando sparo laser
+        if ((int)DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
+        else screen.draw(selectedSetting, 558, 332);
+
+        // disegno icone musica/suono
+        //System.out.println(InputManager.musicPercent);
+        if (InputManager.soundPercent==0f) screen.draw(soundOff, 230, 215);
+        else screen.draw(soundOn, 230, 215);
+        if (InputManager.musicPercent==0f) screen.draw(musicOff, 230, 145);
+        else screen.draw(musicOn, 230, 145);
+
+        // disegno barre volume
+        float filledWidth1 = (InputManager.soundPercent) * 390;
+        float filledWidth2 = (InputManager.musicPercent) * 390;
+        if (filledWidth1 > 0.0) screen.draw(volumeState, 300, 228, filledWidth1, 25);
+        if (filledWidth2 > 0.0) screen.draw(volumeState, 300, 157, filledWidth2, 25);
+
+        // testo percentuale volumi
+        fontBoldWhite20.draw(screen, Math.round(InputManager.soundPercent*100)+"%", 705, 250);
+        fontBoldWhite20.draw(screen, Math.round(InputManager.musicPercent*100)+"%", 705, 177);
     }
 
 
@@ -408,6 +433,9 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 if (InputManager.superLaser) screen.draw(tickImg, 712, 174);
                 if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
 
+                // button start hover
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 800, 100);
+
                 break;
 
             // pagina 'space battle'
@@ -448,6 +476,9 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
                 if (InputManager.superLaser) screen.draw(tickImg, 874, 330);
 
+                // button fight hover
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 800, 100);
+
                 break;
 
             // pagina 'space journey'
@@ -468,6 +499,9 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 // bonus punti
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
+                // button map hover
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 800, 100);
+
                 break;
 
             // pagina 'rtg'
@@ -482,7 +516,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 fontBlue20.draw(screen, m.prize, 720, 231); // premio missione
 
                 // progresso completamento task corrente
-                drawPageRTG(screen, missionID);
+                drawRTGPage(screen, missionID);
 
                 break;
 
@@ -499,13 +533,16 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 fontBoldWhite15.draw(screen, formatter.format(InputManager.item5), 487, 157); // item 5
                 fontBoldWhite15.draw(screen, formatter.format(InputManager.item6), 730, 157); // item 6
 
-                // prezzo finale
-                fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 530, 108); // prezzo d'acquisto finale
-
                 // testi "sold out" per specificare che i prodotti non sono disponibili
                 if ((boolean) DataUserManager.getProgress("state_product_5")) screen.draw(txtSoldOut, 435, 160);
                 if ((boolean) DataUserManager.getProgress("state_product_6")) screen.draw(txtSoldOut, 680, 160);
 
+                // button confirm-purchase and reset hover
+                if (InputManager.isBtnBuyHover) screen.draw(buttonsOver[4], 504, 68);
+                if (InputManager.isBtnResetHover) screen.draw(buttonsOver[5], 791, 68);
+
+                // prezzo finale
+                fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 530, 108); // prezzo d'acquisto finale
                 break;
 
             // pagina 'profile info'
@@ -594,40 +631,30 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
         // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
             if (InputManager.open22) screen.draw(softInfos, 250, 175); // info software
-            else if (InputManager.open23) screen.draw(closeGame, 250, 175); // chiusura gioco
-            else if (InputManager.open24) screen.draw(warning, 250, 175); // avviso difficoltà elevata
+            else if (InputManager.open23) { // chiusura gioco
+                screen.draw(closeGame, 250, 175);
+
+                // button YES and NO hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
+            }
+            else if (InputManager.open24) { // avviso difficoltà elevata
+                screen.draw(warning, 250, 175);
+
+                // button OK and PLAY hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 271, 211);
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 513, 211);
+            }
             else if (InputManager.open25) { // conferma acquisto
                 screen.draw(confirmBuy, 250, 175);
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
+
+                // button YES and NO hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
-            else if (InputManager.open26) { // impostazioni di gioco
-                screen.draw(settings, 175, 25);
-
-                // comandi movimento navicella
-                if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
-                else screen.draw(selectedSetting, 268, 332);
-                // comando sparo laser
-                if ((int)DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
-                else screen.draw(selectedSetting, 558, 332);
-
-                // disegno icone musica/suono
-                //System.out.println(InputManager.musicPercent);
-                if (InputManager.soundPercent==0f) screen.draw(soundOff, 230, 215);
-                else screen.draw(soundOn, 230, 215);
-                if (InputManager.musicPercent==0f) screen.draw(musicOff, 230, 145);
-                else screen.draw(musicOn, 230, 145);
-
-                // disegno barre volume
-                float filledWidth1 = (InputManager.soundPercent) * 390;
-                float filledWidth2 = (InputManager.musicPercent) * 390;
-                if (filledWidth1 > 0.0) screen.draw(volumeState, 300, 228, filledWidth1, 25);
-                if (filledWidth2 > 0.0) screen.draw(volumeState, 300, 157, filledWidth2, 25);
-
-                // testo percentuale volumi
-                fontBoldWhite20.draw(screen, Math.round(InputManager.soundPercent*100)+"%", 705, 250);
-                fontBoldWhite20.draw(screen, Math.round(InputManager.musicPercent*100)+"%", 705, 177);
-            }
+            else if (InputManager.open26) drawSettingsPage(screen); // impostazioni di gioco
         }
     }
 

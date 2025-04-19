@@ -32,6 +32,8 @@ public class InputManager implements InputProcessor {
 
     // variabili per gestire certi input
     protected static boolean secondScreen=false, open22=false, open23=false, open24=false, open25=false, open26=false;
+    // variabili per cambiare lo stile dei pulsanti
+    protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false, isBtnLHover=false, isBtnRHover=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -511,8 +513,35 @@ public class InputManager implements InputProcessor {
     // cambio icona mouse
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
+        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
+
+        // CAMBIO STILE PULSANTI
+        // YES logout / OK warning / YES purchase
+        if ((secondScreen && (open23 || open24 || open25)) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            isBtnLHover=true;
+        }
+
+        // NO logout / PLAY warning / NO purchase
+        if ((secondScreen && (open23 || open24 || open25)) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            isBtnRHover=true;
+        }
+
+        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25 && !open26) {
+            // rtg
+            if (page == 3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
+
+            // market
+            if (page==17) {
+                // pulsante reset
+                if ((screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624) && finalPrize > 0) isBtnResetHover=true;
+                // pulsante per confermare l'acquisto
+                if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize > 0) isBtnBuyHover=true;
+            }
+        }
+
         return true;
     }
 

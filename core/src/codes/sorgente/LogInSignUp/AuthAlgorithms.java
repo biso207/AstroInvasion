@@ -231,7 +231,7 @@ public class AuthAlgorithms implements InputProcessor {
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
         // controllo digitazione caratteri validi
-        else if (character >= 32 && character < 127 && currentInput.length() <= 20) currentInput.append(character);
+        else if (character >= 32 && character < 127 && currentInput.length() <= 18) currentInput.append(character);
 
         // aggiornamento nickname e password
         nickname = nicknameInput.toString();

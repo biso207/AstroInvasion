@@ -70,9 +70,9 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         img2 = new Texture("login_signup_screens/page_2_sign_up_eng.png");
         showPS = new Texture("images/showPS.png");
         coverPS = new Texture("images/coverPS.png");
-        loginPageBtnHover = new Texture("images/new_profile_button_hover.png");
-        signupPageBtnHover = new Texture("images/login_button_hover.png");
-        continueBtnHover = new Texture("images/continue_button_hover.png");
+        loginPageBtnHover = new Texture("images/btns_hover/new_profile_button_hover.png");
+        signupPageBtnHover = new Texture("images/btns_hover/login_button_hover.png");
+        continueBtnHover = new Texture("images/btns_hover/continue_button_hover.png");
 
         alg.enteringNickname = true; // digitazione nickname attivata
     }
@@ -116,9 +116,9 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         }
 
         if (alg.enteringNickname) {
-            font.draw(screen, alg.nicknameInput, 265, 415);
+            font.draw(screen, alg.nicknameInput, 265, 414);
         } else if (alg.enteringPassword) {
-            font.draw(screen, alg.nicknameInput, 265, 415);
+            font.draw(screen, alg.nicknameInput, 265, 414);
 
             // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
             if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 310);
