@@ -81,13 +81,40 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 writeFileCG();
                 break;
             case 1:
-                System.out.println("salvataggio space battle");
+                writeFileSpaceBattle();
                 break;
         }
     }
 
     // salvataggio progressi utente
     public void writeFileCG() {
+        // recupero id missione
+        int missionID = (int) DataUserManager.getProgress("mission_id");
+
+        // salvataggio progressi
+        DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
+        DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
+        DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
+        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
+
+        // aggiornamento progresso task RTG
+        switch (missionID) {
+            case 1:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("num_aliens_hit_RTG", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG"));
+                break;
+            case 3:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("points_RTG", points + (int) DataUserManager.getProgress("points_RTG"));
+                break;
+            case 4:
+                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
+                break;
+        }
+    }
+
+    public void writeFileSpaceBattle(){
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
 
@@ -166,7 +193,25 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
                 break;
             case 1:
-                System.out.println("space battle");
+                // schermata base
+                screen.draw(gameOver0, 0, 0);
+
+                // scritte progressi partita
+                font2.draw(screen, formatter.format(points), 195, 457);
+                font2.draw(screen, formatter.format(credits), 205, 397);
+                font2.draw(screen, formatter.format(aliensHit), 235, 337);
+
+                // numero carte speciali
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 385);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 385);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 272);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 272);
+
+                // stampa rettangolo selezione carta
+                if (goldHeart) screen.draw(rectSelectCard, 693, 398);
+                if (shield) screen.draw(rectSelectCard, 831, 398);
+                if (superLaser) screen.draw(rectSelectCard, 693, 285);
+                if (doublePoints) screen.draw(rectSelectCard, 831, 285);
                 break;
         }
         screen.end();
