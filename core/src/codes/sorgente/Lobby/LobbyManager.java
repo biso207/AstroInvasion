@@ -26,9 +26,6 @@ public class LobbyManager implements Screen {
     // soundtrack
     protected static Music soundtrack;
 
-    // creazione oggetto navicella generico
-    protected static Spacecraft selectedSp;
-
     // istanze altre classi
     private final UIManager ui;
     private final InputManager input;
@@ -39,10 +36,8 @@ public class LobbyManager implements Screen {
         // init dello screen
         this.screen = game.screen;
 
-        // istanza di UIManager
+        // istanza di UIManager con caricamento risorse e creazione grafica
         ui = new UIManager();
-        // caricamento navicella utente
-        selectedSp = ui.createSpacecrafts(); // navicelle e recupero navicella utente
 
         // istanza di InputManager
         input = new InputManager();

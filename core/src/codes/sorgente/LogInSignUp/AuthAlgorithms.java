@@ -270,7 +270,7 @@ public class AuthAlgorithms implements InputProcessor {
             Gdx.graphics.setCursor(cursor);
         }
         // pulsante accesso gioco
-        if ((screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
+        if ((screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512) && passwordInput.length() >= 1) {
             isHover1=true;
         }
         // pulsante cambio pagina

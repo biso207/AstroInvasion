@@ -22,12 +22,15 @@ import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
+
+import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
 
-public class UIManager implements ResourceLoader {    // dichiarazione icone difficoltà, spunta completamento, premi RTG
+public class UIManager implements ResourceLoader {
+    // dichiarazione icone difficoltà, spunta completamento, premi RTG
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState;
@@ -46,6 +49,8 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
     // immagini in sovra impressione
     private Texture closeGame, softInfos, warning, confirmBuy, settings;
+    // immagine navicella + immagine space battle bloccato
+    private Texture spImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
     private Texture[] buttonsOver;
@@ -61,8 +66,8 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
     // arraylist delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
 
-    // navicella utente
-    private Spacecraft selectedSp;
+    // creazione oggetto navicella per il package Lobby
+    protected static Spacecraft selectedSp;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     private NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -85,6 +90,10 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
         cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
+
+
+        // caricamento navicella utente
+        selectedSp = createSpacecrafts(); // navicelle e recupero navicella utente
 
         // caricamento risorse
         createMissions();
@@ -142,6 +151,12 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
         // testo "SOLD OUT" per il marketplace
         txtSoldOut = new Texture("images/sold_item_txt.png");
+
+        // immagine navicella
+        spImg = new Texture(selectedSp.getPathImg());
+
+        // testo informativo space battle bloccato
+        infoBanner = new Texture("images/warning_txt_space_battle.png");
 
         // icone suoni
         soundOn = new Texture("images/icoSoundOn.png");
@@ -404,7 +419,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
+                screen.draw(spImg, 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
@@ -434,7 +449,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
 
                 // button start hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 800, 100);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
 
                 break;
 
@@ -449,7 +464,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
+                screen.draw(spImg, 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
@@ -476,8 +491,11 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
                 if (InputManager.superLaser) screen.draw(tickImg, 874, 330);
 
+                // testo informativo gioco bloccato
+                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
+
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 800, 100);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 770, 98);
 
                 break;
 
@@ -489,7 +507,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
 
                 // navicella //
                 // immagine
-                screen.draw(new Texture(selectedSp.getPathImg()), 330, 130);
+                screen.draw(spImg, 330, 130);
                 // nome
                 fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
                 // bonus velocità
@@ -500,7 +518,7 @@ public class UIManager implements ResourceLoader {    // dichiarazione icone dif
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 800, 100);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 770, 98);
 
                 break;
 

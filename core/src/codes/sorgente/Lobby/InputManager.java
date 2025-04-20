@@ -18,13 +18,9 @@ import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
 
-import javax.xml.crypto.Data;
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static sorgente.Lobby.LobbyManager.selectedSp;
 
 public class InputManager implements InputProcessor {
     // mappa dei range
@@ -43,7 +39,7 @@ public class InputManager implements InputProcessor {
     // boolean per le carte speciali
     public static boolean goldHeart, shield, superLaser, doublePoints;
     // nome navicella
-    private final String nameSp = selectedSp.getName();
+    private final String nameSp = UIManager.selectedSp.getName();
 
     // difficoltà classic game e space battle
     private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
@@ -122,7 +118,6 @@ public class InputManager implements InputProcessor {
         return true;
     }
 
-    /// TODO: capire perché quando si chiude una pagina secondaria si passa sempre alla page 0 e non a quella precedente...
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         /*
@@ -205,11 +200,11 @@ public class InputManager implements InputProcessor {
                         secondScreen = open24 = true;
                     } else {
                         LobbyManager.soundtrack.stop(); // interruzione musica
-                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
                     }
-                } else if (page == 1) {
+                } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, selectedSp)); // avvio space battle
+                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp)); // avvio space battle
                 } else if (page == 2) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
@@ -447,7 +442,7 @@ public class InputManager implements InputProcessor {
             if ((secondScreen && open24) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 secondScreen = open24 = false;
                 LobbyManager.soundtrack.stop();
-                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, selectedSp)); // avvio classic game
+                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
             }
 
             // YES => conferma acquisto
@@ -539,6 +534,11 @@ public class InputManager implements InputProcessor {
                 if ((screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624) && finalPrize > 0) isBtnResetHover=true;
                 // pulsante per confermare l'acquisto
                 if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize > 0) isBtnBuyHover=true;
+            }
+
+            // avvio modalità di gioco
+            if ((page==0 || page==2 || (page==1 && ((int)DataUserManager.getProgress("level") > 10))) && (screenX >= 778 && screenX <= 928) && (screenY >= 552 && screenY <= 592)) {
+                isBtnStartHover=true;
             }
         }
 
