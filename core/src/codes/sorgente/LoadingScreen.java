@@ -33,7 +33,7 @@ public class LoadingScreen implements Screen {
     private Texture background; // immagine di sfondo
 
     // array dei colori della barra di caricamento
-    private final String[] colorsLoader =  {"#FF3030", "#620616", "#7B0D0E", "#151E51", "#2A1535"};
+    private final String[] colorsLoader =  {"#FF3030", "#640414", "#033427", "#0B2353", "#0E2036"};
 
 
     public LoadingScreen(Main game) {

@@ -449,7 +449,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
 
                 // button start hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
 
                 break;
 
