@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class UIManager implements ResourceLoader {
     // dichiarazione icone difficoltà, spunta completamento, premi RTG
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3,
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState;
 
@@ -55,7 +55,7 @@ public class UIManager implements ResourceLoader {
     // pulsanti + scuri al passaggio del mouse
     private Texture[] buttonsOver;
 
-    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25, fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -196,6 +196,8 @@ public class UIManager implements ResourceLoader {
 
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick2.png");
+        // rettangolo selezione carta
+        rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
 
         // immagine di progresso missione RTG
         progressRTG = new Texture("images/progress.png");
@@ -410,12 +412,12 @@ public class UIManager implements ResourceLoader {
             // pagina 'classic game'
             case 0:
                 // testi //
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 395, 410); // punti totali
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 420, 380); // partite giocate
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 878, 385); // numero 'shield'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 715, 229); // numero 'super laser'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 878, 229); // numero 'double points'
+                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 400, 400); // punti totali
+                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 370); // partite giocate
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
                 // navicella //
                 // immagine
@@ -432,21 +434,21 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
-                        screen.draw(diffCG1, 636 ,108);
+                        screen.draw(diffCG1, 640 ,108);
                         break;
                     case 2:
-                        screen.draw(diffCG2, 636 ,108);
+                        screen.draw(diffCG2, 640 ,108);
                         break;
                     case 3:
-                        screen.draw(diffCG3, 636 ,108);
+                        screen.draw(diffCG3, 640 ,108);
                         break;
                 }
 
-                // spunta selezione carta speciale
-                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
-                if (InputManager.shield) screen.draw(tickImg, 874, 330);
-                if (InputManager.superLaser) screen.draw(tickImg, 712, 174);
-                if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
+                // selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(rectSelectCard, 688, 375);
+                if (InputManager.superLaser) screen.draw(rectSelectCard, 688, 261);
+                if (InputManager.shield) screen.draw(rectSelectCard, 801, 375);
+                if (InputManager.doublePoints) screen.draw(rectSelectCard, 801, 261);
 
                 // button start hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
@@ -459,8 +461,8 @@ public class UIManager implements ResourceLoader {
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 420, 410); // vittorie
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 435, 380); // vittorie consecutive
                 fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 420, 350); // partite giocate
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 878, 385); // numero 'super laser'
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
+                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 878, 385); // numero 'super laser'
 
                 // navicella //
                 // immagine
@@ -477,19 +479,19 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_space_battle")) {
                     case 1:
-                        screen.draw(diffSB1, 636 ,108);
+                        screen.draw(diffSB1, 640 ,108);
                         break;
                     case 2:
-                        screen.draw(diffSB2, 636 ,108);
+                        screen.draw(diffSB2, 640 ,108);
                         break;
                     case 3:
-                        screen.draw(diffSB3, 636 ,108);
+                        screen.draw(diffSB3, 640 ,108);
                         break;
                 }
 
-                // spunta selezione carta speciale
-                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
-                if (InputManager.superLaser) screen.draw(tickImg, 874, 330);
+                // selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(rectSelectCard, 688, 375);
+                if (InputManager.superLaser) screen.draw(rectSelectCard, 688, 261);
 
                 // testo informativo gioco bloccato
                 if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
