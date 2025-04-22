@@ -166,18 +166,13 @@ public class InputManager implements InputProcessor {
             if ((page<=9 && page>4) && (screenX>=343 && screenX<=373) && (screenY>=553 && screenY<=593)) {
                 page--;
             }
-            // apertura pagina 21 (difficulty infos classic game)
-            if (page == 0 && (screenX>=623 && screenX<=703) && (screenY>=552 && screenY<=592)) {
-                previousPage = page;
-                page = 21;
-            }
-            // apertura pagina 22 (difficulty infos space battle)
-            if (page == 1 && (screenX>=623 && screenX<=703) && (screenY>=552 && screenY<=592)) {
-                previousPage = page;
-                page = 22;
+            // apertura pagina 21/22 (difficulty infos classic game/space battle)
+            if ((screenX>=614 && screenX<=694) && (screenY>=551 && screenY<=592)) {
+                if (page == 0) { previousPage = page; page = 21; }
+                else if (page == 1) { previousPage = page; page = 22; }
             }
             // apertura pagina 20 (cards infos)
-            if ((page == 0 || page == 1) && (screenX>=883 && screenX<=913) && (screenY>=230 && screenY<=260)) {
+            if ((page == 0 || page == 1) && (screenX>=880 && screenX<=905) && (screenY>=255 && screenY<=280)) {
                 previousPage = page;
                 page = 20;
             }
@@ -214,7 +209,7 @@ public class InputManager implements InputProcessor {
             /// TODO: impostare la selezione della navicella...
 
             // cambio difficoltà classic game
-            if (page == 0 && (screenX >= 710 && screenX <= 730) && (screenY >= 560 && screenY <= 584)) {
+            if (page == 0 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
                 if (diffCG < 3) {
                     diffCG++;
                     DataUserManager.setProgress("diff_classic_game", diffCG);
@@ -227,8 +222,9 @@ public class InputManager implements InputProcessor {
                 }
             }
 
+            System.out.println(screenX + " " + screenY);
             // cambio difficoltà space battle
-            if (page == 1 && (screenX >= 710 && screenX <= 730) && (screenY >= 560 && screenY <= 584)) {
+            if (page == 1 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
                 if (diffSB < 3) {
                     diffSB++;
                     DataUserManager.setProgress("diff_space_battle", diffSB);
@@ -245,12 +241,12 @@ public class InputManager implements InputProcessor {
 
             // selezione carte speciali //
             // gold heart
-            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX >= 705 && screenX <= 734) && (screenY >= 346 && screenY <= 368)) {
+            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323)) {
                 goldHeart = !goldHeart;
                 shield = superLaser = doublePoints = false;
             }
             // shield
-            if ((page == 0 || page == 1) && (!nameSp.equals("Astrid")) && (screenX >= 867 && screenX <= 896) && (screenY >= 346 && screenY <= 368)) {
+            if ((page == 0 || page == 1) && (!nameSp.equals("Astrid")) && (screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323)) {
                 if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0)) {
                     shield = !shield;
                     superLaser = false;
@@ -261,12 +257,12 @@ public class InputManager implements InputProcessor {
                 goldHeart = doublePoints = false;
             }
             // super laser
-            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX >= 705 && screenX <= 734) && (screenY >= 504 && screenY <= 526)) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438)) {
                 superLaser = !superLaser;
                 goldHeart = shield = doublePoints = false;
             }
             // double points
-            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX >= 867 && screenX <= 896) && (screenY >= 504 && screenY <= 526)) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438)) {
                 doublePoints = !doublePoints;
                 goldHeart = shield = superLaser = false;
             }
@@ -298,7 +294,7 @@ public class InputManager implements InputProcessor {
                     case 3:
                         DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
                         DataUserManager.setProgress("credits", credits + 100);// aggiunta 100 crediti
-                        DataUserManager.setProgress("total_credits", credits + 100);// aggiunta 100 crediti totali
+                        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits") + 100);// aggiunta 100 crediti totali
                         missionID++;
                         break;
                     case 4:

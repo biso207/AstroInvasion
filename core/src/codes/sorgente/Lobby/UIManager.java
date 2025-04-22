@@ -410,8 +410,8 @@ public class UIManager implements ResourceLoader {
             // pagina 'classic game'
             case 0:
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 395, 410); // punti totali
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 420, 380); // partite giocate
+                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 395, 410); // punti totali
+                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 420, 380); // partite giocate
                 fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
                 fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 878, 385); // numero 'shield'
                 fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 715, 229); // numero 'super laser'
@@ -432,13 +432,13 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
-                        screen.draw(diffCG1, 646 ,108);
+                        screen.draw(diffCG1, 636 ,108);
                         break;
                     case 2:
-                        screen.draw(diffCG2, 646 ,108);
+                        screen.draw(diffCG2, 636 ,108);
                         break;
                     case 3:
-                        screen.draw(diffCG3, 646 ,108);
+                        screen.draw(diffCG3, 636 ,108);
                         break;
                 }
 
@@ -477,13 +477,13 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_space_battle")) {
                     case 1:
-                        screen.draw(diffSB1, 646 ,108);
+                        screen.draw(diffSB1, 636 ,108);
                         break;
                     case 2:
-                        screen.draw(diffSB2, 646 ,108);
+                        screen.draw(diffSB2, 636 ,108);
                         break;
                     case 3:
-                        screen.draw(diffSB3, 646 ,108);
+                        screen.draw(diffSB3, 636 ,108);
                         break;
                 }
 
@@ -495,7 +495,7 @@ public class UIManager implements ResourceLoader {
                 if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
 
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
 
                 break;
 
@@ -518,7 +518,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
 
                 break;
 
