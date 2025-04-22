@@ -180,16 +180,16 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 font2.draw(screen, formatter.format(aliensHit), 235, 337);
 
                 // numero carte speciali
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 385);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 385);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 272);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 272);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 375);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 375);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 262);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 262);
 
                 // stampa rettangolo selezione carta
-                if (goldHeart) screen.draw(rectSelectCard, 693, 398);
-                if (shield) screen.draw(rectSelectCard, 831, 398);
-                if (superLaser) screen.draw(rectSelectCard, 693, 285);
-                if (doublePoints) screen.draw(rectSelectCard, 831, 285);
+                if (goldHeart) screen.draw(rectSelectCard, 693, 388);
+                if (shield) screen.draw(rectSelectCard, 831, 388);
+                if (superLaser) screen.draw(rectSelectCard, 693, 275);
+                if (doublePoints) screen.draw(rectSelectCard, 831, 275);
 
                 break;
             case 1:
@@ -202,16 +202,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 font2.draw(screen, formatter.format(aliensHit), 235, 337);
 
                 // numero carte speciali
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 385);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 385);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 272);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 272);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 365);
+                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 252);
 
                 // stampa rettangolo selezione carta
-                if (goldHeart) screen.draw(rectSelectCard, 693, 398);
-                if (shield) screen.draw(rectSelectCard, 831, 398);
-                if (superLaser) screen.draw(rectSelectCard, 693, 285);
-                if (doublePoints) screen.draw(rectSelectCard, 831, 285);
+                if (goldHeart) screen.draw(rectSelectCard, 693, 388);
+                if (superLaser) screen.draw(rectSelectCard, 831, 388);
                 break;
         }
         screen.end();
@@ -280,7 +276,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         boolean canDisableDoublePoints = (int) DataUserManager.getProgress("num_double_points") > 0 && !selectedSp.getName().equals("Drakar");
 
         // gold heart
-        if (canDisableGoldHeart && screenX >= 685 && screenX <= 755 && screenY >= 232 && screenY <= 299) {
+        if (canDisableGoldHeart && (screenX >= 685 && screenX <= 755) && (screenY >= 242 && screenY <= 309)) {
             goldHeart = !goldHeart;
             if (canDisableShield) shield = false;
             if (canDisableSuperLaser) superLaser = false;
@@ -288,15 +284,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // shield
-        if (canDisableShield && screenX >= 824 && screenX <= 892 && screenY >= 232 && screenY <= 299) {
-            shield = !shield;
+        if ((screenX >= 824 && screenX <= 892) && (screenY >= 242 && screenY <= 309)) {
+            if (mod==0 && canDisableShield) shield = !shield; // selezione shield
+            else if (mod==1 && canDisableSuperLaser) superLaser = !superLaser; // selezione super laser
+            else return; // uscita
+
+            // disattivazione altre carte speciali
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableSuperLaser) superLaser = false;
             if (canDisableDoublePoints) doublePoints = false;
         }
 
         // super laser
-        if (canDisableSuperLaser && screenX >= 685 && screenX <= 755 && screenY >= 344 && screenY <= 412) {
+        if (mod==0 && canDisableSuperLaser && (screenX >= 685 && screenX <= 755) && (screenY >= 354 && screenY <= 422)) {
             superLaser = !superLaser;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;
@@ -304,7 +304,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // double points
-        if (canDisableDoublePoints && screenX >= 824 && screenX <= 892 && screenY >= 344 && screenY <= 412) {
+        if (mod == 0 && canDisableDoublePoints && (screenX >= 824 && screenX <= 892) && (screenY >= 354 && screenY <= 422)) {
             doublePoints = !doublePoints;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;

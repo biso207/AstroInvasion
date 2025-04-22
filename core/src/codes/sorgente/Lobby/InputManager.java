@@ -295,6 +295,7 @@ public class InputManager implements InputProcessor {
                         DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
                         DataUserManager.setProgress("credits", credits + 100);// aggiunta 100 crediti
                         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits") + 100);// aggiunta 100 crediti totali
+                        currentCredit+=100;
                         missionID++;
                         break;
                     case 4:
@@ -318,11 +319,11 @@ public class InputManager implements InputProcessor {
                 }
                 if ((screenX >= 494 && screenX <= 514 && screenY >= 385 && screenY <= 405) && item2 > 0) { // item 2
                     item2--;
-                    currentCredit += 75;
+                    currentCredit += 100;
                 }
                 if ((screenX >= 644 && screenX <= 664 && screenY >= 385 && screenY <= 405) && item3 > 0) { // item 3
                     item3--;
-                    currentCredit += 100;
+                    currentCredit += 150;
                 }
                 if ((screenX >= 794 && screenX <= 814 && screenY >= 385 && screenY <= 405) && item4 > 0) { // item 4
                     item4--;
@@ -342,13 +343,13 @@ public class InputManager implements InputProcessor {
                     item1++;
                     currentCredit -= 50;
                 }
-                if ((screenX >= 559 && screenX <= 579 && screenY >= 385 && screenY <= 405) && (currentCredit - 75 >= 0)) { // item 2
+                if ((screenX >= 559 && screenX <= 579 && screenY >= 385 && screenY <= 405) && (currentCredit - 100 >= 0)) { // item 2
                     item2++;
-                    currentCredit -= 75;
-                }
-                if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit - 100 >= 0)) { // item 3
-                    item3++;
                     currentCredit -= 100;
+                }
+                if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit - 150 >= 0)) { // item 3
+                    item3++;
+                    currentCredit -= 150;
                 }
                 if ((screenX >= 859 && screenX <= 879 && screenY >= 385 && screenY <= 405) && (currentCredit - 200 >= 0)) { // item 4
                     item4++;

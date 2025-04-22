@@ -205,7 +205,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 alienSpeed = 200;
                 spawnInterval = 0.3f;
                 laserCooldown = 0.2f;
-                lives = totalLives = 4;
+                lives = totalLives = 2;
                 scoreInc = 50;
                 creditsInc = 1;
                 break;
@@ -215,7 +215,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 alienSpeed = 200;
                 spawnInterval = 0.2f;
                 laserCooldown = 0.25f;
-                lives = totalLives = 3;
+                lives = totalLives = 2;
                 scoreInc = 100;
                 creditsInc = 3;
                 break;

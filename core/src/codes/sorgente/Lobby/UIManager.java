@@ -55,7 +55,7 @@ public class UIManager implements ResourceLoader {
     // pulsanti + scuri al passaggio del mouse
     private Texture[] buttonsOver;
 
-    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25, fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+    private BitmapFont fontBlue15, fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20, fontBoldDarkRed25, fontWhite20, fontMediumWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -113,11 +113,17 @@ public class UIManager implements ResourceLoader {
     public void loadFont() {
         // dichiarazione font
         try {
+            // blue
             fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter-regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter-regular blue 20
+            fontMediumBlue15 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_15.fnt")); // inter-medium blue 15
+            fontMediumBlue20 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_20.fnt")); // inter-medium blue 20
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
+            // red
             fontBoldDarkRed25 = new BitmapFont(Gdx.files.internal("font/inter/bold_darkRed_25.fnt")); // inter-regular blue 20
+            // white
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter-regular white 20
+            fontMediumWhite20 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_20.fnt")); // inter-medium white 20
             fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter-bold white 15
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
@@ -297,10 +303,10 @@ public class UIManager implements ResourceLoader {
         RTGs = new RTG[4];
 
         // creazione oggetti
-        RTG RTG0 = new RTG("Hit", 50, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
         RTG RTG1 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
         RTG RTG2 = new RTG("Earn", 2000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
-        RTG RTG3 = new RTG("Earn", 5, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
+        RTG RTG3 = new RTG("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         RTGs[0] = RTG0;
         RTGs[1] = RTG1;
@@ -412,18 +418,18 @@ public class UIManager implements ResourceLoader {
             // pagina 'classic game'
             case 0:
                 // testi //
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 400, 400); // punti totali
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 370); // partite giocate
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 402, 400); // punti totali
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 370); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
-                // navicella //
+                // NAVICELLA //
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -458,17 +464,17 @@ public class UIManager implements ResourceLoader {
             // pagina 'space battle'
             case 1:
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 420, 410); // vittorie
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 435, 380); // vittorie consecutive
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 420, 350); // partite giocate
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
-                fontBoldWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 878, 385); // numero 'super laser'
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 425, 415); // vittorie
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 445, 385); // vittorie consecutive
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 425, 355); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
-                // navicella //
+                // NAVICELLA //
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -491,21 +497,21 @@ public class UIManager implements ResourceLoader {
 
                 // selezione carta speciale
                 if (InputManager.goldHeart) screen.draw(rectSelectCard, 688, 375);
-                if (InputManager.superLaser) screen.draw(rectSelectCard, 688, 261);
+                if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
                 if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
 
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
 
                 break;
 
             // pagina 'space journey'
             case 2:
                 // testi //
-                fontBlue20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
-                fontBlue20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
+                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
+                fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
 
                 // navicella //
                 // immagine
@@ -520,7 +526,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
 
                 break;
 
@@ -531,9 +537,9 @@ public class UIManager implements ResourceLoader {
                 RTG m = RTGs[missionID-1];
 
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 403); // numero missione raggiunta
-                fontBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
-                fontBlue20.draw(screen, m.prize, 720, 231); // premio missione
+                fontMediumBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
+                fontMediumBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
+                fontMediumBlue20.draw(screen, "x" + m.prize, 720, 231); // premio missione
 
                 // progresso completamento task corrente
                 drawRTGPage(screen, missionID);
@@ -543,7 +549,7 @@ public class UIManager implements ResourceLoader {
             // pagina 'marketplace'
             case 17:
                 // testi //
-                fontBoldDarkRed25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
+                fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
 
                 // numero prodotti da acquistare
                 fontBoldWhite15.draw(screen, formatter.format(InputManager.item1), 384, 310); // item 1
