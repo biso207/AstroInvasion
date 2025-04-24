@@ -646,11 +646,11 @@ public class UIManager implements ResourceLoader {
                     }
 
                     // riquadro selezione
-                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-2, y-2);
+                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-5, y-5);
 
                     // posizione oggetti
                     x+=161;
-                    if ((i+1)%5==0) { x=143; y-=111; }
+                    if ((i+1)%5==0) { x=142; y-=111; } // reset posizione alla nuova riga
                 }
         }
 
