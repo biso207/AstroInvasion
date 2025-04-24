@@ -633,7 +633,7 @@ public class UIManager implements ResourceLoader {
             // pagina avatars
             case 18:
                 // stampa immagini
-                int x=143; int y=410;
+                int x=142; int y=410; // x e y del primo avatar
                 for (int i=0; i<=19; i++) {
                     // stampa immagine avatar
                     if (!Avatar.isAchieved(i)) {
