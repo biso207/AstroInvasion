@@ -457,7 +457,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.doublePoints) screen.draw(rectSelectCard, 801, 261);
 
                 // button start hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 773, 101);
 
                 break;
 
@@ -503,7 +503,7 @@ public class UIManager implements ResourceLoader {
                 if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
 
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 773, 101);
 
                 break;
 
@@ -526,7 +526,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 773, 101);
 
                 break;
 
@@ -575,21 +575,23 @@ public class UIManager implements ResourceLoader {
             case 19:
                 // testi //
                 // SCRITTE A SX
-                fontBlue20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
-                fontBlue20.draw(screen, AuthAlgorithms.password, 172, 372); // password
-                fontBlue20.draw(screen, AuthAlgorithms.date, 185, 332); // data registrazione
+                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
+                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 372); // password
+                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 333); // data registrazione
 
                 // SCRITTE A DX
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 620, 412); // punti
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 610, 372); // livello
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 630, 332); // numero missione
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 630, 292); // crediti
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 690, 252); // partite classic game
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 690, 212); // partite space battle
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 690, 172); // vittorie space battle
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 615, 412); // punti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 605, 372); // livello
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 625, 332); // numero missione
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_aliens_hit")), 645, 292); // alieni colpiti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 625, 252); // crediti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("total_credits")), 680, 212); // crediti totali
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 680, 172); // partite classic game
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 680, 132); // partite space battle
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 680, 92); // vittorie space battle
 
                 // immagini //
-                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
+                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 462, 513); // avatar
                 break;
 
             // pagina 'missions 1'
