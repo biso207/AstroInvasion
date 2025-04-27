@@ -575,9 +575,9 @@ public class UIManager implements ResourceLoader {
             case 19:
                 // testi //
                 // SCRITTE A SX
-                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
-                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 372); // password
-                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 333); // data registrazione
+                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 387); // nickname
+                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 347); // password
+                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 308); // data registrazione
 
                 // SCRITTE A DX
                 fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 615, 412); // punti
