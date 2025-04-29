@@ -29,7 +29,7 @@ public class Avatar {
         // vittorie space battle
         int winSB = (int) DataUserManager.getProgress("won_SB");
 
-        // return dello sblocco avatar
+        // return stato avatar => true=sbloccato; false=bloccato
         return switch (id) {
             case 0, 1, 2, 3 -> true;
             case 4 -> level > 12;
@@ -46,8 +46,8 @@ public class Avatar {
             case 15 -> level == 40;
             case 16 -> total_credits >= 10000;
             case 17 -> total_credits >= 50000;
-            case 18 -> points >= 1000000;
-            case 19 -> winSB >= 100;
+            case 18 -> points >= 3000000;
+            case 19 -> points >= 5000000l;
             default -> false;
         };
     }

@@ -252,8 +252,8 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 10K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "Claim 50K Credits"));
-        mapAvatars.put(18, new Avatar("Luke", "Reach 1M Points"));
-        mapAvatars.put(19, new Avatar("Emma", "Win 100 Space Battles"));
+        mapAvatars.put(18, new Avatar("Luke", "Reach 3M Points"));
+        mapAvatars.put(19, new Avatar("Emma", "Reach 5M Points"));
     }
 
     // metodo per creare le navicelle
