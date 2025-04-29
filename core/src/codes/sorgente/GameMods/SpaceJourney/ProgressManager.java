@@ -21,6 +21,12 @@ public class ProgressManager {
     // costruttore
     public ProgressManager() {
         this.credits = (int) DataUserManager.getProgress("credits");
+
+        /// Serve solo per le prove!
+        unlockedGalaxies.add(1);
+        unlockedGalaxies.add(2);
+        //unlockedGalaxies.add(3);
+        //unlockedGalaxies.add(4);
     }
 
     /// TODO: recuperare una variabile di vittoria partita per settare a COMPLETED il livello appena giocato...

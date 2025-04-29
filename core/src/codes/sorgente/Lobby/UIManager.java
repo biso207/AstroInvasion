@@ -500,7 +500,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
+                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 175);
 
                 // button fight hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 773, 101);
@@ -517,7 +517,7 @@ public class UIManager implements ResourceLoader {
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -591,7 +591,7 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 680, 92); // vittorie space battle
 
                 // immagini //
-                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 462, 513); // avatar
+                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
                 break;
 
             // pagina 'missions 1'
@@ -635,7 +635,7 @@ public class UIManager implements ResourceLoader {
             // pagina avatars
             case 18:
                 // stampa immagini
-                int x=142; int y=410; // x e y del primo avatar
+                int x=145; int y=410; // x e y del primo avatar
                 for (int i=0; i<=19; i++) {
                     // stampa immagine avatar
                     if (!Avatar.isAchieved(i)) {
@@ -652,7 +652,7 @@ public class UIManager implements ResourceLoader {
 
                     // posizione oggetti
                     x+=161;
-                    if ((i+1)%5==0) { x=142; y-=111; } // reset posizione alla nuova riga
+                    if ((i+1)%5==0) { x=145; y-=111; } // reset posizione alla nuova riga
                 }
         }
 

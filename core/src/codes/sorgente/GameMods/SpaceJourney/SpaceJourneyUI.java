@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 
+import javax.xml.crypto.Data;
+
 public class SpaceJourneyUI {
     // immagini galassie
     private Texture imgGalaxy0, imgGalaxy1, imgGalaxy2, imgGalaxy3, imgGalaxy4;
@@ -18,15 +20,12 @@ public class SpaceJourneyUI {
     private Texture imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4;
     private Texture imgFlagSeat;
 
-    private final int numGalaxy, numLevel;
+    private final int numLevel;
 
     // costruttore
-    SpaceJourneyUI(int numGalaxy) {
+    SpaceJourneyUI() {
         // caricamento risorse in memoria
         loadResources();
-
-        // numero della galassia corrente
-        this.numGalaxy = numGalaxy;
         // numero livello raggiunto
         this.numLevel = (int) DataUserManager.getProgress("level");
     }
@@ -61,18 +60,37 @@ public class SpaceJourneyUI {
     }
 
     // metodo per creare la grafica di una galassia
-    public void createGalaxyUI() {
-        int start = numGalaxy*10-9;
-        int finish = numGalaxy*10;
+    public void createGalaxyUI(SpriteBatch screen) {
+        int start = SpaceJourney.numGalaxy*10-9;
+        int finish = SpaceJourney.numGalaxy*10;
+
+        // posizione iniziale immagine livello
+        int X=100, Y=100;
+
         for (int i = start; i <= finish; i++) {
-            Level l = new Level(i);
-            System.out.println("livello " + i + " stato: " + l.getState(i));
+            Level l = new Level(i); // creazione oggetto livello
+
+            switch (l.getState((int)DataUserManager.getProgress("level"))) {
+                case COMPLETED:
+                    screen.draw(imgCompletedLevelG1, X, Y);
+                    break;
+                case LOCKED:
+                    screen.draw(imgLockedLevelG1, X, Y);
+                    break;
+                case UNLOCKED:
+                    screen.draw(imgUnlockedLevelG1, X, Y);
+                    break;
+            }
+            X+=100;
+
+            // reset posizione immagini
+            if (i==finish/2) X=100; Y+=100;
         }
     }
 
     // metodo per stampare le grafiche
     public void printUI(SpriteBatch screen) {
-        switch (numGalaxy) {
+        switch (SpaceJourney.numGalaxy) {
             case 0:
                 screen.draw(imgGalaxy0, 0,0);
                 break;
@@ -90,6 +108,6 @@ public class SpaceJourneyUI {
                 break;
         }
 
-        if (numGalaxy != 0) createGalaxyUI();
+        if (SpaceJourney.numGalaxy != 0) createGalaxyUI(screen);
     }
 }

@@ -25,7 +25,7 @@ public class SpaceJourney implements Screen {
     private Music soundtrack;
 
     private final List<Galaxy> galaxies;
-    private int currentGalaxy = 0;
+    protected static int numGalaxy = 0;
     private int[] unlockCosts = {1000, 3000, 5000, 7000};
 
     private final ProgressManager progressManager = new ProgressManager();
@@ -44,7 +44,7 @@ public class SpaceJourney implements Screen {
         setupGalaxies();
 
         // setup grafica
-        ui = new SpaceJourneyUI(currentGalaxy); /// TODO: recuperare la galassia corrente...
+        ui = new SpaceJourneyUI();
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/space_journey_sound.mp3")); // file audio
@@ -75,7 +75,7 @@ public class SpaceJourney implements Screen {
         if (Gdx.input.justTouched()) {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, touchPos)) {
-                    if (galaxy.isUnlocked()) System.out.println("sei entrato nella galassia " + galaxy.getId());
+                    if (galaxy.isUnlocked()) numGalaxy = galaxy.getId();
                 }
             }
 
@@ -89,16 +89,17 @@ public class SpaceJourney implements Screen {
             }
         }
 
-        // controllo pagina per tornare indietro: 0 => Lobby; 4<=numGalaxy<=1 => currentGalaxy=0
+        // controllo click del mouse: 0 => Lobby; 4<=numGalaxy<=1 => mapGalaxies (0)
         if (isBackButtonClicked(touchPos)) {
-            if (currentGalaxy == 0) {
+            if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
                 game.setScreen(new LobbyManager(game)); // back to lobby
             }
-            else currentGalaxy = 0;
+            else numGalaxy = 0;
         }
 
-        if (isHomeIconClicked(touchPos) && currentGalaxy == 0) {
+        // back to lobby cliccando l'icona della terra
+        if (isHomeIconClicked(touchPos) && numGalaxy == 0) {
             soundtrack.stop(); // stop della musica
             game.setScreen(new LobbyManager(game)); // back to lobby
         }
@@ -114,7 +115,7 @@ public class SpaceJourney implements Screen {
         return ((screenX >= 904 && screenX <= 936) && (screenY >= 582 && screenY <= 615));
     }
 
-    // metodo per tornare alla lobby cliccando sull'icona della terra
+    // metodo per controllare il click dell'icona della terra
     private boolean isHomeIconClicked(Vector2 touchPos) {
         double screenX = touchPos.x;
         double screenY = touchPos.y;
@@ -124,8 +125,16 @@ public class SpaceJourney implements Screen {
 
     // metodo per controllare se l'area di una galassia è stata cliccata
     private boolean isGalaxyClicked(Galaxy g, Vector2 touchPos) {
-        // Implementare logica di clic sui range delle galassie
-        return false;
+        double screenX = touchPos.x;
+        double screenY = touchPos.y;
+        System.out.println( screenX + " " + screenY + " " + g.getId());
+        return switch (g.getId()) {
+            case 1 -> ((screenX >= 353 && screenX <= 458) && (screenY >= 96 && screenY <= 181));
+            case 2 -> ((screenX >= 707 && screenX <= 811) && (screenY >= 127 && screenY <= 201));
+            case 3 -> ((screenX >= 736 && screenX <= 833) && (screenY >= 371 && screenY <= 471));
+            case 4 -> ((screenX >= 245 && screenX <= 337) && (screenY >= 356 && screenY <= 448));
+            default -> false;
+        };
     }
 
     // metodo per controllare se l'area di un livello è stato cliccato
