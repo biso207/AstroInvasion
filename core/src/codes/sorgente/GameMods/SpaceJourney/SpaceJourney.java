@@ -24,7 +24,7 @@ public class SpaceJourney implements Screen {
     // soundtrack
     private Music soundtrack;
 
-    private final List<Galaxy> galaxies;
+    protected static List<Galaxy> galaxies;
     protected static int numGalaxy = 0;
     private int[] unlockCosts = {1000, 3000, 5000, 7000};
 
@@ -38,7 +38,7 @@ public class SpaceJourney implements Screen {
         // init dello screen
         this.screen = game.screen;
 
-        this.galaxies = new ArrayList<>();
+        galaxies = new ArrayList<>();
 
         // init galassie e livelli
         setupGalaxies();
@@ -112,7 +112,7 @@ public class SpaceJourney implements Screen {
 
         System.out.println(screenX + " " + screenY);
 
-        return ((screenX >= 904 && screenX <= 936) && (screenY >= 582 && screenY <= 615));
+        return ((screenX >= 900 && screenX <= 940) && (screenY >= 577 && screenY <= 617));
     }
 
     // metodo per controllare il click dell'icona della terra
