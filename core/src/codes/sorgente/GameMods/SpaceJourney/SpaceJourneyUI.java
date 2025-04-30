@@ -6,32 +6,42 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.GameMods.SpaceJourney;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
+import sorgente.ResourceLoader;
 
 import javax.xml.crypto.Data;
 
-public class SpaceJourneyUI {
-    // immagini galassie
+public class SpaceJourneyUI implements ResourceLoader {
+    // immagini
     private Texture imgGalaxy0, imgGalaxy1, imgGalaxy2, imgGalaxy3, imgGalaxy4;
     private Texture imgCompletedLevelG1, imgCompletedLevelG2, imgCompletedLevelG3, imgCompletedLevelG4;
     private Texture imgLockedLevelG1, imgLockedLevelG2, imgLockedLevelG3, imgLockedLevelG4;
     private Texture imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4;
-    private Texture imgFlagSeat;
+    private Texture imgFlagSeat, imgNumLevelSeat;
+
+    // font
+    private BitmapFont fontBoldBlue20;
 
     private final int numLevel;
 
     // costruttore
     SpaceJourneyUI() {
         // caricamento risorse in memoria
-        loadResources();
+        loadImages(); // immagini
+        loadFont(); // font
+
         // numero livello raggiunto
         this.numLevel = (int) DataUserManager.getProgress("level");
     }
 
+    @Override
     // metodo per caricare le risorse
-    public void loadResources() {
+    public void loadImages() {
         // base galassie
         imgGalaxy0 = new Texture("images/space_journey_maps/galaxy0.png");
         imgGalaxy1 = new Texture("images/space_journey_maps/galaxy1.png");
@@ -57,6 +67,23 @@ public class SpaceJourneyUI {
 
         // icona bandiera livello corrente
         imgFlagSeat = new Texture("images/space_journey_maps/flag_seat_marker.png");
+        // cerchio per il numero del livello
+        imgNumLevelSeat = new Texture("images/space_journey_maps/level_circle.png");
+
+    }
+
+    // metodo per caricare e creare i font
+    @Override
+    public void loadFont() {
+        // dichiarazione font
+        try {
+            // blue
+            fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
+        } catch (Exception e) {
+            // dichiarazione font
+            BitmapFont font = new BitmapFont(); // font di default (arial)
+            font.setColor(Color.valueOf("#151A3B")); // colore blu
+        }
     }
 
     // metodo per creare la grafica di una galassia
@@ -64,27 +91,56 @@ public class SpaceJourneyUI {
         int start = SpaceJourney.numGalaxy*10-9;
         int finish = SpaceJourney.numGalaxy*10;
 
-        // posizione iniziale immagine livello
-        int X=100, Y=100;
+        System.out.println(SpaceJourney.numGalaxy);
+        System.out.println(start);
+        System.out.println(finish);
+
+        // posizione iniziale immagine livello e icona numero livello
+        int X=46, Y=338;
+        int X2=40, Y2=400;
 
         for (int i = start; i <= finish; i++) {
             Level l = new Level(i); // creazione oggetto livello
-
-            switch (l.getState((int)DataUserManager.getProgress("level"))) {
+            System.out.println(l.getState(numLevel));
+            switch (l.getState(numLevel)) {
                 case COMPLETED:
-                    screen.draw(imgCompletedLevelG1, X, Y);
+                    switch(SpaceJourney.numGalaxy) {
+                        case 1 -> screen.draw(imgCompletedLevelG1, X, Y);
+                        case 2 -> screen.draw(imgCompletedLevelG2, X, Y);
+                        case 3 -> screen.draw(imgCompletedLevelG3, X, Y);
+                        case 4 -> screen.draw(imgCompletedLevelG4, X, Y);
+                    }
                     break;
                 case LOCKED:
-                    screen.draw(imgLockedLevelG1, X, Y);
+                    switch(SpaceJourney.numGalaxy) {
+                        case 1 -> screen.draw(imgLockedLevelG1, X, Y);
+                        case 2 -> screen.draw(imgLockedLevelG2, X, Y);
+                        case 3 -> screen.draw(imgLockedLevelG3, X, Y);
+                        case 4 -> screen.draw(imgLockedLevelG4, X, Y);
+                    }
                     break;
                 case UNLOCKED:
-                    screen.draw(imgUnlockedLevelG1, X, Y);
+                    switch(SpaceJourney.numGalaxy) {
+                        case 1 -> screen.draw(imgUnlockedLevelG1, X, Y);
+                        case 2 -> screen.draw(imgUnlockedLevelG2, X, Y);
+                        case 3 -> screen.draw(imgUnlockedLevelG3, X, Y);
+                        case 4 -> screen.draw(imgUnlockedLevelG4, X, Y);
+                    }
                     break;
             }
-            X+=100;
+
+            // stampa numero livello
+            screen.draw(imgNumLevelSeat, X2, Y2);
+            fontBoldBlue20.draw(screen, String.valueOf(i), X2+10, Y2+30);
+
+            X+=204;
+            X2+=204;
 
             // reset posizione immagini
-            if (i==finish/2) X=100; Y+=100;
+            if (i==finish/2) {
+                X=46; Y-=225;
+                X2=40; Y2-=225;
+            }
         }
     }
 
