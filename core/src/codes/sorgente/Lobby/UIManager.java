@@ -70,7 +70,7 @@ public class UIManager implements ResourceLoader {
     protected static Spacecraft selectedSp;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
-    private NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
+    private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // mouse
     protected static Pixmap mouse, mouseOver; // immagini

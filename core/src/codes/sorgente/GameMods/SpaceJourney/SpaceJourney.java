@@ -10,6 +10,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import sorgente.DataUserManager;
 import sorgente.Lobby.InputManager;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
@@ -26,11 +27,14 @@ public class SpaceJourney implements Screen {
 
     protected static List<Galaxy> galaxies;
     protected static int numGalaxy = 0;
-    private int[] unlockCosts = {1000, 3000, 5000, 7000};
 
     private final ProgressManager progressManager = new ProgressManager();
 
+    // istanza classe della grafica
     private final SpaceJourneyUI ui;
+
+    // livello raggiunto
+    private final int numLevel = (int) DataUserManager.getProgress("level");
 
     // costruttore
     public SpaceJourney(Main game) {
@@ -62,7 +66,7 @@ public class SpaceJourney implements Screen {
                 levels.add(new Level(levelId)); // tutti i livelli bloccati
             }
             // alla mappa viene aggiunto un'ID e la sua lista di livelli
-            galaxies.add(new Galaxy(i, progressManager.isGalaxyUnlocked(i), levels));
+            galaxies.add(new Galaxy(i, levels));
         }
     }
 
@@ -75,7 +79,7 @@ public class SpaceJourney implements Screen {
         if (Gdx.input.justTouched()) {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, touchPos)) {
-                    if (galaxy.isUnlocked()) numGalaxy = galaxy.getId();
+                    if ((numLevel/10+1)>=galaxy.getId()) numGalaxy = galaxy.getId();
                 }
             }
 
@@ -140,6 +144,7 @@ public class SpaceJourney implements Screen {
     // metodo per controllare se l'area di un livello è stato cliccato
     private boolean isLevelClicked(Level l, Vector2 touchPos) {
         // Implementare logica di clic sui livelli
+        /// la logica sarà un for che gira su 10 x e 2 y
         return false;
     }
 
@@ -179,6 +184,7 @@ public class SpaceJourney implements Screen {
     // rilascio risorse
     @Override public void dispose() {}
 
+    // altri metodi
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}

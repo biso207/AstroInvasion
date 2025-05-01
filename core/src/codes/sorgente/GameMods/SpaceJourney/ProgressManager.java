@@ -21,12 +21,6 @@ public class ProgressManager {
     // costruttore
     public ProgressManager() {
         this.credits = (int) DataUserManager.getProgress("credits");
-
-        /// Serve solo per le prove!
-        unlockedGalaxies.add(1);
-        unlockedGalaxies.add(2);
-        unlockedGalaxies.add(3);
-        unlockedGalaxies.add(4);
     }
 
     /// TODO: recuperare una variabile di vittoria partita per settare a COMPLETED il livello appena giocato...
@@ -55,36 +49,15 @@ public class ProgressManager {
         return levelStates.getOrDefault(levelId, LevelState.LOCKED);
     }
 
-    // metodo per sbloccare una galassia
-    public boolean unlockGalaxy(int galaxy) {
-        // prezzo sblocco galassia
-        int cost = switch (galaxy) {
-            case 2 -> 1000;
-            case 3 -> 3000;
-            case 4 -> 5000;
-            case 5 -> 7000;
-            default -> 0;
-        };
-
-        // sblocco galassia
-        if (credits >= cost && !unlockedGalaxies.contains(galaxy)) {
-            DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
-            unlockedGalaxies.add(galaxy); // aggiunta alla lista delle galassie sbloccate quella nuova
-            return true;
-        }
-
-        return false;
-    }
-
     // metodo per sbloccare un livello
-    public boolean unlockLevel(int levelId) {
+    public boolean unlockLevel(int levelID) {
         // costo di sblocco
-        int cost = (levelId % 10 == 0) ? 700 : 200; // 200 primi 9, 700 il finale
+        int cost = levelID*100; // il prezzo cresce sempre di 100 arrivando fino a 4000
 
         // sblocco livello
-        if (credits >= cost && getLevelState(levelId) == LevelState.LOCKED) {
+        if (credits >= cost && getLevelState(levelID) == LevelState.LOCKED) {
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
-            levelStates.put(levelId, LevelState.UNLOCKED); // cambio stato accessibilità del livello
+            levelStates.put(levelID, LevelState.UNLOCKED); // cambio stato accessibilità del livello
             return true;
         }
         return false;

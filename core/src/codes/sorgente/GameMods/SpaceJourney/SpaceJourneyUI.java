@@ -16,6 +16,10 @@ import sorgente.Main;
 import sorgente.ResourceLoader;
 
 import javax.xml.crypto.Data;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
     // immagini
@@ -23,11 +27,14 @@ public class SpaceJourneyUI implements ResourceLoader {
     private Texture imgCompletedLevelG1, imgCompletedLevelG2, imgCompletedLevelG3, imgCompletedLevelG4;
     private Texture imgLockedLevelG1, imgLockedLevelG2, imgLockedLevelG3, imgLockedLevelG4;
     private Texture imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4;
-    private Texture imgFlagSeat, imgNumLevelSeat, closeButton;
+    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect;
     private Texture[] bgs;
 
     // font
-    private BitmapFont fontBoldBlue20, fontBoldWhite60, fontBoldItalicWhite25;
+    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite60, fontBoldItalicWhite25;
+
+    // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
+    private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // testi per le pagine
     private final String[] titles = {"Space Journey", "Fenixia Galaxy", "Malloc Galaxy", "Seraphis Galaxy", "Efron Galaxy"};
@@ -38,6 +45,27 @@ public class SpaceJourneyUI implements ResourceLoader {
         "“Per aspera ad astra”",
         "“Never stop exploring”"
     };
+    private final String[] nameGuardians = {
+        "Kaelor — Guardian of Fenixia",
+        "Drelor — Guardian of Malloc",
+        "Varyn — Guardian of Seraphis",
+        "Tessar — Guardian of Efron"
+    };
+    private final String[] loreGuardians = {
+        "He who burns with the fire of primordial stars. Keeper of cosmic rebirth.",
+        "Ancient sentinel of a forgotten world, he watches over the hidden forces that stir beneath Malloc’s silence.",
+        "A forgotten angel among the stars, he brings both light and judgment. Beautiful and deadly.",
+        "The weaver of orbits. No light escapes his control."
+    };
+    private final String[] messageGuardians = {
+        "From ashes you came, to ashes you shall return. Face the fire of eternity.",
+        "You walk a path buried beneath centuries. Speak your purpose, or turn away.",
+        "You seek light, but light burns those unworthy. Step into judgment.",
+        "I do not strike with rage... I erase with purpose."
+    };
+
+    // mappa per le immagini dei livelli
+    private Map<LevelState, List<Texture>> imagesByState;
 
     // numero livello raggiunto
     private final int numLevel;
@@ -79,12 +107,22 @@ public class SpaceJourneyUI implements ResourceLoader {
         imgUnlockedLevelG3 = new Texture("images/space_journey_maps/level_g3_unlocked.png");
         imgUnlockedLevelG4 = new Texture("images/space_journey_maps/level_g4_unlocked.png");
 
+        // caricamento mappa con le immagini dei livelli
+        imagesByState = Map.of(
+            LevelState.COMPLETED, List.of(imgCompletedLevelG1, imgCompletedLevelG2, imgCompletedLevelG3, imgCompletedLevelG4),
+            LevelState.LOCKED, List.of(imgLockedLevelG1, imgLockedLevelG2, imgLockedLevelG3, imgLockedLevelG4),
+            LevelState.UNLOCKED, List.of(imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4)
+        );
+
         // icona bandiera livello corrente
         imgFlagSeat = new Texture("images/space_journey_maps/flag_seat_marker.png");
         // cerchio per il numero del livello
         imgNumLevelSeat = new Texture("images/space_journey_maps/level_circle.png");
         // X per chiudere la pagina
         closeButton = new Texture("images/space_journey_maps/close_button.png");
+        // rettangolo prezzo livello
+        priceRect = new Texture("images/space_journey_maps/price_rect.png");
+
 
     }
 
@@ -96,6 +134,7 @@ public class SpaceJourneyUI implements ResourceLoader {
             // blue
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-bold blue 20
             // white
+            fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60.fnt")); // inter-bold white 60
             fontBoldItalicWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_25.fnt")); // inter-bold-italic white 25
         } catch (Exception e) {
@@ -113,7 +152,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         // stampa titolo e sotto-titolo
         screen.draw(bgs[SpaceJourney.numGalaxy], 0,0);
         if (SpaceJourney.numGalaxy!=0) {
-            fontBoldWhite70.draw(screen, titles[SpaceJourney.numGalaxy], 65, 628);
+            fontBoldWhite60.draw(screen, titles[SpaceJourney.numGalaxy], 65, 628);
             fontBoldItalicWhite25.draw(screen, subTitles[SpaceJourney.numGalaxy], 64, 535);
         }
         else {
@@ -144,48 +183,34 @@ public class SpaceJourneyUI implements ResourceLoader {
         int X2=40, Y2=400;
 
         for (int i = start; i <= finish; i++) {
-            Level l = new Level(i); // creazione oggetto livello
-            //System.out.println(l.getState(numLevel));
-            switch (l.getState(numLevel)) {
-                case COMPLETED:
-                    switch(SpaceJourney.numGalaxy) {
-                        case 1 -> screen.draw(imgCompletedLevelG1, X, Y);
-                        case 2 -> screen.draw(imgCompletedLevelG2, X, Y);
-                        case 3 -> screen.draw(imgCompletedLevelG3, X, Y);
-                        case 4 -> screen.draw(imgCompletedLevelG4, X, Y);
-                    }
-                    break;
-                case LOCKED:
-                    switch(SpaceJourney.numGalaxy) {
-                        case 1 -> screen.draw(imgLockedLevelG1, X, Y);
-                        case 2 -> screen.draw(imgLockedLevelG2, X, Y);
-                        case 3 -> screen.draw(imgLockedLevelG3, X, Y);
-                        case 4 -> screen.draw(imgLockedLevelG4, X, Y);
-                    }
-                    break;
-                case UNLOCKED:
-                    switch(SpaceJourney.numGalaxy) {
-                        case 1 -> screen.draw(imgUnlockedLevelG1, X, Y);
-                        case 2 -> screen.draw(imgUnlockedLevelG2, X, Y);
-                        case 3 -> screen.draw(imgUnlockedLevelG3, X, Y);
-                        case 4 -> screen.draw(imgUnlockedLevelG4, X, Y);
-                    }
-                    break;
-            }
+            Level l = new Level(i); // crea il livello
+            LevelState state = l.getState(numLevel); // stato livello
+            int galaxy = SpaceJourney.numGalaxy; // galassia corrente
 
-            // stampa numero livello
-            if (SpaceJourney.numGalaxy!=0) {
+            if (galaxy != 0) {
+                // disegno immagine livello in base alla galassia e allo stato
+                screen.draw(imagesByState.get(state).get(galaxy - 1), X, Y);
+
+                // prezzo sblocco livello
+                if (i==numLevel && state==LevelState.TO_BUY) { // raggiunto ma da pagare
+                    // stampa rettangolo
+                    screen.draw(priceRect, X2+50, Y2);
+                    // stampa prezzo
+                    fontBoldWhite20.draw(screen, formatter.format(numLevel* 100L), X2+60, Y2+28);
+                }
+
+                // stampa numero livello
                 screen.draw(imgNumLevelSeat, X2, Y2);
-                fontBoldBlue20.draw(screen, String.valueOf(i), X2+9, Y2+30);
+                fontBoldBlue20.draw(screen, String.valueOf(i), X2 + 9, Y2 + 30);
             }
 
-            X+=204;
-            X2+=204;
-
-            // reset posizione immagini
-            if (i==(finish-5)) {
-                X=50; Y-=224; // pianeti
-                X2=40; Y2-=224; // numero livello
+            // aggiorna posizione
+            X += 204;
+            X2 += 204;
+            // seconda riga della pagina
+            if (i == (finish - 5)) {
+                X = 50; Y -= 224;
+                X2 = 40; Y2 -= 224;
             }
         }
     }
