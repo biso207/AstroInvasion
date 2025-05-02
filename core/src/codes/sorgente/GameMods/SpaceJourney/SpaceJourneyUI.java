@@ -192,11 +192,11 @@ public class SpaceJourneyUI implements ResourceLoader {
                 screen.draw(imagesByState.get(state).get(galaxy - 1), X, Y);
 
                 // prezzo sblocco livello
-                if (i==numLevel && state==LevelState.TO_BUY) { // raggiunto ma da pagare
+                if (i==numLevel) { // raggiunto ma da pagare
                     // stampa rettangolo
-                    screen.draw(priceRect, X2+50, Y2);
+                    screen.draw(priceRect, X2+40, Y2);
                     // stampa prezzo
-                    fontBoldWhite20.draw(screen, formatter.format(numLevel* 100L), X2+60, Y2+28);
+                    fontBoldWhite20.draw(screen, formatter.format(numLevel* 100L), X2+50, Y2+28);
                 }
 
                 // stampa numero livello

@@ -133,10 +133,10 @@ public class SpaceJourney implements Screen {
         double screenY = touchPos.y;
         System.out.println( screenX + " " + screenY + " " + g.getId());
         return switch (g.getId()) {
-            case 1 -> ((screenX >= 353 && screenX <= 458) && (screenY >= 96 && screenY <= 181));
+            case 1 -> ((screenX >= 360 && screenX <= 449) && (screenY >= 93 && screenY <= 185));
             case 2 -> ((screenX >= 707 && screenX <= 811) && (screenY >= 127 && screenY <= 201));
             case 3 -> ((screenX >= 736 && screenX <= 833) && (screenY >= 371 && screenY <= 471));
-            case 4 -> ((screenX >= 245 && screenX <= 337) && (screenY >= 356 && screenY <= 448));
+            case 4 -> ((screenX >= 241 && screenX <= 344) && (screenY >= 361 && screenY <= 445));
             default -> false;
         };
     }

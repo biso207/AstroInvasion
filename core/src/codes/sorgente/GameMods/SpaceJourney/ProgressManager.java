@@ -55,7 +55,7 @@ public class ProgressManager {
         int cost = levelID*100; // il prezzo cresce sempre di 100 arrivando fino a 4000
 
         // sblocco livello
-        if (credits >= cost && getLevelState(levelID) == LevelState.LOCKED) {
+        if (credits >= cost && getLevelState(levelID) == LevelState.TO_BUY) {
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
             levelStates.put(levelID, LevelState.UNLOCKED); // cambio stato accessibilità del livello
             return true;
