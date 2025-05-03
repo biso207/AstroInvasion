@@ -122,8 +122,6 @@ public class SpaceJourneyUI implements ResourceLoader {
         closeButton = new Texture("images/space_journey_maps/close_button.png");
         // rettangolo prezzo livello
         priceRect = new Texture("images/space_journey_maps/price_rect.png");
-
-
     }
 
     // metodo per caricare e creare i font

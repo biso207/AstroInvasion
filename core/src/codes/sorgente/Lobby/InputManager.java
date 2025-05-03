@@ -27,11 +27,11 @@ public class InputManager implements InputProcessor {
     private final Map<Integer, HitBox> hitBoxes = new HashMap<>();
 
     // variabili per gestire certi input
-    protected static boolean secondScreen=false, open22=false, open23=false, open24=false, open25=false, open26=false;
+    protected static boolean secondScreen=false, open17=false, open13=false, open18=false, open14=false, open16=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false, isBtnLHover=false, isBtnRHover=false;
     // lista delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 25, 26);
+    private final Set<Integer> listSecondPages = Set.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
     protected static int page = 0;
     private int previousPage;
@@ -89,12 +89,10 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
         hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
         hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
-        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, false)); // 'spacecrafts 1'
-        hitBoxes.put(10, new HitBox(50, 444, 270, 462, 10, true));  // 'missions 1'
-        hitBoxes.put(18, new HitBox(50, 496, 270, 514, 17, false)); // 'marketplace'
+        hitBoxes.put(5, new HitBox(50, 496, 270, 514, 5, false)); // 'marketplace'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(24, new HitBox(862, 62, 950, 145, 19, true));  // 'profile infos'
-        hitBoxes.put(28, new HitBox(50, 550, 270, 568, 23, true));   // 'instructions'
+        hitBoxes.put(6, new HitBox(862, 62, 950, 145, 6, true));  // 'profile infos'
+        hitBoxes.put(11, new HitBox(50, 550, 270, 568, 11, true));   // 'instructions'
     }
 
     // ************************************** //
@@ -103,15 +101,15 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25 && !open26)) {
-            open23 = true;
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open17 && !open13 && !open18 && !open14 && !open16)) {
+            open13 = true;
             secondScreen = true;
             return true;
         }
 
         // click tasto esc per annullare il logout
-        if (keycode == Input.Keys.ESCAPE && (secondScreen&&open23)) {
-            open23 = false;
+        if (keycode == Input.Keys.ESCAPE && (secondScreen&&open13)) {
+            open13 = false;
             secondScreen = false;
         }
 
@@ -129,7 +127,7 @@ public class InputManager implements InputProcessor {
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
-        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25 && !open26) {
+        if (!listSecondPages.contains(page) && !open17 && !open13 && !open18 && !open14 && !open16) {
 
             // CAMBIO PAGINE LOBBY
             // for-each per iterare i vari range e controllare i cambi pagina
@@ -142,48 +140,38 @@ public class InputManager implements InputProcessor {
                 }
             }
 
+            // APERTURA PAGINA NAVICELLE => viene creata una classe a parte che gestisce tutto (grafiche+input)
+            if ((screenX>=50 && screenX<=270) && (screenY>=389 && screenY<=407)) {
+                // apertura pagina navicelle
+                /// Non ha bisogno di memorizzare la pagina precedente perché si crea una nuova lobby dalla pagina
+                LobbyManager.game.setScreen(new SpacecraftSelectionScreen(LobbyManager.game));
+            }
+
             // CLICK NELLE PAGINE
             // apertura pagina 'software infos'
             if ((screenX>=105 && screenX<=135) && (screenY>=600 && screenY<=630)) {
-                open22 = true;
+                open17 = true;
                 secondScreen = true;
             }
             // apertura pagina 'logout'
             if ((screenX>=162 && screenX<=192) && (screenY>=600 && screenY<=630)) {
-                open23 = true;
+                open13 = true;
                 secondScreen = true;
             }
             // apertura pagina 'settings'
             if ((screenX>=50 && screenX<=90) && (screenY>=600 && screenY<=630)) {
-                open26 = true;
+                open16 = true;
                 secondScreen = true;
             }
-            // cambio pagina (19-23) => 'spacecraft 1->5'
-            if ((page>=4 && page<9) && (screenX>=873 && screenX<=913) && (screenY>=553 && screenY<=593)) {
-                page++;
-            }
-            // cambio pagina (23-19) => 'spacecraft 5->1'
-            if ((page<=9 && page>4) && (screenX>=343 && screenX<=373) && (screenY>=553 && screenY<=593)) {
-                page--;
-            }
-            // apertura pagina 21/22 (difficulty infos classic game/space battle)
+            // apertura pagina 9/10 (difficulty infos classic game/space battle)
             if ((screenX>=614 && screenX<=694) && (screenY>=551 && screenY<=592)) {
-                if (page == 0) { previousPage = page; page = 21; }
-                else if (page == 1) { previousPage = page; page = 22; }
+                if (page == 0) { previousPage = page; page = 9; }
+                else if (page == 1) { previousPage = page; page = 10; }
             }
             // apertura pagina 20 (cards infos)
             if ((page == 0 || page == 1) && (screenX>=880 && screenX<=905) && (screenY>=255 && screenY<=280)) {
                 previousPage = page;
-                page = 20;
-            }
-
-            // cambio pagina (10-17) => 'missions 1-7'
-            if ((screenX >= 885 && screenX <= 925) && (screenY >= 622 && screenY <= 642)) {
-                if ((page >= 10 && page < 16)) page++;
-            }
-            // cambio pagina (17-10) => 'missions 7-1'
-            if ((screenX >= 65 && screenX <= 105) && (screenY >= 622 && screenY <= 642)) {
-                if ((page <= 16 && page > 10)) page--;
+                page = 8;
             }
 
             // controllo per avviare le modalità di gioco
@@ -192,7 +180,7 @@ public class InputManager implements InputProcessor {
                 if (page == 0) {
                     // controllo per l'avviso difficoltà
                     if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
-                        secondScreen = open24 = true;
+                        secondScreen = open18 = true;
                     } else {
                         LobbyManager.soundtrack.stop(); // interruzione musica
                         LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
@@ -205,8 +193,6 @@ public class InputManager implements InputProcessor {
                     LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
                 }
             }
-
-            /// TODO: impostare la selezione della navicella...
 
             // cambio difficoltà classic game
             if (page == 0 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
@@ -222,7 +208,6 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            System.out.println(screenX + " " + screenY);
             // cambio difficoltà space battle
             if (page == 1 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
                 if (diffSB < 3) {
@@ -311,7 +296,7 @@ public class InputManager implements InputProcessor {
             }
 
             // acquisti nel negozio
-            if (page == 17) {
+            if (page == 5) {
                 // rimozione prodotto
                 if ((screenX >= 344 && screenX <= 364 && screenY >= 385 && screenY <= 405) && item1 > 0) { // item 1
                     item1--;
@@ -373,7 +358,7 @@ public class InputManager implements InputProcessor {
 
                 // pulsante per confermare l'acquisto
                 if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize > 0) {
-                    secondScreen = open25 = true;
+                    secondScreen = open14 = true;
                 }
 
                 // prezzo finale
@@ -385,11 +370,11 @@ public class InputManager implements InputProcessor {
         // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE E SECONDARIE //
         // *************************************************** //
         else {
-            // apertura pagina 18 'avatar'
-            if (page == 19 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 18;
+            // apertura pagina 7 'avatar'
+            if (page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
 
             // selezione avatar
-            if (page == 18) {
+            if (page == 7) {
                 int x = 133, y = 220; // posizione avatar 1
                 for (int i = 0; i <= 19; i++) {
                     if ((screenX >= x && screenX <= x + 66) && (screenY >= y && screenY <= y + 66)) {
@@ -409,41 +394,41 @@ public class InputManager implements InputProcessor {
 
             // chiusura pagina istruzioni; info profilo-difficoltà; missioni; avatar
             if ((screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
-                if (page == 18) page = 19; // evita di tornare alla lobby dalla pagina degli avatar
+                if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;
             }
 
             // chiusura software infos
-            if ((secondScreen && open22) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
-                secondScreen = open22 = false;
+            if ((secondScreen && open17) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
+                secondScreen = open17 = false;
             }
 
             // NO logout => si continua nella sessione di gioco
-            if ((secondScreen && open23) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
-                secondScreen = open23 = false;
+            if ((secondScreen && open13) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                secondScreen = open13 = false;
             }
 
             // YES logout => back to the Authentication Page
-            if ((secondScreen && open23) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                secondScreen = open23 = false;
+            if ((secondScreen && open13) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                secondScreen = open13 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
             }
 
             // OK warning => close warning and back to lobby
-            if ((secondScreen && open24) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                secondScreen = open24 = false;
+            if ((secondScreen && open18) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                secondScreen = open18 = false;
             }
 
             // PLAY warning => play classic game
-            if ((secondScreen && open24) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
-                secondScreen = open24 = false;
+            if ((secondScreen && open18) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                secondScreen = open18 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
             }
 
             // YES => conferma acquisto
-            if ((secondScreen && open25) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open14) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 // salvataggio crediti rimasti
                 DataUserManager.setProgress("credits", currentCredit);
 
@@ -462,21 +447,21 @@ public class InputManager implements InputProcessor {
                 finalPrize = 0; // reset final prize
 
                 // chiusura schermata in sovra impressione
-                secondScreen = open25 = false;
+                secondScreen = open14 = false;
             }
 
             // NO => annulla acquisto
-            if ((secondScreen && open25) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
-                secondScreen = open25 = false;
+            if ((secondScreen && open14) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                secondScreen = open14 = false;
             }
 
             // chiusura pagina impostazioni
-            if ((secondScreen && open26) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
-                secondScreen = open26 = false;
+            if ((secondScreen && open16) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
+                secondScreen = open16 = false;
             }
 
             // setting impostazioni
-            if ((secondScreen && open26)) {
+            if ((secondScreen && open16)) {
                 // tipo di movimento
                 if ((screenX >= 259 && screenX <= 421) && (screenY >= 195 && screenY <= 272)) DataUserManager.setProgress("movement_type", 1);
                 if ((screenX >= 259 && screenX <= 421) && (screenY >= 290 && screenY <= 367)) DataUserManager.setProgress("movement_type", 2);
@@ -512,21 +497,21 @@ public class InputManager implements InputProcessor {
 
         // CAMBIO STILE PULSANTI
         // YES logout / OK warning / YES purchase
-        if ((secondScreen && (open23 || open24 || open25)) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
             isBtnLHover=true;
         }
 
         // NO logout / PLAY warning / NO purchase
-        if ((secondScreen && (open23 || open24 || open25)) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
             isBtnRHover=true;
         }
 
-        if (!listSecondPages.contains(page) && !open22 && !open23 && !open24 && !open25 && !open26) {
+        if (!listSecondPages.contains(page) && !open17 && !open13 && !open18 && !open14 && !open16) {
             // rtg
             if (page == 3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
 
             // market
-            if (page==17) {
+            if (page==5) {
                 // pulsante reset
                 if ((screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624) && finalPrize > 0) isBtnResetHover=true;
                 // pulsante per confermare l'acquisto
@@ -545,7 +530,7 @@ public class InputManager implements InputProcessor {
     // rilascio del mouse
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // stato di false per il movimento delle barre volume
-        if (secondScreen && open26) {
+        if (secondScreen && open16) {
             draggingSound = false;
             draggingMusic = false;
         }
@@ -555,7 +540,7 @@ public class InputManager implements InputProcessor {
     // click continuato e movimento del mouse
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
         // controlli per il movimento delle barre volume
-        if (secondScreen && open26) {
+        if (secondScreen && open16) {
             if (draggingSound) {
                 soundPercent = Math.min(1f, Math.max(0f, (screenX - 285) / (float) (685 - 285)));
                 DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio

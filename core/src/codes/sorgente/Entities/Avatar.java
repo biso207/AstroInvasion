@@ -32,22 +32,22 @@ public class Avatar {
         // return stato avatar => true=sbloccato; false=bloccato
         return switch (id) {
             case 0, 1, 2, 3 -> true;
-            case 4 -> level > 12;
-            case 5 -> level > 14;
-            case 6 -> level > 16;
-            case 7 -> level > 18;
-            case 8 -> level > 21;
-            case 9 -> level > 22;
-            case 10 -> level > 25;
-            case 11 -> level > 28;
-            case 12 -> level > 34;
-            case 13 -> level > 36;
-            case 14 -> level > 38;
-            case 15 -> level == 40;
+            case 4 -> level > 3;
+            case 5 -> level > 6;
+            case 6 -> level > 9;
+            case 7 -> level > 13;
+            case 8 -> level > 16;
+            case 9 -> level > 19;
+            case 10 -> level > 23;
+            case 11 -> level > 26;
+            case 12 -> level > 29;
+            case 13 -> level > 33;
+            case 14 -> level > 36;
+            case 15 -> level == 39;
             case 16 -> total_credits >= 10000;
             case 17 -> total_credits >= 50000;
             case 18 -> points >= 3000000;
-            case 19 -> points >= 5000000l;
+            case 19 -> points >= 5000000;
             default -> false;
         };
     }

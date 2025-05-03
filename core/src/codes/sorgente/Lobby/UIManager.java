@@ -47,8 +47,6 @@ public class UIManager implements ResourceLoader {
     private Texture[] RTGPrizes;
     public static RTG[] RTGs;
 
-    // immagini in sovra impressione
-    private Texture closeGame, softInfos, warning, confirmBuy, settings;
     // immagine navicella + immagine space battle bloccato
     private Texture spImg, infoBanner;
 
@@ -64,7 +62,7 @@ public class UIManager implements ResourceLoader {
     private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
+    private final Set<Integer> listSecondPages = Set.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
     // creazione oggetto navicella per il package Lobby
     protected static Spacecraft selectedSp;
@@ -140,20 +138,13 @@ public class UIManager implements ResourceLoader {
     @Override
     public void loadImages() {
         // popolamento mappa lobby
-        for (int i = 0; i < 24; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 19; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio RTG
         Texture img_special = new Texture("images/rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
-
-        // immagini in sovra impressione
-        closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
-        softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
-        warning = new Texture("secondary_screens/lobby_warning_eng.png");
-        confirmBuy = new Texture("secondary_screens/lobby_confirm_buy_eng.png");
-        settings = new Texture("secondary_screens/lobby_settings_eng.png");
 
         // testo "SOLD OUT" per il marketplace
         txtSoldOut = new Texture("images/sold_item_txt.png");
@@ -238,18 +229,18 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(1, new Avatar("Cap. Idra", null));
         mapAvatars.put(2, new Avatar("Cap. Pegaso", null));
         mapAvatars.put(3, new Avatar("Cap. Woka", null));
-        mapAvatars.put(4, new Avatar("Cooper", "Complete Level 12"));
-        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 14"));
-        mapAvatars.put(6, new Avatar("Scot", "Complete Level 16"));
-        mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 18"));
-        mapAvatars.put(8, new Avatar("Amin", "Complete Level 21"));
-        mapAvatars.put(9, new Avatar("Samira", "Complete Level 22"));
-        mapAvatars.put(10, new Avatar("Abdul", "Complete Level 25"));
-        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 28"));
-        mapAvatars.put(12, new Avatar("Chen", "Complete Level 34"));
-        mapAvatars.put(13, new Avatar("Lin", "Complete Level 36"));
-        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 38"));
-        mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
+        mapAvatars.put(4, new Avatar("Cooper", "Complete Level 3"));
+        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 6"));
+        mapAvatars.put(6, new Avatar("Scot", "Complete Level 9"));
+        mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 13"));
+        mapAvatars.put(8, new Avatar("Amin", "Complete Level 16"));
+        mapAvatars.put(9, new Avatar("Samira", "Complete Level 19"));
+        mapAvatars.put(10, new Avatar("Abdul", "Complete Level 23"));
+        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 26"));
+        mapAvatars.put(12, new Avatar("Chen", "Complete Level 29"));
+        mapAvatars.put(13, new Avatar("Lin", "Complete Level 33"));
+        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 36"));
+        mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 10K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "Claim 50K Credits"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 3M Points"));
@@ -353,7 +344,7 @@ public class UIManager implements ResourceLoader {
 
     // metodo per disegnare la pagina delle impostazioni
     public void drawSettingsPage(SpriteBatch screen) {
-        screen.draw(settings, 175, 25);
+        screen.draw(mapLobby.get(16), 175, 25);
 
         // comandi movimento navicella
         if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
@@ -547,7 +538,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'marketplace'
-            case 17:
+            case 5:
                 // testi //
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
 
@@ -572,7 +563,7 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'profile info'
-            case 19:
+            case 6:
                 // testi //
                 // SCRITTE A SX
                 fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 387); // nickname
@@ -594,46 +585,8 @@ public class UIManager implements ResourceLoader {
                 screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
                 break;
 
-            // pagina 'missions 1'
-            case 10:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_CG"));
-                break;
-
-            // pagina 'missions 2'
-            case 11:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, 100000000);
-                break;
-
-            // pagina 'missions 3'
-            case 12:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_SB"));
-                break;
-
-            // pagina 'missions 4'
-            case 13:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("won_SB"));
-                break;
-
-            // pagina 'missions 5'
-            case 14:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("points"));
-                break;
-
-            // pagina 'missions 6'
-            case 15:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("level"));
-                break;
-
-            // pagina 'missions 7'
-            case 16:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("credits"));
-                break;
-
             // pagina avatars
-            case 18:
+            case 7:
                 // stampa immagini
                 int x=145; int y=410; // x e y del primo avatar
                 for (int i=0; i<=19; i++) {
@@ -658,23 +611,23 @@ public class UIManager implements ResourceLoader {
 
         // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
-            if (InputManager.open22) screen.draw(softInfos, 250, 175); // info software
-            else if (InputManager.open23) { // chiusura gioco
-                screen.draw(closeGame, 250, 175);
+            if (InputManager.open17) screen.draw(mapLobby.get(17), 250, 175); // info software
+            else if (InputManager.open13) { // chiusura gioco
+                screen.draw(mapLobby.get(13), 250, 175);
 
                 // button YES and NO hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
-            else if (InputManager.open24) { // avviso difficoltà elevata
-                screen.draw(warning, 250, 175);
+            else if (InputManager.open18) { // avviso difficoltà elevata
+                screen.draw(mapLobby.get(18), 250, 175);
 
                 // button OK and PLAY hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 513, 211);
             }
-            else if (InputManager.open25) { // conferma acquisto
-                screen.draw(confirmBuy, 250, 175);
+            else if (InputManager.open14) { // conferma acquisto
+                screen.draw(mapLobby.get(14), 250, 175);
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
 
@@ -682,7 +635,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
-            else if (InputManager.open26) drawSettingsPage(screen); // impostazioni di gioco
+            else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
         }
     }
 
@@ -706,11 +659,5 @@ public class UIManager implements ResourceLoader {
         diffSB1.dispose();
         diffSB2.dispose();
         diffSB3.dispose();
-        closeGame.dispose();
-        softInfos.dispose();
-        warning.dispose();
-        confirmBuy.dispose();
-        settings.dispose();
-        selectedSetting.dispose();
     }
 }

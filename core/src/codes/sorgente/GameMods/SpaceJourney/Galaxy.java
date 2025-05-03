@@ -9,8 +9,8 @@ package sorgente.GameMods.SpaceJourney;
 import java.util.List;
 
 public class Galaxy {
-    private int id;
-    private List<Level> levels;
+    private final int id;
+    private final List<Level> levels;
 
     public Galaxy(int id, List<Level> levels) {
         this.id = id;
