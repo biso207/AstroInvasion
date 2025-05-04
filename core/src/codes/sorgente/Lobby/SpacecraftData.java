@@ -7,38 +7,65 @@ Developed by BIGA©. All rights reserved.
 package sorgente.Lobby;
 
 import com.badlogic.gdx.graphics.Texture;
+import sorgente.DataUserManager;
 
 public class SpacecraftData {
     public int id;
-    public String name, lore, mission;
+    public String lore, mission;
     public int speed,laserSpeed, bonusPoint;
-    private Texture spImg;
 
-    public SpacecraftData(int id, String name, String mission, String lore, Texture spImg, int speed, int laserSpeed, int bonusPoint) {
+    public SpacecraftData(int id, String mission, String lore, int speed, int laserSpeed, int bonusPoint) {
         this.id = id;
-        this.name = name;
         this.mission = mission;
         this.lore = lore;
-        this.spImg = spImg;
         this.speed = speed;
         this.laserSpeed = laserSpeed;
         this.bonusPoint = bonusPoint;
+    }
+
+    // metodo per restituire lo stato di una navicella (sbloccata o meno)
+    public static boolean isAchieved(int id) {
+        // livello utente
+        int level = (int) DataUserManager.getProgress("level");
+        // stato elementi 5 e 6 del negozio
+        boolean state5 = (boolean) DataUserManager.getProgress("state_product_5");
+        boolean state6 = (boolean) DataUserManager.getProgress("state_product_6");
+        // numero vittorie SB
+        int winSB = (int) DataUserManager.getProgress("won_SB");
+        // task raggiunto nel RTG
+        int numMission = (int) DataUserManager.getProgress("num_mission");
+
+        // return stato avatar => true=sbloccato; false=bloccato
+        return switch (id) {
+            case 0, 1, 2, 3 -> true;
+            case 4 -> level > 2;
+            case 5 -> level > 5;
+            case 6 -> level > 8;
+            case 7 -> level > 10;
+            case 8 -> level > 12;
+            case 9 -> level > 15;
+            case 10 -> level > 18;
+            case 11 -> level > 20;
+            case 12 -> level > 22;
+            case 13 -> level > 25;
+            case 14 -> level > 28;
+            case 15 -> level > 30;
+            case 16 -> level > 32;
+            case 17 -> level > 35;
+            case 18 -> level > 38;
+            case 19 -> level == 40;
+            case 20 -> state5;
+            case 21 -> state6;
+            case 22 -> winSB >= 100;
+            case 23 -> numMission >= 100;
+            default -> false;
+        };
     }
 
     // GETTER //
     // getter id
     public int getId() {
         return id;
-    }
-
-    // getter name
-    public String getName() {
-        return name;
-    }
-
-    // getter imagePath
-    public Texture getImage() {
-        return spImg;
     }
 
     // getter lore

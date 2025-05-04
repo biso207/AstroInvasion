@@ -179,7 +179,7 @@ public class InputManager implements InputProcessor {
                 // avvio modalità di gioco
                 if (page == 0) {
                     // controllo per l'avviso difficoltà
-                    if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
+                    if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
                         secondScreen = open18 = true;
                     } else {
                         LobbyManager.soundtrack.stop(); // interruzione musica
@@ -226,30 +226,44 @@ public class InputManager implements InputProcessor {
 
             // selezione carte speciali //
             // gold heart
-            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && (screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323)) {
+            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323))) {
                 goldHeart = !goldHeart;
-                shield = superLaser = doublePoints = false;
+                // disattivazione altre carte
+                if (!nameSp.equals("Astrid")) shield = false;
+                if (!nameSp.equals("Rorik")) superLaser = false;
+                if (!nameSp.equals("Drakar")) doublePoints = false;
             }
             // shield
-            if ((page == 0 || page == 1) && (!nameSp.equals("Astrid")) && (screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323)) {
+            if (((screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323))) {
                 if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0)) {
                     shield = !shield;
-                    superLaser = false;
+                    if (!nameSp.equals("Rorik")) superLaser = false;
                 } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0)) {
                     superLaser = !superLaser;
-                    shield = false;
+                    if (!nameSp.equals("Astrid")) shield = false;
                 }
-                goldHeart = doublePoints = false;
+
+                // disattivazione altre carte
+                if (!nameSp.equals("Alpha")) goldHeart = false;
+                if (!nameSp.equals("Drakar")) doublePoints = false;
             }
             // super laser
-            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && (screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438)) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438))) {
                 superLaser = !superLaser;
-                goldHeart = shield = doublePoints = false;
+
+                // disattivazione altre carte
+                if (!nameSp.equals("Alpha")) goldHeart = false;
+                if (!nameSp.equals("Astrid")) shield = false;
+                if (!nameSp.equals("Drakar")) doublePoints = false;
             }
             // double points
-            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && (screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438)) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && ((screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438))) {
                 doublePoints = !doublePoints;
-                goldHeart = shield = superLaser = false;
+
+                // disattivazione altre carte
+                if (!nameSp.equals("Alpha")) goldHeart = false;
+                if (!nameSp.equals("Rorik")) superLaser = false;
+                if (!nameSp.equals("Astrid")) shield = false;
             }
 
             // claim reward del RTG

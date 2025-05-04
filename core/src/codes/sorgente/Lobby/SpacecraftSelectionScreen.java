@@ -12,6 +12,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
+import org.w3c.dom.css.Rect;
 import sorgente.DataUserManager;
 import sorgente.Entities.Spacecraft;
 import sorgente.Main;
@@ -21,7 +22,7 @@ import java.util.*;
 public class SpacecraftSelectionScreen implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;
-    private Texture bg, selectionBox, scrollBar;
+    private Texture bg, selectionBox;
     private final List<SpacecraftData> spacecrafts;
     private final Map<Rectangle, Integer> clickableAreas;
     private int selectedId = -1; // id della navicella selezionata
@@ -29,8 +30,8 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
     private float scrollY = 2300; // posizione iniziale dello scroll/pagina
     private final float maxScrollY = 2300; // Altezza massima della schermata scrollabile (immagine - altezza schermo)
     private final float scrollSpeed = 50f;  // Velocità dello scroll per rotellina
-    private float dragStartY = -1;
-    private boolean isDragging = false; // stato click prolungato del mouse
+
+    private BitmapFont fontBoldWhite18;
 
     // costruttore
     public SpacecraftSelectionScreen(Main game) {
@@ -38,9 +39,10 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
         // init dello screen
         this.screen = game.screen;
 
+        clickableAreas = new HashMap<>();
+
         // caricamento dati navicelle
         spacecrafts = loadSpacecrafts();
-        clickableAreas = new HashMap<>();
 
         // caricamento risorse grafiche
         loadImages();
@@ -56,37 +58,23 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
     private List<SpacecraftData> loadSpacecrafts() {
         List<SpacecraftData> list = new ArrayList<>();
 
-        // nomi delle navicelle
-        String[] names = {"Omega", "Idra", "Pegaso", "Woka", "Beowulf", "Andvari", "Siko", "Fenixia", "Ares", "Asgard",
-            "Galahad", "Malloc", "Orion", "Centauro", "Zephyr", "Phoenix", "Selen", "Scylla", "Keto", "Efron",
-            "Drakar", "Rorik", "Astrid", "Alpha"};
         // missioni delle navicelle
         String[] missions = {"", "", "", "",
             "Complete Level 2", "Complete Level 5", "Complete Level 8", "Complete Level 10",
             "Complete Level 12", "Complete Level 15", "Complete Level 18", "Complete Level 20",
             "Complete Level 22", "Complete Level 25", "Complete Level 28", "Complete Level 30",
             "Complete Level 32", "Complete Level 35", "Complete Level 38", "Complete Level 40",
-            "Win 100 SB", "Buy in the Market", "Buy in the Market", "Reach Task 100 in RTG"
+            "Buy in the Market", "Buy in the Market", "Win 100 SB", "Reach Task 100 in RTG"
         };
         // lore delle navicelle
-        String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar rebel",
+        String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
             "Ancestral Warrior", "Energy Thief", "Deadly Silence", "Blazing Rebirth",
             "Cosmic Rage", "Divine Fortress", "Invincible Purity", "Glitched Code",
             "Space Hunter", "Hybrid Fury", "Supersonic Wind", "Sacred Flame",
             "Lunar Light", "Shadow Tentacles", "Eternal Abyss", "Echo Of Time",
             "Stellar Longship", "Frost Dominator", "Rising star", "Absolute Origin"
         };
-
-        // percorsi immagine navicelle
-        String[] imagePaths = {"images/spacecrafts/_omega.png", "images/spacecrafts/_idra.png", "images/spacecrafts/_pegaso.png",
-            "images/spacecrafts/_woka.png", "images/spacecrafts/_beowulf_basic.png", "images/spacecrafts/_andvari_basic.png",
-            "images/spacecrafts/_siko_basic.png", "images/spacecrafts/_fenixia_basic.png", "images/spacecrafts/_ares_basic.png",
-            "images/spacecrafts/_asgard_basic.png", "images/spacecrafts/_galahad_basic.png", "images/spacecrafts/_malloc_basic.png",
-            "images/spacecrafts/_orion_basic.png", "images/spacecrafts/_centauro_basic.png", "images/spacecrafts/_zephyr_basic.png",
-            "images/spacecrafts/_phoenix_basic.png", "images/spacecrafts/_selen_basic.png", "images/spacecrafts/_scylla_basic.png",
-            "images/spacecrafts/_keto_basic.png", "images/spacecrafts/_efron_basic.png", "images/spacecrafts/_drakar.png",
-            "images/spacecrafts/_rorik.png", "images/spacecrafts/_astrid.png", "images/spacecrafts/_alpha.png"};
-        // potenze delle navicelle
+        // potenze delle navicelle => ordine potenze: 0:bonus punti, 1:vel navicella, 2:vel laser
         int[][] attributes = {
             {0, 1, 0}, {5, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 2, 0}, {10, 0, 0}, {0, 0, 2}, {0, 0, 3}, {0, 3, 0},
             {15, 0, 0}, {0, 1, 1}, {10, 2, 0}, {0, 2, 1}, {20, 0, 0}, {0, 4, 1}, {0, 1, 2}, {0, 2, 2}, {30, 0, 0},
@@ -95,7 +83,28 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
 
         // popolamento della mappa navicelle
         for (int i = 0; i < 24; i++) {
-            list.add(new SpacecraftData((i+1), names[i], missions[i], lore[i], new Texture(imagePaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
+            list.add(new SpacecraftData(i, missions[i], lore[i], attributes[i][1], attributes[i][2], attributes[i][0]));
+        }
+
+        // popolamento mappa range per la selezione delle navicelle
+        int x1=82, x2=471, x3=493, x4=882, y1=342, y2=486;
+        int spID=0; // id della navicella
+        Rectangle area; // rappresenta l'area cliccabile
+
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<4; j++) {
+                if (j==0 || j==2) area = new Rectangle(x1, y1, x2-x1, y2-y1);
+                else area = new Rectangle(x3, y1, x4-x3, y2-y1);
+
+                // aggiunta del range solo se la navicella è cliccabile
+                if (SpacecraftData.isAchieved(spID)) clickableAreas.put(area, spID);
+                if (j==1)  { y1+=168; y2+=168; } // passaggio alla riga seguente
+
+                // passaggio alla navicella successiva
+                spID++;
+            }
+            // passaggio al gruppo successivo
+            y1+= 257; y2+=257;
         }
 
         return list;
@@ -107,54 +116,52 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
     public void loadImages() {
         bg = new Texture("lobby_screens/lobby (4).png");
         selectionBox = new Texture("images/rect_selected_SP.png");
-        scrollBar = new Texture("images/scrollBar.png");
     }
 
     @Override
     public void loadFont() {
-        System.out.println("ciaone dai font");
+        fontBoldWhite18 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_18.fnt")); // inter-bold white 18
     }
 
     // **************** //
     // GESTIONE GRAFICA //
     // **************** //
+    // metodo per stampare i testi e le immagini
+    public void createGraphic() {
+        int spID=0; // id navicella per recuperare gli attributi
+        int X, x1=258, x2= 670, y=2645; // x e y della prima scritta della prima navicella
+        // iterazione con 2 for per dividere i gruppi delle navicelle
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<4; j++) {
+                SpacecraftData s = spacecrafts.get(spID); // oggetto navicella
 
-    // metodo per disegnare le navicelle
-    private void drawShips() {
-        float x, y;
-        int spacing = 410; // distanza tra due navicelle su una riga
-        int spacing2 = 168; // distanza tra due navicelle in colonna nello stesso box
+                // x delle scritte (x1 è la prima colonna, x2 è la seconda)
+                X = (j == 0 || j == 2) ? x1 : x2;
 
-        // x e y della prima navicella del primo gruppo
-        int startX = 120;
-        int startY = 2580;
+                // attributi mostrati se la navicella è sbloccata altrimenti sono nascosti
+                if (SpacecraftData.isAchieved(spID)) {
+                    if (s.getSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getSpeed(), X, y-scrollY);
+                    if (s.getLaserSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getLaserSpeed(), X, (y-37)-scrollY);
+                    if (s.getBonusPoint()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoint() + "%", X, (y-74)-scrollY);
+                    fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-scrollY);
 
-        for (int i = 0; i < 24; i++) {
-            SpacecraftData ship = spacecrafts.get(i);
-            int row = i % 2; // 12 righe
-            int col = i / 2; // 2 navicelle per riga
+                    // disegno rettangolo di selezione
+                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(selectionBox, X-180, (y-145)-scrollY);
+                }
+                else {
+                    fontBoldWhite18.draw(screen, "?", X, y-scrollY);
+                    fontBoldWhite18.draw(screen, "?", X, (y-37)-scrollY);
+                    fontBoldWhite18.draw(screen, "?", X, (y-74)-scrollY);
+                    fontBoldWhite18.draw(screen, s.getMission(), X, (y-107)-scrollY);
+                }
 
-            // incremento x e y dello stesso gruppo
-            x = startX + row * spacing;
-            y = startY - col * spacing2 - scrollY;
+                if (j==1)  y-=168; // passaggio alla riga seguente
 
-            System.out.println(i + ": " + x + " " + y + "\n");
-
-            // disegno navicella
-            screen.draw(ship.getImage(), x, y);
-
-            // rettangolo cliccabile per selezionare una navicella
-            Rectangle box = new Rectangle(x, y, 396, 150);
-            clickableAreas.put(box, ship.id);
-
-            // disegno rettangolo selezione navicella
-            if (ship.id == selectedId) {
-                screen.draw(selectionBox, x - 5, y - 5);
+                // passaggio alla navicella successiva
+                spID++;
             }
-
-            // setting distanza in Y
-            if ((i+1)%4==0 || i%4==0) spacing2 = 230; // prime due del gruppo
-            else spacing2 = 168; // passaggio alla riga successiva di uno stesso gruppo
+            // passaggio al gruppo successivo
+            y-= 257;
         }
     }
 
@@ -174,50 +181,21 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
 
     // metodo per controllare i click del mouse
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        //System.out.println(screenX + " " + screenY);
         // chiusura pagina cliccando sulla X
-        if ((screenX >= 900 && screenX <= 940) && (screenY >= 577 && screenY <= 617)) {
+        if ((screenX >= 906 && screenX <= 947) && (screenY >= 83 && screenY <= 122)) {
             game.setScreen(new LobbyManager(game)); // back to lobby
-        }
-
-        // avvio drugging del mouse in caso tenga cliccata la barra
-        if (button == Input.Buttons.LEFT) {
-            isDragging = true;
-            dragStartY = screenY;
         }
 
         // controllo selezione navicella
         for (Map.Entry<Rectangle, Integer> entry : clickableAreas.entrySet()) {
             Rectangle area = entry.getKey();
-            if (area.contains(screenX, screenY + scrollY)) {
+            System.out.println(screenY + " " + scrollY);
+            if (area.contains(screenX, screenY+(maxScrollY-scrollY))) {
                 selectedId = entry.getValue(); // recupero id navicella selezionata
-                // salvataggio navicella scelta
-                DataUserManager.setProgress("spacecraft", selectedId);
+                // salvataggio navicella scelta se sbloccata
+                if (SpacecraftData.isAchieved(selectedId)) DataUserManager.setProgress("spacecraft", selectedId);
                 break;
             }
-        }
-        return true;
-    }
-
-    // cambio icona mouse
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) { return false; }
-
-    // rilascio del mouse
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) {
-            isDragging = false;
-        }
-        return true;
-    }
-
-    // click continuato e movimento del mouse
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if (isDragging) {
-            float deltaY = dragStartY - screenY;
-            scrollY += deltaY;
-            clampScroll();
-            dragStartY = screenY;
         }
         return true;
     }
@@ -239,6 +217,9 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
     }
 
     // altri metodi
+    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
+    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
@@ -256,11 +237,10 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
         screen.begin();
 
         // disegno dello sfondo
-        System.out.println(-scrollY);
-        screen.draw(bg, 0, -scrollY); // l'immagine viene "scrollata"
-        //screen.draw(bg, 0, -2300); // l'immagine viene "scrollata"
-        // disegno delle navicelle e scritta dei loro attributi
-        drawShips();
+        screen.draw(bg, 0, -scrollY); // l'immagine di sfondo viene "scrollata"
+
+        // scrittura testi e stampa immagini
+        createGraphic();
 
         // chiusura screen
         screen.end();
