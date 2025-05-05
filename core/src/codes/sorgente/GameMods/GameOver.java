@@ -39,17 +39,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // font
     private BitmapFont font, font2;
     // immagini
-    private Texture gameOver0, rectSelectCard;
+    private Texture gameOver0, gameOver1, victory, rectSelectCard;
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     private final Spacecraft selectedSp;
 
     // boolean per le carte speciali e disattivazione
-    public boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
+    private boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
+    // stato vittoria/sconfitta space battle
+    private boolean win;
 
     // costruttore
-    public GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit) {
+    public GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit, boolean win) {
         // set gioco
         this.game = game;
 
@@ -59,6 +61,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         this.points = points;
         this.credits = credits;
         this.aliensHit = aliensHit;
+        this.win = win;
 
         // attivazione carte delle navicelle premium
         if (selectedSp.getName().equals("Alpha")) goldHeart = true;
@@ -149,6 +152,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override
     public void loadImages() {
         gameOver0 = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
+        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
+        victory = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
         rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
     }
 
@@ -194,7 +199,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 break;
             case 1:
                 // schermata base
-                screen.draw(gameOver0, 0, 0);
+                switch (win) {
+                    case true -> screen.draw(victory, 0, 0);
+                    case false -> screen.draw(gameOver1, 0, 0);
+                }
 
                 // scritte progressi partita
                 font2.draw(screen, formatter.format(points), 195, 457);

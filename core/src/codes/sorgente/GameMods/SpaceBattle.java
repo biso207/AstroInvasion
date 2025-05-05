@@ -336,13 +336,11 @@ public class SpaceBattle implements Screen, InputProcessor {
         screen.end();
     }
 
+    // metodo per constatare vittoria/sconfitta
     private void gameOver(boolean win) {
         // diminuzione carte speciali
         //if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
-        //if (usedShield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
         //if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
-        //if (doublePoints && !selectedSp.getName().equals("Drakar")) DataUserManager.setProgress("num_double_points", (int) DataUserManager.getProgress("num_double_points")-1);
-
 
         soundtrack.stop();
         game.setScreen(new GameOver(game, selectedSp, 1, 0, 0, 0));
