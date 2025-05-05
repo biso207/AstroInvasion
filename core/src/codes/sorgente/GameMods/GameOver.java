@@ -191,7 +191,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 if (superLaser) screen.draw(rectSelectCard, 693, 285);
                 if (doublePoints) screen.draw(rectSelectCard, 831, 285);
 
-                break;
+                break;dds
             case 1:
                 // schermata base
                 screen.draw(gameOver0, 0, 0);
