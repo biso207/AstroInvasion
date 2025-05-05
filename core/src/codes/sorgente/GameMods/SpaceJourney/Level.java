@@ -10,6 +10,7 @@ public class Level {
     private final int id;
     private LevelState state;
 
+    // costruttore
     public Level(int id) {
         this.id = id;
     }
@@ -22,11 +23,11 @@ public class Level {
     // metodo per recuperare lo stato di un livello
     public LevelState getState(int numLevel) {
         if (id == numLevel) {
-            return LevelState.UNLOCKED; // Il livello corrente è Unlocked
+            return LevelState.UNLOCKED; // il livello corrente è Unlocked
         } else if (id < numLevel) {
-            return LevelState.COMPLETED; // I livelli precedenti sono Completed
+            return LevelState.COMPLETED; // i livelli precedenti sono Completed
         } else {
-            return LevelState.LOCKED; // I livelli successivi sono Locked
+            return LevelState.LOCKED; // i livelli successivi sono Locked
         }
     }
 

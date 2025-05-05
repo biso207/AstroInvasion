@@ -175,9 +175,9 @@ public class AuthAlgorithms implements InputProcessor {
         JSONObject gameProgresses = new JSONObject();
         /// Le seguenti variabili possono avere dei valori alti per testare il gioco
         gameProgresses.put("avatar", 0);
-        gameProgresses.put("credits", 100);
+        gameProgresses.put("credits", 0);
         gameProgresses.put("credits_RTG", 0);
-        gameProgresses.put("total_credits", 100);
+        gameProgresses.put("total_credits", 0);
         gameProgresses.put("completed_RTG", false);
         gameProgresses.put("diff_classic_game", 1);
         gameProgresses.put("diff_space_battle", 1);
@@ -186,10 +186,10 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("movement_type", 1);
         gameProgresses.put("shot_type", 1);
         gameProgresses.put("spacecraft", 1);
-        gameProgresses.put("num_double_points", 3);
-        gameProgresses.put("num_gold_heart", 3);
-        gameProgresses.put("num_shield", 3);
-        gameProgresses.put("num_super_laser", 3);
+        gameProgresses.put("num_double_points", 1);
+        gameProgresses.put("num_gold_heart", 1);
+        gameProgresses.put("num_shield", 1);
+        gameProgresses.put("num_super_laser", 1);
         gameProgresses.put("num_mission", 1);
         gameProgresses.put("won_SB_RTG", 0);
         gameProgresses.put("num_aliens_hit", 0);

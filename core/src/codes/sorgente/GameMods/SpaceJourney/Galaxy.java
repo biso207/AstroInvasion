@@ -9,26 +9,16 @@ package sorgente.GameMods.SpaceJourney;
 import java.util.List;
 
 public class Galaxy {
-    private int id;
-    private boolean isUnlocked;
-    private List<Level> levels;
+    private final int id;
+    private final List<Level> levels;
 
-    public Galaxy(int id, boolean isUnlocked, List<Level> levels) {
+    public Galaxy(int id, List<Level> levels) {
         this.id = id;
-        this.isUnlocked = isUnlocked;
         this.levels = levels;
     }
 
     public int getId() {
         return id;
-    }
-
-    public boolean isUnlocked() {
-        return isUnlocked;
-    }
-
-    public void unlock() {
-        isUnlocked = true;
     }
 
     public List<Level> getLevels() {

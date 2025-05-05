@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class UIManager implements ResourceLoader {
     // dichiarazione icone difficoltà, spunta completamento, premi RTG
-    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3,
+    private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState;
 
@@ -47,15 +47,13 @@ public class UIManager implements ResourceLoader {
     private Texture[] RTGPrizes;
     public static RTG[] RTGs;
 
-    // immagini in sovra impressione
-    private Texture closeGame, softInfos, warning, confirmBuy, settings;
     // immagine navicella + immagine space battle bloccato
     private Texture spImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
     private Texture[] buttonsOver;
 
-    private BitmapFont fontBlue15, fontBlue20, fontBoldBlue20, fontBoldDarkRed25,fontWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+    private BitmapFont fontBlue15, fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20, fontBoldDarkRed25, fontWhite20, fontMediumWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
 
     // hashmap per le diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -64,13 +62,13 @@ public class UIManager implements ResourceLoader {
     private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(10, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24);
+    private final Set<Integer> listSecondPages = Set.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
     // creazione oggetto navicella per il package Lobby
     protected static Spacecraft selectedSp;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
-    private NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
+    private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // mouse
     protected static Pixmap mouse, mouseOver; // immagini
@@ -113,11 +111,17 @@ public class UIManager implements ResourceLoader {
     public void loadFont() {
         // dichiarazione font
         try {
+            // blue
             fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter-regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter-regular blue 20
+            fontMediumBlue15 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_15.fnt")); // inter-medium blue 15
+            fontMediumBlue20 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_20.fnt")); // inter-medium blue 20
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
+            // red
             fontBoldDarkRed25 = new BitmapFont(Gdx.files.internal("font/inter/bold_darkRed_25.fnt")); // inter-regular blue 20
+            // white
             fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter-regular white 20
+            fontMediumWhite20 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_20.fnt")); // inter-medium white 20
             fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter-bold white 15
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
@@ -134,20 +138,13 @@ public class UIManager implements ResourceLoader {
     @Override
     public void loadImages() {
         // popolamento mappa lobby
-        for (int i = 0; i < 24; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 19; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio RTG
         Texture img_special = new Texture("images/rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
-
-        // immagini in sovra impressione
-        closeGame = new Texture("secondary_screens/lobby_close_game_eng.png");
-        softInfos = new Texture("secondary_screens/lobby_software_info_eng.png");
-        warning = new Texture("secondary_screens/lobby_warning_eng.png");
-        confirmBuy = new Texture("secondary_screens/lobby_confirm_buy_eng.png");
-        settings = new Texture("secondary_screens/lobby_settings_eng.png");
 
         // testo "SOLD OUT" per il marketplace
         txtSoldOut = new Texture("images/sold_item_txt.png");
@@ -196,6 +193,8 @@ public class UIManager implements ResourceLoader {
 
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick2.png");
+        // rettangolo selezione carta
+        rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
 
         // immagine di progresso missione RTG
         progressRTG = new Texture("images/progress.png");
@@ -230,39 +229,39 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(1, new Avatar("Cap. Idra", null));
         mapAvatars.put(2, new Avatar("Cap. Pegaso", null));
         mapAvatars.put(3, new Avatar("Cap. Woka", null));
-        mapAvatars.put(4, new Avatar("Cooper", "Complete Level 12"));
-        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 14"));
-        mapAvatars.put(6, new Avatar("Scot", "Complete Level 16"));
-        mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 18"));
-        mapAvatars.put(8, new Avatar("Amin", "Complete Level 21"));
-        mapAvatars.put(9, new Avatar("Samira", "Complete Level 22"));
-        mapAvatars.put(10, new Avatar("Abdul", "Complete Level 25"));
-        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 28"));
-        mapAvatars.put(12, new Avatar("Chen", "Complete Level 34"));
-        mapAvatars.put(13, new Avatar("Lin", "Complete Level 36"));
-        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 38"));
-        mapAvatars.put(15, new Avatar("Sarah", "Complete Level 40"));
+        mapAvatars.put(4, new Avatar("Cooper", "Complete Level 3"));
+        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 6"));
+        mapAvatars.put(6, new Avatar("Scot", "Complete Level 9"));
+        mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 13"));
+        mapAvatars.put(8, new Avatar("Amin", "Complete Level 16"));
+        mapAvatars.put(9, new Avatar("Samira", "Complete Level 19"));
+        mapAvatars.put(10, new Avatar("Abdul", "Complete Level 23"));
+        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 26"));
+        mapAvatars.put(12, new Avatar("Chen", "Complete Level 29"));
+        mapAvatars.put(13, new Avatar("Lin", "Complete Level 33"));
+        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 36"));
+        mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 10K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "Claim 50K Credits"));
-        mapAvatars.put(18, new Avatar("Luke", "Reach 1M Points"));
-        mapAvatars.put(19, new Avatar("Emma", "Win 100 Space Battles"));
+        mapAvatars.put(18, new Avatar("Luke", "Reach 3M Points"));
+        mapAvatars.put(19, new Avatar("Emma", "Reach 5M Points"));
     }
 
     // metodo per creare le navicelle
     public Spacecraft createSpacecrafts() {
         // nomi delle navicelle
-        String[] names = {"Omega", "Idra", "Pegaso", "Woka", "Beowulf", "Andvari", "Siko", "Fenixia", "Ares", "Asgard",
-            "Galahad", "Malloc", "Orion", "Centauro", "Zephyr", "Phoenix", "Selen", "Scylla", "Keto", "Efron",
+        String[] names = {"Omega", "Idra", "Woka", "Pegaso", "Ares", "Andvari", "Siko", "Fenixia", "Selen", "Centauro",
+            "Zephyr", "Malloc", "Orion", "Asgard", "Galahad", "Seraphis", "Beowulf", "Scylla", "Keto", "Efron",
             "Drakar", "Rorik", "Astrid", "Alpha"};
         // percorsi immagine navicelle
-        String[] imagePaths = {"images/spacecrafts/_omega.png", "images/spacecrafts/_idra.png", "images/spacecrafts/_pegaso.png",
-            "images/spacecrafts/_woka.png", "images/spacecrafts/_beowulf_basic.png", "images/spacecrafts/_andvari_basic.png",
-            "images/spacecrafts/_siko_basic.png", "images/spacecrafts/_fenixia_basic.png", "images/spacecrafts/_ares_basic.png",
-            "images/spacecrafts/_asgard_basic.png", "images/spacecrafts/_galahad_basic.png", "images/spacecrafts/_malloc_basic.png",
-            "images/spacecrafts/_orion_basic.png", "images/spacecrafts/_centauro_basic.png", "images/spacecrafts/_zephyr_basic.png",
-            "images/spacecrafts/_phoenix_basic.png", "images/spacecrafts/_selen_basic.png", "images/spacecrafts/_scylla_basic.png",
-            "images/spacecrafts/_keto_basic.png", "images/spacecrafts/_efron_basic.png", "images/spacecrafts/_drakar.png",
-            "images/spacecrafts/_rorik.png", "images/spacecrafts/_astrid.png", "images/spacecrafts/_alpha.png"};
+        String[] imagePaths = {"images/spacecrafts/basics/omega.png", "images/spacecrafts/basics/idra.png", "images/spacecrafts/basics/woka.png",
+            "images/spacecrafts/basics/pegaso.png", "images/spacecrafts/basics/ares.png", "images/spacecrafts/basics/andvari.png",
+            "images/spacecrafts/basics/siko.png", "images/spacecrafts/basics/fenixia.png", "images/spacecrafts/basics/selen.png",
+            "images/spacecrafts/basics/centauro.png", "images/spacecrafts/basics/zephyr.png", "images/spacecrafts/basics/malloc.png",
+            "images/spacecrafts/basics/orion.png", "images/spacecrafts/basics/asgard.png", "images/spacecrafts/basics/galahad.png",
+            "images/spacecrafts/basics/seraphis.png", "images/spacecrafts/basics/beowulf.png", "images/spacecrafts/basics/scylla.png",
+            "images/spacecrafts/basics/keto.png", "images/spacecrafts/basics/efron.png", "images/spacecrafts/basics/drakar.png",
+            "images/spacecrafts/basics/rorik.png", "images/spacecrafts/basics/astrid.png", "images/spacecrafts/basics/alpha.png"};
         // percorsi immagine laser
         String[] laserPaths = {"images/lasers/laser_omega.png", "images/lasers/laser_idra.png", "images/lasers/laser_pegaso.png",
             "images/lasers/laser_woka.png", "images/lasers/laser_beowulf.png", "images/lasers/laser_andvari.png",
@@ -281,6 +280,7 @@ public class UIManager implements ResourceLoader {
 
         // popolamento della mappa navicelle
         for (int i = 0; i < 24; i++) {
+            // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
             mapSpacecrafts.put(i, new Spacecraft(names[i], imagePaths[i], new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
         }
 
@@ -295,10 +295,10 @@ public class UIManager implements ResourceLoader {
         RTGs = new RTG[4];
 
         // creazione oggetti
-        RTG RTG0 = new RTG("Hit", 50, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
         RTG RTG1 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
         RTG RTG2 = new RTG("Earn", 2000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
-        RTG RTG3 = new RTG("Earn", 5, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
+        RTG RTG3 = new RTG("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         RTGs[0] = RTG0;
         RTGs[1] = RTG1;
@@ -345,7 +345,7 @@ public class UIManager implements ResourceLoader {
 
     // metodo per disegnare la pagina delle impostazioni
     public void drawSettingsPage(SpriteBatch screen) {
-        screen.draw(settings, 175, 25);
+        screen.draw(mapLobby.get(16), 175, 25);
 
         // comandi movimento navicella
         if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
@@ -410,18 +410,18 @@ public class UIManager implements ResourceLoader {
             // pagina 'classic game'
             case 0:
                 // testi //
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 395, 410); // punti totali
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 420, 380); // partite giocate
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 878, 385); // numero 'shield'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 715, 229); // numero 'super laser'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 878, 229); // numero 'double points'
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 402, 400); // punti totali
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 370); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
-                // navicella //
+                // NAVICELLA //
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -432,41 +432,41 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
-                        screen.draw(diffCG1, 636 ,108);
+                        screen.draw(diffCG1, 640 ,108);
                         break;
                     case 2:
-                        screen.draw(diffCG2, 636 ,108);
+                        screen.draw(diffCG2, 640 ,108);
                         break;
                     case 3:
-                        screen.draw(diffCG3, 636 ,108);
+                        screen.draw(diffCG3, 640 ,108);
                         break;
                 }
 
-                // spunta selezione carta speciale
-                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
-                if (InputManager.shield) screen.draw(tickImg, 874, 330);
-                if (InputManager.superLaser) screen.draw(tickImg, 712, 174);
-                if (InputManager.doublePoints) screen.draw(tickImg, 874, 174);
+                // selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(rectSelectCard, 688, 375);
+                if (InputManager.superLaser) screen.draw(rectSelectCard, 688, 261);
+                if (InputManager.shield) screen.draw(rectSelectCard, 801, 375);
+                if (InputManager.doublePoints) screen.draw(rectSelectCard, 801, 261);
 
                 // button start hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 775, 103);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 773, 101);
 
                 break;
 
             // pagina 'space battle'
             case 1:
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 420, 410); // vittorie
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 435, 380); // vittorie consecutive
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 420, 350); // partite giocate
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 715, 385); // numero 'gold heart'
-                fontWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 878, 385); // numero 'super laser'
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 425, 415); // vittorie
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 445, 385); // vittorie consecutive
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 425, 355); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
-                // navicella //
+                // NAVICELLA //
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -477,39 +477,39 @@ public class UIManager implements ResourceLoader {
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_space_battle")) {
                     case 1:
-                        screen.draw(diffSB1, 636 ,108);
+                        screen.draw(diffSB1, 640 ,108);
                         break;
                     case 2:
-                        screen.draw(diffSB2, 636 ,108);
+                        screen.draw(diffSB2, 640 ,108);
                         break;
                     case 3:
-                        screen.draw(diffSB3, 636 ,108);
+                        screen.draw(diffSB3, 640 ,108);
                         break;
                 }
 
-                // spunta selezione carta speciale
-                if (InputManager.goldHeart) screen.draw(tickImg, 712, 330);
-                if (InputManager.superLaser) screen.draw(tickImg, 874, 330);
+                // selezione carta speciale
+                if (InputManager.goldHeart) screen.draw(rectSelectCard, 688, 375);
+                if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 183);
+                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 175);
 
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 773, 101);
 
                 break;
 
             // pagina 'space journey'
             case 2:
                 // testi //
-                fontBlue20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
-                fontBlue20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
+                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
+                fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
 
                 // navicella //
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
-                fontBlue15.draw(screen, selectedSp.getName(), 413, 226);
+                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
                 // bonus velocità
                 if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
@@ -518,7 +518,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 770, 98);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 773, 101);
 
                 break;
 
@@ -529,9 +529,9 @@ public class UIManager implements ResourceLoader {
                 RTG m = RTGs[missionID-1];
 
                 // testi //
-                fontBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 403); // numero missione raggiunta
-                fontBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
-                fontBlue20.draw(screen, m.prize, 720, 231); // premio missione
+                fontMediumBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
+                fontMediumBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
+                fontMediumBlue20.draw(screen, "x" + m.prize, 720, 231); // premio missione
 
                 // progresso completamento task corrente
                 drawRTGPage(screen, missionID);
@@ -539,9 +539,9 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'marketplace'
-            case 17:
+            case 5:
                 // testi //
-                fontBoldDarkRed25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
+                fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
 
                 // numero prodotti da acquistare
                 fontBoldWhite15.draw(screen, formatter.format(InputManager.item1), 384, 310); // item 1
@@ -564,68 +564,32 @@ public class UIManager implements ResourceLoader {
                 break;
 
             // pagina 'profile info'
-            case 19:
+            case 6:
                 // testi //
                 // SCRITTE A SX
-                fontBlue20.draw(screen, AuthAlgorithms.nickname, 172, 412); // nickname
-                fontBlue20.draw(screen, AuthAlgorithms.password, 172, 372); // password
-                fontBlue20.draw(screen, AuthAlgorithms.date, 185, 332); // data registrazione
+                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 387); // nickname
+                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 347); // password
+                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 308); // data registrazione
 
                 // SCRITTE A DX
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 620, 412); // punti
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 610, 372); // livello
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 630, 332); // numero missione
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 630, 292); // crediti
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 690, 252); // partite classic game
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 690, 212); // partite space battle
-                fontBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 690, 172); // vittorie space battle
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 615, 412); // punti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 605, 372); // livello
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 625, 332); // numero missione
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_aliens_hit")), 645, 292); // alieni colpiti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 625, 252); // crediti
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("total_credits")), 680, 212); // crediti totali
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 680, 172); // partite classic game
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 680, 132); // partite space battle
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 680, 92); // vittorie space battle
 
                 // immagini //
                 screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
                 break;
 
-            // pagina 'missions 1'
-            case 10:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_CG"));
-                break;
-
-            // pagina 'missions 2'
-            case 11:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, 100000000);
-                break;
-
-            // pagina 'missions 3'
-            case 12:
-                // testi e immagini //
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("matches_SB"));
-                break;
-
-            // pagina 'missions 4'
-            case 13:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("won_SB"));
-                break;
-
-            // pagina 'missions 5'
-            case 14:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("points"));
-                break;
-
-            // pagina 'missions 6'
-            case 15:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("level"));
-                break;
-
-            // pagina 'missions 7'
-            case 16:
-                printCompleteMission(screen, InputManager.page, (int)DataUserManager.getProgress("credits"));
-                break;
-
             // pagina avatars
-            case 18:
+            case 7:
                 // stampa immagini
-                int x=143; int y=410;
+                int x=145; int y=410; // x e y del primo avatar
                 for (int i=0; i<=19; i++) {
                     // stampa immagine avatar
                     if (!Avatar.isAchieved(i)) {
@@ -638,33 +602,33 @@ public class UIManager implements ResourceLoader {
                     }
 
                     // riquadro selezione
-                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-2, y-2);
+                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-5, y-5);
 
                     // posizione oggetti
                     x+=161;
-                    if ((i+1)%5==0) { x=143; y-=111; }
+                    if ((i+1)%5==0) { x=145; y-=111; } // reset posizione alla nuova riga
                 }
         }
 
         // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
-            if (InputManager.open22) screen.draw(softInfos, 250, 175); // info software
-            else if (InputManager.open23) { // chiusura gioco
-                screen.draw(closeGame, 250, 175);
+            if (InputManager.open17) screen.draw(mapLobby.get(17), 250, 175); // info software
+            else if (InputManager.open13) { // chiusura gioco
+                screen.draw(mapLobby.get(13), 250, 175);
 
                 // button YES and NO hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
-            else if (InputManager.open24) { // avviso difficoltà elevata
-                screen.draw(warning, 250, 175);
+            else if (InputManager.open18) { // avviso difficoltà elevata
+                screen.draw(mapLobby.get(18), 250, 175);
 
                 // button OK and PLAY hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 513, 211);
             }
-            else if (InputManager.open25) { // conferma acquisto
-                screen.draw(confirmBuy, 250, 175);
+            else if (InputManager.open14) { // conferma acquisto
+                screen.draw(mapLobby.get(14), 250, 175);
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
 
@@ -672,7 +636,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
-            else if (InputManager.open26) drawSettingsPage(screen); // impostazioni di gioco
+            else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
         }
     }
 
@@ -696,11 +660,5 @@ public class UIManager implements ResourceLoader {
         diffSB1.dispose();
         diffSB2.dispose();
         diffSB3.dispose();
-        closeGame.dispose();
-        softInfos.dispose();
-        warning.dispose();
-        confirmBuy.dispose();
-        settings.dispose();
-        selectedSetting.dispose();
     }
 }

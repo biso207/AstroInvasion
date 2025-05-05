@@ -4,6 +4,7 @@ package sorgente.GameMods.SpaceJourney;
 
 public enum LevelState {
     LOCKED,     // bloccato
-    UNLOCKED,   // sbloccato ma non ancora completato
+    TO_BUY,    // sbloccato ma da pagare
+    UNLOCKED,   // sbloccato e giocabile
     COMPLETED   // completato
 }
