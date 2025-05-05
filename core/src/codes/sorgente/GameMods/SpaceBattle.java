@@ -97,7 +97,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
-        topBar = new Texture("images/top_bar_classic_game.png");
+        topBar = new Texture("images/top_bar_space_battle.png");
 
         playImg = new Texture("images/play.png");
         stopImg = new Texture("images/stop.png");
@@ -343,7 +343,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         //if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
         soundtrack.stop();
-        game.setScreen(new GameOver(game, selectedSp, 1, 0, 0, 0));
+        game.setScreen(new GameOver(game, selectedSp, 1, 0, 0, 0, win));
 
 
     }

@@ -503,7 +503,7 @@ public class ClassicGame implements Screen, InputProcessor {
         if (bonusPoints > 0) points = points+((points*bonusPoints)/100); // aggiunta percentuale di bonus
 
         // apertura pagina di game over
-        game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit));
+        game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit, false));
     }
 
     // classe per le animazioni

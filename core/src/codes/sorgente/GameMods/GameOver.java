@@ -199,10 +199,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 break;
             case 1:
                 // schermata base
-                switch (win) {
+                /*switch (win) {
                     case true -> screen.draw(victory, 0, 0);
                     case false -> screen.draw(gameOver1, 0, 0);
-                }
+                }*/
+                if (win) screen.draw(victory, 0, 0);
+                else screen.draw(gameOver1, 0, 0);
 
                 // scritte progressi partita
                 font2.draw(screen, formatter.format(points), 195, 457);
