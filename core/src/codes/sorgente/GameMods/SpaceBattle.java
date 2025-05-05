@@ -41,13 +41,16 @@ public class SpaceBattle implements Screen, InputProcessor {
     private final Music soundtrack;
     private final Sound shotSound, hitSound;
     private final BitmapFont font;
-    private final Texture topBar;
+    private Texture topBar, stopImg, playImg;
 
     private final Spacecraft selectedSp;
 
     private float enemyDirection = 1;
 
     private int totalLives = 4;
+    private int totalEnemyLives = 4;
+
+    private Texture  gameOver1, gameOver2;
 
     //Texture cuori
     Texture life1 = new Texture("images/lives/heart 100%.png");
@@ -93,6 +96,9 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         topBar = new Texture("images/top_bar_classic_game.png");
 
+        playImg = new Texture("images/play.png");
+        stopImg = new Texture("images/stop.png");
+
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3"));
         soundtrack.setLooping(true);
         soundtrack.play();
@@ -101,17 +107,50 @@ public class SpaceBattle implements Screen, InputProcessor {
         hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3"));
 
         Gdx.input.setInputProcessor(this);
+
+        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
+        gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
+
+
     }
 
     //Valori di inizio gioco
     private void setupGameParameters(int difficulty) {
-        playerSpeed = 200 + selectedSp.getSpSpeed() * 100;
-        laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
-        enemySpeed = 300;
-        playerLaserCooldown = 0.3f;
-        enemyLaserCooldown = 0.3f;
-        playerLives = totalLives;
-        enemyLives = totalLives;
+        switch (difficulty){
+            case 1:
+                playerSpeed = 200 + selectedSp.getSpSpeed() * 100;
+                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                enemySpeed = 300;
+                playerLaserCooldown = 0.3f;
+                enemyLaserCooldown = 0.3f;
+                totalLives = 4;
+                totalEnemyLives = 4;
+                playerLives = totalLives;
+                enemyLives = totalEnemyLives;
+                break;
+            case 2:
+                playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
+                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                enemySpeed = 400;
+                playerLaserCooldown = 0.3f;
+                enemyLaserCooldown = 0.3f;
+                totalLives = 3;
+                totalEnemyLives = 4;
+                playerLives = totalLives;
+                enemyLives = totalEnemyLives;
+                break;
+            case 3:
+                playerSpeed = 400 + selectedSp.getSpSpeed() * 100;
+                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                enemySpeed = 500;
+                playerLaserCooldown = 0.3f;
+                enemyLaserCooldown = 0.3f;
+                totalLives = 2;
+                totalEnemyLives = 4;
+                playerLives = totalLives;
+                enemyLives = totalEnemyLives;
+                break;
+        }
     }
 
     //Laser
@@ -260,9 +299,12 @@ public class SpaceBattle implements Screen, InputProcessor {
             screen.draw(livesTextures[totalLives - 2][playerLives - 1], 93, 640);
         }
         // stampa vite rimanenti
-        if (totalLives >= 2 && totalLives <= 4 && enemyLives >= 1 && enemyLives <= totalLives) {
-            screen.draw(livesTextures[totalLives - 2][enemyLives - 1], 700, 640);
+        if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
+            screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 700, 640);
         }
+        // stampa icona pausa
+        if (isPaused) screen.draw(stopImg, 472, 637);
+        else screen.draw(playImg, 472, 637);
         screen.end();
     }
 
@@ -276,6 +318,8 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         soundtrack.stop();
         game.setScreen(new GameOver(game, selectedSp, 1, 0, 0, 0));
+
+
     }
 
 

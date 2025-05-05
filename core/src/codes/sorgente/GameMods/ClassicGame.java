@@ -271,6 +271,7 @@ public class ClassicGame implements Screen, InputProcessor {
         Texture life6 = new Texture("images/lives/heart 25%.png");
         goldHeartImg = new Texture("images/lives/gold heart.png");
 
+
         livesTextures = new Texture[][]{
             {life4, life1}, // totalLives = 2
             {life5, life3, life1}, // totalLives = 3
