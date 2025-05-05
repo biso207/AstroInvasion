@@ -89,10 +89,10 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
         hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
         hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
-        hitBoxes.put(5, new HitBox(50, 496, 270, 514, 5, false)); // 'marketplace'
+        hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
+        hitBoxes.put(11, new HitBox(50, 493, 270, 511, 11, true));  // 'instructions'
         // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(6, new HitBox(862, 62, 950, 145, 6, true));  // 'profile infos'
-        hitBoxes.put(11, new HitBox(50, 550, 270, 568, 11, true));   // 'instructions'
     }
 
     // ************************************** //
