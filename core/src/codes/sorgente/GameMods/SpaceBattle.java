@@ -73,7 +73,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         backgroundTexture = new Texture("images/bgInGame.png");
         playerTexture = new Texture(selectedSp.getPathImg());
-        enemyTexture = new Texture("images/spacecrafts/_drakar.png");
+        enemyTexture = new Texture("images/spacecrafts/_alpha_enemy.png");
 
         playerShip = new Rectangle(400, 20, 70, 64);
         enemyShip = new Rectangle(400, 520, 70, 64);
