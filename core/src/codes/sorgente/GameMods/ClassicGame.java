@@ -499,7 +499,7 @@ public class ClassicGame implements Screen, InputProcessor {
         if (aliensHit >= 20) DataUserManager.setProgress("matches_CG", (int) DataUserManager.getProgress("matches_CG")+1);
 
         // aggiunta bonus punti
-        int bonusPoints = selectedSp.getBonusPoint();
+        int bonusPoints = selectedSp.getBonusPoints();
         if (bonusPoints > 0) points = points+((points*bonusPoints)/100); // aggiunta percentuale di bonus
 
         // apertura pagina di game over

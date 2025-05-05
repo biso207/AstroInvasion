@@ -12,15 +12,15 @@ import sorgente.DataUserManager;
 public class SpacecraftData {
     public int id;
     public String lore, mission;
-    public int speed,laserSpeed, bonusPoint;
+    public int speed, laserSpeed, bonusPoints;
 
-    public SpacecraftData(int id, String mission, String lore, int speed, int laserSpeed, int bonusPoint) {
+    public SpacecraftData(int id, String mission, String lore, int speed, int laserSpeed, int bonusPoints) {
         this.id = id;
         this.mission = mission;
         this.lore = lore;
         this.speed = speed;
         this.laserSpeed = laserSpeed;
-        this.bonusPoint = bonusPoint;
+        this.bonusPoints = bonusPoints;
     }
 
     // metodo per restituire lo stato di una navicella (sbloccata o meno)
@@ -89,8 +89,8 @@ public class SpacecraftData {
     }
 
     // getter bonusPoint
-    public int getBonusPoint() {
-        return bonusPoint;
+    public int getBonusPoints() {
+        return bonusPoints;
     }
 
 

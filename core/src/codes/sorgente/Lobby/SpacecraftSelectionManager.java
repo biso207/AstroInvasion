@@ -12,14 +12,12 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
-import org.w3c.dom.css.Rect;
 import sorgente.DataUserManager;
-import sorgente.Entities.Spacecraft;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import java.util.*;
 
-public class SpacecraftSelectionScreen implements Screen, InputProcessor, ResourceLoader {
+public class SpacecraftSelectionManager implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;
     private Texture bg, selectionBox;
@@ -34,7 +32,7 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
     private BitmapFont fontBoldWhite18;
 
     // costruttore
-    public SpacecraftSelectionScreen(Main game) {
+    public SpacecraftSelectionManager(Main game) {
         this.game = game;
         // init dello screen
         this.screen = game.screen;
@@ -74,16 +72,19 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
             "Lunar Light", "Shadow Tentacles", "Eternal Abyss", "Echo Of Time",
             "Stellar Longship", "Frost Dominator", "Rising star", "Absolute Origin"
         };
-        // potenze delle navicelle => ordine potenze: 0:bonus punti, 1:vel navicella, 2:vel laser
+        // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {0, 1, 0}, {5, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 2, 0}, {10, 0, 0}, {0, 0, 2}, {0, 0, 3}, {0, 3, 0},
-            {15, 0, 0}, {0, 1, 1}, {10, 2, 0}, {0, 2, 1}, {20, 0, 0}, {0, 4, 1}, {0, 1, 2}, {0, 2, 2}, {30, 0, 0},
-            {0, 1, 4}, {10, 0, 2}, {0, 5, 5}, {50, 5, 0}, {50, 0, 5}, {50, 5, 5}
+            {1, 0, 0}, {0, 0, 5}, {0, 1, 0}, {1, 0, 0},
+            {2, 0, 0}, {0, 0, 10}, {0, 2, 0}, {0, 3, 0},
+            {3, 0, 0}, {0, 0, 15}, {1, 1, 0}, {2, 0, 10},
+            {2, 1, 0}, {0, 0, 20}, {4, 1, 0}, {1, 2, 0},
+            {2, 2, 0}, {0, 0, 30}, {1, 4, 0}, {0, 2, 10},
+            {5, 5, 0}, {5, 0, 50}, {5, 0, 50}, {5, 5, 50}
         };
 
         // popolamento della mappa navicelle
         for (int i = 0; i < 24; i++) {
-            list.add(new SpacecraftData(i, missions[i], lore[i], attributes[i][1], attributes[i][2], attributes[i][0]));
+            list.add(new SpacecraftData(i, missions[i], lore[i], attributes[i][0], attributes[i][1], attributes[i][2]));
         }
 
         // popolamento mappa range per la selezione delle navicelle
@@ -142,7 +143,7 @@ public class SpacecraftSelectionScreen implements Screen, InputProcessor, Resour
                 if (SpacecraftData.isAchieved(spID)) {
                     if (s.getSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getSpeed(), X, y-scrollY);
                     if (s.getLaserSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getLaserSpeed(), X, (y-37)-scrollY);
-                    if (s.getBonusPoint()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoint() + "%", X, (y-74)-scrollY);
+                    if (s.getBonusPoints()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoints() + "%", X, (y-74)-scrollY);
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-scrollY);
 
                     // disegno rettangolo di selezione

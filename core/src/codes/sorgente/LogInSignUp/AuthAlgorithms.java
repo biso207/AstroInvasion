@@ -202,6 +202,7 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("points_RTG", 0);
         gameProgresses.put("state_product_5", false);
         gameProgresses.put("state_product_6", false);
+        gameProgresses.put("level_bought", false);
         gameProgresses.put("sound_volume", 0.5);
         gameProgresses.put("music_volume", 0.5);
 

@@ -271,11 +271,14 @@ public class UIManager implements ResourceLoader {
             "images/lasers/laser_phoenix.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
             "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
             "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
-        // potenze delle navicelle
+        // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {0, 1, 0}, {5, 0, 0}, {1, 0, 0}, {0, 1, 0}, {0, 2, 0}, {10, 0, 0}, {0, 0, 2}, {0, 0, 3}, {0, 3, 0},
-            {15, 0, 0}, {0, 1, 1}, {10, 2, 0}, {0, 2, 1}, {20, 0, 0}, {0, 4, 1}, {0, 1, 2}, {0, 2, 2}, {30, 0, 0},
-            {0, 1, 4}, {10, 0, 2}, {0, 5, 5}, {50, 5, 0}, {50, 0, 5}, {50, 5, 5}
+            {1, 0, 0}, {0, 0, 5}, {0, 1, 0}, {1, 0, 0},
+            {2, 0, 0}, {0, 0, 10}, {0, 2, 0}, {0, 3, 0},
+            {3, 0, 0}, {0, 0, 15}, {1, 1, 0}, {2, 0, 10},
+            {2, 1, 0}, {0, 0, 20}, {4, 1, 0}, {1, 2, 0},
+            {2, 2, 0}, {0, 0, 30}, {1, 4, 0}, {0, 2, 10},
+            {5, 5, 0}, {5, 0, 50}, {5, 0, 50}, {5, 5, 50}
         };
 
         // popolamento della mappa navicelle
@@ -427,7 +430,7 @@ public class UIManager implements ResourceLoader {
                 // bonus v. laser
                 if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
+                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_classic_game")) {
@@ -472,7 +475,7 @@ public class UIManager implements ResourceLoader {
                 // bonus v. laser
                 if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
+                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
                 switch ((int)DataUserManager.getProgress("diff_space_battle")) {
@@ -515,7 +518,7 @@ public class UIManager implements ResourceLoader {
                 // bonus v. laser
                 if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoint()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoint() + "%", 450, 145);
+                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // button map hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 773, 101);

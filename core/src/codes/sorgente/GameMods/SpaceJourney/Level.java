@@ -6,6 +6,8 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.GameMods.SpaceJourney;
 
+import sorgente.DataUserManager;
+
 public class Level {
     private final int id;
     private LevelState state;
@@ -21,13 +23,20 @@ public class Level {
     }
 
     // metodo per recuperare lo stato di un livello
-    public LevelState getState(int numLevel) {
-        if (id == numLevel) {
-            return LevelState.UNLOCKED; // il livello corrente è Unlocked
-        } else if (id < numLevel) {
-            return LevelState.COMPLETED; // i livelli precedenti sono Completed
+    public LevelState getState() {
+        // livello raggiunto
+        int currentLevel = (int) DataUserManager.getProgress("level");
+        // livello acquistato per essere giocato
+        boolean levelBought = (boolean) DataUserManager.getProgress("level_bought");
+
+        // controlli per restituire lo stato
+        if (id == currentLevel) {
+            if (levelBought) return LevelState.UNLOCKED; // il livello corrente è sbloccato e giocato
+            else return LevelState.TO_BUY; // il livello corrente è sbloccato ma da "acquistare" per essere giocato
+        } else if (id < currentLevel) {
+            return LevelState.COMPLETED; // i livelli precedenti sono completati
         } else {
-            return LevelState.LOCKED; // i livelli successivi sono Locked
+            return LevelState.LOCKED; // i livelli successivi sono bloccati
         }
     }
 

@@ -22,13 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
-    // immagini
-    private Texture imgGalaxy0, imgGalaxy1, imgGalaxy2, imgGalaxy3, imgGalaxy4;
-    private Texture imgCompletedLevelG1, imgCompletedLevelG2, imgCompletedLevelG3, imgCompletedLevelG4;
-    private Texture imgLockedLevelG1, imgLockedLevelG2, imgLockedLevelG3, imgLockedLevelG4;
-    private Texture imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4;
-    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect;
-    private Texture[] bgs;
+    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, baseInfoLevel;
+    private Texture[] bgs, imgGuardians, imgBorders, imgRectsEnemies, imgButtonsStart, imgButtonsStartHover;
 
     // font
     private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite60, fontBoldItalicWhite25;
@@ -47,14 +42,14 @@ public class SpaceJourneyUI implements ResourceLoader {
     };
     private final String[] nameGuardians = {
         "Kaelor — Guardian of Fenixia",
-        "Drelor — Guardian of Malloc",
-        "Varyn — Guardian of Seraphis",
+        "Selaya — Guardian of Malloc",
+        "Vaelis — Guardian of Seraphis",
         "Tessar — Guardian of Efron"
     };
     private final String[] loreGuardians = {
         "He who burns with the fire of primordial stars. Keeper of cosmic rebirth.",
-        "Ancient sentinel of a forgotten world, he watches over the hidden forces that stir beneath Malloc’s silence.",
-        "A forgotten angel among the stars, he brings both light and judgment. Beautiful and deadly.",
+        "Ancient sentinel of a forgotten world, she watches over the hidden forces that stir beneath Malloc’s silence.",
+        "A forgotten angel among the stars, she brings both light and judgment. Beautiful and deadly.",
         "The weaver of orbits. No light escapes his control."
     };
     private final String[] messageGuardians = {
@@ -84,34 +79,65 @@ public class SpaceJourneyUI implements ResourceLoader {
     // metodo per caricare le risorse
     public void loadImages() {
         // base galassie
-        imgGalaxy0 = new Texture("images/space_journey_maps/galaxy0.png");
-        imgGalaxy1 = new Texture("images/space_journey_maps/galaxy1.png");
-        imgGalaxy2 = new Texture("images/space_journey_maps/galaxy2.png");
-        imgGalaxy3 = new Texture("images/space_journey_maps/galaxy3.png");
-        imgGalaxy4 = new Texture("images/space_journey_maps/galaxy4.png");
+        Texture imgGalaxy0 = new Texture("images/space_journey_maps/galaxy0.png");
+        Texture imgGalaxy1 = new Texture("images/space_journey_maps/galaxy1.png");
+        Texture imgGalaxy2 = new Texture("images/space_journey_maps/galaxy2.png");
+        Texture imgGalaxy3 = new Texture("images/space_journey_maps/galaxy3.png");
+        Texture imgGalaxy4 = new Texture("images/space_journey_maps/galaxy4.png");
+        // popolamento array
         bgs = new Texture[] {imgGalaxy0, imgGalaxy1, imgGalaxy2, imgGalaxy3, imgGalaxy4};
 
-        // icone livelli galassie
-        imgCompletedLevelG1 = new Texture("images/space_journey_maps/level_g1_completed.png");
-        imgCompletedLevelG2 = new Texture("images/space_journey_maps/level_g2_completed.png");
-        imgCompletedLevelG3 = new Texture("images/space_journey_maps/level_g3_completed.png");
-        imgCompletedLevelG4 = new Texture("images/space_journey_maps/level_g4_completed.png");
+        // risorse rettangolo info livello //
+        // immagini nemici
+        Texture enemy1 = new Texture ("images/space_journey_maps/info_levels/guardianG1.png");
+        Texture enemy2 = new Texture ("images/space_journey_maps/info_levels/guardianG2.png");
+        Texture enemy3 = new Texture ("images/space_journey_maps/info_levels/guardianG3.png");
+        Texture enemy4 = new Texture ("images/space_journey_maps/info_levels/guardianG4.png");
+        imgGuardians = new Texture[] {enemy1, enemy2, enemy3, enemy4};
+        // bordi rettangolo
+        Texture border1 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel1.png");
+        Texture border2 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel2.png");
+        Texture border3 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel3.png");
+        Texture border4 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel4.png");
+        imgBorders = new Texture[] {border1, border2, border3, border4};
+        // pulsanti avvio partita
+        Texture btnStart1 = new Texture ("images/space_journey_maps/info_levels/start_level_g1.png");
+        Texture btnStart2 = new Texture ("images/space_journey_maps/info_levels/start_level_g2.png");
+        Texture btnStart3 = new Texture ("images/space_journey_maps/info_levels/start_level_g3.png");
+        Texture btnStart4 = new Texture ("images/space_journey_maps/info_levels/start_level_g4.png");
+        imgButtonsStart = new Texture[] {btnStart1, btnStart2, btnStart3, btnStart4};
+        // pulsanti avvio hover
+        Texture btnStartHover1 = new Texture ("images/space_journey_maps/info_levels/start_level_g1_hover.png");
+        Texture btnStartHover2 = new Texture ("images/space_journey_maps/info_levels/start_level_g2_hover.png");
+        Texture btnStartHover3 = new Texture ("images/space_journey_maps/info_levels/start_level_g3_hover.png");
+        Texture btnStartHover4 = new Texture ("images/space_journey_maps/info_levels/start_level_g4_hover.png");
+        imgButtonsStartHover = new Texture[] {btnStartHover1, btnStartHover2, btnStartHover3, btnStartHover4};
+        // immagine base
+        baseInfoLevel = new Texture("images/space_journey_maps/info_levels/base_infoLevel.png");
 
-        imgLockedLevelG1 = new Texture("images/space_journey_maps/level_g1_locked.png");
-        imgLockedLevelG2 = new Texture("images/space_journey_maps/level_g2_locked.png");
-        imgLockedLevelG3 = new Texture("images/space_journey_maps/level_g3_locked.png");
-        imgLockedLevelG4 = new Texture("images/space_journey_maps/level_g4_locked.png");
-
-        imgUnlockedLevelG1 = new Texture("images/space_journey_maps/level_g1_unlocked.png");
-        imgUnlockedLevelG2 = new Texture("images/space_journey_maps/level_g2_unlocked.png");
-        imgUnlockedLevelG3 = new Texture("images/space_journey_maps/level_g3_unlocked.png");
-        imgUnlockedLevelG4 = new Texture("images/space_journey_maps/level_g4_unlocked.png");
+        // livelli galassie //
+        // completati
+        Texture imgCompletedLevelG1 = new Texture("images/space_journey_maps/level_g1_completed.png");
+        Texture imgCompletedLevelG2 = new Texture("images/space_journey_maps/level_g2_completed.png");
+        Texture imgCompletedLevelG3 = new Texture("images/space_journey_maps/level_g3_completed.png");
+        Texture imgCompletedLevelG4 = new Texture("images/space_journey_maps/level_g4_completed.png");
+        // bloccati
+        Texture imgLockedLevelG1 = new Texture("images/space_journey_maps/level_g1_locked.png");
+        Texture imgLockedLevelG2 = new Texture("images/space_journey_maps/level_g2_locked.png");
+        Texture imgLockedLevelG3 = new Texture("images/space_journey_maps/level_g3_locked.png");
+        Texture imgLockedLevelG4 = new Texture("images/space_journey_maps/level_g4_locked.png");
+        // sbloccati
+        Texture imgUnlockedLevelG1 = new Texture("images/space_journey_maps/level_g1_unlocked.png");
+        Texture imgUnlockedLevelG2 = new Texture("images/space_journey_maps/level_g2_unlocked.png");
+        Texture imgUnlockedLevelG3 = new Texture("images/space_journey_maps/level_g3_unlocked.png");
+        Texture imgUnlockedLevelG4 = new Texture("images/space_journey_maps/level_g4_unlocked.png");
 
         // caricamento mappa con le immagini dei livelli
         imagesByState = Map.of(
             LevelState.COMPLETED, List.of(imgCompletedLevelG1, imgCompletedLevelG2, imgCompletedLevelG3, imgCompletedLevelG4),
             LevelState.LOCKED, List.of(imgLockedLevelG1, imgLockedLevelG2, imgLockedLevelG3, imgLockedLevelG4),
-            LevelState.UNLOCKED, List.of(imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4)
+            LevelState.UNLOCKED, List.of(imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4),
+            LevelState.TO_BUY, List.of(imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4)
         );
 
         // icona bandiera livello corrente
@@ -159,7 +185,7 @@ public class SpaceJourneyUI implements ResourceLoader {
                 case 1 -> screen.draw(imgFlagSeat, 430, 170);
                 case 2 -> screen.draw(imgFlagSeat, 775, 185);
                 case 3 -> screen.draw(imgFlagSeat, 800, 455);
-                case 4 -> screen.draw(imgFlagSeat, 300, 430);
+                case 4, 5 -> screen.draw(imgFlagSeat, 300, 430);
             }
             // icona numero galassia
             screen.draw(imgNumLevelSeat, 350, 130); // g1
@@ -182,7 +208,7 @@ public class SpaceJourneyUI implements ResourceLoader {
 
         for (int i = start; i <= finish; i++) {
             Level l = new Level(i); // crea il livello
-            LevelState state = l.getState(numLevel); // stato livello
+            LevelState state = l.getState(); // stato livello
             int galaxy = SpaceJourney.numGalaxy; // galassia corrente
 
             if (galaxy != 0) {
@@ -190,7 +216,7 @@ public class SpaceJourneyUI implements ResourceLoader {
                 screen.draw(imagesByState.get(state).get(galaxy - 1), X, Y);
 
                 // prezzo sblocco livello
-                if (i==numLevel) { // raggiunto ma da pagare
+                if (i==numLevel && l.getState()==LevelState.TO_BUY) { // raggiunto ma da pagare
                     // stampa rettangolo
                     screen.draw(priceRect, X2+40, Y2);
                     // stampa prezzo
@@ -216,5 +242,53 @@ public class SpaceJourneyUI implements ResourceLoader {
     // metodo per stampare le grafiche
     public void printUI(SpriteBatch screen) {
         createGalaxyUI(screen);
+    }
+
+    // metodo per rilasciare le risorse
+    public void dispose() {
+        // dispose background textures
+        for (Texture texture : bgs) {
+            texture.dispose();
+        }
+
+        // dispose guardian textures
+        for (Texture texture : imgGuardians) {
+            texture.dispose();
+        }
+
+        // dispose border textures
+        for (Texture texture : imgBorders) {
+            texture.dispose();
+        }
+
+        // dispose button textures
+        for (Texture texture : imgButtonsStart) {
+            texture.dispose();
+        }
+
+        // dispose button hover textures
+        for (Texture texture : imgButtonsStartHover) {
+            texture.dispose();
+        }
+
+        // dispose level state textures
+        for (List<Texture> textures : imagesByState.values()) {
+            for (Texture texture : textures) {
+                texture.dispose();
+            }
+        }
+
+        // dispose individual textures
+        imgFlagSeat.dispose();
+        imgNumLevelSeat.dispose();
+        closeButton.dispose();
+        priceRect.dispose();
+        baseInfoLevel.dispose();
+
+        // dispose fonts
+        fontBoldBlue20.dispose();
+        fontBoldWhite20.dispose();
+        fontBoldWhite60.dispose();
+        fontBoldItalicWhite25.dispose();
     }
 }

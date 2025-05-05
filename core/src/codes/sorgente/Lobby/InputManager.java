@@ -144,7 +144,7 @@ public class InputManager implements InputProcessor {
             if ((screenX>=50 && screenX<=270) && (screenY>=389 && screenY<=407)) {
                 // apertura pagina navicelle
                 /// Non ha bisogno di memorizzare la pagina precedente perché si crea una nuova lobby dalla pagina
-                LobbyManager.game.setScreen(new SpacecraftSelectionScreen(LobbyManager.game));
+                LobbyManager.game.setScreen(new SpacecraftSelectionManager(LobbyManager.game));
             }
 
             // CLICK NELLE PAGINE
