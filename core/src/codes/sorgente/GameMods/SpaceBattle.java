@@ -1,5 +1,6 @@
 package sorgente.GameMods;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
@@ -20,11 +21,12 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Random;
 
 public class SpaceBattle implements Screen, InputProcessor {
     private final Main game;
     private final SpriteBatch screen;
-    private final Texture backgroundTexture, enemyTexture, playerTexture;
+    private final Texture backgroundTexture, enemyTexture, playerTexture, laserTexture;
     private final Rectangle playerShip, enemyShip;
     private final Array<Rectangle> playerLasers = new Array<>();
     private final Array<Rectangle> enemyLasers = new Array<>();
@@ -32,6 +34,8 @@ public class SpaceBattle implements Screen, InputProcessor {
 
     private float backgroundY1, backgroundY2;
     private float playerSpeed, laserSpeed, enemySpeed;
+    private Array<Texture> laserTextures;
+    private Array<Texture> enemyTextures;
     private float playerCooldown = 0, enemyCooldown = 0;
     private float playerLaserCooldown, enemyLaserCooldown;
 
@@ -73,7 +77,6 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         backgroundTexture = new Texture("images/bgInGame.png");
         playerTexture = new Texture(selectedSp.getPathImg());
-        enemyTexture = new Texture("images/spacecrafts/_alpha_enemy.png");
 
         playerShip = new Rectangle(400, 20, 70, 64);
         enemyShip = new Rectangle(400, 520, 70, 64);
@@ -110,6 +113,19 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
         gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
+
+        enemyTextures = new Array<Texture>();
+
+        Random random = new Random();
+        int selection = random.nextInt(20) + 1;
+
+        loadEnemyTextures();
+
+        System.out.println(selection);
+        System.out.println(laserTextures.get(selection));
+
+        enemyTexture = enemyTextures.get(selection);
+        laserTexture = laserTextures.get(selection);
 
 
     }
@@ -216,6 +232,18 @@ public class SpaceBattle implements Screen, InputProcessor {
     }
 
 
+    private void loadEnemyTextures() {
+        enemyTextures = new Array<>();
+        laserTextures = new Array<>();
+        for (int i = 1; i < 22; i++) enemyTextures.add(new Texture("images/spacecrafts/enemies/enemy" + i + ".png"));
+        for (int i = 1; i < 22; i++) laserTextures.add(new Texture("images/spacecrafts/enemies/laser" + i + ".png"));
+    }
+
+
+
+
+
+
     //Movimento sfondo
     private void updateBackground(float delta) {
         backgroundY1 -= 50 * delta;
@@ -292,7 +320,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         for (Rectangle laser : playerLasers)
             screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
         for (Rectangle laser : enemyLasers)
-            screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
+            screen.draw(laserTexture, laser.x, laser.y);
         screen.draw(topBar, 20, 600);
         // stampa vite rimanenti
         if (totalLives >= 2 && totalLives <= 4 && playerLives >= 1 && playerLives <= totalLives) {
@@ -342,6 +370,12 @@ public class SpaceBattle implements Screen, InputProcessor {
         enemyTexture.dispose();
         backgroundTexture.dispose();
         font.dispose();
+        for (Texture t : enemyTextures) {
+            t.dispose();
+        }
+        for (Texture t : laserTextures) {
+            t.dispose();
+        }
     }
 
     @Override public boolean keyTyped(char character) { return true; }
