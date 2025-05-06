@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -25,15 +26,13 @@ import sorgente.Entities.Spacecraft;
 
 import javax.xml.crypto.Data;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class UIManager implements ResourceLoader {
-    // dichiarazione icone difficoltà, spunta completamento, premi RTG
+    // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState;
+        volumeState, bgSpacecraftSelection, spacecraftSelectionBox;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -51,18 +50,20 @@ public class UIManager implements ResourceLoader {
     private Texture spImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
-    private Texture[] buttonsOver;
+    private final Texture[] buttonsOver;
 
-    private BitmapFont fontBlue15, fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20, fontBoldDarkRed25, fontWhite20, fontMediumWhite20, fontBoldWhite15, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+    private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
 
-    // hashmap per le diverse texture
+    // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
     private final HashMap<Integer, Texture> mapAvatarsImgs; // immagini avatar
     private final HashMap<Integer, Avatar> mapAvatars; // oggetti avatar
     private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
+    private final List<SpacecraftData> spacecrafts;
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+    private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
     // creazione oggetto navicella per il package Lobby
     protected static Spacecraft selectedSp;
@@ -71,8 +72,9 @@ public class UIManager implements ResourceLoader {
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // mouse
-    protected static Pixmap mouse, mouseOver; // immagini
-    protected static Cursor cursor, cursorOver; // oggetto cursore
+    protected Pixmap mouse, mouseOver; // immagini
+    protected static Cursor cursor;
+    protected Cursor cursorOver; // oggetto cursore
 
     // costruttore
     public UIManager() {
@@ -97,6 +99,8 @@ public class UIManager implements ResourceLoader {
         createMissions();
         loadImages(); // immagini lobby
         loadFont(); // font
+        // caricamento dati navicelle
+        spacecrafts = loadSpacecrafts(); // navicelle per la schermata di selezione
         createAvatars(); // creazione oggetti avatar
 
         // il caricamento delle navicelle avviene in LobbyManager così da passargli la navicella selezionata
@@ -112,17 +116,14 @@ public class UIManager implements ResourceLoader {
         // dichiarazione font
         try {
             // blue
-            fontBlue15 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_15.fnt")); // inter-regular blue 15
             fontBlue20 = new BitmapFont(Gdx.files.internal("font/inter/regular_blue_20.fnt")); // inter-regular blue 20
             fontMediumBlue15 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_15.fnt")); // inter-medium blue 15
             fontMediumBlue20 = new BitmapFont(Gdx.files.internal("font/inter/medium_blue_20.fnt")); // inter-medium blue 20
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
-            // red
-            fontBoldDarkRed25 = new BitmapFont(Gdx.files.internal("font/inter/bold_darkRed_25.fnt")); // inter-regular blue 20
             // white
-            fontWhite20 = new BitmapFont(Gdx.files.internal("font/inter/regular_white_20.fnt")); // inter-regular white 20
             fontMediumWhite20 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_20.fnt")); // inter-medium white 20
             fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter-bold white 15
+            fontBoldWhite18 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_18.fnt")); // inter-bold white 18
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
@@ -200,6 +201,10 @@ public class UIManager implements ResourceLoader {
         progressRTG = new Texture("images/progress.png");
         progressBarRegion = new TextureRegion(progressRTG);
 
+        // immagini per la pagina di selezione delle navicelle
+        bgSpacecraftSelection = new Texture("lobby_screens/lobby (4).png");
+        spacecraftSelectionBox = new Texture("images/rect_selected_SP.png");
+
         // array per gli avatar
         avatars = new Texture[20];
         avatarsCovered = new Texture[20];
@@ -218,6 +223,44 @@ public class UIManager implements ResourceLoader {
 
         // quadrato avatar selezionato
         selectedAvatar = new Texture("images/avatars/selected_avatar.png");
+    }
+
+    // creazione grafica delle navicelle
+    private List<SpacecraftData> loadSpacecrafts() {
+        List<SpacecraftData> list = new ArrayList<>();
+
+        // missioni delle navicelle
+        String[] missions = {"", "", "", "",
+            "Complete Level 2", "Complete Level 5", "Complete Level 8", "Complete Level 10",
+            "Complete Level 12", "Complete Level 15", "Complete Level 18", "Complete Level 20",
+            "Complete Level 22", "Complete Level 25", "Complete Level 28", "Complete Level 30",
+            "Complete Level 32", "Complete Level 35", "Complete Level 38", "Complete Level 40",
+            "Buy in the Market", "Buy in the Market", "Win 100 SB", "Reach Task 100 in RTG"
+        };
+        // lore delle navicelle
+        String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
+            "Ancestral Warrior", "Energy Thief", "Deadly Silence", "Blazing Rebirth",
+            "Cosmic Rage", "Divine Fortress", "Invincible Purity", "Glitched Code",
+            "Space Hunter", "Hybrid Fury", "Supersonic Wind", "Sacred Flame",
+            "Lunar Light", "Shadow Tentacles", "Eternal Abyss", "Echo Of Time",
+            "Stellar Longship", "Frost Dominator", "Rising star", "Absolute Origin"
+        };
+        // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
+        int[][] attributes = {
+            {1, 0, 0}, {0, 0, 5}, {0, 1, 0}, {1, 0, 0},
+            {2, 0, 0}, {0, 0, 10}, {0, 2, 0}, {0, 3, 0},
+            {3, 0, 0}, {0, 0, 15}, {1, 1, 0}, {2, 0, 10},
+            {2, 1, 0}, {0, 0, 20}, {4, 1, 0}, {1, 2, 0},
+            {2, 2, 0}, {0, 0, 30}, {1, 4, 0}, {0, 2, 10},
+            {5, 5, 0}, {5, 0, 50}, {5, 0, 50}, {5, 5, 50}
+        };
+
+        // popolamento della mappa navicelle
+        for (int i = 0; i < 24; i++) {
+            list.add(new SpacecraftData(i, missions[i], lore[i], attributes[i][0], attributes[i][1], attributes[i][2]));
+        }
+
+        return list;
     }
 
     // **************** //
@@ -375,30 +418,52 @@ public class UIManager implements ResourceLoader {
         fontBoldWhite20.draw(screen, Math.round(InputManager.musicPercent*100)+"%", 705, 177);
     }
 
+    // metodo per stampare i testi e le immagini
+    public void drawSPSelectionPage(SpriteBatch screen) {
+        // immagine di sfondo
+        screen.draw(mapLobby.get(4), 0, -InputManager.scrollY);
 
-    // metodo per stampare testi e immagini nelle pagine 'missions'
-    public void printCompleteMission(SpriteBatch screen, int page, int c) {
-        // spostamento lungo y di scritte e immagini ripetitive
-        //int y=0;
-        int y2=0;
+        int spID=0; // id navicella per recuperare gli attributi
+        int X, x1=258, x2= 670, y=2645; // x e y della prima scritta della prima navicella
+        // iterazione con 2 for per dividere i gruppi delle navicelle
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<4; j++) {
+                SpacecraftData s = spacecrafts.get(spID); // oggetto navicella
 
-        // array per controllare il completamente delle missioni in pagine 'missions'
-        boolean[] isCompleted = CheckMissions.getInstance().checkCompleted(page, c);
-        for (int i=0; i<4; i++) {
-            // testo obiettivo missione
-            //if (page!=31) fontBlue20.draw(screen, formatter.format(c), 380, 435+y);
+                // x delle scritte (x1 è la prima colonna, x2 è la seconda)
+                X = (j == 0 || j == 2) ? x1 : x2;
 
-            // spunta completamento missione
-            if (isCompleted[i]) screen.draw(tickImg, 885, 430-y2);
+                // attributi mostrati se la navicella è sbloccata altrimenti sono nascosti
+                if (SpacecraftData.isAchieved(spID)) {
+                    if (s.getSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getSpeed(), X, y-InputManager.scrollY);
+                    if (s.getLaserSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getLaserSpeed(), X, (y-37)-InputManager.scrollY);
+                    if (s.getBonusPoints()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoints() + "%", X, (y-74)-InputManager.scrollY);
+                    fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
-            y2+=103;
+                    // disegno rettangolo di selezione
+                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-180, (y-145)-InputManager.scrollY);
+                }
+                else {
+                    fontBoldWhite18.draw(screen, "?", X, y-InputManager.scrollY);
+                    fontBoldWhite18.draw(screen, "?", X, (y-37)-InputManager.scrollY);
+                    fontBoldWhite18.draw(screen, "?", X, (y-74)-InputManager.scrollY);
+                    fontBoldWhite18.draw(screen, s.getMission(), X, (y-107)-InputManager.scrollY);
+                }
+
+                if (j==1)  y-=168; // passaggio alla riga seguente
+
+                // passaggio alla navicella successiva
+                spID++;
+            }
+            // passaggio al gruppo successivo
+            y-= 257;
         }
     }
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
-        // background principale
-        screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        // background principale (NO la pagina 4, viene mostrata dal suo metodo)
+        if (InputManager.page != 4) screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
@@ -541,6 +606,10 @@ public class UIManager implements ResourceLoader {
 
                 break;
 
+            // pagina "spacecraft"
+            case 4:
+                drawSPSelectionPage(screen);
+                break;
             // pagina 'marketplace'
             case 5:
                 // testi //
@@ -663,5 +732,33 @@ public class UIManager implements ResourceLoader {
         diffSB1.dispose();
         diffSB2.dispose();
         diffSB3.dispose();
+        bgSpacecraftSelection.dispose();
+        spacecraftSelectionBox.dispose();
+
+        rectSelectCard.dispose();
+        claimPrize.dispose();
+        progressRTG.dispose();
+        notifyCompletedRTG.dispose();
+        txtSoldOut.dispose();
+
+        soundOn.dispose();
+        soundOff.dispose();
+        musicOn.dispose();
+        musicOff.dispose();
+        volumeState.dispose();
+        selectedSetting.dispose();
+
+        for (Texture btn : buttonsOver) {
+            btn.dispose();
+        }
+
+        for (Texture prize : RTGPrizes) {
+            prize.dispose();
+        }
+
+        mouse.dispose();
+        mouseOver.dispose();
+        cursor.dispose();
+        cursorOver.dispose();
     }
 }

@@ -1,6 +1,6 @@
 {
     "diff_space_battle": 1,
-    "level_bought": true,
+    "level_bought": false,
     "state_product_6": true,
     "total_credits": 100340,
     "mission_id": 1,
@@ -8,7 +8,7 @@
     "cons_won_SB": 0,
     "points": 3267190,
     "num_shield": 20,
-    "spacecraft": 2,
+    "spacecraft": 20,
     "completed_RTG": false,
     "num_double_points": 15,
     "music_volume": 0,

@@ -11,6 +11,7 @@ package sorgente.Lobby;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Rectangle;
 import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.GameMods.ClassicGame;
@@ -25,13 +26,15 @@ import java.util.Set;
 public class InputManager implements InputProcessor {
     // mappa dei range
     private final Map<Integer, HitBox> hitBoxes = new HashMap<>();
+    // mappa range navicelle
+    private final Map<Rectangle, Integer> clickableAreas = new HashMap<>();
 
     // variabili per gestire certi input
-    protected static boolean secondScreen=false, open17=false, open13=false, open18=false, open14=false, open16=false;
+    protected static boolean secondScreen=false, open4=false, open13=false, open14=false, open17=false, open18=false, open16=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false, isBtnLHover=false, isBtnRHover=false;
     // lista delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+    private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
     protected static int page = 0;
     private int previousPage;
@@ -59,11 +62,16 @@ public class InputManager implements InputProcessor {
     // percentuale audio
     public static float soundPercent, musicPercent;
 
+    protected static float scrollY = 2300; // posizione iniziale dello scroll/pagina
+    private final float maxScrollY = 2300; // altezza massima della schermata scrollabile (immagine - altezza schermo)
+
 
     // costruttore
     public InputManager() {
         // definizione delle aree cliccabili
         hitAreas();
+        // definizione aree navicelle cliccabili
+        selectSPAreas();
 
         // reset stato carte speciali
         goldHeart=shield=superLaser=doublePoints=false;
@@ -89,10 +97,41 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
         hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
         hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
+        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, true)); // 'road to glory'
         hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
         hitBoxes.put(11, new HitBox(50, 493, 270, 511, 11, true));  // 'instructions'
         // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(6, new HitBox(862, 62, 950, 145, 6, true));  // 'profile infos'
+    }
+
+    // metodo per popolare le aree cliccabili nella selezione delle navicelle
+    private void selectSPAreas() {
+        // popolamento mappa range per la selezione delle navicelle
+        int x1=82, x2=471, x3=493, x4=882, y1=342, y2=486;
+        int spID=0; // id della navicella
+        Rectangle area; // rappresenta l'area cliccabile
+
+        for (int i=0; i<6; i++) {
+            for (int j=0; j<4; j++) {
+                if (j==0 || j==2) area = new Rectangle(x1, y1, x2-x1, y2-y1);
+                else area = new Rectangle(x3, y1, x4-x3, y2-y1);
+
+                // aggiunta del range solo se la navicella è cliccabile
+                if (SpacecraftData.isAchieved(spID)) clickableAreas.put(area, spID);
+                if (j==1)  { y1+=168; y2+=168; } // passaggio alla riga seguente
+
+                // passaggio alla navicella successiva
+                spID++;
+            }
+            // passaggio al gruppo successivo
+            y1+= 257; y2+=257;
+        }
+    }
+
+    // controlla il margine di scorrimento del mouse
+    private void clampScroll() {
+        if (scrollY < 0) scrollY = 0;
+        if (scrollY > maxScrollY) scrollY = maxScrollY;
     }
 
     // ************************************** //
@@ -101,7 +140,7 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open17 && !open13 && !open18 && !open14 && !open16)) {
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open13 && !open17 && !open18 && !open14 && !open16)) {
             open13 = true;
             secondScreen = true;
             return true;
@@ -138,13 +177,6 @@ public class InputManager implements InputProcessor {
                     page = hb.targetPage; // cambio pagina
                     break;
                 }
-            }
-
-            // APERTURA PAGINA NAVICELLE => viene creata una classe a parte che gestisce tutto (grafiche+input)
-            if ((screenX>=50 && screenX<=270) && (screenY>=389 && screenY<=407)) {
-                // apertura pagina navicelle
-                /// Non ha bisogno di memorizzare la pagina precedente perché si crea una nuova lobby dalla pagina
-                LobbyManager.game.setScreen(new SpacecraftSelectionManager(LobbyManager.game));
             }
 
             // CLICK NELLE PAGINE
@@ -221,8 +253,6 @@ public class InputManager implements InputProcessor {
                     DataUserManager.setProgress("diff_space_battle", diffSB);
                 }
             }
-
-            // setting impostazioni
 
             // selezione carte speciali //
             // gold heart
@@ -384,6 +414,20 @@ public class InputManager implements InputProcessor {
         // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE E SECONDARIE //
         // *************************************************** //
         else {
+            // controllo selezione navicella
+            if (page == 4) {
+                int selectedId = -1; // id navicella iniziale
+                for (Map.Entry<Rectangle, Integer> entry : clickableAreas.entrySet()) {
+                    Rectangle area = entry.getKey();
+                    System.out.println(screenY + " " + scrollY);
+                    if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
+                        selectedId = entry.getValue(); // recupero id navicella selezionata
+                        // salvataggio navicella scelta se sbloccata
+                        if (SpacecraftData.isAchieved(selectedId)) DataUserManager.setProgress("spacecraft", selectedId);
+                        break;
+                    }
+                }
+            }
             // apertura pagina 7 'avatar'
             if (page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
 
@@ -404,6 +448,12 @@ public class InputManager implements InputProcessor {
                         y += 66 + 45; // 66 larghezza img, 45 distanza di y tra immagini
                     }
                 }
+            }
+
+            // chiusura pagina navicelle
+            if ((screenX >= 906 && screenX <= 947) && (screenY >= 83 && screenY <= 122)) {
+                open4 = false;
+                page = previousPage;
             }
 
             // chiusura pagina istruzioni; info profilo-difficoltà; missioni; avatar
@@ -568,10 +618,19 @@ public class InputManager implements InputProcessor {
         return true;
     }
 
+    // gestisce lo scorrimento del mouse sulla schermata
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        // diminuzione di Y => deve essere tra 2300 e 0 compresi
+        scrollY -= amountY * 50f;
+        // controllo posizione
+        clampScroll();
+        return true;
+    }
+
     // altri metodi
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
     /*

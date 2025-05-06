@@ -30,7 +30,8 @@ public class SpaceJourney implements Screen, InputProcessor {
     protected static List<Galaxy> galaxies;
     protected static int numGalaxy = 0;
 
-    private final ProgressManager progressManager = new ProgressManager();
+    // info livello
+    protected static boolean infoLevel=false;
 
     // istanza classe della grafica
     private final SpaceJourneyUI ui;
@@ -91,38 +92,69 @@ public class SpaceJourney implements Screen, InputProcessor {
 
     // metodo per controllare se l'area di un livello è stato cliccato
     private boolean isLevelClicked(Level l, double screenX, double screenY) {
-        System.out.println(l.getId() + ": " + l.getState());
+        int x=50, y=420; // posizione primo livello sulla schermata
+
+        // for per iterare i 10 range
+        for (int i = 0; i < 10; i++) {
+            System.out.println(i + ") x:" + x + " y:" + y);
+            if ((screenX>=x && screenX<=x+80) && (screenY>=y && screenY<=y-80)) return true;
+
+            x+=205; // passaggio al livello successivo sulla stessa riga
+            // cambio riga
+            if (i==4) {
+                x=50; // reset x
+                y-=222;
+            }
+        }
         return false;
     }
 
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
-    // metodo per rilevare il click da tastiera
-    @Override public boolean keyTyped(char character) {
-        return true;
-    }
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         screenY = Gdx.graphics.getHeight() - screenY;
 
-        System.out.println("x:" + screenX + " y:" + screenY);
+        //System.out.println("x:" + screenX + " y:" + screenY);
         // click per apertura di una galassia
-        for (Galaxy galaxy : galaxies) {
-            if (isGalaxyClicked(galaxy, screenX, screenY)) {
-                if ((numLevel/10+1)>=galaxy.getId()) numGalaxy = galaxy.getId();
+        if (numGalaxy==0) {
+            for (Galaxy galaxy : galaxies) {
+                if (isGalaxyClicked(galaxy, screenX, screenY)) {
+                    if ((numLevel / 10 + 1) >= galaxy.getId()) numGalaxy = galaxy.getId();
+                }
             }
         }
 
         // click su un livello => il for è solo per i 10 livelli della galassia aperta e se ci si trova in una galassia
-        if (numGalaxy>0) {
-            for (Level level : galaxies.get(numGalaxy - 1).getLevels()) {
-                if (isLevelClicked(level, screenX, screenY)) {
-                    if (level.isUnlocked()) System.out.println("level unlocked: " + level.getId());
+        if (numGalaxy > 0) {
+            int startX = 50;
+            int startY = 420;
+            int spacingX = 205;
+            int spacingY = 224;
+            int levelSize = 80;
+
+            List<Level> levels = galaxies.get(numGalaxy - 1).getLevels();
+
+            for (int i = 0; i < levels.size(); i++) {
+                int col = i % 5;       // colonna da 0 a 4
+                int row = i / 5;       // riga 0 (prima), 1 (seconda)
+
+                int x = startX + col * spacingX;
+                int y = startY - row * spacingY;
+
+                if (screenX >= x && screenX <= x + levelSize &&
+                    screenY >= y - levelSize && screenY <= y) {
+                    if (levels.get(i).getState() == LevelState.UNLOCKED) System.out.println("avvio livello " + levels.get(i).getId());
+                    else if (levels.get(i).getState() == LevelState.TO_BUY) infoLevel=true;
                 }
             }
+
+            // chiusura info level
+            if (infoLevel && screenX >= 760 && screenX <= 800 && screenY >= 520 && screenY <= 558) infoLevel=false;
         }
+
 
         // back to lobby cliccando l'icona della terra
         if (((screenX >= 25 && screenX <= 122) && (screenY >= 182 && screenY <= 283)) && numGalaxy == 0) {
@@ -131,7 +163,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
-        if (((screenX >= 900 && screenX <= 940) && (screenY >= 577 && screenY <= 617))) {
+        if (!infoLevel && ((screenX >= 900 && screenX <= 940) && (screenY >= 577 && screenY <= 617))) {
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
                 game.setScreen(new LobbyManager(game)); // back to lobby
@@ -143,6 +175,8 @@ public class SpaceJourney implements Screen, InputProcessor {
     }
 
     // altri metodi
+    // metodo per rilevare il click da tastiera
+    @Override public boolean keyTyped(char character) { return true; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }

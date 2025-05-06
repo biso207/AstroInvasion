@@ -94,6 +94,12 @@ public class SpaceJourneyUI implements ResourceLoader {
         Texture enemy3 = new Texture ("images/space_journey_maps/info_levels/guardianG3.png");
         Texture enemy4 = new Texture ("images/space_journey_maps/info_levels/guardianG4.png");
         imgGuardians = new Texture[] {enemy1, enemy2, enemy3, enemy4};
+        // rettangolo con immagini nemici
+        Texture rectEnemies1 = new Texture ("images/space_journey_maps/info_levels/enemy_rect1.png");
+        Texture rectEnemies2 = new Texture ("images/space_journey_maps/info_levels/enemy_rect2.png");
+        Texture rectEnemies3 = new Texture ("images/space_journey_maps/info_levels/enemy_rect3.png");
+        Texture rectEnemies4 = new Texture ("images/space_journey_maps/info_levels/enemy_rect4.png");
+        imgRectsEnemies = new Texture[] {rectEnemies1, rectEnemies2, rectEnemies3, rectEnemies4};
         // bordi rettangolo
         Texture border1 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel1.png");
         Texture border2 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel2.png");
@@ -239,9 +245,23 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
     }
 
+    // metodo per stampare le info livello
+    public void infoLevel(SpriteBatch screen) {
+        // sfondo base
+        screen.draw(baseInfoLevel, 143, 100);
+
+        // bordo, pulsante avvio, rectAvatar
+        screen.draw(imgBorders[SpaceJourney.numGalaxy], 156, 115);
+        screen.draw(imgRectsEnemies[SpaceJourney.numGalaxy], 200, 250);
+        screen.draw(imgButtonsStart[SpaceJourney.numGalaxy], 425, 145);
+    }
+
     // metodo per stampare le grafiche
     public void printUI(SpriteBatch screen) {
         createGalaxyUI(screen);
+
+        // info livello
+        if (SpaceJourney.infoLevel) infoLevel(screen);
     }
 
     // metodo per rilasciare le risorse
