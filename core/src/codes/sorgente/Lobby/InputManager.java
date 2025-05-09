@@ -451,12 +451,12 @@ public class InputManager implements InputProcessor {
             }
 
             // chiusura pagina navicelle
-            if ((screenX >= 906 && screenX <= 947) && (screenY >= 83 && screenY <= 122)) {
+            if (page==4 && (screenX >= 906 && screenX <= 947) && (screenY >= 83 && screenY <= 122)) {
                 open4 = false;
                 page = previousPage;
             }
 
-            // chiusura pagina istruzioni; info profilo-difficoltà; missioni; avatar
+            // chiusura pagina istruzioni; info profilo-difficoltà; avatar
             if ((screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;

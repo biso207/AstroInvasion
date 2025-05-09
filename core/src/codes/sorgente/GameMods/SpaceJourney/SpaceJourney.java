@@ -16,6 +16,7 @@ import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
 
 import javax.crypto.spec.PSource;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     protected static int numGalaxy = 0;
 
     // info livello
-    protected static boolean infoLevel=false;
+    protected static boolean infoLevel=false, buyLevel=false;
 
     // istanza classe della grafica
     private final SpaceJourneyUI ui;
@@ -82,31 +83,12 @@ public class SpaceJourney implements Screen, InputProcessor {
     // metodo per controllare se l'area di una galassia è stata cliccata
     private boolean isGalaxyClicked(Galaxy g, double screenX, double screenY) {
         return switch (g.getId()) {
-            case 1 -> ((screenX >= 360 && screenX <= 449) && (screenY >= 93 && screenY <= 185));
-            case 2 -> ((screenX >= 707 && screenX <= 811) && (screenY >= 127 && screenY <= 201));
-            case 3 -> ((screenX >= 736 && screenX <= 833) && (screenY >= 371 && screenY <= 471));
-            case 4 -> ((screenX >= 241 && screenX <= 344) && (screenY >= 361 && screenY <= 445));
+            case 1 -> ((screenX >= 360 && screenX <= 449) && (screenY >= 513 && screenY <= 610));
+            case 2 -> ((screenX >= 707 && screenX <= 811) && (screenY >= 501 && screenY <= 572));
+            case 3 -> ((screenX >= 736 && screenX <= 833) && (screenY >= 229 && screenY <= 327));
+            case 4 -> ((screenX >= 241 && screenX <= 344) && (screenY >= 258 && screenY <= 339));
             default -> false;
         };
-    }
-
-    // metodo per controllare se l'area di un livello è stato cliccato
-    private boolean isLevelClicked(Level l, double screenX, double screenY) {
-        int x=50, y=420; // posizione primo livello sulla schermata
-
-        // for per iterare i 10 range
-        for (int i = 0; i < 10; i++) {
-            System.out.println(i + ") x:" + x + " y:" + y);
-            if ((screenX>=x && screenX<=x+80) && (screenY>=y && screenY<=y-80)) return true;
-
-            x+=205; // passaggio al livello successivo sulla stessa riga
-            // cambio riga
-            if (i==4) {
-                x=50; // reset x
-                y-=222;
-            }
-        }
-        return false;
     }
 
     // ************************************** //
@@ -115,9 +97,7 @@ public class SpaceJourney implements Screen, InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        screenY = Gdx.graphics.getHeight() - screenY;
-
-        //System.out.println("x:" + screenX + " y:" + screenY);
+        System.out.println("x:" + screenX + " y:" + screenY);
         // click per apertura di una galassia
         if (numGalaxy==0) {
             for (Galaxy galaxy : galaxies) {
@@ -130,29 +110,50 @@ public class SpaceJourney implements Screen, InputProcessor {
         // click su un livello => il for è solo per i 10 livelli della galassia aperta e se ci si trova in una galassia
         if (numGalaxy > 0) {
             int startX = 50;
-            int startY = 420;
+            int startY = 278;
             int spacingX = 205;
             int spacingY = 224;
             int levelSize = 80;
 
             List<Level> levels = galaxies.get(numGalaxy - 1).getLevels();
 
+            // controllo click su un livello
             for (int i = 0; i < levels.size(); i++) {
                 int col = i % 5;       // colonna da 0 a 4
                 int row = i / 5;       // riga 0 (prima), 1 (seconda)
 
+                // x e y dell'i-esimo livello
                 int x = startX + col * spacingX;
-                int y = startY - row * spacingY;
+                int y = startY + row * spacingY;
 
+                // controllo click su un singolo livello
                 if (screenX >= x && screenX <= x + levelSize &&
-                    screenY >= y - levelSize && screenY <= y) {
-                    if (levels.get(i).getState() == LevelState.UNLOCKED) System.out.println("avvio livello " + levels.get(i).getId());
-                    else if (levels.get(i).getState() == LevelState.TO_BUY) infoLevel=true;
+                    screenY <= y + levelSize && screenY >= y) {
+                    if (levels.get(i).getState() == LevelState.UNLOCKED) infoLevel=true;
+                    else if (levels.get(i).getState() == LevelState.TO_BUY) buyLevel=true;
                 }
             }
 
+            int numLevel = (int) DataUserManager.getProgress("level"); // livello attuale utente
+            int price = 100*numLevel; // prezzo del livello
+            int currentCredits = (int) DataUserManager.getProgress("credits"); // crediti attuali dell'utente
+
+            // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE //
             // chiusura info level
-            if (infoLevel && screenX >= 760 && screenX <= 800 && screenY >= 520 && screenY <= 558) infoLevel=false;
+            if (infoLevel && (screenX >= 760 && screenX <= 800) && (screenY >= 139 && screenY <= 180)) infoLevel=false;
+            // NO sblocco livello
+            if (buyLevel && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) buyLevel=false;
+            // SI sblocco livello
+            if (buyLevel && (currentCredits-price>=0) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                // aggiornamento crediti dell'utente in memoria
+                DataUserManager.setProgress("credits", currentCredits-price);
+
+                // sblocco livello
+                new Level(numLevel).unlock();
+
+                // chiusura pagina in sovra impressione
+                buyLevel=false;
+            }
         }
 
 
@@ -163,7 +164,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
-        if (!infoLevel && ((screenX >= 900 && screenX <= 940) && (screenY >= 577 && screenY <= 617))) {
+        if (!infoLevel && !buyLevel && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
                 game.setScreen(new LobbyManager(game)); // back to lobby

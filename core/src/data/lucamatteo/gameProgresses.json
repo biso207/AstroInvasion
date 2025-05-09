@@ -1,6 +1,6 @@
 {
     "diff_space_battle": 1,
-    "level_bought": false,
+    "level_bought": true,
     "state_product_6": true,
     "total_credits": 100340,
     "mission_id": 1,
@@ -13,7 +13,7 @@
     "num_double_points": 15,
     "music_volume": 0,
     "num_mission": 100,
-    "credits": 100340,
+    "credits": 977600,
     "matches_SB": 0,
     "credits_RTG": 0,
     "num_gold_heart": 19,

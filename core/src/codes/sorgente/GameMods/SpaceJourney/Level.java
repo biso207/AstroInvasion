@@ -42,16 +42,21 @@ public class Level {
 
     // metodo per settare il livello ad sbloccato
     public void unlock() {
-        if (state == LevelState.LOCKED) {
-            state = LevelState.UNLOCKED;
+        // recupero crediti utente
+        int credits = (int) DataUserManager.getProgress("credits");
+        // costo di sblocco
+        int cost = id*100; // il prezzo cresce sempre di 100 arrivando fino a 4000
+        System.out.println(cost);
+        // sblocco livello
+        if (credits >= cost) {
+            DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
+            DataUserManager.setProgress("level_bought", true); // cambio stato "livello acquistato"
         }
     }
 
     // metodo per settare ad completato un livello
     public void complete() {
-        if (state == LevelState.UNLOCKED) {
-            state = LevelState.COMPLETED;
-        }
+        state = LevelState.COMPLETED;
     }
 
     // metodo per recuperare controllare che un livello sia sbloccato

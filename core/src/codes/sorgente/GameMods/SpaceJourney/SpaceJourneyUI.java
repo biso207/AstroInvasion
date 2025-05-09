@@ -22,11 +22,11 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
-    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, baseInfoLevel;
+    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, baseInfoLevel, buyLevelImg;
     private Texture[] bgs, imgGuardians, imgBorders, imgRectsEnemies, imgButtonsStart, imgButtonsStartHover;
 
     // font
-    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite60, fontBoldItalicWhite25;
+    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite60, fontBoldItalicWhite25;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -121,6 +121,9 @@ public class SpaceJourneyUI implements ResourceLoader {
         // immagine base
         baseInfoLevel = new Texture("images/space_journey_maps/info_levels/base_infoLevel.png");
 
+        // immagine per lo sblocco di un livello
+        buyLevelImg = new Texture("images/space_journey_maps/info_levels/buy_level.png");
+
         // livelli galassie //
         // completati
         Texture imgCompletedLevelG1 = new Texture("images/space_journey_maps/level_g1_completed.png");
@@ -165,6 +168,7 @@ public class SpaceJourneyUI implements ResourceLoader {
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-bold blue 20
             // white
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
+            fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60.fnt")); // inter-bold white 60
             fontBoldItalicWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_25.fnt")); // inter-bold-italic white 25
         } catch (Exception e) {
@@ -245,7 +249,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
     }
 
-    // metodo per stampare le info livello
+    // metodo per stampare le info di un livello
     public void infoLevel(SpriteBatch screen) {
         // sfondo base
         screen.draw(baseInfoLevel, 143, 100);
@@ -256,12 +260,23 @@ public class SpaceJourneyUI implements ResourceLoader {
         screen.draw(imgButtonsStart[SpaceJourney.numGalaxy], 425, 145);
     }
 
+    // metodo per stampare le informazione di sblocco di un livello
+    public void buyLevel(SpriteBatch screen) {
+        // sfondo base
+        screen.draw(buyLevelImg, 250, 175);
+
+        // prezzo livello
+        fontBoldWhite25.draw(screen, formatter.format(numLevel* 100L), 390, 347);
+    }
+
     // metodo per stampare le grafiche
     public void printUI(SpriteBatch screen) {
         createGalaxyUI(screen);
 
         // info livello
         if (SpaceJourney.infoLevel) infoLevel(screen);
+        // acquisto livello
+        if (SpaceJourney.buyLevel) buyLevel(screen);
     }
 
     // metodo per rilasciare le risorse
