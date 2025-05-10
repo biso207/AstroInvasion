@@ -53,7 +53,7 @@ public class Avatar {
     }
 
     // getter nome
-    public String getNome() {
+    public String getName() {
         return nome;
     }
 

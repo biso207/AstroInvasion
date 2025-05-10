@@ -255,9 +255,10 @@ public class SpaceJourneyUI implements ResourceLoader {
         screen.draw(baseInfoLevel, 143, 100);
 
         // bordo, pulsante avvio, rectAvatar
-        screen.draw(imgBorders[SpaceJourney.numGalaxy], 156, 115);
-        screen.draw(imgRectsEnemies[SpaceJourney.numGalaxy], 200, 250);
-        screen.draw(imgButtonsStart[SpaceJourney.numGalaxy], 425, 145);
+        screen.draw(imgBorders[SpaceJourney.numGalaxy-1], 156, 113); // bordo
+        screen.draw(imgGuardians[SpaceJourney.numGalaxy-1], 234, 292); // nemico
+        screen.draw(imgRectsEnemies[SpaceJourney.numGalaxy-1], 233, 291); // rettangolo nemico
+        screen.draw(imgButtonsStart[SpaceJourney.numGalaxy-1], 420, 152); // pulsante avvio partita
     }
 
     // metodo per stampare le informazione di sblocco di un livello

@@ -59,7 +59,7 @@ public class UIManager implements ResourceLoader {
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
     private final HashMap<Integer, Texture> mapAvatarsImgs; // immagini avatar
     private final HashMap<Integer, Avatar> mapAvatars; // oggetti avatar
-    private final HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
+    private static HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
     private final List<SpacecraftData> spacecrafts;
 
     // arraylist delle pagine secondarie
@@ -81,7 +81,7 @@ public class UIManager implements ResourceLoader {
         this.mapLobby = new HashMap<>();
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
-        this.mapSpacecrafts = new HashMap<>();
+        mapSpacecrafts = new HashMap<>();
         this.buttonsOver = new Texture[10];
 
         // mouse
@@ -93,7 +93,9 @@ public class UIManager implements ResourceLoader {
 
 
         // caricamento navicella utente
-        selectedSp = createSpacecrafts(); // navicelle e recupero navicella utente
+        createSpacecrafts();
+        // selezione navicella utente
+        selectedSp = selectSpacecraft();
 
         // caricamento risorse
         createMissions();
@@ -274,7 +276,7 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(3, new Avatar("Cap. Woka", null));
         mapAvatars.put(4, new Avatar("Cooper", "Complete Level 3"));
         mapAvatars.put(5, new Avatar("Jessica", "Complete Level 6"));
-        mapAvatars.put(6, new Avatar("Scot", "Complete Level 9"));
+        mapAvatars.put(6, new Avatar("Scott", "Complete Level 9"));
         mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 13"));
         mapAvatars.put(8, new Avatar("Amin", "Complete Level 16"));
         mapAvatars.put(9, new Avatar("Samira", "Complete Level 19"));
@@ -291,7 +293,7 @@ public class UIManager implements ResourceLoader {
     }
 
     // metodo per creare le navicelle
-    public Spacecraft createSpacecrafts() {
+    public void createSpacecrafts() {
         // nomi delle navicelle
         String[] names = {"Omega", "Idra", "Woka", "Pegaso", "Ares", "Andvari", "Siko", "Fenixia", "Selen", "Centauro",
             "Zephyr", "Malloc", "Orion", "Asgard", "Galahad", "Seraphis", "Beowulf", "Scylla", "Keto", "Efron",
@@ -329,12 +331,13 @@ public class UIManager implements ResourceLoader {
             // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
             mapSpacecrafts.put(i, new Spacecraft(names[i], imagePaths[i], new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
         }
+    }
 
+    // metodo per selezionare la navicella: viene chiamato alla creazione della Lobby e al cambio navicella
+    public static Spacecraft selectSpacecraft() {
         // recupero navicella utente
         Object spacecraft = DataUserManager.getProgress("spacecraft");
-        selectedSp = mapSpacecrafts.get((int) spacecraft); // navicella utente
-
-        return selectedSp;
+        return mapSpacecrafts.get((int) spacecraft); // return navicella
     }
 
     public void createMissions() {
@@ -462,6 +465,13 @@ public class UIManager implements ResourceLoader {
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
+        // cambio navicella in caso di nuova selezione
+        if (InputManager.isSPChanged) {
+            selectedSp = selectSpacecraft(); // nuovo oggetto navicella
+            spImg = new Texture(selectedSp.getPathImg()); // caricamento della nuova immagine
+            InputManager.isSPChanged = false; // cambio stato selezione navicella
+        }
+
         // background principale (NO la pagina 4, viene mostrata dal suo metodo)
         if (InputManager.page != 4) screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
@@ -669,7 +679,7 @@ public class UIManager implements ResourceLoader {
                         screen.draw(avatarsCovered[i], x, y);
                     }
                     else {
-                        fontBoldWhite15.draw(screen, mapAvatars.get(i).getNome(), x, y-15);
+                        fontBoldWhite15.draw(screen, mapAvatars.get(i).getName(), x, y-15);
                         screen.draw(avatars[i], x, y);
                     }
 

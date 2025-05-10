@@ -14,6 +14,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
+import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
@@ -42,7 +43,9 @@ public class InputManager implements InputProcessor {
     // boolean per le carte speciali
     public static boolean goldHeart, shield, superLaser, doublePoints;
     // nome navicella
-    private final String nameSp = UIManager.selectedSp.getName();
+    private String nameSp = UIManager.selectedSp.getName();
+    // stato cambio navicella
+    protected static boolean isSPChanged = false;
 
     // difficoltà classic game e space battle
     private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
@@ -423,7 +426,15 @@ public class InputManager implements InputProcessor {
                     if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
                         // salvataggio navicella scelta se sbloccata
-                        if (SpacecraftData.isAchieved(selectedId)) DataUserManager.setProgress("spacecraft", selectedId);
+                        if (SpacecraftData.isAchieved(selectedId)) {
+                            DataUserManager.setProgress("spacecraft", selectedId);
+                            // cambio stato selezione a true
+                            isSPChanged = true;
+                            // cambio nome navicella con creazione nuovo oggetto
+                            Spacecraft s = UIManager.selectSpacecraft();
+                            nameSp = s.getName();
+                            System.out.println(nameSp);
+                        }
                         break;
                     }
                 }
