@@ -26,7 +26,7 @@ public class SpaceJourneyUI implements ResourceLoader {
     private Texture[] bgs, imgGuardians, imgBorders, imgRectsEnemies, imgButtonsStart, imgButtonsStartHover;
 
     // font
-    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite60, fontBoldItalicWhite25;
+    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60, fontBoldWhite60_1, fontBoldItalicWhite25;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -53,10 +53,10 @@ public class SpaceJourneyUI implements ResourceLoader {
         "The weaver of orbits. No light escapes his control."
     };
     private final String[] messageGuardians = {
-        "From ashes you came, to ashes you shall return. Face the fire of eternity.",
-        "You walk a path buried beneath centuries. Speak your purpose, or turn away.",
-        "You seek light, but light burns those unworthy. Step into judgment.",
-        "I do not strike with rage... I erase with purpose."
+        "“From ashes you came, to ashes you shall return. Face the fire of eternity.”",
+        "“You walk a path buried beneath centuries. Speak your purpose, or turn away.”",
+        "“You seek light, but light burns those unworthy. Step into judgment.”",
+        "“I do not strike with rage... I erase with purpose.”"
     };
 
     // mappa per le immagini dei livelli
@@ -168,8 +168,10 @@ public class SpaceJourneyUI implements ResourceLoader {
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-bold blue 20
             // white
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
-            fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
+            fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 20
+            fontBoldWhite35 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 25
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60.fnt")); // inter-bold white 60
+            fontBoldWhite60_1 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60 NO Shadow
             fontBoldItalicWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_25.fnt")); // inter-bold-italic white 25
         } catch (Exception e) {
             // dichiarazione font
@@ -259,6 +261,13 @@ public class SpaceJourneyUI implements ResourceLoader {
         screen.draw(imgGuardians[SpaceJourney.numGalaxy-1], 234, 292); // nemico
         screen.draw(imgRectsEnemies[SpaceJourney.numGalaxy-1], 233, 291); // rettangolo nemico
         screen.draw(imgButtonsStart[SpaceJourney.numGalaxy-1], 420, 152); // pulsante avvio partita
+
+        // testi //
+        fontBoldWhite60_1.draw(screen, "Level " + numLevel, 190, 560); // numero livello
+        fontBoldWhite35.draw(screen, "START", 440, 190); // testo avvio partita
+        // tipologia gioco
+        if (numLevel%2==0) fontBoldWhite25.draw(screen, "Space Battle", 440, 250);
+        else fontBoldWhite25.draw(screen, "Classic Game", 440, 250);
     }
 
     // metodo per stampare le informazione di sblocco di un livello

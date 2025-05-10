@@ -48,7 +48,7 @@ public class AuthAlgorithms implements InputProcessor {
     public AuthAlgorithms() {
         // digitazione attiva
         this.enteringNickname = true;
-        this.enteringPassword = true;
+        this.enteringPassword = false;
 
         // dichiarazione dei stringBuilder
         nicknameInput = new StringBuilder();
@@ -79,15 +79,15 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per direzione all'algoritmo di registrazione o accesso
     public void processLoginOrSignup() {
         if (state == 0) {
-            LogInAlg();
+            LogInAlg(); // algoritmo di accesso
         } else {
-            SignUpAlg();
+            SignUpAlg(); // algoritmo di registrazione
         }
 
         nicknameInput.setLength(0);
         passwordInput.setLength(0);
         enteringNickname = true;
-        enteringPassword = true;
+        enteringPassword = false;
     }
 
     // algoritmo di registrazione
@@ -118,6 +118,7 @@ public class AuthAlgorithms implements InputProcessor {
     // algoritmo di accesso
     public void LogInAlg() {
         try {
+            System.out.println(nicknameInput);
             // lettura password nickname e password dai file
             String filePath = "data/" + nicknameInput + "/userData.json"; // percorso file json
             FileHandle fileHandle = Gdx.files.local(filePath); // creazione oggetto fileHandle
@@ -135,6 +136,9 @@ public class AuthAlgorithms implements InputProcessor {
                 error = true;
             }
             else {
+                nickname = String.valueOf(nicknameInput);
+                password = String.valueOf(passwordInput);
+
                 state = 2;
             }
         }
@@ -142,9 +146,6 @@ public class AuthAlgorithms implements InputProcessor {
             error = true;
             System.out.println("Errore: " + e.getMessage());
         }
-
-        nickname = String.valueOf(nicknameInput);
-        password = String.valueOf(passwordInput);
     }
 
     // metodo per creare i file per i progressi utente
@@ -225,25 +226,22 @@ public class AuthAlgorithms implements InputProcessor {
         StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
 
         // ENTER terminare la digitazione
-        if ((character == '\n' || character == '\r') && currentInput.length() >= 1) {
-            if (enteringNickname) enteringNickname = false;
-            else enteringPassword = false;
+        if ((character == '\n' || character == '\r')) {
+            if (enteringNickname) {
+                enteringPassword=true;
+                enteringNickname=false;
+            }
+            else if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1)) processLoginOrSignup();
         }
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
         // controllo digitazione caratteri validi
         else if (character >= 32 && character < 127 && currentInput.length() <= 18) currentInput.append(character);
-
-        // aggiornamento nickname e password
-        nickname = nicknameInput.toString();
-        password = passwordInput.toString();
-
         return true;
     }
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println(screenX + " " + screenY);
         // cambio pagina - accesso => registrazione
         if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             if (state==0) state = 1;
@@ -258,6 +256,16 @@ public class AuthAlgorithms implements InputProcessor {
         if ((screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
             showPS = !showPS;
         }
+        // click per attivare la digitazione della password
+        if (!enteringNickname && ((screenX>=250 && screenX<=731) && (screenY>=275 && screenY<=317))) {
+            enteringNickname=true;
+            enteringPassword=false;
+        }
+        if (!enteringPassword && ((screenX>=250 && screenX<=731) && (screenY>=373 && screenY<=415)) &&
+            !(screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
+            enteringPassword=true;
+            enteringNickname=false;
+        }
         return true;
     }
 
@@ -271,7 +279,7 @@ public class AuthAlgorithms implements InputProcessor {
             Gdx.graphics.setCursor(cursor);
         }
         // pulsante accesso gioco
-        if ((screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512) && passwordInput.length() >= 1) {
+        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             isHover1=true;
         }
         // pulsante cambio pagina
