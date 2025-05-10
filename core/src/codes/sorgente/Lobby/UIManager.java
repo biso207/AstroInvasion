@@ -249,12 +249,12 @@ public class UIManager implements ResourceLoader {
         };
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {1, 0, 0}, {0, 0, 5}, {0, 1, 0}, {1, 0, 0},
-            {2, 0, 0}, {0, 0, 10}, {0, 2, 0}, {0, 3, 0},
-            {3, 0, 0}, {0, 0, 15}, {1, 1, 0}, {2, 0, 10},
-            {2, 1, 0}, {0, 0, 20}, {4, 1, 0}, {1, 2, 0},
-            {2, 2, 0}, {0, 0, 30}, {1, 4, 0}, {0, 2, 10},
-            {5, 5, 0}, {5, 0, 50}, {5, 0, 50}, {5, 5, 50}
+            {1, 1, 0}, {0, 1, 5}, {1, 0, 5}, {3, 0, 0},
+            {2, 1, 0}, {0, 2, 10}, {2, 0, 10}, {1, 2, 0},
+            {3, 2, 0}, {0, 3, 20}, {3, 0, 20}, {2, 3, 0},
+            {4, 3, 0}, {0, 4, 30}, {4, 0, 30}, {3, 4, 0},
+            {5, 4, 0}, {0, 5, 40}, {5, 0, 40}, {4, 5, 0},
+            {3, 4, 10}, {0, 3, 50}, {3, 0, 50}, {4, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -318,12 +318,12 @@ public class UIManager implements ResourceLoader {
             "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {1, 0, 0}, {0, 0, 5}, {0, 1, 0}, {1, 0, 0},
-            {2, 0, 0}, {0, 0, 10}, {0, 2, 0}, {0, 3, 0},
-            {3, 0, 0}, {0, 0, 15}, {1, 1, 0}, {2, 0, 10},
-            {2, 1, 0}, {0, 0, 20}, {4, 1, 0}, {1, 2, 0},
-            {2, 2, 0}, {0, 0, 30}, {1, 4, 0}, {0, 2, 10},
-            {5, 5, 0}, {5, 0, 50}, {5, 0, 50}, {5, 5, 50}
+            {1, 1, 0}, {0, 1, 5}, {1, 0, 5}, {3, 0, 0},
+            {2, 1, 0}, {0, 2, 10}, {2, 0, 10}, {1, 2, 0},
+            {3, 2, 0}, {0, 3, 20}, {3, 0, 20}, {2, 3, 0},
+            {4, 3, 0}, {0, 4, 30}, {4, 0, 30}, {3, 4, 0},
+            {5, 4, 0}, {0, 5, 40}, {5, 0, 40}, {4, 5, 0},
+            {3, 4, 10}, {0, 3, 50}, {3, 0, 50}, {4, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -404,7 +404,6 @@ public class UIManager implements ResourceLoader {
         else screen.draw(selectedSetting, 558, 332);
 
         // disegno icone musica/suono
-        //System.out.println(InputManager.musicPercent);
         if (InputManager.soundPercent==0f) screen.draw(soundOff, 230, 215);
         else screen.draw(soundOn, 230, 215);
         if (InputManager.musicPercent==0f) screen.draw(musicOff, 230, 145);

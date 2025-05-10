@@ -49,7 +49,8 @@ public class ClassicGame implements Screen, InputProcessor {
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
 
-    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, playImg, stopImg, quitMatch, bannerRTG;
+    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, shieldBanner, shieldLife, playImg,
+        stopImg, quitMatch, bannerRTG;
 
     // matrice per le immagini delle vite rimanenti
     private Texture[][] livesTextures;
@@ -293,6 +294,11 @@ public class ClassicGame implements Screen, InputProcessor {
         brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
         // super laser
         superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
+
+        // banner scudo attivo
+        shieldBanner = new Texture("images/shield_banner.png");
+        // vita dello scudo
+        shieldLife = new Texture("images/shield_life.png");
 
         // notifica completamente RTG
         bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
@@ -541,8 +547,14 @@ public class ClassicGame implements Screen, InputProcessor {
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
         // aggiunta scudo
-        if (shield && spaceshipHit < 5) screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
-        if (shield && spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x - 25, spaceship.y);
+        if (shield) {
+            screen.draw(shieldBanner, 850, 480);
+            //screen.draw(shieldLife, 860, 440, (10-spaceshipHit)*10, 20);
+            /// La seguente è SOLO di prova, prende troppa memoria e rallenta il gioco
+            screen.draw(new TextureRegion(shieldLife, shieldLife.getWidth() * (10-spaceshipHit), 20), 860, 460);
+            if (spaceshipHit < 5) screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
+            if (spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x - 25, spaceship.y);
+        }
 
         // stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);

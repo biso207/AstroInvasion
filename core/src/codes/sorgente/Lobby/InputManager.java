@@ -433,7 +433,14 @@ public class InputManager implements InputProcessor {
                             // cambio nome navicella con creazione nuovo oggetto
                             Spacecraft s = UIManager.selectSpacecraft();
                             nameSp = s.getName();
-                            System.out.println(nameSp);
+
+                            // reset stato carte per sicurezza
+                            goldHeart=shield=superLaser=doublePoints=false;
+                            // riattivazione carte speciali se selezionata una navicella premium
+                            if (nameSp.equals("Alpha")) goldHeart = true;
+                            if (nameSp.equals("Astrid")) shield = true;
+                            if (nameSp.equals("Rorik")) superLaser = true;
+                            if (nameSp.equals("Drakar")) doublePoints = true;
                         }
                         break;
                     }
