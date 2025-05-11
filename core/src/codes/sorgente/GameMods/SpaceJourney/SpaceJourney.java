@@ -34,6 +34,9 @@ public class SpaceJourney implements Screen, InputProcessor {
     // info livello
     protected static boolean infoLevel=false, buyLevel=false;
 
+    // pulsante avvio livello
+    protected static boolean startLevelHover=false;
+
     // istanza classe della grafica
     private final SpaceJourneyUI ui;
 
@@ -175,10 +178,16 @@ public class SpaceJourney implements Screen, InputProcessor {
         return true;
     }
 
+    // metodo per cambiare grafiche al passaggio del mouse
+    @Override public boolean mouseMoved(int screenX, int screenY) {
+
+        startLevelHover = (screenX >= 417 && screenX <= 567) && (screenY >= 442 && screenY <= 483);
+        return true;
+    }
+
     // altri metodi
     // metodo per rilevare il click da tastiera
     @Override public boolean keyTyped(char character) { return true; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }

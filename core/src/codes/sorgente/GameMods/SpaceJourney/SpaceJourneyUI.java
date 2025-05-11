@@ -22,8 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
-    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, baseInfoLevel, buyLevelImg;
-    private Texture[] bgs, imgGuardians, imgBorders, imgRectsEnemies, imgButtonsStart, imgButtonsStartHover;
+    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, buyLevelImg;
+    private Texture[] bgs, infoLevels, imgButtonsStartHover;
 
     // font
     private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60, fontBoldWhite60_1, fontBoldItalicWhite25;
@@ -39,24 +39,6 @@ public class SpaceJourneyUI implements ResourceLoader {
         "“Adventure is worthwhile in itself”",
         "“Per aspera ad astra”",
         "“Never stop exploring”"
-    };
-    private final String[] nameGuardians = {
-        "Kaelor — Guardian of Fenixia",
-        "Selaya — Guardian of Malloc",
-        "Vaelis — Guardian of Seraphis",
-        "Tessar — Guardian of Efron"
-    };
-    private final String[] loreGuardians = {
-        "He who burns with the fire of primordial stars. Keeper of cosmic rebirth.",
-        "Ancient sentinel of a forgotten world, she watches over the hidden forces that stir beneath Malloc’s silence.",
-        "A forgotten angel among the stars, she brings both light and judgment. Beautiful and deadly.",
-        "The weaver of orbits. No light escapes his control."
-    };
-    private final String[] messageGuardians = {
-        "“From ashes you came, to ashes you shall return. Face the fire of eternity.”",
-        "“You walk a path buried beneath centuries. Speak your purpose, or turn away.”",
-        "“You seek light, but light burns those unworthy. Step into judgment.”",
-        "“I do not strike with rage... I erase with purpose.”"
     };
 
     // mappa per le immagini dei livelli
@@ -88,38 +70,18 @@ public class SpaceJourneyUI implements ResourceLoader {
         bgs = new Texture[] {imgGalaxy0, imgGalaxy1, imgGalaxy2, imgGalaxy3, imgGalaxy4};
 
         // risorse rettangolo info livello //
-        // immagini nemici
-        Texture enemy1 = new Texture ("images/space_journey_maps/info_levels/guardianG1.png");
-        Texture enemy2 = new Texture ("images/space_journey_maps/info_levels/guardianG2.png");
-        Texture enemy3 = new Texture ("images/space_journey_maps/info_levels/guardianG3.png");
-        Texture enemy4 = new Texture ("images/space_journey_maps/info_levels/guardianG4.png");
-        imgGuardians = new Texture[] {enemy1, enemy2, enemy3, enemy4};
-        // rettangolo con immagini nemici
-        Texture rectEnemies1 = new Texture ("images/space_journey_maps/info_levels/enemy_rect1.png");
-        Texture rectEnemies2 = new Texture ("images/space_journey_maps/info_levels/enemy_rect2.png");
-        Texture rectEnemies3 = new Texture ("images/space_journey_maps/info_levels/enemy_rect3.png");
-        Texture rectEnemies4 = new Texture ("images/space_journey_maps/info_levels/enemy_rect4.png");
-        imgRectsEnemies = new Texture[] {rectEnemies1, rectEnemies2, rectEnemies3, rectEnemies4};
-        // bordi rettangolo
-        Texture border1 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel1.png");
-        Texture border2 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel2.png");
-        Texture border3 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel3.png");
-        Texture border4 = new Texture ("images/space_journey_maps/info_levels/border_infoLevel4.png");
-        imgBorders = new Texture[] {border1, border2, border3, border4};
-        // pulsanti avvio partita
-        Texture btnStart1 = new Texture ("images/space_journey_maps/info_levels/start_level_g1.png");
-        Texture btnStart2 = new Texture ("images/space_journey_maps/info_levels/start_level_g2.png");
-        Texture btnStart3 = new Texture ("images/space_journey_maps/info_levels/start_level_g3.png");
-        Texture btnStart4 = new Texture ("images/space_journey_maps/info_levels/start_level_g4.png");
-        imgButtonsStart = new Texture[] {btnStart1, btnStart2, btnStart3, btnStart4};
+        // immagini info livello
+        Texture infoLevel1 = new Texture("images/space_journey_maps/info_levels/info_level_G1.png");
+        Texture infoLevel2 = new Texture("images/space_journey_maps/info_levels/info_level_G2.png");
+        Texture infoLevel3 = new Texture("images/space_journey_maps/info_levels/info_level_G3.png");
+        Texture infoLevel4 = new Texture("images/space_journey_maps/info_levels/info_level_G4.png");
+        infoLevels = new Texture[] {infoLevel1, infoLevel2, infoLevel3, infoLevel4};
         // pulsanti avvio hover
         Texture btnStartHover1 = new Texture ("images/space_journey_maps/info_levels/start_level_g1_hover.png");
         Texture btnStartHover2 = new Texture ("images/space_journey_maps/info_levels/start_level_g2_hover.png");
         Texture btnStartHover3 = new Texture ("images/space_journey_maps/info_levels/start_level_g3_hover.png");
         Texture btnStartHover4 = new Texture ("images/space_journey_maps/info_levels/start_level_g4_hover.png");
         imgButtonsStartHover = new Texture[] {btnStartHover1, btnStartHover2, btnStartHover3, btnStartHover4};
-        // immagine base
-        baseInfoLevel = new Texture("images/space_journey_maps/info_levels/base_infoLevel.png");
 
         // immagine per lo sblocco di un livello
         buyLevelImg = new Texture("images/space_journey_maps/info_levels/buy_level.png");
@@ -254,20 +216,17 @@ public class SpaceJourneyUI implements ResourceLoader {
     // metodo per stampare le info di un livello
     public void infoLevel(SpriteBatch screen) {
         // sfondo base
-        screen.draw(baseInfoLevel, 143, 100);
-
-        // bordo, pulsante avvio, rectAvatar
-        screen.draw(imgBorders[SpaceJourney.numGalaxy-1], 156, 113); // bordo
-        screen.draw(imgGuardians[SpaceJourney.numGalaxy-1], 234, 292); // nemico
-        screen.draw(imgRectsEnemies[SpaceJourney.numGalaxy-1], 233, 291); // rettangolo nemico
-        screen.draw(imgButtonsStart[SpaceJourney.numGalaxy-1], 420, 152); // pulsante avvio partita
+        screen.draw(infoLevels[SpaceJourney.numGalaxy-1], 143, 100);
 
         // testi //
-        fontBoldWhite60_1.draw(screen, "Level " + numLevel, 190, 560); // numero livello
-        fontBoldWhite35.draw(screen, "START", 440, 190); // testo avvio partita
+        fontBoldWhite60_1.draw(screen, "Level " + numLevel, 194, 560); // numero livello
+        fontBoldWhite35.draw(screen, "START", 450, 200); // testo avvio partita
         // tipologia gioco
-        if (numLevel%2==0) fontBoldWhite25.draw(screen, "Space Battle", 440, 250);
+        if (numLevel%2==0) fontBoldWhite25.draw(screen, "Space Battle", 210, 500);
         else fontBoldWhite25.draw(screen, "Classic Game", 440, 250);
+
+        System.out.println(SpaceJourney.startLevelHover);
+        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 200);
     }
 
     // metodo per stampare le informazione di sblocco di un livello
@@ -296,18 +255,8 @@ public class SpaceJourneyUI implements ResourceLoader {
             texture.dispose();
         }
 
-        // dispose guardian textures
-        for (Texture texture : imgGuardians) {
-            texture.dispose();
-        }
-
-        // dispose border textures
-        for (Texture texture : imgBorders) {
-            texture.dispose();
-        }
-
-        // dispose button textures
-        for (Texture texture : imgButtonsStart) {
+        // dispose info livelli
+        for (Texture texture : infoLevels) {
             texture.dispose();
         }
 
@@ -328,7 +277,6 @@ public class SpaceJourneyUI implements ResourceLoader {
         imgNumLevelSeat.dispose();
         closeButton.dispose();
         priceRect.dispose();
-        baseInfoLevel.dispose();
 
         // dispose fonts
         fontBoldBlue20.dispose();
