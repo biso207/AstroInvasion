@@ -105,7 +105,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         if (numGalaxy==0) {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, screenX, screenY)) {
-                    if ((numLevel / 10 + 1) >= galaxy.getId()) numGalaxy = galaxy.getId();
+                    if ((int) (double) (numLevel / 10) >= galaxy.getId()) numGalaxy = galaxy.getId();
                 }
             }
         }
@@ -181,7 +181,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     // metodo per cambiare grafiche al passaggio del mouse
     @Override public boolean mouseMoved(int screenX, int screenY) {
 
-        startLevelHover = (screenX >= 417 && screenX <= 567) && (screenY >= 442 && screenY <= 483);
+        startLevelHover = (screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523);
         return true;
     }
 

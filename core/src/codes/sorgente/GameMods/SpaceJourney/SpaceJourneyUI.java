@@ -155,11 +155,11 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
         else {
             // icona bandiera galassia corrente
-            switch (numLevel/10+1) {
+            switch ((int) (double) (numLevel / 10)) {
                 case 1 -> screen.draw(imgFlagSeat, 430, 170);
                 case 2 -> screen.draw(imgFlagSeat, 775, 185);
                 case 3 -> screen.draw(imgFlagSeat, 800, 455);
-                case 4, 5 -> screen.draw(imgFlagSeat, 300, 430);
+                case 4 -> screen.draw(imgFlagSeat, 300, 430);
             }
             // icona numero galassia
             screen.draw(imgNumLevelSeat, 350, 130); // g1
@@ -218,15 +218,14 @@ public class SpaceJourneyUI implements ResourceLoader {
         // sfondo base
         screen.draw(infoLevels[SpaceJourney.numGalaxy-1], 143, 100);
 
+        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 168);
+
         // testi //
         fontBoldWhite60_1.draw(screen, "Level " + numLevel, 194, 560); // numero livello
-        fontBoldWhite35.draw(screen, "START", 450, 200); // testo avvio partita
+        fontBoldWhite35.draw(screen, "START", 440, 210); // testo avvio partita
         // tipologia gioco
         if (numLevel%2==0) fontBoldWhite25.draw(screen, "Space Battle", 210, 500);
         else fontBoldWhite25.draw(screen, "Classic Game", 440, 250);
-
-        System.out.println(SpaceJourney.startLevelHover);
-        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 200);
     }
 
     // metodo per stampare le informazione di sblocco di un livello
