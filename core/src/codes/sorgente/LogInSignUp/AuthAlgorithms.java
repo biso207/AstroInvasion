@@ -14,6 +14,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import org.json.JSONObject;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,6 +45,9 @@ public class AuthAlgorithms implements InputProcessor {
     private final Pixmap mouse, mouseOver; // immagini
     private final Cursor cursor; // oggetto cursore
 
+    // istanza classe per mandare la notifica di avvio
+    private NotificaAvvio notify;
+
     // costruttore
     public AuthAlgorithms() {
         // digitazione attiva
@@ -58,6 +62,9 @@ public class AuthAlgorithms implements InputProcessor {
         mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
+
+        // creazione istanza notifica
+        notify = new NotificaAvvio();
     }
 
     // ************************** //
@@ -105,7 +112,11 @@ public class AuthAlgorithms implements InputProcessor {
                 // creazione file utente
                 createFiles();
 
+                // successo
                 state = 2;
+
+                // manda la notifica di apertura gioco
+                notify.sendMessage();
             }
             else if (generalFolder.exists() && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
                 error = true;
@@ -139,7 +150,11 @@ public class AuthAlgorithms implements InputProcessor {
                 nickname = String.valueOf(nicknameInput);
                 password = String.valueOf(passwordInput);
 
+                // successo
                 state = 2;
+
+                // manda la notifica di apertura gioco
+                notify.sendMessage();
             }
         }
         catch(Exception e){
