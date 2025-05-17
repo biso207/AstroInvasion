@@ -343,9 +343,10 @@ public class SpaceBattle implements Screen, InputProcessor {
         //if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
         soundtrack.stop();
-        game.setScreen(new GameOver(game, selectedSp, 1, 0, 0, 0, win));
 
-
+        /// TODO: settare correttamente isLevel se si è giocato o meno un livello
+        int[] stats = {0, 0, 0};
+        game.setScreen(new GameOver(game, selectedSp, 1, stats, win, false));
     }
 
 

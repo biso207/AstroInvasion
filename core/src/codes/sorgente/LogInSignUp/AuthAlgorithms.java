@@ -116,7 +116,7 @@ public class AuthAlgorithms implements InputProcessor {
                 state = 2;
 
                 // manda la notifica di apertura gioco
-                notify.sendMessage();
+                //notify.sendMessage();
             }
             else if (generalFolder.exists() && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
                 error = true;
@@ -154,7 +154,7 @@ public class AuthAlgorithms implements InputProcessor {
                 state = 2;
 
                 // manda la notifica di apertura gioco
-                notify.sendMessage();
+                //notify.sendMessage();
             }
         }
         catch(Exception e){

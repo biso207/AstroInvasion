@@ -218,7 +218,7 @@ public class InputManager implements InputProcessor {
                         secondScreen = open18 = true;
                     } else {
                         LobbyManager.soundtrack.stop(); // interruzione musica
-                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
+                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
                     }
                 } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
@@ -506,7 +506,7 @@ public class InputManager implements InputProcessor {
             if ((secondScreen && open18) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 secondScreen = open18 = false;
                 LobbyManager.soundtrack.stop();
-                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp)); // avvio classic game
+                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
             }
 
             // YES => conferma acquisto

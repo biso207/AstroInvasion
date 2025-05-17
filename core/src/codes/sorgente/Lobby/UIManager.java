@@ -9,22 +9,17 @@ package sorgente.Lobby;
 
 // import codici e librerie
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.Missions.CheckMissions;
 import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
 
-import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -569,7 +564,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 588, 175);
+                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 159);
 
                 // button fight hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 773, 101);

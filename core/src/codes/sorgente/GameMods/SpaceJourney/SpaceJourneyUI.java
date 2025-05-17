@@ -22,7 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
-    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, buyLevelImg;
+    private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, buyLevelImg,
+        diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
 
     // font
@@ -46,6 +47,17 @@ public class SpaceJourneyUI implements ResourceLoader {
 
     // numero livello raggiunto
     private final int numLevel;
+
+    // livelli in classic game
+    private final List<Integer> listCG = List.of(1, 3, 4, 6, 7, 9,
+        11, 13, 14, 16, 17, 19,
+        21, 23, 24, 26, 27, 29,
+        31, 33, 34, 36, 37, 39);
+    // livelli in space battle
+    private final List<Integer> listSB = List.of(2, 5, 8, 10,
+                            12, 15, 18, 20,
+                            22, 25, 28, 30,
+                            32, 35, 38, 40);
 
     // costruttore
     SpaceJourneyUI() {
@@ -111,6 +123,15 @@ public class SpaceJourneyUI implements ResourceLoader {
             LevelState.TO_BUY, List.of(imgUnlockedLevelG1, imgUnlockedLevelG2, imgUnlockedLevelG3, imgUnlockedLevelG4)
         );
 
+        // icona difficoltà classic game
+        diffCG1 = new Texture("images/space_journey_maps/info_levels/diff1_classicgame_mini.png");
+        diffCG2 = new Texture("images/space_journey_maps/info_levels/diff2_classicgame_mini.png");
+        diffCG3 = new Texture("images/space_journey_maps/info_levels/diff3_classicgame_mini.png");
+        // icona difficoltà space battle
+        diffSB1 = new Texture("images/space_journey_maps/info_levels/diff1_spacebattle_mini.png");
+        diffSB2 = new Texture("images/space_journey_maps/info_levels/diff2_spacebattle_mini.png");
+        diffSB3 = new Texture("images/space_journey_maps/info_levels/diff3_spacebattle_mini.png");
+
         // icona bandiera livello corrente
         imgFlagSeat = new Texture("images/space_journey_maps/flag_seat_marker.png");
         // cerchio per il numero del livello
@@ -155,7 +176,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
         else {
             // icona bandiera galassia corrente
-            switch ((int) (double) (numLevel / 10)) {
+            switch ((int) Math.ceil((double) numLevel / 10)) {
                 case 1 -> screen.draw(imgFlagSeat, 430, 170);
                 case 2 -> screen.draw(imgFlagSeat, 775, 185);
                 case 3 -> screen.draw(imgFlagSeat, 800, 455);
@@ -218,14 +239,51 @@ public class SpaceJourneyUI implements ResourceLoader {
         // sfondo base
         screen.draw(infoLevels[SpaceJourney.numGalaxy-1], 143, 100);
 
-        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 168);
+        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 169);
 
         // testi //
         fontBoldWhite60_1.draw(screen, "Level " + numLevel, 194, 560); // numero livello
-        fontBoldWhite35.draw(screen, "START", 440, 210); // testo avvio partita
+        fontBoldWhite35.draw(screen, "START", 443, 208); // testo avvio partita
+
         // tipologia gioco
-        if (numLevel%2==0) fontBoldWhite25.draw(screen, "Space Battle", 210, 500);
-        else fontBoldWhite25.draw(screen, "Classic Game", 440, 250);
+        if (listSB.contains(numLevel)) {
+            fontBoldWhite25.draw(screen, "Space Battle", 223, 445);
+
+            // icona difficoltà
+            switch ((int) Math.ceil((double) numLevel / 10)) {
+                case 1:
+                    screen.draw(diffSB1, 404 ,421);
+                    break;
+                case 2, 3:
+                    screen.draw(diffSB2, 404 ,421);
+                    break;
+                case 4:
+                    screen.draw(diffSB3, 404 ,421);
+                    break;
+            }
+
+            // missione livello
+            fontBoldWhite25.draw(screen, "Hit him " + numLevel + " times", 560, 433);
+        }
+        else {
+            fontBoldWhite25.draw(screen, "Classic Game", 223, 445);
+
+            // icona difficoltà
+            switch ((int) Math.ceil((double) numLevel / 10)) {
+                case 1:
+                    screen.draw(diffCG1, 404 ,421);
+                    break;
+                case 2, 3:
+                    screen.draw(diffCG2, 404 ,421);
+                    break;
+                case 4:
+                    screen.draw(diffCG3, 404 ,421);
+                    break;
+            }
+
+            // missione livello
+            fontBoldWhite25.draw(screen, "Kill " + ((numLevel*10)+10) + " aliens", 560, 433);
+        }
     }
 
     // metodo per stampare le informazione di sblocco di un livello

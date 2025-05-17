@@ -37,9 +37,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private final int mod, points, credits, aliensHit;
 
     // font
-    private BitmapFont font, font2;
+    private BitmapFont font, font2, font3;
     // immagini
-    private Texture gameOver0, gameOver1, victory, rectSelectCard;
+    private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
+    guardianG1, guardianG2, guardianG3, guardianG4;
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
@@ -47,21 +48,36 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // boolean per le carte speciali e disattivazione
     private boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
-    // stato vittoria/sconfitta space battle
-    private boolean win;
+
+    // stato livello e vittoria/sconfitta partita
+    private final boolean win, isLevel;
+    // stato premio raccolto
+    private boolean isRewardClaimed;
+
+    /// TODO:
+    /// aggiungere la raccolta del premio, con essa cambia il testo da CLAIM e CLOSE e il range cambia funzione
+    /// da click per raccogliere il premio a click per tornare alla mappa dei livelli.
+    /// una volta che si completa il livello, da qua, bisogna cambiare lo stato del livello corrente a COMPLETED e mettere
+    /// il successivo a TO_BUY. Aggiungere la grafica corretta in base ai premi per la schermata di vittoria
+    /// e assegnare il premio corretto. per assegnare il premio non bisogna fare nulla! basta aggiornare i progressi
+    /// con il valore di "level" incremento di 1 e il gioco farà i suoi controlli dove deve e sarà tutto già disponibile.
+    /// i premi mostrati qua sono solo da mostrare, così come l'immagine del guardiano e il testo di completamento del livello.
+    /// impostare bene i testi dei pulsanti e i pulsanti "hover" quando ci passa sopra.
+    /// aggiungere il controllo per riavviare il livello in cui si è perso direttamente da qua.
 
     // costruttore
-    public GameOver(Main game, Spacecraft selectedSp, int mod, int points, int credits, int aliensHit, boolean win) {
+    public GameOver(Main game, Spacecraft selectedSp, int mod, int[] stats, boolean win, boolean isLevel) {
         // set gioco
         this.game = game;
 
         // recupero progressi
         this.selectedSp = selectedSp;
         this.mod = mod;
-        this.points = points;
-        this.credits = credits;
-        this.aliensHit = aliensHit;
+        this.points = stats[0];
+        this.credits = stats[1];
+        this.aliensHit = stats[2];
         this.win = win;
+        this.isLevel = isLevel;
 
         // attivazione carte delle navicelle premium
         if (selectedSp.getName().equals("Alpha")) goldHeart = true;
@@ -151,9 +167,22 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // caricamento schermate di base
     @Override
     public void loadImages() {
-        gameOver0 = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
-        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
-        victory = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
+        // game over / vittoria modalità classiche
+        gameOverCG = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
+        gameOverSB = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
+        victorySB = new Texture(Gdx.files.internal("secondary_screens/victorySB_sb_eng.png"));
+
+        // livelli
+        levelCompleted = new Texture(Gdx.files.internal("secondary_screens/completed_level.png"));
+        levelDefeat = new Texture(Gdx.files.internal("secondary_screens/defeat_level.png"));
+
+        // guardians
+        guardianG1 = new Texture(Gdx.files.internal("secondary_screens/guardianG1.png"));
+        guardianG2 = new Texture(Gdx.files.internal("secondary_screens/guardianG2.png"));
+        guardianG3 = new Texture(Gdx.files.internal("secondary_screens/guardianG3.png"));
+        guardianG4 = new Texture(Gdx.files.internal("secondary_screens/guardianG4.png"));
+
+        // rettangolo selezione carta speciale
         rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
     }
 
@@ -164,6 +193,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter bold white 20
             font2 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
+            font3 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter bold white 30
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -176,35 +206,63 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // switch delle modalità di gioco
         switch (mod) {
             case 0:
-                // schermata base
-                screen.draw(gameOver0, 0, 0);
+                // grafica sconfitta Classic Game
+                if (!isLevel) {
+                    // schermata base
+                    screen.draw(gameOverCG, 0, 0);
 
-                // scritte progressi partita
-                font2.draw(screen, formatter.format(points), 195, 457);
-                font2.draw(screen, formatter.format(credits), 205, 397);
-                font2.draw(screen, formatter.format(aliensHit), 235, 337);
+                    // scritte progressi partita
+                    font2.draw(screen, formatter.format(points), 195, 457);
+                    font2.draw(screen, formatter.format(credits), 205, 397);
+                    font2.draw(screen, formatter.format(aliensHit), 235, 337);
 
-                // numero carte speciali
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 375);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 837, 375);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 262);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 837, 262);
+                    // numero carte speciali
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 375);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 837, 375);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 702, 262);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 837, 262);
 
-                // stampa rettangolo selezione carta
-                if (goldHeart) screen.draw(rectSelectCard, 693, 388);
-                if (shield) screen.draw(rectSelectCard, 831, 388);
-                if (superLaser) screen.draw(rectSelectCard, 693, 275);
-                if (doublePoints) screen.draw(rectSelectCard, 831, 275);
+                    // stampa rettangolo selezione carta
+                    if (goldHeart) screen.draw(rectSelectCard, 693, 388);
+                    if (shield) screen.draw(rectSelectCard, 831, 388);
+                    if (superLaser) screen.draw(rectSelectCard, 693, 275);
+                    if (doublePoints) screen.draw(rectSelectCard, 831, 275);
+
+                }
+                // grafica completamento/sconfitta livello di tipo Classic Game
+                else {
+                    // schermata base
+                    screen.draw(win ? levelCompleted : levelDefeat, 0, 0);
+
+                    // stampa immagini
+                    if (!win) { // sconfitta
+                        // immagine nemico
+                        int numLevel = (int) DataUserManager.getProgress("level");
+                        switch ((int) Math.ceil((double) numLevel / 10)) {
+                            case 1 -> screen.draw(guardianG1, 430, 170);
+                            case 2 -> screen.draw(guardianG2, 775, 185);
+                            case 3 -> screen.draw(guardianG3, 800, 455);
+                            case 4 -> screen.draw(guardianG4, 300, 430);
+                        }
+
+                        // testi
+                        font2.draw(screen, "RESTART", 450, 200);
+                        font2.draw(screen, "CLOSE", 600, 200);
+                    }
+                    else { // vittoria
+                        font2.draw(screen, "CLOSE", 600, 200);
+                    }
+                }
 
                 break;
             case 1:
                 // schermata base
                 /*switch (win) {
-                    case true -> screen.draw(victory, 0, 0);
-                    case false -> screen.draw(gameOver1, 0, 0);
+                    case true -> screen.draw(victorySB, 0, 0);
+                    case false -> screen.draw(gameOverSB, 0, 0);
                 }*/
-                if (win) screen.draw(victory, 0, 0);
-                else screen.draw(gameOver1, 0, 0);
+
+                screen.draw(win ? victorySB : gameOverSB, 0, 0);
 
                 // scritte progressi partita
                 font2.draw(screen, formatter.format(points), 195, 457);
@@ -237,7 +295,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         if (character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
-                    game.setScreen(new ClassicGame(game, selectedSp));
+                    game.setScreen(new ClassicGame(game, selectedSp, false));
                     break;
                 case 1:
                     game.setScreen(new SpaceBattle(game, selectedSp));
@@ -247,6 +305,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         return true;
     }
+
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // click NO => ritorno alla Lobby
@@ -264,7 +323,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     InputManager.superLaser = superLaser;
                     InputManager.doublePoints = doublePoints;
 
-                    game.setScreen(new ClassicGame(game, selectedSp));
+                    game.setScreen(new ClassicGame(game, selectedSp, false));
                     break;
                 case 1:
                     game.setScreen(new SpaceBattle(game, selectedSp));

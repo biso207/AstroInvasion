@@ -105,7 +105,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         if (numGalaxy==0) {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, screenX, screenY)) {
-                    if ((int) (double) (numLevel / 10) >= galaxy.getId()) numGalaxy = galaxy.getId();
+                    if ((int) Math.ceil((double) numLevel / 10) >= galaxy.getId()) numGalaxy = galaxy.getId();
                 }
             }
         }
@@ -161,7 +161,7 @@ public class SpaceJourney implements Screen, InputProcessor {
 
 
         // back to lobby cliccando l'icona della terra
-        if (((screenX >= 25 && screenX <= 122) && (screenY >= 182 && screenY <= 283)) && numGalaxy == 0) {
+        if (((screenX >= 25 && screenX <= 122) && (screenY >= 418 && screenY <= 518)) && numGalaxy == 0) {
             soundtrack.stop(); // stop della musica
             game.setScreen(new LobbyManager(game)); // back to lobby
         }

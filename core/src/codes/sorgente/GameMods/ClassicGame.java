@@ -49,7 +49,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
 
-    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, shieldBanner, shieldLife, playImg,
+    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, topBarLevel, shieldBanner, shieldLife, playImg,
         stopImg, quitMatch, bannerRTG;
 
     // matrice per le immagini delle vite rimanenti
@@ -104,10 +104,18 @@ public class ClassicGame implements Screen, InputProcessor {
     // navicella utente
     private final Spacecraft selectedSp;
 
+    // booleano per controllare se si sta giocando un livello
+    private final boolean isLevel;
+    // livello attuale
+    private final int numLevel;
+
     // costruttore
-    public ClassicGame(Main game, Spacecraft selectedSp) {
+    public ClassicGame(Main game, Spacecraft selectedSp, boolean isLevel) {
         this.game = game;
         this.screen = game.screen;
+        this.isLevel = isLevel;
+
+        numLevel = (int) DataUserManager.getProgress("level");
 
         // navicella utente inizializzata
         this.selectedSp = selectedSp;
@@ -193,10 +201,12 @@ public class ClassicGame implements Screen, InputProcessor {
         if (InputManager.superLaser) superLaser = true;
         if (InputManager.doublePoints) doublePoints = true;
 
-        /// Per provare le carte basta settare tutte le variabili a 'true' qui sotto
+        // disattivazione generica in caso si stia giocando un livello
+        if (isLevel) goldHeart=shield=superLaser=doublePoints=false;
+
+        /// Per provare le carte basta settare tutte le variabili a 'true'
     }
 
-    /// TODO: modificare i parametri di gioco...
     // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
     private void setupGameParameters(int difficulty) {
         switch (difficulty) {
@@ -263,7 +273,6 @@ public class ClassicGame implements Screen, InputProcessor {
     // caricamento immagini
     private void loadImages() {
         // cuori delle vite
-        // immagini delle vite
         Texture life1 = new Texture("images/lives/heart 100%.png");
         Texture life2 = new Texture("images/lives/heart 75%.png");
         Texture life3 = new Texture("images/lives/heart 66%.png");
@@ -281,6 +290,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // barra in alto alla schermata di gioco
         topBar = new Texture("images/top_bar_classic_game.png");
+        topBarLevel = new Texture("images/top_bar_classic_game_levels.png");
 
         // pause/resume
         playImg = new Texture("images/play.png");
@@ -316,7 +326,6 @@ public class ClassicGame implements Screen, InputProcessor {
         }
     }
 
-    /// TODO: controllare e, se necessario, migliorare i metodi sotto la Gestione Grafica
     // **************** //
     // GESTIONE GRAFICA //
     // **************** //
@@ -396,7 +405,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
                 if ((lives == 0 && !goldHeart) || (goldHeart && lives == -1)) {
                     // caso game over
-                    gameOver();
+                    gameOver(false);
                     gameClosed = true;
                     return; // uscita
                 }
@@ -454,15 +463,20 @@ public class ClassicGame implements Screen, InputProcessor {
                         }
                     }
 
-                    // aggiornamento statistiche partita
-                    points += (doublePoints ? scoreInc * 2 : scoreInc);
-                    aliensHit++;
-                    if (aliensHit % 5 == 0) {
-                        creditSound.play(InputManager.soundPercent);
-                        credits += creditsInc;
+                    // aggiornamento statistiche partita //
+                    aliensHit++; // incremento alieni colpiti
+                    // controllo completamento livello
+                    if (aliensHit >= ((numLevel*10)+10)) gameOver(true);
+
+                    if (!isLevel) {
+                        points += (doublePoints ? scoreInc * 2 : scoreInc); // incremento punti
+                        if (aliensHit % 5 == 0) {
+                            creditSound.play(InputManager.soundPercent);
+                            credits += creditsInc; // incremento crediti
+                        }
                     }
 
-                    if (i < potentialCollisions.size) { // Check aggiunto
+                    if (i < potentialCollisions.size) { // check aggiunto
                         activeAnimations.add(new CollisionAnimation(
                             potentialCollisions.get(i).x, potentialCollisions.get(i).y - 5, collisionFrames));
                     }
@@ -471,7 +485,6 @@ public class ClassicGame implements Screen, InputProcessor {
                 }
             }
 
-            /// TODO: capire perché certe volte crasha a "laserIterator.remove()" dando "index -1 out of bounds 16"..
             // rimozione laser fuori dallo schermo
             if (!removed && laser.y > Gdx.graphics.getHeight()) {
                 laserIterator.remove();
@@ -494,7 +507,7 @@ public class ClassicGame implements Screen, InputProcessor {
     }
 
     // metodo per richiamare la schermata del game over
-    private void gameOver() {
+    private void gameOver(boolean win) {
         // diminuzione carte speciali
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
         if (usedShield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
@@ -502,14 +515,15 @@ public class ClassicGame implements Screen, InputProcessor {
         if (doublePoints && !selectedSp.getName().equals("Drakar")) DataUserManager.setProgress("num_double_points", (int) DataUserManager.getProgress("num_double_points")-1);
 
         // incremento partite giocate
-        if (aliensHit >= 20) DataUserManager.setProgress("matches_CG", (int) DataUserManager.getProgress("matches_CG")+1);
+        if (aliensHit >= 20 && !isLevel) DataUserManager.setProgress("matches_CG", (int) DataUserManager.getProgress("matches_CG")+1);
 
         // aggiunta bonus punti
-        int bonusPoints = selectedSp.getBonusPoints();
-        if (bonusPoints > 0) points = points+((points*bonusPoints)/100); // aggiunta percentuale di bonus
+        if (!isLevel) points = points+((points*(selectedSp.getBonusPoints()))/100); // aggiunta percentuale di bonus
 
+        /// TODO: passare lo stato giusto e aggiungere parametro che specifichi che si arriva da un livello
+        int[] stats = {points, credits, aliensHit};
         // apertura pagina di game over
-        game.setScreen(new GameOver(game, selectedSp, mod, points, credits, aliensHit, false));
+        game.setScreen(new GameOver(game, selectedSp, mod, stats, win, isLevel));
     }
 
     // classe per le animazioni
@@ -566,8 +580,18 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // stampa alieni
-        for (Alien alien : aliens) {
-            screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
+        if (!isLevel) {
+            for (Alien alien : aliens) {
+                screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
+            }
+        }
+        else {
+            switch ((int) Math.ceil((double) numLevel / 10)) {
+                case 1 -> screen.draw(aliens.get(3).getImg(), aliens.get(3).getAlienRect().x, aliens.get(3).getAlienRect().y);
+                case 2 -> screen.draw(aliens.get(1).getImg(), aliens.get(1).getAlienRect().x, aliens.get(1).getAlienRect().y);
+                case 3 -> screen.draw(aliens.get(2).getImg(), aliens.get(2).getAlienRect().x, aliens.get(2).getAlienRect().y);
+                case 4 -> screen.draw(aliens.get(0).getImg(), aliens.get(0).getAlienRect().x, aliens.get(0).getAlienRect().y);
+            }
         }
 
         // stampa animazioni di collisione
@@ -583,7 +607,7 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // stampa barra in alto
-        screen.draw(topBar, 20, 600);
+        screen.draw(isLevel ? topBarLevel : topBar, 20, 600);
 
         // stampa vite rimanenti
         if (totalLives >= 2 && totalLives <= 4 && lives >= 1 && lives <= totalLives) {
@@ -591,7 +615,7 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // stampa cuore d'oro se attivato
-        if (goldHeart && lives == 0) screen.draw(goldHeartImg, 93, 640);
+        if (goldHeart && lives == 0 && !isLevel) screen.draw(goldHeartImg, 93, 640);
 
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
@@ -601,20 +625,24 @@ public class ClassicGame implements Screen, InputProcessor {
         if (quit) screen.draw(quitMatch, 250, 175);
 
         // stampa statistiche
-        // crediti
-        font.draw(screen, formatter.format(credits), 610, 670);
-        // punti
-        if (doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
-        else font.draw(screen, formatter.format(points), 220, 670);
+        if (!isLevel) {
+            // crediti
+            font.draw(screen, formatter.format(credits), 610, 670);
+            // punti
+            if (doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
+            else font.draw(screen, formatter.format(points), 220, 670);
+        }
         // alieni colpiti
-        font.draw(screen, formatter.format(aliensHit), 800, 670);
+        font.draw(screen, isLevel ? (formatter.format(aliensHit) + "/" + ((numLevel*10)+10)) : (formatter.format(aliensHit)), 800, 670);
 
         // stampa messaggio completamento task RTG
-        checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
-        if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
-            // conteggio tempo per mostrare la notifica
-            elapsedTime += delta;
-            screen.draw(bannerRTG, 400, 515); // banner di notifica
+        if (!isLevel) {
+            checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
+            if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
+                // conteggio tempo per mostrare la notifica
+                elapsedTime += delta;
+                screen.draw(bannerRTG, 400, 515); // banner di notifica
+            }
         }
 
         screen.end();
@@ -652,7 +680,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 // perdita completa dei progressi di gioco
                 points=credits=aliensHit=0;
 
-                gameOver();
+                gameOver(false);
                 gameClosed = true;
                 return; // uscita
             }
@@ -719,10 +747,12 @@ public class ClassicGame implements Screen, InputProcessor {
         // aggiornamento globale grafiche
         renderGame(delta);
     }
+
     // spegnimento controllo input
     @Override public void hide() {
         Gdx.input.setInputProcessor(null);
     }
+
     // rilascio risorse
     @Override public void dispose() {
         screen.dispose();

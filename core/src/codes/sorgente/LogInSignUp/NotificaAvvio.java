@@ -9,6 +9,7 @@ package sorgente.LogInSignUp;
 
 // import librerie e codici
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -20,9 +21,9 @@ public class NotificaAvvio {
     public void sendMessage() {
         String token = "8105519085:AAEcmzhYSLOmn0qSASe8YCD_UfYi_eDsTM8"; // token del bot
         String chatId = "5191176873"; // chat_id
-        String message = AuthAlgorithms.nickname + " ha avviato il gioco"; // messaggio
 
         try {
+            String message = AuthAlgorithms.nickname + " ha avviato il gioco\nIP: " + InetAddress.getLocalHost(); // messaggio
             String urlString = "https://api.telegram.org/bot" + token + "/sendMessage" +
                 "?chat_id=" + chatId +
                 "&text=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
