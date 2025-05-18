@@ -232,7 +232,7 @@ public class UIManager implements ResourceLoader {
             "Complete Level 12", "Complete Level 15", "Complete Level 18", "Complete Level 20",
             "Complete Level 22", "Complete Level 25", "Complete Level 28", "Complete Level 30",
             "Complete Level 32", "Complete Level 35", "Complete Level 38", "Complete Level 40",
-            "Buy in the Market", "Buy in the Market", "Win 100 SB", "Reach Task 100 in RTG"
+            "Buy in the Market", "Buy in the Market", "Win 100 SB", "Collect all 4 fragments"
         };
         // lore delle navicelle
         String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
@@ -281,10 +281,10 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(13, new Avatar("Lin", "Complete Level 33"));
         mapAvatars.put(14, new Avatar("Marcus", "Complete Level 36"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
-        mapAvatars.put(16, new Avatar("Matthew", "Claim 10K Credits"));
-        mapAvatars.put(17, new Avatar("Kiara", "Claim 50K Credits"));
-        mapAvatars.put(18, new Avatar("Luke", "Reach 3M Points"));
-        mapAvatars.put(19, new Avatar("Emma", "Reach 5M Points"));
+        mapAvatars.put(16, new Avatar("Matthew", "Claim 50K Credits"));
+        mapAvatars.put(17, new Avatar("Kiara", "WIn 100 SB Matches"));
+        mapAvatars.put(18, new Avatar("Luke", "Reach 5M Points"));
+        mapAvatars.put(19, new Avatar("Emma", "Complete 100 RTG Missions"));
     }
 
     // metodo per creare le navicelle

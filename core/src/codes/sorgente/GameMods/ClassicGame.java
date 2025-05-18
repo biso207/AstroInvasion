@@ -108,6 +108,8 @@ public class ClassicGame implements Screen, InputProcessor {
     private final boolean isLevel;
     // livello attuale
     private final int numLevel;
+    // colore alieno
+    private int type;
 
     // costruttore
     public ClassicGame(Main game, Spacecraft selectedSp, boolean isLevel) {
@@ -119,6 +121,9 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // navicella utente inizializzata
         this.selectedSp = selectedSp;
+
+        // colore alieno di default
+        type=0;
 
         // immagine navicella
         spaceshipTexture = new Texture(selectedSp.getPathImg());
@@ -381,9 +386,20 @@ public class ClassicGame implements Screen, InputProcessor {
     private void updateAliens(float delta) {
         spawnTimer += delta;
 
+        // creazione alieno
         if (spawnTimer >= spawnInterval) {
+            if (isLevel) {
+                switch ((int) Math.ceil((double) numLevel / 10)) {
+                    case 1 -> type = 3;
+                    case 2 -> type = 1;
+                    case 3 -> type = 2;
+                    case 4 -> type = 0;
+                }
+            }
+            else type = MathUtils.random(alienTextures.length - 1);
+
             Alien alien = new Alien(
-                alienTextures[MathUtils.random(alienTextures.length - 1)],
+                alienTextures[type],
                 new Rectangle(MathUtils.random(20, Gdx.graphics.getWidth() - 84), 700, 64, 64)
             );
             aliens.add(alien);
@@ -466,7 +482,7 @@ public class ClassicGame implements Screen, InputProcessor {
                     // aggiornamento statistiche partita //
                     aliensHit++; // incremento alieni colpiti
                     // controllo completamento livello
-                    if (aliensHit >= ((numLevel*10)+10)) gameOver(true);
+                    if (aliensHit >= (numLevel*10)) gameOver(true);
 
                     if (!isLevel) {
                         points += (doublePoints ? scoreInc * 2 : scoreInc); // incremento punti
@@ -580,18 +596,8 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // stampa alieni
-        if (!isLevel) {
-            for (Alien alien : aliens) {
-                screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
-            }
-        }
-        else {
-            switch ((int) Math.ceil((double) numLevel / 10)) {
-                case 1 -> screen.draw(aliens.get(3).getImg(), aliens.get(3).getAlienRect().x, aliens.get(3).getAlienRect().y);
-                case 2 -> screen.draw(aliens.get(1).getImg(), aliens.get(1).getAlienRect().x, aliens.get(1).getAlienRect().y);
-                case 3 -> screen.draw(aliens.get(2).getImg(), aliens.get(2).getAlienRect().x, aliens.get(2).getAlienRect().y);
-                case 4 -> screen.draw(aliens.get(0).getImg(), aliens.get(0).getAlienRect().x, aliens.get(0).getAlienRect().y);
-            }
+        for (Alien alien : aliens) {
+            screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
 
         // stampa animazioni di collisione
@@ -633,7 +639,12 @@ public class ClassicGame implements Screen, InputProcessor {
             else font.draw(screen, formatter.format(points), 220, 670);
         }
         // alieni colpiti
-        font.draw(screen, isLevel ? (formatter.format(aliensHit) + "/" + ((numLevel*10)+10)) : (formatter.format(aliensHit)), 800, 670);
+        if (isLevel) {
+            font.draw(screen, formatter.format(aliensHit) + "/" + (numLevel*10), 610, 670);
+        }
+        else {
+            font.draw(screen, formatter.format(aliensHit), 800, 670);
+        }
 
         // stampa messaggio completamento task RTG
         if (!isLevel) {

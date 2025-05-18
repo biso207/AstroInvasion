@@ -9,14 +9,13 @@ package sorgente.GameMods.SpaceJourney;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import sorgente.DataUserManager;
+import sorgente.Entities.Spacecraft;
+import sorgente.GameMods.ClassicGame;
+import sorgente.GameMods.SpaceBattle;
 import sorgente.Lobby.InputManager;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
-
-import javax.crypto.spec.PSource;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,11 +42,22 @@ public class SpaceJourney implements Screen, InputProcessor {
     // livello raggiunto
     private final int numLevel = (int) DataUserManager.getProgress("level");
 
+    // livelli in space battle
+    private final List<Integer> listSB = List.of(2, 4, 6, 8,
+        12, 14, 16, 18,
+        22, 24, 26, 28,
+        32, 34, 36, 38);
+
+    // navicella utente
+    private Spacecraft selectedSp;
+
     // costruttore
-    public SpaceJourney(Main game) {
+    public SpaceJourney(Main game, Spacecraft selectedSp) {
         this.game = game;
         // init dello screen
         this.screen = game.screen;
+        // navicella utente
+        this.selectedSp = selectedSp;
 
         // init lista galassie
         galaxies = new ArrayList<>();
@@ -173,6 +183,12 @@ public class SpaceJourney implements Screen, InputProcessor {
                 game.setScreen(new LobbyManager(game)); // back to lobby
             }
             else numGalaxy = 0;
+        }
+
+        // avvio livello
+        if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
+            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp));
+            else game.setScreen(new ClassicGame(game, selectedSp, true));
         }
 
         return true;

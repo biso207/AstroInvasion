@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
+import com.badlogic.gdx.graphics.Texture3D;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -18,13 +19,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
+import sorgente.GameMods.SpaceJourney.Level;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.LobbyManager;
 import sorgente.Lobby.UIManager;
 
+import javax.xml.crypto.Data;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class GameOver implements Screen, InputProcessor, ResourceLoader {
@@ -38,9 +43,59 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // font
     private BitmapFont font, font2, font3;
+
     // immagini
     private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
     guardianG1, guardianG2, guardianG3, guardianG4;
+    // lista immagine premi
+    private final List<Texture> listImgReward = new ArrayList<>();
+    // lista testi premi
+    private final List<String> listTextReward = List.of(
+        "1x Super Laser",
+        "Spacecraft Ares",
+        "Avatar Cooper",
+        "Spacecraft Andvari",
+        "1x Double Points",
+        "Spacecraft Siko",
+        "Avatar Jessica",
+        "Spacecraft Fenixia",
+        "Avatar Scott",
+        "1x Alpha Fragment",
+
+        "2x Super Laser",
+        "Spacecraft Selen",
+        "Avatar Stephanie",
+        "Spacecraft Centauro",
+        "2x Double Points",
+        "Spacecraft Zephyr",
+        "Avatar Amin",
+        "Spacecraft Malloc",
+        "Avatar Samira",
+        "1x Alpha Fragment",
+
+        "3x Super Laser",
+        "Spacecraft Orion",
+        "Avatar Adbul",
+        "Spacecraft Asgard",
+        "3x Double Points",
+        "Spacecraft Galahad",
+        "Avatar Dorothy",
+        "Spacecraft Seraphis",
+        "Avatar Chen",
+        "1x Alpha Fragment",
+
+        "4x Super Laser",
+        "Spacecraft Bewoulf",
+        "Avatar Lin",
+        "Spacecraft Scylla",
+        "4x Double Points",
+        "Spacecraft Keto",
+        "Avatar Marcus",
+        "Spacecraft Efron",
+        "Avatar Sarah",
+        "1x Alpha Fragment"
+    );
+
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
@@ -170,7 +225,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // game over / vittoria modalità classiche
         gameOverCG = new Texture(Gdx.files.internal("secondary_screens/game_over_cg_eng.png"));
         gameOverSB = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
-        victorySB = new Texture(Gdx.files.internal("secondary_screens/victorySB_sb_eng.png"));
+        victorySB = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
 
         // livelli
         levelCompleted = new Texture(Gdx.files.internal("secondary_screens/completed_level.png"));
@@ -184,6 +239,11 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // rettangolo selezione carta speciale
         rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
+
+        // caricamento immagine premi
+        for (int i=1; i<=40; i++) {
+            listImgReward.add(new Texture(Gdx.files.internal("images/levels_rewards/reward" + i + ".png")));
+        }
     }
 
     // caricamento e creazione font per le scritte
@@ -230,55 +290,64 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
                 }
                 // grafica completamento/sconfitta livello di tipo Classic Game
-                else {
-                    // schermata base
-                    screen.draw(win ? levelCompleted : levelDefeat, 0, 0);
-
-                    // stampa immagini
-                    if (!win) { // sconfitta
-                        // immagine nemico
-                        int numLevel = (int) DataUserManager.getProgress("level");
-                        switch ((int) Math.ceil((double) numLevel / 10)) {
-                            case 1 -> screen.draw(guardianG1, 430, 170);
-                            case 2 -> screen.draw(guardianG2, 775, 185);
-                            case 3 -> screen.draw(guardianG3, 800, 455);
-                            case 4 -> screen.draw(guardianG4, 300, 430);
-                        }
-
-                        // testi
-                        font2.draw(screen, "RESTART", 450, 200);
-                        font2.draw(screen, "CLOSE", 600, 200);
-                    }
-                    else { // vittoria
-                        font2.draw(screen, "CLOSE", 600, 200);
-                    }
-                }
-
+                else graphicLevel();
                 break;
             case 1:
-                // schermata base
-                /*switch (win) {
-                    case true -> screen.draw(victorySB, 0, 0);
-                    case false -> screen.draw(gameOverSB, 0, 0);
-                }*/
+                if (!isLevel) {
+                    // schermata base
+                    screen.draw(win ? victorySB : gameOverSB, 0, 0);
 
-                screen.draw(win ? victorySB : gameOverSB, 0, 0);
+                    // scritte progressi partita
+                    font2.draw(screen, formatter.format(points), 195, 457);
+                    font2.draw(screen, formatter.format(credits), 205, 397);
+                    font2.draw(screen, formatter.format(aliensHit), 235, 337);
 
-                // scritte progressi partita
-                font2.draw(screen, formatter.format(points), 195, 457);
-                font2.draw(screen, formatter.format(credits), 205, 397);
-                font2.draw(screen, formatter.format(aliensHit), 235, 337);
+                    // numero carte speciali
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 365);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 702, 252);
 
-                // numero carte speciali
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 702, 365);
-                font.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 702, 252);
-
-                // stampa rettangolo selezione carta
-                if (goldHeart) screen.draw(rectSelectCard, 693, 388);
-                if (superLaser) screen.draw(rectSelectCard, 831, 388);
+                    // stampa rettangolo selezione carta
+                    if (goldHeart) screen.draw(rectSelectCard, 693, 388);
+                    if (superLaser) screen.draw(rectSelectCard, 831, 388);
+                }
+                else graphicLevel();
                 break;
         }
         screen.end();
+    }
+
+    // metodo per la grafica dei livelli
+    public void graphicLevel() {
+        // sfondo di base
+        screen.draw(win ? levelCompleted : levelDefeat, 0, 0);
+
+        if (!win) { // sconfitta
+            // immagine nemico
+            int numLevel = (int) DataUserManager.getProgress("level");
+            switch ((int) Math.ceil((double) numLevel / 10)) {
+                case 1 -> screen.draw(guardianG1, 430, 170);
+                case 2 -> screen.draw(guardianG2, 775, 185);
+                case 3 -> screen.draw(guardianG3, 800, 455);
+                case 4 -> screen.draw(guardianG4, 300, 430);
+            }
+
+            // testi
+            font2.draw(screen, "RESTART", 350, 200);
+            font2.draw(screen, "CLOSE", 550, 200);
+        }
+        else { // vittoria
+            // testo pulsante
+            font2.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 450, 200);
+
+            // stampa immagine premio + testo descrittivo
+            screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")), 300, 150);
+            font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")), 300, 200);
+
+            // incremento livello
+            DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
+            // setting stato livello da acquistare
+            DataUserManager.setProgress("level_bought", false);
+        }
     }
 
     // ************************************** //
@@ -295,7 +364,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         if (character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
-                    game.setScreen(new ClassicGame(game, selectedSp, false));
+                    game.setScreen(new ClassicGame(game, selectedSp, isLevel));
                     break;
                 case 1:
                     game.setScreen(new SpaceBattle(game, selectedSp));
@@ -323,7 +392,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     InputManager.superLaser = superLaser;
                     InputManager.doublePoints = doublePoints;
 
-                    game.setScreen(new ClassicGame(game, selectedSp, false));
+                    game.setScreen(new ClassicGame(game, selectedSp, isLevel));
                     break;
                 case 1:
                     game.setScreen(new SpaceBattle(game, selectedSp));

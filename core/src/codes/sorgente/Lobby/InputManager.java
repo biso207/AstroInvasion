@@ -225,7 +225,7 @@ public class InputManager implements InputProcessor {
                     LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp)); // avvio space battle
                 } else if (page == 2) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game)); // apertura mappa space journey
+                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp)); // apertura mappa space journey
                 }
             }
 

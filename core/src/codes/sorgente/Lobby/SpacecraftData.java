@@ -1,6 +1,6 @@
 /*
 Astro Invasion - class SpacecraftData -
-Crea oggetti SpacecraftData per la pagina di selezione delle navicelle
+Gestisce e controlla i dati, come lo stato di sblocco, delle navicelle da selezionare
 Developed by BIGA©. All rights reserved.
 */
 
@@ -33,7 +33,7 @@ public class SpacecraftData {
         // numero vittorie SB
         int winSB = (int) DataUserManager.getProgress("won_SB");
         // task raggiunto nel RTG
-        int numMission = (int) DataUserManager.getProgress("num_mission");
+        int fragments = (int) DataUserManager.getProgress("alpha_fragments");
 
         // return stato avatar => true=sbloccato; false=bloccato
         return switch (id) {
@@ -57,7 +57,7 @@ public class SpacecraftData {
             case 20 -> state5;
             case 21 -> state6;
             case 22 -> winSB >= 100;
-            case 23 -> numMission >= 100;
+            case 23 -> fragments == 4;
             default -> false;
         };
     }

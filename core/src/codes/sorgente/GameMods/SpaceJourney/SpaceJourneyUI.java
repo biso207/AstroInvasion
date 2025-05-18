@@ -48,16 +48,11 @@ public class SpaceJourneyUI implements ResourceLoader {
     // numero livello raggiunto
     private final int numLevel;
 
-    // livelli in classic game
-    private final List<Integer> listCG = List.of(1, 3, 4, 6, 7, 9,
-        11, 13, 14, 16, 17, 19,
-        21, 23, 24, 26, 27, 29,
-        31, 33, 34, 36, 37, 39);
     // livelli in space battle
-    private final List<Integer> listSB = List.of(2, 5, 8, 10,
-                            12, 15, 18, 20,
-                            22, 25, 28, 30,
-                            32, 35, 38, 40);
+    private final List<Integer> listSB = List.of(2, 4, 6, 8,
+        12, 14, 16, 18,
+        22, 24, 26, 28,
+        32, 34, 36, 38);
 
     // costruttore
     SpaceJourneyUI() {
@@ -282,7 +277,7 @@ public class SpaceJourneyUI implements ResourceLoader {
             }
 
             // missione livello
-            fontBoldWhite25.draw(screen, "Kill " + ((numLevel*10)+10) + " aliens", 560, 433);
+            fontBoldWhite25.draw(screen, "Kill " + (numLevel*10) + " aliens", 560, 433);
         }
     }
 

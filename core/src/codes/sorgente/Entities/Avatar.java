@@ -28,6 +28,8 @@ public class Avatar {
         int  points = (int) DataUserManager.getProgress("points");
         // vittorie space battle
         int winSB = (int) DataUserManager.getProgress("won_SB");
+        // numero missione RTG
+        int numMission = (int) DataUserManager.getProgress("num_mission");
 
         // return stato avatar => true=sbloccato; false=bloccato
         return switch (id) {
@@ -43,11 +45,11 @@ public class Avatar {
             case 12 -> level > 29;
             case 13 -> level > 33;
             case 14 -> level > 36;
-            case 15 -> level == 39;
-            case 16 -> total_credits >= 10000;
-            case 17 -> total_credits >= 50000;
-            case 18 -> points >= 3000000;
-            case 19 -> points >= 5000000;
+            case 15 -> level > 39;
+            case 16 -> total_credits >= 50000;
+            case 17 -> winSB >= 100;
+            case 18 -> points >= 5000000;
+            case 19 -> numMission >= 100;
             default -> false;
         };
     }
