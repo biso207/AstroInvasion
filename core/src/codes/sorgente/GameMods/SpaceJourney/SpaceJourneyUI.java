@@ -26,9 +26,6 @@ public class SpaceJourneyUI implements ResourceLoader {
         diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, btnHoverL, btnHoverR;
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
 
-    // stato cambio stile mouse
-    private boolean isBtnRHover=false, isBtnLHover=false;
-
     // font
     private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60, fontBoldWhite60_1, fontBoldItalicWhite25;
 
@@ -299,8 +296,8 @@ public class SpaceJourneyUI implements ResourceLoader {
 
         // stampa pulsanti hover
         int price = 100*numLevel; // prezzo del livello
-        if (isBtnLHover && ((int) DataUserManager.getProgress("credits")-price>=0)) screen.draw(btnHoverL, 271, 211);
-        else if (isBtnRHover) screen.draw(btnHoverR, 513, 211);
+        if (SpaceJourney.isBtnLHover && ((int) DataUserManager.getProgress("credits")-price>=0)) screen.draw(btnHoverL, 271, 211);
+        else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 513, 211);
     }
 
     // metodo per stampare le grafiche

@@ -742,14 +742,15 @@ public class ClassicGame implements Screen, InputProcessor {
     // metodo per cambiare lo stile dei pulsanti al passaggio del mouse sopra di essi
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
-        // YES purchase
-        if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+        // YES quit
+        if (quit && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
             isBtnLHover=true;
         }
 
-        // NO purchase
-        if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+        // NO quit
+        if (quit && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
             isBtnRHover=true;
         }
         return true;

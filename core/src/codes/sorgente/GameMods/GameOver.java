@@ -421,7 +421,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per cambiare stile pulsanti al passaggio del mouse sopra di essi
     @Override public boolean mouseMoved(int screenX, int screenY) {
+        isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
+        /// TODO: cambiare i range x e y..
         // YES restart
         if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             isBtnLHover=true;

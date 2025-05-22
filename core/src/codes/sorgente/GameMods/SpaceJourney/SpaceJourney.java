@@ -34,7 +34,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     protected static boolean infoLevel=false, buyLevel=false;
 
     // pulsante avvio livello
-    protected static boolean startLevelHover=false;
+    protected static boolean startLevelHover=false, isBtnRHover=false, isBtnLHover=false;
 
     // istanza classe della grafica
     private final SpaceJourneyUI ui;
@@ -196,6 +196,17 @@ public class SpaceJourney implements Screen, InputProcessor {
 
     // metodo per cambiare grafiche al passaggio del mouse
     @Override public boolean mouseMoved(int screenX, int screenY) {
+        startLevelHover=isBtnLHover=isBtnRHover=false;
+        // YES purchase
+        if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            isBtnLHover=true;
+        }
+
+        // NO purchase
+        if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            isBtnRHover=true;
+        }
+
 
         startLevelHover = (screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523);
         return true;
