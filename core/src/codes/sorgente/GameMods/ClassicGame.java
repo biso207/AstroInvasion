@@ -50,13 +50,13 @@ public class ClassicGame implements Screen, InputProcessor {
     private final Pool<Rectangle> laserPool;
 
     private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, topBarLevel, shieldBanner, shieldLife, playImg,
-        stopImg, quitMatch, bannerRTG;
+        stopImg, quitMatch, bannerRTG, btnHoverR, btnHoverL;
 
     // matrice per le immagini delle vite rimanenti
     private Texture[][] livesTextures;
 
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
-    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
+    private NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // valori in gioco
     private float spacecraftSpeed, laserSpeed, alienSpeed;
@@ -86,6 +86,9 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // dichiarazione font
     private BitmapFont font, fontGold;
+
+    // stato cambio stile mouse
+    private boolean isBtnRHover=false, isBtnLHover=false;
 
     // audio di gioco
     private final Sound creditSound, shotSound, hitSound, completedRTGSound;
@@ -317,6 +320,10 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // notifica completamente RTG
         bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
+
+        // pulsanti hover
+        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
     }
 
     // caricamento e creazione font per le scritte
@@ -482,7 +489,7 @@ public class ClassicGame implements Screen, InputProcessor {
                     // aggiornamento statistiche partita //
                     aliensHit++; // incremento alieni colpiti
                     // controllo completamento livello
-                    if (aliensHit >= (numLevel*10)) gameOver(true);
+                    if (isLevel && aliensHit >= (numLevel*10)) gameOver(true);
 
                     if (!isLevel) {
                         points += (doublePoints ? scoreInc * 2 : scoreInc); // incremento punti
@@ -628,7 +635,12 @@ public class ClassicGame implements Screen, InputProcessor {
         else screen.draw(playImg, 472, 637);
 
         // stampa immagine per chiudere il gioco
-        if (quit) screen.draw(quitMatch, 250, 175);
+        if (quit) {
+            screen.draw(quitMatch, 250, 175);
+
+            if (isBtnLHover) screen.draw(btnHoverL, 271, 211);
+            else if (isBtnRHover) screen.draw(btnHoverR, 513, 211);
+        }
 
         // stampa statistiche
         if (!isLevel) {
@@ -727,12 +739,27 @@ public class ClassicGame implements Screen, InputProcessor {
         }
     }
 
+    // metodo per cambiare lo stile dei pulsanti al passaggio del mouse sopra di essi
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        // CAMBIO STILE PULSANTI
+        // YES purchase
+        if ((screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            isBtnLHover=true;
+        }
+
+        // NO purchase
+        if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            isBtnRHover=true;
+        }
+        return true;
+    }
+
     // altri metodi
     @Override public boolean keyTyped(char character) { return true; }
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }

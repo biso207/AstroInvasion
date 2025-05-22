@@ -284,7 +284,7 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(16, new Avatar("Matthew", "Claim 50K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "WIn 100 SB Matches"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 5M Points"));
-        mapAvatars.put(19, new Avatar("Emma", "Complete 100 RTG Missions"));
+        mapAvatars.put(19, new Avatar("Emma", "Reach Task 100 in RTG")); /// TODO: control this...
     }
 
     // metodo per creare le navicelle

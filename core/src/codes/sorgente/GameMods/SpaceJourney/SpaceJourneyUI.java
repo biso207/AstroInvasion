@@ -23,8 +23,11 @@ import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
     private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, buyLevelImg,
-        diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
+        diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, btnHoverL, btnHoverR;
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
+
+    // stato cambio stile mouse
+    private boolean isBtnRHover=false, isBtnLHover=false;
 
     // font
     private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60, fontBoldWhite60_1, fontBoldItalicWhite25;
@@ -92,6 +95,11 @@ public class SpaceJourneyUI implements ResourceLoader {
 
         // immagine per lo sblocco di un livello
         buyLevelImg = new Texture("images/space_journey_maps/info_levels/buy_level.png");
+
+        // pulsanti hover per sbloccare il livello
+        // pulsanti hover
+        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
 
         // livelli galassie //
         // completati
@@ -288,6 +296,11 @@ public class SpaceJourneyUI implements ResourceLoader {
 
         // prezzo livello
         fontBoldWhite25.draw(screen, formatter.format(numLevel* 100L), 390, 347);
+
+        // stampa pulsanti hover
+        int price = 100*numLevel; // prezzo del livello
+        if (isBtnLHover && ((int) DataUserManager.getProgress("credits")-price>=0)) screen.draw(btnHoverL, 271, 211);
+        else if (isBtnRHover) screen.draw(btnHoverR, 513, 211);
     }
 
     // metodo per stampare le grafiche

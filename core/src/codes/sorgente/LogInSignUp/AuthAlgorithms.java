@@ -201,7 +201,7 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("level", 1);
         gameProgresses.put("movement_type", 1);
         gameProgresses.put("shot_type", 1);
-        gameProgresses.put("spacecraft", 1);
+        gameProgresses.put("spacecraft", 0);
         gameProgresses.put("num_double_points", 1);
         gameProgresses.put("num_gold_heart", 1);
         gameProgresses.put("num_shield", 1);

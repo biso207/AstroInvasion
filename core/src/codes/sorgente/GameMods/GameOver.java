@@ -44,9 +44,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // font
     private BitmapFont font, font2, font3;
 
+    // stato cambio stile mouse
+    private boolean isBtnRHover=false, isBtnLHover=false;
+
     // immagini
     private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
-    guardianG1, guardianG2, guardianG3, guardianG4;
+    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR;
     // lista immagine premi
     private final List<Texture> listImgReward = new ArrayList<>();
     // lista testi premi
@@ -97,7 +100,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     );
 
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
-    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
+    private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     private final Spacecraft selectedSp;
 
@@ -244,6 +247,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         for (int i=1; i<=40; i++) {
             listImgReward.add(new Texture(Gdx.files.internal("images/levels_rewards/reward" + i + ".png")));
         }
+
+        // pulsanti hover
+        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
     }
 
     // caricamento e creazione font per le scritte
@@ -288,6 +295,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (superLaser) screen.draw(rectSelectCard, 693, 275);
                     if (doublePoints) screen.draw(rectSelectCard, 831, 275);
 
+                    // pulsanti hover
+                    if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
+                    if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
                 }
                 // grafica completamento/sconfitta livello di tipo Classic Game
                 else graphicLevel();
@@ -309,6 +319,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // stampa rettangolo selezione carta
                     if (goldHeart) screen.draw(rectSelectCard, 693, 388);
                     if (superLaser) screen.draw(rectSelectCard, 831, 388);
+
+                    // pulsanti hover
+                    if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
+                    if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
                 }
                 else graphicLevel();
                 break;
@@ -405,6 +419,21 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         return true;
     }
 
+    // metodo per cambiare stile pulsanti al passaggio del mouse sopra di essi
+    @Override public boolean mouseMoved(int screenX, int screenY) {
+        // CAMBIO STILE PULSANTI
+        // YES restart
+        if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+            isBtnLHover=true;
+        }
+
+        // NO restart
+        if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+            isBtnRHover=true;
+        }
+        return true;
+    }
+
     // metodo per controllare la selezione delle carte speciali
     public void selectCard(int screenX, int screenY) {
         // selezione carta speciale
@@ -453,7 +482,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // altri metodi
     @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
