@@ -154,13 +154,12 @@ public class SpaceJourney implements Screen, InputProcessor {
             // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE //
             // chiusura info level
             if (infoLevel && (screenX >= 760 && screenX <= 800) && (screenY >= 139 && screenY <= 180)) infoLevel=false;
+
             // NO sblocco livello
             if (buyLevel && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) buyLevel=false;
+
             // SI sblocco livello
             if (buyLevel && (currentCredits-price>=0) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                // aggiornamento crediti dell'utente in memoria
-                DataUserManager.setProgress("credits", currentCredits-price);
-
                 // sblocco livello
                 new Level(numLevel).unlock();
 
@@ -187,6 +186,7 @@ public class SpaceJourney implements Screen, InputProcessor {
 
         // avvio livello
         if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
+            infoLevel=false; // chiusura pagina in sovra impressione
             if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp));
             else game.setScreen(new ClassicGame(game, selectedSp, true));
         }

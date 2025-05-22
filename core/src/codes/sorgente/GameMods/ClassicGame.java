@@ -223,7 +223,7 @@ public class ClassicGame implements Screen, InputProcessor {
                 laserSpeed = 200;
                 alienSpeed = 200;
                 spawnInterval = 0.3f;
-                laserCooldown = 0.2f;
+                laserCooldown = 0.25f;
                 lives = totalLives = 2;
                 scoreInc = 50;
                 creditsInc = 1;
@@ -231,7 +231,7 @@ public class ClassicGame implements Screen, InputProcessor {
             case 2:
                 spacecraftSpeed = 200;
                 laserSpeed = 200;
-                alienSpeed = 200;
+                alienSpeed = 250;
                 spawnInterval = 0.2f;
                 laserCooldown = 0.25f;
                 lives = totalLives = 2;
@@ -745,12 +745,12 @@ public class ClassicGame implements Screen, InputProcessor {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
         // YES quit
-        if (quit && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+        if (isPaused && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
             isBtnLHover=true;
         }
 
         // NO quit
-        if (quit && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+        if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
             isBtnRHover=true;
         }
         return true;
@@ -772,6 +772,7 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // aggiornamento grafica
     @Override public void render(float delta) {
+        Gdx.input.setInputProcessor(this);
         if (!isPaused) {
             delta = Math.min(delta, 1 / 30f);
         }

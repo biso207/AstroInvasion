@@ -153,17 +153,20 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         loadImages();
 
         // aggiornamento progressi di gioco. DA NON METTERE DENTRO METODI CHE VENGONO RIPETUTI
-        switch (mod) {
-            case 0:
-                writeFileCG();
-                break;
-            case 1:
-                writeFileSpaceBattle();
-                break;
+        if (win) saveLevelProgress();
+        else {
+            switch (mod) {
+                case 0:
+                    writeFileCG();
+                    break;
+                case 1:
+                    writeFileSpaceBattle();
+                    break;
+            }
         }
     }
 
-    // salvataggio progressi utente
+    // salvataggio progressi utente in classic game
     public void writeFileCG() {
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
@@ -191,6 +194,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
     }
 
+    // salvataggio progressi utente in space battle
     public void writeFileSpaceBattle(){
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
@@ -216,6 +220,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
                 break;
         }
+    }
+
+    // salvataggio progressi livelli
+    public void saveLevelProgress() {
+        // incremento livello
+        DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
+        // setting stato livello da acquistare
+        DataUserManager.setProgress("level_bought", false);
     }
 
     // ************************************** //
@@ -294,10 +306,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (shield) screen.draw(rectSelectCard, 831, 388);
                     if (superLaser) screen.draw(rectSelectCard, 693, 275);
                     if (doublePoints) screen.draw(rectSelectCard, 831, 275);
-
-                    // pulsanti hover
-                    if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
-                    if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
                 }
                 // grafica completamento/sconfitta livello di tipo Classic Game
                 else graphicLevel();
@@ -319,13 +327,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // stampa rettangolo selezione carta
                     if (goldHeart) screen.draw(rectSelectCard, 693, 388);
                     if (superLaser) screen.draw(rectSelectCard, 831, 388);
-
-                    // pulsanti hover
-                    if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
-                    if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
                 }
                 else graphicLevel();
                 break;
+        }
+
+        if (!isLevel) {
+            // pulsanti hover
+            if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
+            if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
         }
         screen.end();
     }
@@ -356,11 +366,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // stampa immagine premio + testo descrittivo
             screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")), 300, 150);
             font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")), 300, 200);
-
-            // incremento livello
-            DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
-            // setting stato livello da acquistare
-            DataUserManager.setProgress("level_bought", false);
         }
     }
 
