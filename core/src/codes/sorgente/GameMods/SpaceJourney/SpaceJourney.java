@@ -71,7 +71,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/space_journey_sound.mp3")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
-        soundtrack.setVolume(InputManager.musicPercent);
+        soundtrack.setVolume(InputManager.musicPercent); // volume musica
         soundtrack.play(); // avvio musica
     }
 
@@ -187,6 +187,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         // avvio livello
         if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
             infoLevel=false; // chiusura pagina in sovra impressione
+            soundtrack.stop(); // interruzione musica
             if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp));
             else game.setScreen(new ClassicGame(game, selectedSp, true));
         }
