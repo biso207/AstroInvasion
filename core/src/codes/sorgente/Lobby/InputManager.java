@@ -454,6 +454,12 @@ public class InputManager implements InputProcessor {
                     }
                 }
             }
+
+            // X sp => chiusura pagina 'spacecrafts'
+            if ((screenX >= 908 && screenX <= 948) && (+(maxScrollY - scrollY) >= 74 && +(maxScrollY - scrollY) <= 114)) {
+                page = previousPage;
+            }
+
             // apertura pagina 7 'avatar'
             if (page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
 
@@ -482,7 +488,7 @@ public class InputManager implements InputProcessor {
                 page = previousPage;
             }
 
-            // chiusura pagina istruzioni; info profilo-difficoltà; avatar
+            // X => chiusura pagina istruzioni; info profilo-difficoltà; avatar
             if ((screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
                 if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;
@@ -586,17 +592,13 @@ public class InputManager implements InputProcessor {
         Gdx.graphics.setCursor(UIManager.cursor);
 
         // CAMBIO STILE PULSANTI
-        // apertura pagina 'spacecrafts' dalle pagine classic game/space battle/space journey
-        if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
-            isOpenSpHover=true;
-        }
         // YES logout / OK warning / YES purchase
-        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
             isBtnLHover=true;
         }
 
         // NO logout / PLAY warning / NO purchase
-        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
             isBtnRHover=true;
         }
 
@@ -615,6 +617,11 @@ public class InputManager implements InputProcessor {
             // avvio modalità di gioco
             if ((page==0 || page==2 || (page==1 && ((int)DataUserManager.getProgress("level") > 10))) && (screenX >= 778 && screenX <= 928) && (screenY >= 552 && screenY <= 592)) {
                 isBtnStartHover=true;
+            }
+
+            // apertura pagina 'spacecrafts' dalle pagine classic game/space battle/space journey
+            if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
+                isOpenSpHover=true;
             }
         }
 

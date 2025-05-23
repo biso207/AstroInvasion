@@ -27,7 +27,8 @@ public class SpaceJourneyUI implements ResourceLoader {
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
 
     // font
-    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60, fontBoldWhite60_1, fontBoldItalicWhite25;
+    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60,
+        fontBoldWhite60_1, fontBoldItalicWhite25, fontBoldGreen25, fontBoldRed25;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -94,9 +95,8 @@ public class SpaceJourneyUI implements ResourceLoader {
         buyLevelImg = new Texture("images/space_journey_maps/info_levels/buy_level.png");
 
         // pulsanti hover per sbloccare il livello
-        // pulsanti hover
-        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
-        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
+        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
 
         // livelli galassie //
         // completati
@@ -156,6 +156,10 @@ public class SpaceJourneyUI implements ResourceLoader {
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60.fnt")); // inter-bold white 60
             fontBoldWhite60_1 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60 NO Shadow
             fontBoldItalicWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_25.fnt")); // inter-bold-italic white 25
+            // green
+            fontBoldGreen25 = new BitmapFont(Gdx.files.internal("font/inter/bold_green_25.fnt")); // inter-bold green 25
+            // red
+            fontBoldRed25 = new BitmapFont(Gdx.files.internal("font/inter/bold_red_25.fnt")); // inter-bold red 25
         } catch (Exception e) {
             // dichiarazione font
             BitmapFont font = new BitmapFont(); // font di default (arial)
@@ -288,16 +292,23 @@ public class SpaceJourneyUI implements ResourceLoader {
 
     // metodo per stampare le informazione di sblocco di un livello
     public void buyLevel(SpriteBatch screen) {
+        int currentCredits = (int) DataUserManager.getProgress("credits");
         // sfondo base
         screen.draw(buyLevelImg, 250, 175);
 
         // prezzo livello
-        fontBoldWhite25.draw(screen, formatter.format(numLevel* 100L), 390, 347);
+        boolean higherPrice = currentCredits>=numLevel* 100L;
+        BitmapFont font = higherPrice ? fontBoldGreen25 : fontBoldRed25;
+        font.draw(screen, currentCredits + "/" + formatter.format(numLevel* 100L), 390, 347);
 
         // stampa pulsanti hover
         int price = 100*numLevel; // prezzo del livello
-        if (SpaceJourney.isBtnLHover && ((int) DataUserManager.getProgress("credits")-price>=0)) screen.draw(btnHoverL, 271, 211);
-        else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 513, 211);
+        if (SpaceJourney.isBtnLHover && (currentCredits-price>=0)) screen.draw(btnHoverL, 277, 217);
+        else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 519, 217);
+
+        // scritte pulsanti
+        fontBoldWhite60_1.draw(screen, "YES", 320, 280);
+        fontBoldWhite60_1.draw(screen, "NO", 577, 280);
     }
 
     // metodo per stampare le grafiche
@@ -343,7 +354,12 @@ public class SpaceJourneyUI implements ResourceLoader {
         // dispose fonts
         fontBoldBlue20.dispose();
         fontBoldWhite20.dispose();
+        fontBoldWhite25.dispose();
+        fontBoldWhite35.dispose();
         fontBoldWhite60.dispose();
+        fontBoldWhite60_1.dispose();
         fontBoldItalicWhite25.dispose();
+        fontBoldGreen25.dispose();
+        fontBoldRed25.dispose();
     }
 }

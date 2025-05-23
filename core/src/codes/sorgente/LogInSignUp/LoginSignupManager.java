@@ -113,7 +113,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 break;
         }
 
-        /// PROVE
         // aree di testo
         screen.draw(alg.enteringNickname ? digitAreaON : digitAreaOFF, 257, 379);
         screen.draw(alg.enteringPassword ? digitAreaON : digitAreaOFF, 257, 281);
@@ -121,7 +120,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         if (alg.showPS) screen.draw(showPS, 690,289);
         else screen.draw(coverPS, 690,289);
 
-        if (alg.isHover1) screen.draw(continueBtnHover, 419, 179);
+        if (alg.isHover1) screen.draw(continueBtnHover, 422, 185);
         if (alg.isHover2) {
             if (alg.state==1) screen.draw(signupPageBtnHover, 428, 99);
             else screen.draw(loginPageBtnHover, 428, 99);
@@ -132,20 +131,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
         if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 310);
         else font.draw(screen, alg.passwordInput, 265, 315);
-
-        /*if (alg.enteringNickname) {
-            font.draw(screen, alg.nicknameInput, 265, 414); // testo nickname
-        } else if (alg.enteringPassword) {
-            font.draw(screen, alg.nicknameInput, 265, 414); // testo password
-
-            // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
-            if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 310);
-            else font.draw(screen, alg.passwordInput, 265, 315);
-        } else {
-            alg.processLoginOrSignup();
-        }
-
-         */
         screen.end();
     }
     // spegnimento controllo input

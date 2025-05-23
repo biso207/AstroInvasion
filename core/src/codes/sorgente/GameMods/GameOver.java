@@ -262,8 +262,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // pulsanti hover
-        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
-        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
+        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
     }
 
     // caricamento e creazione font per le scritte
@@ -273,7 +273,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter bold white 20
             font2 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
-            font3 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter bold white 30
+            font3 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter bold white 60
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -333,10 +333,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 break;
         }
 
-        if (!isLevel) {
+        if (!isLevel || !win) {
             // pulsanti hover
-            if (isBtnLHover) screen.draw(btnHoverL, 281, 417);
-            if (isBtnRHover) screen.draw(btnHoverR, 519, 417);
+            if (isBtnLHover) screen.draw(btnHoverL, 277, 48);
+            if (isBtnRHover) screen.draw(btnHoverR, 519, 48);
+
+            // scritte pulsanti
+            font3.draw(screen, "YES", 320, 110);
+            font3.draw(screen, "NO", 577, 110);
         }
         screen.end();
     }
@@ -354,13 +358,11 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 case 3 -> screen.draw(guardianG3, 800, 455);
                 case 4 -> screen.draw(guardianG4, 300, 430);
             }
-
-            // testi
-            font2.draw(screen, "RESTART", 350, 200);
-            font2.draw(screen, "CLOSE", 550, 200);
         }
         else { // vittoria
-            // testo pulsante
+            // pulsanti hover // todo: impostare correttamente la posizione del pulsante hover
+            if (isBtnLHover) screen.draw(btnHoverL, 277, 48);
+            // testo pulsante // todo: impostare correttamente la posizione del testo
             font2.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 450, 200);
 
             // stampa immagine premio + testo descrittivo
@@ -401,7 +403,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
             // livello corrente
             if (!isLevel) game.setScreen(new LobbyManager(game));
-            else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+            else {
+                saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
+                game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+            }
         }
 
         // click YES => avvio nuova partita
@@ -422,10 +427,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             }
         }
 
-        // claim reward
+        // 'claim reward' button
         if (isLevel && !isRewardClaimed && (screenX >= 450 && screenX <= 650) && (screenY >= 200 && screenY <= 300)) {
             saveLevelProgress();
             isRewardClaimed = true;
+        }
+        // 'back to galaxies' button
+        if (isLevel && isRewardClaimed && (screenX >= 450 && screenX <= 650) && (screenY >= 200 && screenY <= 300)) {
+            game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
         }
 
         // selezione carte speciali
@@ -437,7 +446,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean mouseMoved(int screenX, int screenY) {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
-        /// TODO: cambiare i range x e y..
+        // TODO: cambiare i range x e y
         // YES restart
         if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             isBtnLHover=true;

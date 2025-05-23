@@ -27,7 +27,7 @@ public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState, bgSpacecraftSelection, spacecraftSelectionBox;
+        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -48,7 +48,7 @@ public class UIManager implements ResourceLoader {
     private final Texture[] buttonsOver;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15;
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -77,7 +77,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
-        this.buttonsOver = new Texture[11];
+        this.buttonsOver = new Texture[9];
 
         // mouse
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
@@ -124,6 +124,7 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
+            fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
             //fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
         } catch (Exception e) {
             // dichiarazione font
@@ -164,7 +165,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 9; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -220,6 +221,9 @@ public class UIManager implements ResourceLoader {
 
         // quadrato avatar selezionato
         selectedAvatar = new Texture("images/avatars/selected_avatar.png");
+
+        // X chiusura pagina 'spacecrafts'
+        topBanner = new Texture("images/top_banner.png");
     }
 
     // creazione grafica delle navicelle
@@ -422,6 +426,7 @@ public class UIManager implements ResourceLoader {
 
         int spID=0; // id navicella per recuperare gli attributi
         int X, x1=258, x2= 670, y=2645; // x e y della prima scritta della prima navicella
+
         // iterazione con 2 for per dividere i gruppi delle navicelle
         for (int i=0; i<6; i++) {
             for (int j=0; j<4; j++) {
@@ -455,6 +460,9 @@ public class UIManager implements ResourceLoader {
             // passaggio al gruppo successivo
             y-= 257;
         }
+
+        // banner in alto fisso
+        screen.draw(topBanner, 14, 514); // DEVE STARE QUI PERCHÈ STA SOPRA OGNI ALTRO ELEMENTO DELLA PAGINA
     }
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
@@ -491,7 +499,7 @@ public class UIManager implements ResourceLoader {
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
-                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
@@ -539,7 +547,7 @@ public class UIManager implements ResourceLoader {
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
-                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
@@ -584,7 +592,7 @@ public class UIManager implements ResourceLoader {
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
-                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
@@ -699,25 +707,41 @@ public class UIManager implements ResourceLoader {
             else if (InputManager.open13) { // chiusura gioco
                 screen.draw(mapLobby.get(13), 250, 175);
 
-                // button YES and NO hover
-                if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
-                if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
+                // button GREEN and RED hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
+
+                // scritte pulsanti
+                fontBoldWhite60.draw(screen, "YES", 320, 280);
+                fontBoldWhite60.draw(screen, "NO", 577, 280);
             }
             else if (InputManager.open18) { // avviso difficoltà elevata
                 screen.draw(mapLobby.get(18), 250, 175);
 
-                // button OK and PLAY hover
-                if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 271, 211);
-                if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 513, 211);
+                // button GREEN and RED hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
+
+                // scritte pulsanti
+                fontBoldWhite60.draw(screen, "OK", 339, 280);
+                fontBoldWhite60.draw(screen, "PLAY", 548, 280);
+
+                // scritte pulsanti
             }
             else if (InputManager.open14) { // conferma acquisto
                 screen.draw(mapLobby.get(14), 250, 175);
+
+                // button GREEN and RED hover
+                if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
+                if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
+
+                // scritte pulsanti
+                fontBoldWhite60.draw(screen, "YES", 320, 280);
+                fontBoldWhite60.draw(screen, "NO", 577, 280);
+
+                // scritte pulsanti
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
-
-                // button YES and NO hover
-                if (InputManager.isBtnLHover) screen.draw(buttonsOver[9], 271, 211);
-                if (InputManager.isBtnRHover) screen.draw(buttonsOver[6], 513, 211);
             }
             else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
         }
@@ -745,6 +769,7 @@ public class UIManager implements ResourceLoader {
         diffSB3.dispose();
         bgSpacecraftSelection.dispose();
         spacecraftSelectionBox.dispose();
+        topBanner.dispose();
 
         rectSelectCard.dispose();
         claimPrize.dispose();

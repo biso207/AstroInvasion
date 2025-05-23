@@ -87,7 +87,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private boolean completedRTG = false;
 
     // dichiarazione font
-    private BitmapFont font, fontGold;
+    private BitmapFont font, fontGold, fontBoldWhite60;
 
     // stato cambio stile mouse
     private boolean isBtnRHover=false, isBtnLHover=false;
@@ -326,8 +326,8 @@ public class ClassicGame implements Screen, InputProcessor {
         bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
 
         // pulsanti hover
-        btnHoverL = new Texture("images/btns_hover/hover_btn10.png");
-        btnHoverR = new Texture("images/btns_hover/hover_btn7.png");
+        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
     }
 
     // caricamento e creazione font per le scritte
@@ -336,6 +336,7 @@ public class ClassicGame implements Screen, InputProcessor {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
             fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter-bold gold 35
+            fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -648,17 +649,21 @@ public class ClassicGame implements Screen, InputProcessor {
         if (quit) {
             screen.draw(quitMatch, 250, 175);
 
-            if (isBtnLHover) screen.draw(btnHoverL, 271, 211);
-            else if (isBtnRHover) screen.draw(btnHoverR, 513, 211);
+            if (isBtnLHover) screen.draw(btnHoverL, 277, 217);
+            else if (isBtnRHover) screen.draw(btnHoverR, 519, 217);
+
+            // scritte pulsanti
+            fontBoldWhite60.draw(screen, "OK", 339, 280);
+            fontBoldWhite60.draw(screen, "PLAY", 548, 280);
         }
 
         // stampa statistiche
         if (!isLevel) {
             // crediti
-            font.draw(screen, formatter.format(credits), 610, 670);
+            font.draw(screen, formatter.format(credits), 610, 671);
             // punti
-            if (doublePoints) fontGold.draw(screen, formatter.format(points), 220, 670);
-            else font.draw(screen, formatter.format(points), 220, 670);
+            if (doublePoints) fontGold.draw(screen, formatter.format(points), 220, 671);
+            else font.draw(screen, formatter.format(points), 220, 671);
         }
         // alieni colpiti
         if (isLevel) {
@@ -703,13 +708,13 @@ public class ClassicGame implements Screen, InputProcessor {
             int screenY = Gdx.input.getY();
 
             // click NO => si continua a giocare
-            if ((screenX >= 513 && screenX <= 713) && (screenY >= 405 && screenY <= 480)) {
+            if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
                 quit = !quit;
                 isPaused = !isPaused;
             }
 
             // click YES => interruzione gioco
-            if ((screenX >= 270 && screenX <= 470) && (screenY >= 405 && screenY <= 480)) {
+            if ((screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
                 // perdita completa dei progressi di gioco
                 points=credits=aliensHit=0;
 
@@ -750,12 +755,12 @@ public class ClassicGame implements Screen, InputProcessor {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
         // YES quit
-        if (isPaused && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+        if (isPaused && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
             isBtnLHover=true;
         }
 
         // NO quit
-        if ((screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+        if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
             isBtnRHover=true;
         }
         return true;
