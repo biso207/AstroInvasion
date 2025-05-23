@@ -1,6 +1,6 @@
 {
     "diff_space_battle": 3,
-    "level_bought": true,
+    "level_bought": false,
     "state_product_6": true,
     "total_credits": 102445,
     "mission_id": 4,
@@ -20,7 +20,7 @@
     "num_gold_heart": 20,
     "num_aliens_hit_RTG": 0,
     "points_RTG": 0,
-    "level": 40,
+    "level": 41,
     "avatar": 16,
     "won_SB_RTG": 0,
     "diff_classic_game": 3,

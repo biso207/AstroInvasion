@@ -73,6 +73,8 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // stato del gioco (pausa/in gioco)
     private boolean isPaused = false;
+    // stato sparo del laser
+    private boolean shootPressed = false;
 
     // tempo per mostrare la notifica di completamento RTG
     private float elapsedTime = 0;
@@ -727,11 +729,6 @@ public class ClassicGame implements Screen, InputProcessor {
         }
 
         // sparo del laser
-        boolean shootPressed;
-
-        if (shootKey == Input.Buttons.LEFT) shootPressed = Gdx.input.isButtonJustPressed(shootKey);
-        else shootPressed = Gdx.input.isKeyJustPressed(shootKey);
-
         if (shootPressed && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
             shotSound.play(InputManager.soundPercent);
@@ -756,13 +753,26 @@ public class ClassicGame implements Screen, InputProcessor {
         return true;
     }
 
+    // metodo per ascoltare il click del mouse
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) shootPressed = true;
+        else if (button == Input.Keys.SPACE) shootPressed = true;
+
+        return true;
+    }
+
+    // metodo per ascoltare il rilascio del mouse
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) shootPressed = false;
+        else if (button == Input.Keys.SPACE) shootPressed = false;
+        return true;
+    }
+
     // altri metodi
     @Override public boolean keyTyped(char character) { return true; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 

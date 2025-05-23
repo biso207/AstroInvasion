@@ -166,6 +166,8 @@ public class InputManager implements InputProcessor {
         esempio: l'utente NON può avviare il 'classic game' da una pagina in sovra impressione o esterna che riempe lo schermo
         */
 
+        System.out.println(screenX + " " + screenY);
+
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
