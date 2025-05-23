@@ -148,7 +148,9 @@ public class ClassicGame implements Screen, InputProcessor {
         spaceship = new Rectangle(400, 20, 70, 64);
 
         // init parametri in base alla difficoltà di gioco
-        int difficulty = (int) DataUserManager.getProgress("diff_classic_game");
+        int difficulty;
+        if (!isLevel) difficulty = (int) DataUserManager.getProgress("diff_classic_game");
+        else difficulty = (int) Math.ceil((double) numLevel / 10);
         setupGameParameters(difficulty);
 
         // posizione y dello sfondo dinamico
@@ -223,9 +225,9 @@ public class ClassicGame implements Screen, InputProcessor {
             case 1:
                 spacecraftSpeed = 200;
                 laserSpeed = 200;
-                alienSpeed = 200;
-                spawnInterval = 0.3f;
-                laserCooldown = 0.25f;
+                alienSpeed = 250;
+                spawnInterval = 0.2f;
+                laserCooldown = 0.3f;
                 lives = totalLives = 2;
                 scoreInc = 50;
                 creditsInc = 1;
@@ -233,22 +235,22 @@ public class ClassicGame implements Screen, InputProcessor {
             case 2:
                 spacecraftSpeed = 200;
                 laserSpeed = 200;
-                alienSpeed = 250;
-                spawnInterval = 0.2f;
-                laserCooldown = 0.25f;
-                lives = totalLives = 2;
-                scoreInc = 100;
-                creditsInc = 3;
-                break;
-            case 3:
-                spacecraftSpeed = 200;
-                laserSpeed = 200;
                 alienSpeed = 300;
                 spawnInterval = 0.15f;
                 laserCooldown = 0.3f;
                 lives = totalLives = 2;
-                scoreInc = 200;
-                creditsInc = 5;
+                scoreInc = 75;
+                creditsInc = 2;
+                break;
+            case 3:
+                spacecraftSpeed = 200;
+                laserSpeed = 200;
+                alienSpeed = 350;
+                spawnInterval = 0.1f;
+                laserCooldown = 0.3f;
+                lives = totalLives = 2;
+                scoreInc = 100;
+                creditsInc = 3;
                 break;
         }
 
@@ -332,8 +334,8 @@ public class ClassicGame implements Screen, InputProcessor {
     private void loadFont() {
         // dichiarazione font
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter bold white 35
-            fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter bold gold 35
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
+            fontGold = new BitmapFont(Gdx.files.internal("font/inter/bold_gold_35.fnt")); // inter-bold gold 35
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -349,6 +351,8 @@ public class ClassicGame implements Screen, InputProcessor {
         Rectangle laser = laserPool.obtain();
         laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 30, 40);
 
+        // TODO: fare diverse prove per verificare che non si verifichino lag o problemi con il super laser non limitato a 2.
+        /*
         if (superLaser) {
             // Assicura che non ci siano più superLaser del previsto
             if (lasers.size < 2) {
@@ -359,6 +363,9 @@ public class ClassicGame implements Screen, InputProcessor {
         } else {
             lasers.add(laser);
         }
+
+         */
+        lasers.add(laser);
     }
 
     // metodo per muovere i laser sparati
@@ -545,7 +552,7 @@ public class ClassicGame implements Screen, InputProcessor {
         // aggiunta bonus punti
         if (!isLevel) points = points+((points*(selectedSp.getBonusPoints()))/100); // aggiunta percentuale di bonus
 
-        /// TODO: passare lo stato giusto e aggiungere parametro che specifichi che si arriva da un livello
+        // TODO: passare lo stato giusto e aggiungere parametro che specifichi che si arriva da un livello
         int[] stats = {points, credits, aliensHit};
         // apertura pagina di game over
         game.setScreen(new GameOver(game, selectedSp, mod, stats, win, isLevel));
@@ -590,6 +597,7 @@ public class ClassicGame implements Screen, InputProcessor {
             screen.draw(shieldBanner, 850, 480);
             //screen.draw(shieldLife, 860, 440, (10-spaceshipHit)*10, 20);
             /// La seguente è SOLO di prova, prende troppa memoria e rallenta il gioco
+            // TODO: impostare dei secondi per lo scudo e non un numero di hit
             screen.draw(new TextureRegion(shieldLife, shieldLife.getWidth() * (10-spaceshipHit), 20), 860, 460);
             if (spaceshipHit < 5) screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
             if (spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x - 25, spaceship.y);
@@ -673,7 +681,7 @@ public class ClassicGame implements Screen, InputProcessor {
         screen.end();
     }
 
-    /// TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
+    // TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //

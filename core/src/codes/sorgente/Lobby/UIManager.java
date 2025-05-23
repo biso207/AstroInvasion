@@ -77,7 +77,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
-        this.buttonsOver = new Texture[10];
+        this.buttonsOver = new Texture[11];
 
         // mouse
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
@@ -164,7 +164,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 11; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -228,10 +228,10 @@ public class UIManager implements ResourceLoader {
 
         // missioni delle navicelle
         String[] missions = {"", "", "", "",
-            "Complete Level 2", "Complete Level 5", "Complete Level 8", "Complete Level 10",
-            "Complete Level 12", "Complete Level 15", "Complete Level 18", "Complete Level 20",
-            "Complete Level 22", "Complete Level 25", "Complete Level 28", "Complete Level 30",
-            "Complete Level 32", "Complete Level 35", "Complete Level 38", "Complete Level 40",
+            "Complete Level 2", "Complete Level 4", "Complete Level 6", "Complete Level 8",
+            "Complete Level 12", "Complete Level 14", "Complete Level 16", "Complete Level 18",
+            "Complete Level 22", "Complete Level 24", "Complete Level 26", "Complete Level 28",
+            "Complete Level 32", "Complete Level 34", "Complete Level 36", "Complete Level 38",
             "Buy in the Market", "Buy in the Market", "Win 100 SB", "Collect all 4 fragments"
         };
         // lore delle navicelle
@@ -270,16 +270,16 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(2, new Avatar("Cap. Pegaso", null));
         mapAvatars.put(3, new Avatar("Cap. Woka", null));
         mapAvatars.put(4, new Avatar("Cooper", "Complete Level 3"));
-        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 6"));
+        mapAvatars.put(5, new Avatar("Jessica", "Complete Level 7"));
         mapAvatars.put(6, new Avatar("Scott", "Complete Level 9"));
         mapAvatars.put(7, new Avatar("Stephanie", "Complete Level 13"));
-        mapAvatars.put(8, new Avatar("Amin", "Complete Level 16"));
+        mapAvatars.put(8, new Avatar("Amin", "Complete Level 17"));
         mapAvatars.put(9, new Avatar("Samira", "Complete Level 19"));
         mapAvatars.put(10, new Avatar("Abdul", "Complete Level 23"));
-        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 26"));
+        mapAvatars.put(11, new Avatar("Dorothy", "Complete Level 27"));
         mapAvatars.put(12, new Avatar("Chen", "Complete Level 29"));
         mapAvatars.put(13, new Avatar("Lin", "Complete Level 33"));
-        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 36"));
+        mapAvatars.put(14, new Avatar("Marcus", "Complete Level 37"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 50K Credits"));
         mapAvatars.put(17, new Avatar("Kiara", "WIn 100 SB Matches"));
@@ -490,6 +490,8 @@ public class UIManager implements ResourceLoader {
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
                 // NAVICELLA //
+                // pulsante apertura pagina 'spacecrafts'
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
@@ -534,7 +536,10 @@ public class UIManager implements ResourceLoader {
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
+
                 // NAVICELLA //
+                // pulsante apertura pagina 'spacecrafts'
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome
@@ -577,7 +582,9 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
                 fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
 
-                // navicella //
+                // NAVICELLA //
+                // pulsante apertura pagina 'spacecrafts'
+                if (InputManager.isOpenSpHover) screen.draw(buttonsOver[10], 318, 101);
                 // immagine
                 screen.draw(spImg, 330, 130);
                 // nome

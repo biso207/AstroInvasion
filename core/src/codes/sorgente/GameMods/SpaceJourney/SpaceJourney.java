@@ -28,7 +28,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     private Music soundtrack;
 
     protected static List<Galaxy> galaxies;
-    protected static int numGalaxy = 0;
+    protected static int numGalaxy;
 
     // info livello
     protected static boolean infoLevel=false, buyLevel=false;
@@ -52,7 +52,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     private Spacecraft selectedSp;
 
     // costruttore
-    public SpaceJourney(Main game, Spacecraft selectedSp) {
+    public SpaceJourney(Main game, Spacecraft selectedSp, int numGalaxy) {
         this.game = game;
         // init dello screen
         this.screen = game.screen;
@@ -61,6 +61,9 @@ public class SpaceJourney implements Screen, InputProcessor {
 
         // init lista galassie
         galaxies = new ArrayList<>();
+
+        // galassia corrente
+        SpaceJourney.numGalaxy = numGalaxy;
 
         // init galassie e livelli
         setupGalaxies();

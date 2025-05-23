@@ -33,7 +33,8 @@ public class InputManager implements InputProcessor {
     // variabili per gestire certi input
     protected static boolean secondScreen=false, open4=false, open13=false, open14=false, open17=false, open18=false, open16=false;
     // variabili per cambiare lo stile dei pulsanti
-    protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false, isBtnLHover=false, isBtnRHover=false;
+    protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
+        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -100,7 +101,7 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
         hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
         hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
-        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, true)); // 'road to glory'
+        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, true)); // 'spacecrafts'
         hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
         hitBoxes.put(11, new HitBox(50, 493, 270, 511, 11, true));  // 'instructions'
         // le pagine seguenti hanno da memorizzare previousPage
@@ -185,6 +186,11 @@ public class InputManager implements InputProcessor {
             }
 
             // CLICK NELLE PAGINE
+            // apertura pagina 'spacecrafts' cliccando sulla navicella
+            if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
+                previousPage = page;
+                page=4;
+            }
             // apertura pagina 'software infos'
             if ((screenX>=105 && screenX<=135) && (screenY>=600 && screenY<=630)) {
                 open17 = true;
@@ -227,7 +233,7 @@ public class InputManager implements InputProcessor {
                     LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp)); // avvio space battle
                 } else if (page == 2) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp)); // apertura mappa space journey
+                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp, 0)); // apertura mappa space journey
                 }
             }
 
@@ -575,11 +581,15 @@ public class InputManager implements InputProcessor {
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
-        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=false;
+        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
 
         // CAMBIO STILE PULSANTI
+        // apertura pagina 'spacecrafts' dalle pagine classic game/space battle/space journey
+        if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
+            isOpenSpHover=true;
+        }
         // YES logout / OK warning / YES purchase
         if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
             isBtnLHover=true;

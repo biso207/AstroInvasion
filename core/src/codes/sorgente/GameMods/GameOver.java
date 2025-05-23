@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.GameMods.SpaceJourney.Level;
+import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import sorgente.Lobby.InputManager;
@@ -43,6 +44,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // font
     private BitmapFont font, font2, font3;
+
+    // numero livello
+    private final int numLevel = (int) DataUserManager.getProgress("level");
 
     // stato cambio stile mouse
     private boolean isBtnRHover=false, isBtnLHover=false;
@@ -153,16 +157,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         loadImages();
 
         // aggiornamento progressi di gioco. DA NON METTERE DENTRO METODI CHE VENGONO RIPETUTI
-        if (win) saveLevelProgress();
-        else {
-            switch (mod) {
-                case 0:
-                    writeFileCG();
-                    break;
-                case 1:
-                    writeFileSpaceBattle();
-                    break;
-            }
+        switch (mod) {
+            case 0:
+                writeFileCG();
+                break;
+            case 1:
+                writeFileSpaceBattle();
+                break;
         }
     }
 
@@ -225,7 +226,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // salvataggio progressi livelli
     public void saveLevelProgress() {
         // incremento livello
-        DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
+        if (numLevel<40) DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
         // setting stato livello da acquistare
         DataUserManager.setProgress("level_bought", false);
     }
@@ -347,7 +348,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         if (!win) { // sconfitta
             // immagine nemico
-            int numLevel = (int) DataUserManager.getProgress("level");
             switch ((int) Math.ceil((double) numLevel / 10)) {
                 case 1 -> screen.draw(guardianG1, 430, 170);
                 case 2 -> screen.draw(guardianG2, 775, 185);
@@ -364,7 +364,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             font2.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 450, 200);
 
             // stampa immagine premio + testo descrittivo
-            screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")), 300, 150);
+            screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")-1), 300, 150);
             font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")), 300, 200);
         }
     }
@@ -396,9 +396,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // click NO => ritorno alla Lobby
+        System.out.println(screenX + " " + screenY);
+        // click NO => ritorno alla Lobby o mappa livelli
         if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
-            game.setScreen(new LobbyManager(game));
+            // livello corrente
+            if (!isLevel) game.setScreen(new LobbyManager(game));
+            else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
         }
 
         // click YES => avvio nuova partita
@@ -417,6 +420,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     game.setScreen(new SpaceBattle(game, selectedSp));
                     break;
             }
+        }
+
+        // claim reward
+        if (isLevel && !isRewardClaimed && (screenX >= 450 && screenX <= 650) && (screenY >= 200 && screenY <= 300)) {
+            saveLevelProgress();
+            isRewardClaimed = true;
         }
 
         // selezione carte speciali
