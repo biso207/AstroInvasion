@@ -191,7 +191,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
             infoLevel=false; // chiusura pagina in sovra impressione
             soundtrack.stop(); // interruzione musica
-            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp));
+            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp, true));
             else game.setScreen(new ClassicGame(game, selectedSp, true));
         }
 

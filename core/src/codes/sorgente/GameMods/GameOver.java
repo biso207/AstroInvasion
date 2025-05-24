@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture3D;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
@@ -53,7 +54,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // immagini
     private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
-    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR;
+    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR, bannerRTG;
     // lista immagine premi
     private final List<Texture> listImgReward = new ArrayList<>();
     // lista testi premi
@@ -106,7 +107,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // formatter per la virgola delle migliaia in automatico converte l'intero in stringa
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
+    // oggetto navicella utente
     private final Spacecraft selectedSp;
+
+    // stato completamento missione RTG
+    private boolean completedRTG = false;
+    // tempo per mostrare la notifica di completamento RTG
+    private float elapsedTime = 0;
+
+    // audio di gioco
+    private final Sound completedRTGSound;
+
+    // stato suono completamento RTG
+    private boolean completedRTGSoundPlayed=false;
 
     // boolean per le carte speciali e disattivazione
     private boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
@@ -141,6 +154,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         this.win = win;
         this.isLevel = isLevel;
 
+        // SUONI
+        // task RTG completata
+        completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+
         // attivazione carte delle navicelle premium
         if (selectedSp.getName().equals("Alpha")) goldHeart = true;
         if (selectedSp.getName().equals("Astrid")) shield = true;
@@ -166,6 +183,22 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 break;
         }
     }
+
+    // metodo per controllare il completamento della task del 'road to glory' (RTG)
+    public void checkCompletedRTG() {
+        // controllo completamento task rtg
+        if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
+            // setting stato task RTG a true (completato)
+            if (win) {
+                DataUserManager.setProgress("completed_RTG", true); // progresso compiuto
+                completedRTG = true;
+            }
+        }
+    }
+
+    // ****************************** //
+    // SALVATAGGIO PROGRESSI DI GIOCO //
+    // ****************************** //
 
     // salvataggio progressi utente in classic game
     public void writeFileCG() {
@@ -261,6 +294,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             listImgReward.add(new Texture(Gdx.files.internal("images/levels_rewards/reward" + i + ".png")));
         }
 
+        // notifica completamente RTG
+        bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
+
         // pulsanti hover
         btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
         btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
@@ -281,7 +317,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     }
 
     // costruzione grafica
-    public void graphic() {
+    public void graphic(float delta) {
         screen.begin();
         // switch delle modalità di gioco
         switch (mod) {
@@ -328,6 +364,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // stampa rettangolo selezione carta
                     if (goldHeart) screen.draw(rectSelectCard, 693, 388);
                     if (superLaser) screen.draw(rectSelectCard, 831, 388);
+
+                    // stampa messaggio completamento task RTG
+                    checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
+                    if (!completedRTGSoundPlayed) { completedRTGSound.play(); completedRTGSoundPlayed=false; }
+                    if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
+                        // conteggio tempo per mostrare la notifica
+                        elapsedTime += delta;
+                        screen.draw(bannerRTG, 400, 515); // banner di notifica
+                    }
                 }
                 else graphicLevel();
                 break;
@@ -388,7 +433,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     game.setScreen(new ClassicGame(game, selectedSp, isLevel));
                     break;
                 case 1:
-                    game.setScreen(new SpaceBattle(game, selectedSp));
+                    game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
                     break;
             }
         }
@@ -422,7 +467,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     game.setScreen(new ClassicGame(game, selectedSp, isLevel));
                     break;
                 case 1:
-                    game.setScreen(new SpaceBattle(game, selectedSp));
+                    game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
                     break;
             }
         }
@@ -520,8 +565,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // attivazione controllo input
         Gdx.input.setInputProcessor(this);
 
+        delta = Math.min(delta, 1 / 30f);
+
         //handleInput();
-        graphic();
+        graphic(delta);
     }
     // spegnimento controllo input
     @Override public void hide() {

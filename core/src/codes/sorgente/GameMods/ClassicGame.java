@@ -95,6 +95,9 @@ public class ClassicGame implements Screen, InputProcessor {
     // audio di gioco
     private final Sound creditSound, shotSound, hitSound, completedRTGSound;
 
+    // stato suono completamento RTG
+    private boolean completedRTGSoundPlayed=false;
+
     // movimento in gioco
     public int moveLeftKey, moveRightKey, shootKey;
 
@@ -653,8 +656,8 @@ public class ClassicGame implements Screen, InputProcessor {
             else if (isBtnRHover) screen.draw(btnHoverR, 519, 217);
 
             // scritte pulsanti
-            fontBoldWhite60.draw(screen, "OK", 339, 280);
-            fontBoldWhite60.draw(screen, "PLAY", 548, 280);
+            fontBoldWhite60.draw(screen, "YES", 320, 280);
+            fontBoldWhite60.draw(screen, "NO", 577, 280);
         }
 
         // stampa statistiche
@@ -676,6 +679,7 @@ public class ClassicGame implements Screen, InputProcessor {
         // stampa messaggio completamento task RTG
         if (!isLevel) {
             checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
+            if (!completedRTGSoundPlayed) { completedRTGSound.play(InputManager.soundPercent); completedRTGSoundPlayed=false; }
             if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
                 // conteggio tempo per mostrare la notifica
                 elapsedTime += delta;

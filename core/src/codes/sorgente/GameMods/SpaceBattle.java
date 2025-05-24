@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.DataUserManager;
+import sorgente.Lobby.UIManager;
 import sorgente.Main;
 import sorgente.Lobby.InputManager;
 
@@ -56,6 +57,9 @@ public class SpaceBattle implements Screen, InputProcessor {
 
     private Texture  gameOver1, gameOver2;
 
+    // variabile controllo se il gioco è un livello
+    private final boolean isLevel;
+
     //Texture cuori
     Texture life1 = new Texture("images/lives/heart 100%.png");
     Texture life2 = new Texture("images/lives/heart 75%.png");
@@ -70,10 +74,11 @@ public class SpaceBattle implements Screen, InputProcessor {
         {life6, life4, life2, life1} // totalLives = 4
     };
 
-    public SpaceBattle(Main game, Spacecraft selectedSp) {
+    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
         this.game = game;
         this.screen = game.screen;
         this.selectedSp = selectedSp;
+        this.isLevel = isLevel;
 
         backgroundTexture = new Texture("images/bgInGame.png");
         playerTexture = new Texture(selectedSp.getPathImg());

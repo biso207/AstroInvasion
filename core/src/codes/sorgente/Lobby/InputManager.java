@@ -230,7 +230,7 @@ public class InputManager implements InputProcessor {
                     }
                 } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp)); // avvio space battle
+                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false)); // avvio space battle
                 } else if (page == 2) {
                     LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp, 0)); // apertura mappa space journey
