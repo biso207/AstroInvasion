@@ -49,7 +49,7 @@ public class Avatar {
             case 16 -> total_credits >= 50000;
             case 17 -> winSB >= 100;
             case 18 -> points >= 5000000;
-            case 19 -> numMission >= 100;
+            case 19 -> numMission > 100;
             default -> false;
         };
     }

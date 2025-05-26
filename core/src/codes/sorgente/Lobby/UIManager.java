@@ -58,7 +58,7 @@ public class UIManager implements ResourceLoader {
     private final List<SpacecraftData> spacecrafts;
 
     // arraylist delle pagine secondarie
-    private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+    private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
 
     // creazione oggetto navicella per il package Lobby
     protected static Spacecraft selectedSp;
@@ -137,7 +137,7 @@ public class UIManager implements ResourceLoader {
     @Override
     public void loadImages() {
         // popolamento mappa lobby
-        for (int i = 0; i < 19; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 20; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
@@ -286,9 +286,9 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(14, new Avatar("Marcus", "Complete Level 37"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 50K Credits"));
-        mapAvatars.put(17, new Avatar("Kiara", "WIn 100 SB Matches"));
+        mapAvatars.put(17, new Avatar("Kiara", "Win 100 SB Matches"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 5M Points"));
-        mapAvatars.put(19, new Avatar("Emma", "Reach Task 100 in RTG")); /// TODO: control this...
+        mapAvatars.put(19, new Avatar("Emma", "Complete Task 100"));
     }
 
     // metodo per creare le navicelle
@@ -345,7 +345,7 @@ public class UIManager implements ResourceLoader {
         // creazione oggetti
         RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
         RTG RTG1 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
-        RTG RTG2 = new RTG("Earn", 2000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
+        RTG RTG2 = new RTG("Earn", 10000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
         RTG RTG3 = new RTG("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         RTGs[0] = RTG0;
@@ -393,7 +393,7 @@ public class UIManager implements ResourceLoader {
 
     // metodo per disegnare la pagina delle impostazioni
     public void drawSettingsPage(SpriteBatch screen) {
-        screen.draw(mapLobby.get(16), 175, 25);
+        screen.draw(mapLobby.get(17), 175, 25);
 
         // comandi movimento navicella
         if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
@@ -424,8 +424,8 @@ public class UIManager implements ResourceLoader {
         // immagine di sfondo
         screen.draw(mapLobby.get(4), 0, -InputManager.scrollY);
 
-        int spID=0; // id navicella per recuperare gli attributi
-        int X, x1=258, x2= 670, y=2645; // x e y della prima scritta della prima navicella
+        int spID=0; // id navicella per recuperarne gli attributi
+        int X, x1=265, x2= 677, y=2645; // x e y della prima scritta della prima navicella
 
         // iterazione con 2 for per dividere i gruppi delle navicelle
         for (int i=0; i<6; i++) {
@@ -531,7 +531,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.doublePoints) screen.draw(rectSelectCard, 801, 261);
 
                 // button start hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 773, 101);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[0], 777, 105);
 
                 break;
 
@@ -580,7 +580,7 @@ public class UIManager implements ResourceLoader {
                 if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 159);
 
                 // button fight hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 773, 101);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 777, 105);
 
                 break;
 
@@ -605,7 +605,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // button map hover
-                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 773, 101);
+                if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 777, 105);
 
                 break;
 
@@ -647,7 +647,7 @@ public class UIManager implements ResourceLoader {
                 if ((boolean) DataUserManager.getProgress("state_product_6")) screen.draw(txtSoldOut, 680, 160);
 
                 // button confirm-purchase and reset hover
-                if (InputManager.isBtnBuyHover) screen.draw(buttonsOver[4], 504, 68);
+                if (InputManager.isBtnBuyHover) screen.draw(buttonsOver[4], 510, 74);
                 if (InputManager.isBtnResetHover) screen.draw(buttonsOver[5], 791, 68);
 
                 // prezzo finale
@@ -703,9 +703,9 @@ public class UIManager implements ResourceLoader {
 
         // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
-            if (InputManager.open17) screen.draw(mapLobby.get(17), 250, 175); // info software
-            else if (InputManager.open13) { // chiusura gioco
-                screen.draw(mapLobby.get(13), 250, 175);
+            if (InputManager.open18) screen.draw(mapLobby.get(18), 250, 175); // info software
+            else if (InputManager.open14) { // chiusura gioco
+                screen.draw(mapLobby.get(14), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -715,8 +715,8 @@ public class UIManager implements ResourceLoader {
                 fontBoldWhite60.draw(screen, "YES", 320, 280);
                 fontBoldWhite60.draw(screen, "NO", 577, 280);
             }
-            else if (InputManager.open18) { // avviso difficoltà elevata
-                screen.draw(mapLobby.get(18), 250, 175);
+            else if (InputManager.open19) { // avviso difficoltà elevata
+                screen.draw(mapLobby.get(19), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -728,8 +728,8 @@ public class UIManager implements ResourceLoader {
 
                 // scritte pulsanti
             }
-            else if (InputManager.open14) { // conferma acquisto
-                screen.draw(mapLobby.get(14), 250, 175);
+            else if (InputManager.open16) { // conferma acquisto
+                screen.draw(mapLobby.get(15), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -743,7 +743,7 @@ public class UIManager implements ResourceLoader {
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
             }
-            else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
+            else if (InputManager.open17) drawSettingsPage(screen); // impostazioni di gioco
         }
     }
 

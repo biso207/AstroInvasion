@@ -14,7 +14,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -49,7 +48,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private final ArrayList<CollisionAnimation> activeAnimations = new ArrayList<>();
     private final Pool<Rectangle> laserPool;
 
-    private Texture goldHeartImg, shieldImg, brokenShieldImg, superLaserImg, topBar, topBarLevel, shieldBanner, shieldLife, playImg,
+    private Texture goldHeartImg, shieldImg, superLaserImg, topBar, topBarLevel, shieldBanner, shieldIcon, playImg,
         stopImg, quitMatch, bannerRTG, btnHoverR, btnHoverL;
 
     // matrice per le immagini delle vite rimanenti
@@ -88,22 +87,18 @@ public class ClassicGame implements Screen, InputProcessor {
 
     // dichiarazione font
     private BitmapFont font, fontGold, fontBoldWhite60;
-
     // stato cambio stile mouse
     private boolean isBtnRHover=false, isBtnLHover=false;
 
     // audio di gioco
     private final Sound creditSound, shotSound, hitSound, completedRTGSound;
-
     // stato suono completamento RTG
     private boolean completedRTGSoundPlayed=false;
 
     // movimento in gioco
     public int moveLeftKey, moveRightKey, shootKey;
 
-    /* modalità di gioco
-       la modalità di gioco definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
-    */
+    // modalità di gioco che definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
     private final int mod = 0;
 
     // boolean per le carte speciali
@@ -118,6 +113,10 @@ public class ClassicGame implements Screen, InputProcessor {
     private final int numLevel;
     // colore alieno
     private int type;
+
+    // tempo trascorso per lo scudo
+    private float timePassed=0;
+    private final float shieldTime=30f;
 
     // costruttore
     public ClassicGame(Main game, Spacecraft selectedSp, boolean isLevel) {
@@ -312,18 +311,17 @@ public class ClassicGame implements Screen, InputProcessor {
         stopImg = new Texture("images/stop.png");
 
         // quit match
-        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (15).png"));
+        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));
 
         // scudo
         shieldImg = new Texture("images/spacecrafts/_shield.png");
-        brokenShieldImg = new Texture("images/spacecrafts/_broken_shield.png");
         // super laser
         superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
 
         // banner scudo attivo
-        shieldBanner = new Texture("images/shield_banner.png");
-        // vita dello scudo
-        shieldLife = new Texture("images/shield_life.png");
+        shieldBanner = new Texture("images/shield_bar.png");
+        // icona dello scudo
+        shieldIcon = new Texture("images/lives/shield_icon.png");
 
         // notifica completamente RTG
         bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
@@ -432,9 +430,6 @@ public class ClassicGame implements Screen, InputProcessor {
 
             // collisione alieno-navicella
             if (alien.getAlienRect().overlaps(spaceship)) {
-                spaceshipHit++;
-                // disattivazione "scudo" dopo 10 volte che la navicella viene colpita
-                if (spaceshipHit==10) shield = false;
 
                 aliens.removeIndex(i);
                 if (!shield) lives--;
@@ -598,13 +593,13 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // aggiunta scudo
         if (shield) {
-            screen.draw(shieldBanner, 850, 480);
-            //screen.draw(shieldLife, 860, 440, (10-spaceshipHit)*10, 20);
-            /// La seguente è SOLO di prova, prende troppa memoria e rallenta il gioco
-            // TODO: impostare dei secondi per lo scudo e non un numero di hit
-            screen.draw(new TextureRegion(shieldLife, shieldLife.getWidth() * (10-spaceshipHit), 20), 860, 460);
-            if (spaceshipHit < 5) screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
-            if (spaceshipHit >= 5) screen.draw(brokenShieldImg, spaceship.x - 25, spaceship.y);
+            // banner scudo attivo a lato con i secondi rimanenti
+            screen.draw(shieldBanner, 810, 490);
+            // secondi rimanenti scudo attivo
+            font.draw(screen, String.valueOf(Math.round(shieldTime-timePassed)), 895, 547);
+
+            // stampa immagine dello scudo sulla navicella
+            screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
         }
 
         // stampa navicella
@@ -638,7 +633,8 @@ public class ClassicGame implements Screen, InputProcessor {
 
         // stampa vite rimanenti
         if (totalLives >= 2 && totalLives <= 4 && lives >= 1 && lives <= totalLives) {
-            screen.draw(livesTextures[totalLives - 2][lives - 1], 93, 640);
+            if (shield) screen.draw(shieldIcon, 93, 640); // icona scudo al posto del cuore
+            else screen.draw(livesTextures[totalLives - 2][lives - 1], 93, 640);
         }
 
         // stampa cuore d'oro se attivato
@@ -802,8 +798,12 @@ public class ClassicGame implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
         if (!isPaused) {
             delta = Math.min(delta, 1 / 30f);
+            timePassed+=delta; // incremento durata scudo
         }
         else delta=0;
+
+        // disattivazione "scudo" dopo 30 secondi contati tramite il deltaTime
+        if (timePassed>=shieldTime) shield = false;
 
         handleInput(delta);
         updateBackground(delta);

@@ -179,7 +179,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
-        if (!infoLevel && !buyLevel && (screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+        if (!infoLevel && !buyLevel && (screenX >= 898 && screenX <= 940) && (screenY >= 84 && screenY <= 124)) {
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
                 game.setScreen(new LobbyManager(game)); // back to lobby
