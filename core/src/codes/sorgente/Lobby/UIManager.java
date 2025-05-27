@@ -350,7 +350,6 @@ public class UIManager implements ResourceLoader {
 
         RTGs[0] = RTG0;
         RTGs[1] = RTG1;
-        RTGs[2] = RTG2;
         RTGs[3] = RTG3;
     }
 

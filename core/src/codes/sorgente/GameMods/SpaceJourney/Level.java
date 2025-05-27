@@ -49,6 +49,7 @@ public class Level {
         System.out.println(cost);
         // sblocco livello
         if (credits >= cost) {
+            System.out.println("dio porco");
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
             DataUserManager.setProgress("level_bought", true); // cambio stato "livello acquistato"
         }

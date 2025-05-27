@@ -65,7 +65,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private float spawnInterval;
 
     // statistiche
-    private int totalLives, lives, aliensHit, spaceshipHit, points, credits;
+    private int totalLives, lives, aliensHit, points, credits;
 
     // valori di incremento punti e crediti
     private int scoreInc, creditsInc;
@@ -125,7 +125,7 @@ public class ClassicGame implements Screen, InputProcessor {
         this.isLevel = isLevel;
 
         numLevel = (int) DataUserManager.getProgress("level");
-
+        System.out.println(numLevel);
         // navicella utente inizializzata
         this.selectedSp = selectedSp;
 
@@ -150,9 +150,15 @@ public class ClassicGame implements Screen, InputProcessor {
         spaceship = new Rectangle(400, 20, 70, 64);
 
         // init parametri in base alla difficoltà di gioco
-        int difficulty;
+        int difficulty=1;
         if (!isLevel) difficulty = (int) DataUserManager.getProgress("diff_classic_game");
-        else difficulty = (int) Math.ceil((double) numLevel / 10);
+        else {
+            switch ((int) Math.ceil((double) numLevel / 10)) {
+                case 1 -> difficulty=1;
+                case 2, 3 -> difficulty=2;
+                case 4 -> difficulty=3;
+            }
+        }
         setupGameParameters(difficulty);
 
         // posizione y dello sfondo dinamico
@@ -255,7 +261,6 @@ public class ClassicGame implements Screen, InputProcessor {
                 creditsInc = 3;
                 break;
         }
-
         spacecraftSpeed += selectedSp.getSpSpeed()*100;
         laserSpeed += selectedSp.getLaserSpeed()*100;
     }

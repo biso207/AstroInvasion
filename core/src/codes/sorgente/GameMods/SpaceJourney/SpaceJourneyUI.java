@@ -299,7 +299,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         // prezzo livello
         boolean higherPrice = currentCredits>=numLevel* 100L;
         BitmapFont font = higherPrice ? fontBoldGreen25 : fontBoldRed25;
-        font.draw(screen, currentCredits + "/" + formatter.format(numLevel* 100L), 390, 347);
+        font.draw(screen, formatter.format(currentCredits) + "/" + formatter.format(numLevel* 100L), 390, 347);
 
         // stampa pulsanti hover
         int price = 100*numLevel; // prezzo del livello

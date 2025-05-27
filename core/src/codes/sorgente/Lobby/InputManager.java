@@ -487,9 +487,9 @@ public class InputManager implements InputProcessor {
                     }
                 }
             }
-
+            System.out.println(screenX + " " + screenY);
             // chiusura pagina navicelle
-            if (page==4 && (screenX >= 906 && screenX <= 947) && (screenY >= 83 && screenY <= 122)) {
+            if (page==4 && (screenX >= 907 && screenX <= 947) && (screenY >= 68 && screenY <= 106)) {
                 open4 = false;
                 page = previousPage;
             }

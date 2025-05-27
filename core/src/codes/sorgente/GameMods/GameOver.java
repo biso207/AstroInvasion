@@ -398,10 +398,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         if (!win) { // sconfitta
             // immagine nemico
             switch ((int) Math.ceil((double) numLevel / 10)) {
-                case 1 -> screen.draw(guardianG1, 430, 170);
-                case 2 -> screen.draw(guardianG2, 775, 185);
-                case 3 -> screen.draw(guardianG3, 800, 455);
-                case 4 -> screen.draw(guardianG4, 300, 430);
+                case 1 -> screen.draw(guardianG1, 450, 298);
+                case 2 -> screen.draw(guardianG2, 450, 298);
+                case 3 -> screen.draw(guardianG3, 450, 298);
+                case 4 -> screen.draw(guardianG4, 450, 298);
             }
         }
         else { // vittoria
@@ -412,7 +412,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
             // stampa immagine premio + testo descrittivo
             screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")-1), 300, 150);
-            font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")), 300, 200);
+            font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")-1), 300, 200);
         }
     }
 
@@ -449,7 +449,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // livello corrente
             if (!isLevel) game.setScreen(new LobbyManager(game));
             else {
-                saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
+                if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
@@ -491,7 +491,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean mouseMoved(int screenX, int screenY) {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
-        // TODO: cambiare i range x e y
         // YES restart
         if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             isBtnLHover=true;
