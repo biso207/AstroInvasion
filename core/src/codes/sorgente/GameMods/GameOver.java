@@ -352,8 +352,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // schermata base
                     screen.draw(win ? victorySB : gameOverSB, 0, 0);
 
-                    // scritte progressi partita
-                    font2.draw(screen, formatter.format(points), 195, 457);
+                   // scritte progressi partita
+                    font.draw(screen, formatter.format(points), 195, 457);
                     font2.draw(screen, formatter.format(credits), 205, 397);
                     font2.draw(screen, formatter.format(aliensHit), 235, 337);
 

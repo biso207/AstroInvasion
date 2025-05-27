@@ -48,6 +48,9 @@ public class SpaceBattle implements Screen, InputProcessor {
     private final BitmapFont font;
     private Texture topBar, stopImg, playImg;
 
+    private Texture superLaserImg;
+    private boolean superLaser=false, goldHeart=false;
+
     private final Spacecraft selectedSp;
 
     private float enemyDirection = 1;
@@ -67,6 +70,7 @@ public class SpaceBattle implements Screen, InputProcessor {
     Texture life4 = new Texture("images/lives/heart 50%.png");
     Texture life5 = new Texture("images/lives/heart 33%.png");
     Texture life6 = new Texture("images/lives/heart 25%.png");
+    Texture goldHeartImg = new Texture("images/lives/gold heart.png");
 
     Texture[][] livesTextures = new Texture[][]{
         {life4, life1}, // totalLives = 2
@@ -131,6 +135,17 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         enemyTexture = enemyTextures.get(selection);
         laserTexture = laserTextures.get(selection);
+
+        // attivazione carte utente
+        if (selectedSp.getName().equals("Rorik")) superLaser = true;
+        if (selectedSp.getName().equals("Alpha")) goldHeart = true;
+
+        // recupero stato attivazione carta speciale dall'InputManager della Lobby
+        if (InputManager.goldHeart) goldHeart = true;
+        if (InputManager.superLaser) superLaser = true;
+
+        // disattivazione generica in caso si stia giocando un livello
+        if (isLevel) goldHeart=superLaser=false;
 
 
     }
@@ -204,7 +219,7 @@ public class SpaceBattle implements Screen, InputProcessor {
                 playerLives--;
                 it.remove();
                 hitSound.play();
-                if (playerLives <= 0) gameOver(false);
+                if (playerLives <= 0 && !goldHeart) gameOver(false);
             } else if (laser.y < 0) {
                 it.remove();
                 laserPool.free(laser);
@@ -307,11 +322,12 @@ public class SpaceBattle implements Screen, InputProcessor {
             playerShip.x += playerSpeed * delta;
         }
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && playerCooldown >= playerLaserCooldown) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && playerCooldown >= playerLaserCooldown) {
             spawnLaser(playerShip, playerLasers);
             shotSound.play();
             playerCooldown = 0;
         }
+
 
     }
 
@@ -329,11 +345,14 @@ public class SpaceBattle implements Screen, InputProcessor {
         screen.draw(topBar, 20, 600);
         // stampa vite rimanenti
         if (totalLives >= 2 && totalLives <= 4 && playerLives >= 1 && playerLives <= totalLives) {
-            screen.draw(livesTextures[totalLives - 2][playerLives - 1], 93, 640);
+            screen.draw(livesTextures[totalLives - 2][playerLives - 1], 75, 640);
         }
+        // stampa cuore d'oro se attivato
+        if (goldHeart && playerLives == 0 && !isLevel) screen.draw(goldHeartImg, 93, 640);
+
         // stampa vite rimanenti
         if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
-            screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 700, 640);
+            screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 893, 640);
         }
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
@@ -344,7 +363,7 @@ public class SpaceBattle implements Screen, InputProcessor {
     // metodo per constatare vittoria/sconfitta
     private void gameOver(boolean win) {
         // diminuzione carte speciali
-        //if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
+        if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
         //if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
         soundtrack.stop();
