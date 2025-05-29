@@ -209,10 +209,10 @@ public class InputManager implements InputProcessor {
                 open17 = true;
                 secondScreen = true;
             }
-            // apertura pagina 9/10 (difficulty infos classic game/space battle)
+            // apertura pagina 10/11 (difficulty infos classic game/space battle)
             if ((screenX>=614 && screenX<=694) && (screenY>=551 && screenY<=592)) {
-                if (page == 0) { previousPage = page; page = 9; }
-                else if (page == 1) { previousPage = page; page = 10; }
+                if (page == 0) { previousPage = page; page = 10; }
+                else if (page == 1) { previousPage = page; page = 11; }
             }
             // apertura pagina 20 (cards infos)
             if ((page == 0 || page == 1) && (screenX>=880 && screenX<=905) && (screenY>=255 && screenY<=280)) {
