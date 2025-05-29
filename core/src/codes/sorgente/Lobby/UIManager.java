@@ -464,6 +464,7 @@ public class UIManager implements ResourceLoader {
         screen.draw(topBanner, 14, 514); // DEVE STARE QUI PERCHÈ STA SOPRA OGNI ALTRO ELEMENTO DELLA PAGINA
     }
 
+    // todo: trovare la stampa delle info difficoltà e incrementare l'indice di riferimento di 1
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         // cambio navicella in caso di nuova selezione

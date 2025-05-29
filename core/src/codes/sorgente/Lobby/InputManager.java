@@ -180,6 +180,7 @@ public class InputManager implements InputProcessor {
             for (Map.Entry<Integer, HitBox> entry : hitBoxes.entrySet()) {
                 HitBox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
+                    if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
                     break;
@@ -189,6 +190,7 @@ public class InputManager implements InputProcessor {
             // CLICK NELLE PAGINE
             // apertura pagina 'spacecrafts' cliccando sulla navicella
             if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
+                scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                 previousPage = page;
                 page=4;
             }
