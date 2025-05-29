@@ -350,6 +350,7 @@ public class UIManager implements ResourceLoader {
 
         RTGs[0] = RTG0;
         RTGs[1] = RTG1;
+        RTGs[2] = RTG2;
         RTGs[3] = RTG3;
     }
 
@@ -442,7 +443,7 @@ public class UIManager implements ResourceLoader {
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
                     // disegno rettangolo di selezione
-                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-180, (y-145)-InputManager.scrollY);
+                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-177, (y-145)-InputManager.scrollY);
                 }
                 else {
                     fontBoldWhite18.draw(screen, "?", X, y-InputManager.scrollY);
