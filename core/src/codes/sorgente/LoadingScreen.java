@@ -62,7 +62,7 @@ public class LoadingScreen implements Screen {
 
         // incrementa il progresso del caricamento in base al tempo trascorso
         loadingProgress += delta;
-        float loadingTime = 5f; // 5 secondi
+        float loadingTime = 1f; // 5 secondi // todo: impostare a 5 secondi, ora è a 1 per le prove
         if (loadingProgress >= loadingTime) {
             loadingProgress = loadingTime;
             loadingFinished = true; // caricamento completato

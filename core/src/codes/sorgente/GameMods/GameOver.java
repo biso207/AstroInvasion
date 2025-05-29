@@ -10,6 +10,7 @@ package sorgente.GameMods;
 // import librerie e codici
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture3D;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -44,7 +45,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private final int mod, points, credits, aliensHit;
 
     // font
-    private BitmapFont font, font2, font3;
+    private BitmapFont font, fontBoldWhite25, fontBoldWhite50, fontBoldWhite60;
 
     // numero livello
     private final int numLevel = (int) DataUserManager.getProgress("level");
@@ -308,8 +309,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // dichiarazione font
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter bold white 20
-            font2 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
-            font3 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter bold white 60
+            fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter bold white 25
+            fontBoldWhite50 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_50.fnt")); // inter bold white 50
+            fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter bold white 60
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
             font.setColor(Color.valueOf("FFFFFF")); // colore white
@@ -328,9 +330,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     screen.draw(gameOverCG, 0, 0);
 
                     // scritte progressi partita
-                    font2.draw(screen, formatter.format(points), 195, 457);
-                    font2.draw(screen, formatter.format(credits), 205, 397);
-                    font2.draw(screen, formatter.format(aliensHit), 235, 337);
+                    fontBoldWhite25.draw(screen, formatter.format(points), 195, 457);
+                    fontBoldWhite25.draw(screen, formatter.format(credits), 205, 397);
+                    fontBoldWhite25.draw(screen, formatter.format(aliensHit), 235, 337);
 
                     // numero carte speciali
                     font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 375);
@@ -354,8 +356,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
                    // scritte progressi partita
                     font.draw(screen, formatter.format(points), 195, 457);
-                    font2.draw(screen, formatter.format(credits), 205, 397);
-                    font2.draw(screen, formatter.format(aliensHit), 235, 337);
+                    fontBoldWhite25.draw(screen, formatter.format(credits), 205, 397);
+                    fontBoldWhite25.draw(screen, formatter.format(aliensHit), 235, 337);
 
                     // numero carte speciali
                     font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 365);
@@ -384,8 +386,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             if (isBtnRHover) screen.draw(btnHoverR, 519, 48);
 
             // scritte pulsanti
-            font3.draw(screen, "YES", 320, 110);
-            font3.draw(screen, "NO", 577, 110);
+            fontBoldWhite60.draw(screen, "YES", 320, 110);
+            fontBoldWhite60.draw(screen, "NO", 577, 110);
         }
         screen.end();
     }
@@ -406,13 +408,34 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
         else { // vittoria
             // pulsanti hover // todo: impostare correttamente la posizione del pulsante hover
-            if (isBtnLHover) screen.draw(btnHoverL, 277, 48);
+            if (isBtnLHover) screen.draw(btnHoverL, 398, 48);
             // testo pulsante // todo: impostare correttamente la posizione del testo
-            font2.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 450, 200);
+            fontBoldWhite50.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 420, 105);
 
             // stampa immagine premio + testo descrittivo
-            screen.draw(listImgReward.get((int) DataUserManager.getProgress("level")-1), 300, 150);
-            font.draw(screen, listTextReward.get((int) DataUserManager.getProgress("level")-1), 300, 200);
+            int currentLevel = isRewardClaimed ? ((int) DataUserManager.getProgress("level")-2) : ((int) DataUserManager.getProgress("level")-1);
+            screen.draw(listImgReward.get(currentLevel), 462, 320);
+
+            // testi al centro della pagina con lunghezza variabile //
+            // testo LIVELLO COMPLETATO
+            // crea un layout per calcolare la dimensione del testo
+            GlyphLayout layout = new GlyphLayout();
+            String txtCompletedLevel = "LEVEL " + currentLevel + " COMPLETED";
+            // calcola la dimensione reale del testo con il font
+            layout.setText(fontBoldWhite50, txtCompletedLevel);
+
+            // posizione x variabile
+            float x = (1000 - layout.width) / 2f; // 1000 è la larghezza totale dello schermo
+            // disegna il testo centrato orizzontalmente
+            fontBoldWhite50.draw(screen, layout, x, 190);
+
+            // testo NOME PREMIO
+            GlyphLayout layout2 = new GlyphLayout();
+            String txtNamePrize = listTextReward.get(currentLevel);
+            layout2.setText(font, txtNamePrize);
+            float x2 = (1000 - layout2.width) / 2f;
+            // disegna il testo centrato orizzontalmente
+            font.draw(screen, layout2, x2, 280);
         }
     }
 
@@ -445,17 +468,17 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         System.out.println(screenX + " " + screenY);
         // click NO => ritorno alla Lobby o mappa livelli
-        if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+        if (!win && (screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
             // livello corrente
             if (!isLevel) game.setScreen(new LobbyManager(game));
             else {
-                if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
+                //if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
 
         // click YES => avvio nuova partita
-        if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+        if (!win && (screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             switch (mod) {
                 case 0:
                     // stato carte speciali
@@ -473,12 +496,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // 'claim reward' button
-        if (isLevel && !isRewardClaimed && (screenX >= 450 && screenX <= 650) && (screenY >= 200 && screenY <= 300)) {
+        if (win && isLevel && !isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
             saveLevelProgress();
             isRewardClaimed = true;
         }
         // 'back to galaxies' button
-        if (isLevel && isRewardClaimed && (screenX >= 450 && screenX <= 650) && (screenY >= 200 && screenY <= 300)) {
+        if (win && isLevel && isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
             game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
         }
 
@@ -492,13 +515,18 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
         // YES restart
-        if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+        if (!win && (screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
             isBtnLHover=true;
         }
 
         // NO restart
-        if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+        if (!win && (screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
             isBtnRHover=true;
+        }
+
+        // pulsante CLAIM/CLOSE
+        if (win && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+            isBtnLHover=true;
         }
         return true;
     }
