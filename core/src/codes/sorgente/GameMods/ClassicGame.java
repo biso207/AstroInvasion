@@ -96,7 +96,7 @@ public class ClassicGame implements Screen, InputProcessor {
     private boolean completedRTGSoundPlayed=false;
 
     // movimento in gioco
-    public int moveLeftKey, moveRightKey, shootKey;
+    public int moveLeftKey, moveRightKey, shotType;
 
     // modalità di gioco che definisce la schermata game over richiamata dalle diverse schermate delle diverse modalità
     private final int mod = 0;
@@ -205,9 +205,10 @@ public class ClassicGame implements Screen, InputProcessor {
             moveLeftKey = Input.Keys.LEFT;
             moveRightKey = Input.Keys.RIGHT;
         }
+
         // setting comando di sparo
-        if (((int)DataUserManager.getProgress("shot_type")) == 1) shootKey = Input.Buttons.LEFT;
-        else shootKey = Input.Keys.SPACE;
+        if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
+        else shotType = 2;
 
         // attivazione carte utente
         if (selectedSp.getName().equals("Drakar")) doublePoints = true;
@@ -771,14 +772,25 @@ public class ClassicGame implements Screen, InputProcessor {
         return true;
     }
 
-    // metodo per ascoltare il click del mouse
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (button == Input.Buttons.LEFT) shootPressed = true;
-        else if (button == Input.Keys.SPACE) shootPressed = true;
-
+    // TASTIERA
+    // metodo per ascoltare il click della tastiera
+    @Override public boolean keyDown(int keycode) {
+        // click barra spaziatrice per sparare
+        if (keycode == Input.Keys.SPACE && shotType==2) shootPressed = true;
+        return true;
+    }
+    // metodo per ascoltare il rilascio di una tasto della tastiera
+    @Override public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.SPACE && shotType==2) shootPressed = false;
         return true;
     }
 
+    // MOUSE //
+    // metodo per ascoltare il click del mouse
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && shotType==1) shootPressed = true;
+        return true;
+    }
     // metodo per ascoltare il rilascio del mouse
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT) shootPressed = false;
@@ -786,12 +798,8 @@ public class ClassicGame implements Screen, InputProcessor {
         return true;
     }
 
-    //Aggiungi altro comando che cazzo
-
     // altri metodi
     @Override public boolean keyTyped(char character) { return true; }
-    @Override public boolean keyDown(int keycode) { return false; }
-    @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }

@@ -51,6 +51,11 @@ public class SpaceBattle implements Screen, InputProcessor {
     private Texture superLaserImg = new Texture("images/spacecrafts/_super_laser.png");;
     private boolean superLaser=false, goldHeart=false;
 
+    // stato sparo del laser
+    private boolean shootPressed = false;
+    // movimento in gioco
+    public int moveLeftKey, moveRightKey, shotType;
+
     private final Spacecraft selectedSp;
 
     private float enemyDirection = 1;
@@ -148,7 +153,19 @@ public class SpaceBattle implements Screen, InputProcessor {
         // disattivazione generica in caso si stia giocando un livello
         if (isLevel) goldHeart=superLaser=false;
 
+        // setting comando di movimento
+        if (((int) DataUserManager.getProgress("movement_type")) == 1) {
+            moveLeftKey = Input.Keys.A;
+            moveRightKey = Input.Keys.D;
+        }
+        else {
+            moveLeftKey = Input.Keys.LEFT;
+            moveRightKey = Input.Keys.RIGHT;
+        }
 
+        // setting comando di sparo
+        if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
+        else shotType = 2;
     }
 
     //Valori di inizio gioco
@@ -292,6 +309,9 @@ public class SpaceBattle implements Screen, InputProcessor {
     private void handleInput(float delta) {
         playerCooldown += delta;
 
+        // gioco in pausa => nessun altro input può essere preso
+        if (isPaused) return;
+
         // click esc per chiudere la partita
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!isPaused) isPaused = true;
@@ -325,19 +345,16 @@ public class SpaceBattle implements Screen, InputProcessor {
             isPaused = !isPaused;
         }
 
-        // gioco in pausa => nessun altro input può essere preso
-        if (isPaused) return;
-
         // movimento vs sx
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && playerShip.x > 10) {
+        if (Gdx.input.isKeyPressed(moveLeftKey) && playerShip.x > 10) {
             playerShip.x -= playerSpeed * delta;
         }
         // movimento vs dx
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && playerShip.x < 890) {
+        if (Gdx.input.isKeyPressed(moveRightKey) && playerShip.x < 890) {
             playerShip.x += playerSpeed * delta;
         }
 
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && playerCooldown >= playerLaserCooldown) {
+        if (shootPressed && playerCooldown >= playerLaserCooldown) {
             spawnLaser(playerShip, playerLasers);
             shotSound.play();
             playerCooldown = 0;
@@ -383,7 +400,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         soundtrack.stop();
 
-        /// TODO: settare correttamente isLevel se si è giocato o meno un livello
+        // todo: settare correttamente isLevel se si è giocato o meno un livello
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, false));
 
@@ -421,13 +438,35 @@ public class SpaceBattle implements Screen, InputProcessor {
         }
     }
 
+    // TASTIERA
+    // metodo per ascoltare il click della tastiera
+    @Override public boolean keyDown(int keycode) {
+        // click barra spaziatrice per sparare
+        if (keycode == Input.Keys.SPACE && shotType==2) shootPressed = true;
+        return true;
+    }
+    // metodo per ascoltare il rilascio di una tasto della tastiera
+    @Override public boolean keyUp(int keycode) {
+        if (keycode == Input.Keys.SPACE && shotType==2) shootPressed = false;
+        return true;
+    }
+
+    // MOUSE //
+    // metodo per ascoltare il click del mouse
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT && shotType==1) shootPressed = true;
+        return true;
+    }
+    // metodo per ascoltare il rilascio del mouse
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) shootPressed = false;
+        else if (button == Input.Keys.SPACE) shootPressed = false;
+        return true;
+    }
+
     @Override public boolean keyTyped(char character) { return true; }
-    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean keyDown(int keycode) { return false; }
-    @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public void resize(int width, int height) {}
