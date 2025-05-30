@@ -786,7 +786,7 @@ public class ClassicGame implements Screen, InputProcessor {
         return true;
     }
 
-    //Aggiungi altro comando
+    //Aggiungi altro comando che cazzo
 
     // altri metodi
     @Override public boolean keyTyped(char character) { return true; }
