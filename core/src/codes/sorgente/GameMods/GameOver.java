@@ -525,7 +525,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // pulsante CLAIM/CLOSE
-        if (win && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+        if (win && isLevel && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
             isBtnLHover=true;
         }
         return true;
