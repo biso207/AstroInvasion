@@ -112,7 +112,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private final Spacecraft selectedSp;
 
     // stato completamento missione RTG
-    private boolean completedRTG = false;
+    private boolean completedRTG=false;
     // tempo per mostrare la notifica di completamento RTG
     private float elapsedTime = 0;
 
@@ -180,6 +180,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 writeFileCG();
                 break;
             case 1:
+                checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
                 writeFileSpaceBattle();
                 break;
         }
@@ -367,12 +368,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (goldHeart) screen.draw(rectSelectCard, 693, 388);
                     if (superLaser) screen.draw(rectSelectCard, 831, 388);
 
+                    // suono completamento RTG
+                    if (!completedRTGSoundPlayed) {
+                        completedRTGSound.play(); // suono
+                        completedRTGSoundPlayed=true; // evita di riprodurre infinite volte il suono
+                    }
                     // stampa messaggio completamento task RTG
-                    checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
-                    if (!completedRTGSoundPlayed) { completedRTGSound.play(); completedRTGSoundPlayed=false; }
                     if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
-                        // conteggio tempo per mostrare la notifica
-                        elapsedTime += delta;
+                        elapsedTime += delta; // conteggio tempo per mostrare la notifica
                         screen.draw(bannerRTG, 400, 515); // banner di notifica
                     }
                 }
@@ -466,43 +469,45 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println(screenX + " " + screenY);
-        // click NO => ritorno alla Lobby o mappa livelli
-        if (!win && (screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
-            // livello corrente
-            if (!isLevel) game.setScreen(new LobbyManager(game));
-            else {
-                //if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
+        if (win && isLevel) { // vittoria nei livelli
+            // 'claim reward' button
+            if (!isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+                saveLevelProgress();
+                isRewardClaimed = true;
+            }
+            // 'back to galaxies' button
+            if (isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
+        else { // vittoria/sconfitta space battle + sconfitta livelli
+            // click YES => avvio nuova partita
+            if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+                switch (mod) {
+                    case 0:
+                        // stato carte speciali
+                        InputManager.goldHeart = goldHeart;
+                        InputManager.shield = shield;
+                        InputManager.superLaser = superLaser;
+                        InputManager.doublePoints = doublePoints;
 
-        // click YES => avvio nuova partita
-        if (!win && (screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
-            switch (mod) {
-                case 0:
-                    // stato carte speciali
-                    InputManager.goldHeart = goldHeart;
-                    InputManager.shield = shield;
-                    InputManager.superLaser = superLaser;
-                    InputManager.doublePoints = doublePoints;
-
-                    game.setScreen(new ClassicGame(game, selectedSp, isLevel));
-                    break;
-                case 1:
-                    game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
-                    break;
+                        game.setScreen(new ClassicGame(game, selectedSp, isLevel));
+                        break;
+                    case 1:
+                        game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
+                        break;
+                }
             }
-        }
 
-        // 'claim reward' button
-        if (win && isLevel && !isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
-            saveLevelProgress();
-            isRewardClaimed = true;
-        }
-        // 'back to galaxies' button
-        if (win && isLevel && isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
-            game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+            // click NO => ritorno alla Lobby o mappa livelli
+            if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+                // livello corrente
+                if (!isLevel) game.setScreen(new LobbyManager(game));
+                else {
+                    //if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
+                    game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+                }
+            }
         }
 
         // selezione carte speciali
@@ -514,19 +519,22 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean mouseMoved(int screenX, int screenY) {
         isBtnRHover=isBtnLHover=false;
         // CAMBIO STILE PULSANTI
-        // YES restart
-        if (!win && (screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
-            isBtnLHover=true;
+        if (win && isLevel) { // vittoria nei livelli
+            // pulsante CLAIM/CLOSE
+            if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+                isBtnLHover=true;
+            }
         }
+        else { // vittoria/sconfitta space battle + sconfitta livelli
+            // YES restart
+            if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+                isBtnLHover = true;
+            }
 
-        // NO restart
-        if (!win && (screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
-            isBtnRHover=true;
-        }
-
-        // pulsante CLAIM/CLOSE
-        if (win && isLevel && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
-            isBtnLHover=true;
+            // NO restart
+            if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+                isBtnRHover = true;
+            }
         }
         return true;
     }
