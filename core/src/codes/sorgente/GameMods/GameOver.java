@@ -188,12 +188,24 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
     public void checkCompletedRTG() {
+        // recupero partite vinte fin'ora
+        int won = (int) DataUserManager.getProgress("won_SB_RTG");
+        // recupero id missione
+        int missionID = (int) DataUserManager.getProgress("mission_id");
+        // recupero partite da vincere
+        int wonRTG = UIManager.RTGs[missionID-1].calcNumObjMission();
+
+
         // controllo completamento task rtg
         if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
             // setting stato task RTG a true (completato)
             if (win) {
-                DataUserManager.setProgress("completed_RTG", true); // progresso compiuto
-                completedRTG = true;
+                won++; // incremento numero partite vinte
+                if (missionID == 2 && won==wonRTG) {
+                    DataUserManager.setProgress("completed_RTG", true); // progresso compiuto
+                    completedRTG = true;
+                }
+                else DataUserManager.setProgress("won_SB_RTG", won); // aggiornamento partite vinte
             }
         }
     }
@@ -480,7 +492,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
-        else { // vittoria/sconfitta space battle + sconfitta livelli
+        else { // vittoria-sconfitta space battle + sconfitta livelli
             // click YES => avvio nuova partita
             if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
                 switch (mod) {
@@ -525,7 +537,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 isBtnLHover=true;
             }
         }
-        else { // vittoria/sconfitta space battle + sconfitta livelli
+        else { // vittoria-sconfitta space battle + sconfitta livelli
             // YES restart
             if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
                 isBtnLHover = true;
