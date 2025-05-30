@@ -380,6 +380,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, false));
 
+        //Non funziona bene
         goldHeart = false;
         superLaser = false;
 
