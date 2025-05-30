@@ -1,0 +1,80 @@
+/*
+Astro Invasion - class SoundManager -
+Controlla e gestisce i suoni emessi nelle modalità di gioco
+Developed by BIGA©. All rights reserved.
+*/
+
+// package di appartenenza
+package sorgente.GameMods;
+
+// import librerie e codici
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import java.util.HashMap;
+
+public class SoundManager {
+
+    private final float volume;
+    private final HashMap<String, Long> lastPlayedTimeMap;
+
+    private final Sound shotSound;
+    private final Sound hitSound;
+    private final Sound creditSound;
+    private final Sound completedSound;
+
+    // Intervallo minimo (in ms) tra due riproduzioni dello stesso suono
+    private static final long MIN_INTERVAL_SHOT = 50;  // 20 volte al secondo
+    private static final long MIN_INTERVAL_HIT = 100;  // 10 volte al secondo
+
+    // costruttore
+    public SoundManager(float volume) {
+        this.volume = volume;
+        this.lastPlayedTimeMap = new HashMap<>();
+
+        // Caricamento suoni
+        shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.wav"));
+        creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
+        completedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.wav"));
+    }
+
+    /** Metodi con controllo di "throttle" **/
+    // metodo per riprodurre il suono di sparo
+    public void playLaser() {
+        playThrottled("shot", shotSound, MIN_INTERVAL_SHOT);
+    }
+
+    // metodo per riprodurre il suono della collisione
+    public void playHit() {
+        playThrottled("hit", hitSound, MIN_INTERVAL_HIT);
+    }
+
+    /** Suoni rari, li riproduciamo sempre **/
+    // metodo per il suono dei crediti
+    public void playCreditEarned() {
+        creditSound.play(volume);
+    }
+
+    // metodo per il suono di completamento della missione RTG
+    public void playCompletedRTG() {
+        completedSound.play(volume);
+    }
+
+    private void playThrottled(String key, Sound sound, long minIntervalMillis) {
+        long now = System.currentTimeMillis();
+        Long lastPlayed = lastPlayedTimeMap.getOrDefault(key, 0L);
+
+        if (now - lastPlayed >= minIntervalMillis) {
+            sound.play(volume);
+            lastPlayedTimeMap.put(key, now);
+        }
+    }
+
+    public void dispose() {
+        shotSound.dispose();
+        hitSound.dispose();
+        creditSound.dispose();
+        completedSound.dispose();
+    }
+}
+

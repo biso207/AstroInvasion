@@ -29,13 +29,14 @@ import sorgente.DataUserManager;
 import sorgente.Main;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.UIManager;
+import sorgente.ResourceLoader;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class ClassicGame implements Screen, InputProcessor {
+public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;
     private final Texture spaceshipTexture, backgroundTexture;
@@ -90,8 +91,9 @@ public class ClassicGame implements Screen, InputProcessor {
     // stato cambio stile mouse
     private boolean isBtnRHover=false, isBtnLHover=false;
 
-    // audio di gioco
-    private final Sound creditSound, shotSound, hitSound, completedRTGSound;
+    // istanza del soundManager per riprodurre i suoni
+    private final SoundManager soundManager;
+
     // stato suono completamento RTG
     private boolean completedRTGSoundPlayed=false;
 
@@ -186,15 +188,8 @@ public class ClassicGame implements Screen, InputProcessor {
         // caricamento immagini
         loadImages();
 
-        // SUONI
-        // laser sparato
-        shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
-        // alieno colpito
-        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3"));
-        // raccolta monete
-        creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
-        // task RTG completata
-        completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+        // istanza del soundManager per riprodurre i suoni
+        soundManager = new SoundManager(InputManager.soundPercent);
 
         // setting comando di movimento
         if (((int) DataUserManager.getProgress("movement_type")) == 1) {
@@ -289,9 +284,9 @@ public class ClassicGame implements Screen, InputProcessor {
     // ******************* //
     // CARICAMENTO RISORSE //
     // ******************* //
-
+    @Override
     // caricamento immagini
-    private void loadImages() {
+    public void loadImages() {
         // cuori delle vite
         Texture life1 = new Texture("images/lives/heart 100%.png");
         Texture life2 = new Texture("images/lives/heart 75%.png");
@@ -337,8 +332,9 @@ public class ClassicGame implements Screen, InputProcessor {
         btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
     }
 
+    @Override
     // caricamento e creazione font per le scritte
-    private void loadFont() {
+    public void loadFont() {
         // dichiarazione font
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
@@ -482,7 +478,7 @@ public class ClassicGame implements Screen, InputProcessor {
             // for per il controllare le collisioni
             for (int i = 0; i < potentialCollisions.size; i++) {
                 if (laserPathIntersects(previousY, laser.y, laser.x, potentialCollisions.get(i))) {
-                    hitSound.play(InputManager.soundPercent); // suono alieno colpito
+                    soundManager.playHit(); // suono alieno colpito
 
                     // rimozione laser
                     if (!superLaser) {
@@ -508,7 +504,7 @@ public class ClassicGame implements Screen, InputProcessor {
                     if (!isLevel) {
                         points += (doublePoints ? scoreInc * 2 : scoreInc); // incremento punti
                         if (aliensHit % 5 == 0) {
-                            creditSound.play(InputManager.soundPercent);
+                            soundManager.playCreditEarned();
                             credits += creditsInc; // incremento crediti
                         }
                     }
@@ -681,7 +677,12 @@ public class ClassicGame implements Screen, InputProcessor {
         // stampa messaggio completamento task RTG
         if (!isLevel) {
             checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
-            if (!completedRTGSoundPlayed) { completedRTGSound.play(InputManager.soundPercent); completedRTGSoundPlayed=false; }
+
+            // riproduzione suono notifica di completamento
+            if (!completedRTGSoundPlayed && completedRTG) {
+                soundManager.playCompletedRTG();
+                completedRTGSoundPlayed=true;
+            }
             if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
                 // conteggio tempo per mostrare la notifica
                 elapsedTime += delta;
@@ -692,7 +693,7 @@ public class ClassicGame implements Screen, InputProcessor {
         screen.end();
     }
 
-    // TODO: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
+    // todo: implementare i metodi dell'interfaccia InputProcessor partendo dal metodo handleInput
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
@@ -750,26 +751,9 @@ public class ClassicGame implements Screen, InputProcessor {
         // sparo del laser
         if (shootPressed && laserCooldownTimer >= laserCooldown) {
             spawnLaser();
-            shotSound.play(InputManager.soundPercent);
+            soundManager.playLaser();
             laserCooldownTimer = 0;
         }
-    }
-
-    // metodo per cambiare lo stile dei pulsanti al passaggio del mouse sopra di essi
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        isBtnRHover=isBtnLHover=false;
-        // CAMBIO STILE PULSANTI
-        // YES quit
-        if (isPaused && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
-            isBtnLHover=true;
-        }
-
-        // NO quit
-        if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
-            isBtnRHover=true;
-        }
-        return true;
     }
 
     // TASTIERA
@@ -795,6 +779,17 @@ public class ClassicGame implements Screen, InputProcessor {
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button == Input.Buttons.LEFT) shootPressed = false;
         else if (button == Input.Keys.SPACE) shootPressed = false;
+        return true;
+    }
+    // metodo per cambiare lo stile dei pulsanti al passaggio del mouse sopra di essi
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        isBtnRHover=isBtnLHover=false;
+        // YES quit
+        if (isPaused && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) isBtnLHover=true;
+
+        // NO quit
+        if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) isBtnRHover=true;
         return true;
     }
 
@@ -844,6 +839,7 @@ public class ClassicGame implements Screen, InputProcessor {
             texture.dispose();
         }
         font.dispose();
+        soundManager.dispose(); // rilascio risorse audio
     }
 
     @Override public void resize(int width, int height) {}

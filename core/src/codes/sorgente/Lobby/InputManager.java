@@ -39,7 +39,7 @@ public class InputManager implements InputProcessor {
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
-    protected static int page = 0;
+    protected static int page;
     private int previousPage;
 
     // boolean per le carte speciali
@@ -94,6 +94,9 @@ public class InputManager implements InputProcessor {
         // recupero volume audio
         soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
         musicPercent = ((Number) DataUserManager.getProgress("music_volume")).floatValue();
+
+        // reset alla prima pagina per ogni creazione di istanza
+        page = 0;
     }
 
     // metodo per definire le aree di gioco cliccabili

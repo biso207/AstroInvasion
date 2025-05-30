@@ -38,7 +38,6 @@ public class LobbyManager implements Screen {
 
         // istanza di UIManager con caricamento risorse e creazione grafica
         ui = new UIManager();
-
         // istanza di InputManager
         input = new InputManager();
 

@@ -1,6 +1,6 @@
 package sorgente.GameMods;
 
-import com.badlogic.gdx.files.FileHandle;
+// import codici e librerie
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
@@ -14,15 +14,31 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.DataUserManager;
-import sorgente.Lobby.UIManager;
 import sorgente.Main;
 import sorgente.Lobby.InputManager;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Random;
+
+/*
+ todo: cambiare il volume dei suoni in base al volume globale dei suoni per l'utente, controlla in Classic Game o altre
+    classi per come fare. se ricordo bene, basta aggiungere una variabile dentro alle parentesi del metodo .play() dei suoni
+ todo: aggiungere il testo in gioco (nome utente e avversario, o quello che volevi fare te)
+ todo: controllare la collisione tra i laser che si devono eliminare a vicenda quando collidono
+ todo: il super laser non deve rompere il laser utente ma distrugge quelli avversi perforandoli
+ todo: quando si clicca su "YES" per quittare va nel game over dando la vittoria all'utente, deve dare la sconfitta
+ todo: implementare i metodi loadImages e loadFont dell'interfaccia ResourceLoader, lo facciamo in tutte le classi e
+    ti basta spostare le righe dal costruttore, in cui carichi le risorse, nei rispettivi metodi. è solo per organizzare
+    meglio il codice
+ todo: implementare la modalità a livelli dove non contano le vite ma le hit al nemico
+ todo: dare i crediti al giocatore che ha vinto una partita in corrispondenza alle vittorie consecutive fatte
+ todo: nei livelli, quando si vince, non si vince nulla se non il premio del livello. NO crediti e NO punti
+
+ e se aggiungessimo x punti alla vittoria di ogni space battle? potremmo dare, quando si vince, tanti punti quanti la
+ difficoltà, per esempio: difficoltà 1 => 100 punti; difficoltà 2 => 200 e difficoltà 3 300. così, anche space battle
+ è importante per fare punti e crediti.
+
+ ah, fai le cose nei todos. altrimenti? ti licenzio, semplice. :) #buttgay #suckmydick
+*/
 
 public class SpaceBattle implements Screen, InputProcessor {
     private final Main game;
@@ -45,8 +61,8 @@ public class SpaceBattle implements Screen, InputProcessor {
 
     private final Music soundtrack;
     private final Sound shotSound, hitSound;
-    private final BitmapFont font;
-    private Texture topBar, stopImg, playImg;
+    private final BitmapFont font, fontBoldWhite60;
+    private final Texture topBar, stopImg, playImg, quitMatch, btnHoverR, btnHoverL;
 
     private Texture superLaserImg = new Texture("images/spacecrafts/_super_laser.png");;
     private boolean superLaser=false, goldHeart=false;
@@ -57,6 +73,8 @@ public class SpaceBattle implements Screen, InputProcessor {
     public int moveLeftKey, moveRightKey, shotType;
 
     private final Spacecraft selectedSp;
+    // stato cambio stile mouse
+    private boolean isBtnRHover=false, isBtnLHover=false;
 
     private float enemyDirection = 1;
 
@@ -112,6 +130,8 @@ public class SpaceBattle implements Screen, InputProcessor {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
+        fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
+
         topBar = new Texture("images/top_bar_space_battle.png");
 
         playImg = new Texture("images/play.png");
@@ -128,6 +148,12 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
         gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
+
+        // quit match
+        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));
+        // pulsanti hover
+        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
 
         enemyTextures = new Array<Texture>();
 
@@ -309,9 +335,6 @@ public class SpaceBattle implements Screen, InputProcessor {
     private void handleInput(float delta) {
         playerCooldown += delta;
 
-        // gioco in pausa => nessun altro input può essere preso
-        if (isPaused) return;
-
         // click esc per chiudere la partita
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             if (!isPaused) isPaused = true;
@@ -345,6 +368,9 @@ public class SpaceBattle implements Screen, InputProcessor {
             isPaused = !isPaused;
         }
 
+        // gioco in pausa => nessun altro input può essere preso
+        if (isPaused) return;
+
         // movimento vs sx
         if (Gdx.input.isKeyPressed(moveLeftKey) && playerShip.x > 10) {
             playerShip.x -= playerSpeed * delta;
@@ -359,8 +385,6 @@ public class SpaceBattle implements Screen, InputProcessor {
             shotSound.play();
             playerCooldown = 0;
         }
-
-
     }
 
     private void renderGame() {
@@ -389,6 +413,19 @@ public class SpaceBattle implements Screen, InputProcessor {
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
         else screen.draw(playImg, 472, 637);
+
+        // stampa immagine per chiudere il gioco
+        if (quit) {
+            screen.draw(quitMatch, 250, 175);
+
+            if (isBtnLHover) screen.draw(btnHoverL, 277, 217);
+            else if (isBtnRHover) screen.draw(btnHoverR, 519, 217);
+
+            // scritte pulsanti
+            fontBoldWhite60.draw(screen, "YES", 320, 280);
+            fontBoldWhite60.draw(screen, "NO", 577, 280);
+        }
+
         screen.end();
     }
 
@@ -412,6 +449,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
 
     @Override public void render(float delta) {
+        Gdx.input.setInputProcessor(this); // attiva l'ascolto degli input per l'interfaccia InputProcessor
         if (!isPaused) {
             delta = Math.min(delta, 1 / 30f);
         } else delta = 0;
@@ -438,6 +476,9 @@ public class SpaceBattle implements Screen, InputProcessor {
         }
     }
 
+    // ************************************** //
+    // METODI DELL'INTERFACCIA InputProcessor //
+    // ************************************** //
     // TASTIERA
     // metodo per ascoltare il click della tastiera
     @Override public boolean keyDown(int keycode) {
@@ -463,9 +504,19 @@ public class SpaceBattle implements Screen, InputProcessor {
         else if (button == Input.Keys.SPACE) shootPressed = false;
         return true;
     }
+    // metodo per cambiare lo stile dei pulsanti al passaggio del mouse sopra di essi
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        isBtnRHover=isBtnLHover=false;
+        // YES quit
+        if (isPaused && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) isBtnLHover=true;
+
+        // NO quit
+        if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) isBtnRHover=true;
+        return true;
+    }
 
     @Override public boolean keyTyped(char character) { return true; }
-    @Override public boolean mouseMoved(int screenX, int screenY) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
