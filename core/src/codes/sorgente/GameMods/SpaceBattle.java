@@ -210,7 +210,11 @@ public class SpaceBattle implements Screen, InputProcessor {
                 enemyLives--;
                 it.remove();
                 hitSound.play();
-                if (enemyLives <= 0) gameOver(true);
+                if (enemyLives <= 0){
+                    gameOver(true);
+                    DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
+                    DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
+                }
             } else if (laser.y > Gdx.graphics.getHeight()) {
                 it.remove();
                 laserPool.free(laser);
@@ -223,7 +227,10 @@ public class SpaceBattle implements Screen, InputProcessor {
                 playerLives--;
                 it.remove();
                 hitSound.play();
-                if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)) gameOver(false);
+                if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
+                    gameOver(false);
+                    DataUserManager.setProgress("cons_won_SB", 0);
+                }
             } else if (laser.y < 0) {
                 it.remove();
                 laserPool.free(laser);
