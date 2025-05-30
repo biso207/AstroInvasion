@@ -48,7 +48,7 @@ public class SpaceBattle implements Screen, InputProcessor {
     private final BitmapFont font;
     private Texture topBar, stopImg, playImg;
 
-    private Texture superLaserImg;
+    private Texture superLaserImg = new Texture("images/spacecrafts/_super_laser.png");;
     private boolean superLaser=false, goldHeart=false;
 
     private final Spacecraft selectedSp;
@@ -57,6 +57,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
     private int totalLives = 4;
     private int totalEnemyLives = 4;
+
 
     private Texture  gameOver1, gameOver2;
 
@@ -166,7 +167,7 @@ public class SpaceBattle implements Screen, InputProcessor {
                 break;
             case 2:
                 playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
                 enemySpeed = 400;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.3f;
@@ -177,7 +178,7 @@ public class SpaceBattle implements Screen, InputProcessor {
                 break;
             case 3:
                 playerSpeed = 400 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                laserSpeed = 400 + selectedSp.getLaserSpeed() * 100;
                 enemySpeed = 500;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.3f;
@@ -192,8 +193,11 @@ public class SpaceBattle implements Screen, InputProcessor {
     //Laser
     private void spawnLaser(Rectangle origin, Array<Rectangle> targetArray) {
         Rectangle laser = laserPool.obtain();
-        laser.set(origin.x + origin.width / 2 - 5, origin.y + (origin == playerShip ? origin.height : -20), 10, 20);
-        targetArray.add(laser);
+        if (superLaser) screen.draw(superLaserImg, laser.x, laser.y);
+        else {
+            laser.set(origin.x + origin.width / 2 - 5, origin.y + (origin == playerShip ? origin.height : -20), 10, 20);
+            targetArray.add(laser);
+        }
     }
 
     //Aggiorna i laser
@@ -219,12 +223,16 @@ public class SpaceBattle implements Screen, InputProcessor {
                 playerLives--;
                 it.remove();
                 hitSound.play();
-                if (playerLives <= 0 && !goldHeart) gameOver(false);
+                if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)) gameOver(false);
             } else if (laser.y < 0) {
                 it.remove();
                 laserPool.free(laser);
             }
         }
+
+
+
+
     }
 
 
@@ -348,7 +356,7 @@ public class SpaceBattle implements Screen, InputProcessor {
             screen.draw(livesTextures[totalLives - 2][playerLives - 1], 75, 640);
         }
         // stampa cuore d'oro se attivato
-        if (goldHeart && playerLives == 0 && !isLevel) screen.draw(goldHeartImg, 93, 640);
+        if (goldHeart && playerLives == 0 && !isLevel) screen.draw(goldHeartImg, 75, 640);
 
         // stampa vite rimanenti
         if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
@@ -364,13 +372,17 @@ public class SpaceBattle implements Screen, InputProcessor {
     private void gameOver(boolean win) {
         // diminuzione carte speciali
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
-        //if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
+        if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
         soundtrack.stop();
 
         /// TODO: settare correttamente isLevel se si è giocato o meno un livello
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, false));
+
+        goldHeart = false;
+        superLaser = false;
+
     }
 
 
