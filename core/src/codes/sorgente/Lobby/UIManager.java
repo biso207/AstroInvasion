@@ -20,6 +20,7 @@ import sorgente.Missions.RTG;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
 
+import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -45,7 +46,7 @@ public class UIManager implements ResourceLoader {
     private Texture spImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
-    private final Texture[] buttonsOver;
+    private final Texture[] buttonsOver, alphaFragments;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
         fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60;
@@ -78,6 +79,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
         this.buttonsOver = new Texture[9];
+        this.alphaFragments = new Texture[5];
 
         // mouse
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
@@ -150,6 +152,12 @@ public class UIManager implements ResourceLoader {
 
         // immagine navicella
         spImg = new Texture(selectedSp.getPathImg());
+
+        // immagini frammenti alpha
+        for (int i=0; i<4; i++) {
+            alphaFragments[i] = new Texture("images/spacecrafts/basics/alpha_frag" + i + ".png");
+        }
+        alphaFragments[4] = new Texture("images/spacecrafts/basics/alpha.png"); // imm alpha completa
 
         // testo informativo space battle bloccato
         infoBanner = new Texture("images/warning_txt_space_battle.png");
@@ -248,12 +256,12 @@ public class UIManager implements ResourceLoader {
         };
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {1, 1, 0}, {0, 1, 5}, {1, 0, 5}, {3, 0, 0},
-            {2, 1, 0}, {0, 2, 10}, {2, 0, 10}, {1, 2, 0},
-            {3, 2, 0}, {0, 3, 20}, {3, 0, 20}, {2, 3, 0},
-            {4, 3, 0}, {0, 4, 30}, {4, 0, 30}, {3, 4, 0},
-            {5, 4, 0}, {0, 5, 40}, {5, 0, 40}, {4, 5, 0},
-            {3, 4, 10}, {0, 3, 50}, {3, 0, 50}, {4, 3, 10}
+            {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
+            {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
+            {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
+            {2, 2, 0}, {1, 2, 30}, {2, 1, 30}, {1, 3, 0},
+            {3, 2, 0}, {1, 3, 40}, {3, 1, 40}, {2, 3, 0},
+            {3, 3, 0}, {1, 3, 50}, {3, 1, 50}, {3, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -317,12 +325,12 @@ public class UIManager implements ResourceLoader {
             "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
-            {1, 1, 0}, {0, 1, 5}, {1, 0, 5}, {3, 0, 0},
-            {2, 1, 0}, {0, 2, 10}, {2, 0, 10}, {1, 2, 0},
-            {3, 2, 0}, {0, 3, 20}, {3, 0, 20}, {2, 3, 0},
-            {4, 3, 0}, {0, 4, 30}, {4, 0, 30}, {3, 4, 0},
-            {5, 4, 0}, {0, 5, 40}, {5, 0, 40}, {4, 5, 0},
-            {3, 4, 10}, {0, 3, 50}, {3, 0, 50}, {4, 3, 10}
+            {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
+            {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
+            {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
+            {2, 2, 0}, {1, 2, 30}, {2, 1, 30}, {1, 3, 0},
+            {3, 2, 0}, {1, 3, 40}, {3, 1, 40}, {2, 3, 0},
+            {3, 3, 0}, {1, 3, 50}, {3, 1, 50}, {3, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -425,7 +433,7 @@ public class UIManager implements ResourceLoader {
         screen.draw(mapLobby.get(4), 0, -InputManager.scrollY);
 
         int spID=0; // id navicella per recuperarne gli attributi
-        int X, x1=265, x2= 677, y=2645; // x e y della prima scritta della prima navicella
+        int X, x1=266, x2= 678, y=2645; // x e y della prima scritta della prima navicella
 
         // iterazione con 2 for per dividere i gruppi delle navicelle
         for (int i=0; i<6; i++) {
@@ -444,12 +452,20 @@ public class UIManager implements ResourceLoader {
 
                     // disegno rettangolo di selezione
                     if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-177, (y-145)-InputManager.scrollY);
+
+                    // disegno di alpha completata
+                    if (i*j==15) screen.draw(alphaFragments[4], X-125, (y-79)-InputManager.scrollY);
                 }
                 else {
                     fontBoldWhite18.draw(screen, "?", X, y-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, "?", X, (y-37)-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, "?", X, (y-74)-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, s.getMission(), X, (y-107)-InputManager.scrollY);
+
+                    // stampa immagine di alpha
+                    if (i*j==15) {
+                        screen.draw(alphaFragments[(int) DataUserManager.getProgress("alpha_fragments")], X-132, (y-92)-InputManager.scrollY);
+                    }
                 }
 
                 if (j==1)  y-=168; // passaggio alla riga seguente
@@ -587,8 +603,8 @@ public class UIManager implements ResourceLoader {
             // pagina 'space journey'
             case 2:
                 // testi //
-                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 385, 410); // livello
-                fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 475, 380); // galassia corrente
+                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 394, 412); // livello
+                fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 484, 380); // galassia corrente
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'

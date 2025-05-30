@@ -338,7 +338,7 @@ public class InputManager implements InputProcessor {
                         missionID++;
                         break;
                     case 2:
-                        DataUserManager.setProgress("won_SB_RTG", 0); // progressi missione azzerati
+                        DataUserManager.setProgress("won_SB_RTG", 0); // azzeramento partite vinte
                         DataUserManager.setProgress("num_shield", numShield + 1); // aggiunta carta
                         missionID++;
                         break;
@@ -374,11 +374,11 @@ public class InputManager implements InputProcessor {
                 }
                 if ((screenX >= 644 && screenX <= 664 && screenY >= 385 && screenY <= 405) && item3 > 0) { // item 3
                     item3--;
-                    currentCredit += 150;
+                    currentCredit += 200;
                 }
                 if ((screenX >= 794 && screenX <= 814 && screenY >= 385 && screenY <= 405) && item4 > 0) { // item 4
                     item4--;
-                    currentCredit += 200;
+                    currentCredit += 300;
                 }
                 if ((screenX >= 442 && screenX <= 462 && screenY >= 538 && screenY <= 558) && item5 > 0) { // item 5
                     item5--;
@@ -398,13 +398,13 @@ public class InputManager implements InputProcessor {
                     item2++;
                     currentCredit -= 100;
                 }
-                if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit - 150 >= 0)) { // item 3
+                if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit - 200 >= 0)) { // item 3
                     item3++;
-                    currentCredit -= 150;
-                }
-                if ((screenX >= 859 && screenX <= 879 && screenY >= 385 && screenY <= 405) && (currentCredit - 200 >= 0)) { // item 4
-                    item4++;
                     currentCredit -= 200;
+                }
+                if ((screenX >= 859 && screenX <= 879 && screenY >= 385 && screenY <= 405) && (currentCredit - 300 >= 0)) { // item 4
+                    item4++;
+                    currentCredit -= 300;
                 }
                 if ((screenX >= 506 && screenX <= 526 && screenY >= 538 && screenY <= 558) && (currentCredit - 20000 >= 0 && item5 < 1 && !((boolean) DataUserManager.getProgress("state_product_5")))) { // item 5
                     item5++;

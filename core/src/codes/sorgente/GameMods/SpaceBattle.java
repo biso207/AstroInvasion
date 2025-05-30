@@ -59,8 +59,6 @@ public class SpaceBattle implements Screen, InputProcessor {
     private int playerLives, enemyLives;
     private boolean isPaused = false, quit = false, gameClosed = false;
 
-    private final Music soundtrack;
-    private final Sound shotSound, hitSound;
     private final BitmapFont font, fontBoldWhite60;
     private final Texture topBar, stopImg, playImg, quitMatch, btnHoverR, btnHoverL;
 
@@ -81,6 +79,8 @@ public class SpaceBattle implements Screen, InputProcessor {
     private int totalLives = 4;
     private int totalEnemyLives = 4;
 
+    // istanza del soundManager per riprodurre i suoni
+    private final SoundManager soundManager;
 
     private Texture  gameOver1, gameOver2;
 
@@ -107,6 +107,9 @@ public class SpaceBattle implements Screen, InputProcessor {
         this.screen = game.screen;
         this.selectedSp = selectedSp;
         this.isLevel = isLevel;
+
+        // istanza del soundManager per riprodurre i suoni
+        soundManager = new SoundManager(InputManager.soundPercent);
 
         backgroundTexture = new Texture("images/bgInGame.png");
         playerTexture = new Texture(selectedSp.getPathImg());
@@ -136,15 +139,6 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         playImg = new Texture("images/play.png");
         stopImg = new Texture("images/stop.png");
-
-        soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/AstroInvasion_main_soundtrack.mp3"));
-        soundtrack.setLooping(true);
-        soundtrack.play();
-
-        shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
-        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.mp3"));
-
-        Gdx.input.setInputProcessor(this);
 
         gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
         gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
@@ -252,7 +246,7 @@ public class SpaceBattle implements Screen, InputProcessor {
             if (laser.overlaps(enemyShip)) {
                 enemyLives--;
                 it.remove();
-                hitSound.play();
+                soundManager.playHit();
                 if (enemyLives <= 0){
                     gameOver(true);
                     DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
@@ -269,7 +263,7 @@ public class SpaceBattle implements Screen, InputProcessor {
             if (laser.overlaps(playerShip)) {
                 playerLives--;
                 it.remove();
-                hitSound.play();
+                soundManager.playHit();
                 if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
                     gameOver(false);
                     DataUserManager.setProgress("cons_won_SB", 0);
@@ -304,7 +298,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         enemyCooldown += delta;
         if (enemyCooldown >= enemyLaserCooldown) {
             spawnLaser(enemyShip, enemyLasers);
-            shotSound.play();
+            soundManager.playLaser();
             enemyCooldown = 0;
         }
     }
@@ -382,7 +376,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         if (shootPressed && playerCooldown >= playerLaserCooldown) {
             spawnLaser(playerShip, playerLasers);
-            shotSound.play();
+            soundManager.playLaser();
             playerCooldown = 0;
         }
     }
@@ -435,16 +429,12 @@ public class SpaceBattle implements Screen, InputProcessor {
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
         if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
-        soundtrack.stop();
-
-        // todo: settare correttamente isLevel se si è giocato o meno un livello
         int[] stats = {0, 0, 0};
-        game.setScreen(new GameOver(game, selectedSp, 1, stats, win, false));
+        game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
 
         //Non funziona bene
         goldHeart = false;
         superLaser = false;
-
     }
 
 

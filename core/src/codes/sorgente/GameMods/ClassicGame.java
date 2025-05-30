@@ -593,17 +593,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         screen.draw(backgroundTexture, 0, backgroundY1, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
         screen.draw(backgroundTexture, 0, backgroundY2, Gdx.graphics.getWidth(), backgroundTexture.getHeight());
 
-        // aggiunta scudo
-        if (shield) {
-            // banner scudo attivo a lato con i secondi rimanenti
-            screen.draw(shieldBanner, 810, 490);
-            // secondi rimanenti scudo attivo
-            font.draw(screen, String.valueOf(Math.round(shieldTime-timePassed)), 895, 547);
-
-            // stampa immagine dello scudo sulla navicella
-            screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
-        }
-
         // stampa navicella
         screen.draw(spaceshipTexture, spaceship.x, spaceship.y);
 
@@ -688,6 +677,17 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
                 elapsedTime += delta;
                 screen.draw(bannerRTG, 400, 515); // banner di notifica
             }
+        }
+
+        // aggiunta scudo
+        if (shield) {
+            // banner scudo attivo a lato con i secondi rimanenti
+            screen.draw(shieldBanner, 810, 490);
+            // secondi rimanenti scudo attivo
+            fontGold.draw(screen, String.valueOf(Math.round(shieldTime-timePassed)), 895, 547);
+
+            // stampa immagine dello scudo sulla navicella
+            screen.draw(shieldImg, spaceship.x - 25, spaceship.y);
         }
 
         screen.end();

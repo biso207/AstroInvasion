@@ -116,9 +116,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // tempo per mostrare la notifica di completamento RTG
     private float elapsedTime = 0;
 
-    // audio di gioco
-    private final Sound completedRTGSound;
-
     // stato suono completamento RTG
     private boolean completedRTGSoundPlayed=false;
 
@@ -130,16 +127,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // stato premio raccolto
     private boolean isRewardClaimed;
 
-    /// TODO:
-    /// aggiungere la raccolta del premio, con essa cambia il testo da CLAIM e CLOSE e il range cambia funzione
-    /// da click per raccogliere il premio a click per tornare alla mappa dei livelli.
-    /// una volta che si completa il livello, da qua, bisogna cambiare lo stato del livello corrente a COMPLETED e mettere
-    /// il successivo a TO_BUY. Aggiungere la grafica corretta in base ai premi per la schermata di vittoria
-    /// e assegnare il premio corretto. per assegnare il premio non bisogna fare nulla! basta aggiornare i progressi
-    /// con il valore di "level" incremento di 1 e il gioco farà i suoi controlli dove deve e sarà tutto già disponibile.
-    /// i premi mostrati qua sono solo da mostrare, così come l'immagine del guardiano e il testo di completamento del livello.
-    /// impostare bene i testi dei pulsanti e i pulsanti "hover" quando ci passa sopra.
-    /// aggiungere il controllo per riavviare il livello in cui si è perso direttamente da qua.
+    // istanza del soundManager per riprodurre i suoni
+    private final SoundManager soundManager;
+
+    /*
+     todo:
+        aggiungere la raccolta del premio, con essa cambia il testo da CLAIM e CLOSE e il range cambia funzione
+        da click per raccogliere il premio a click per tornare alla mappa dei livelli.
+     */
 
     // costruttore
     public GameOver(Main game, Spacecraft selectedSp, int mod, int[] stats, boolean win, boolean isLevel) {
@@ -155,9 +150,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         this.win = win;
         this.isLevel = isLevel;
 
-        // SUONI
-        // task RTG completata
-        completedRTGSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+        // istanza del soundManager per riprodurre i suoni
+        soundManager = new SoundManager(InputManager.soundPercent);
 
         // attivazione carte delle navicelle premium
         if (selectedSp.getName().equals("Alpha")) goldHeart = true;
@@ -189,7 +183,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
     public void checkCompletedRTG() {
         // recupero partite vinte fin'ora
-        int won = (int) DataUserManager.getProgress("won_SB_RTG");
+        int wonInRow = (int) DataUserManager.getProgress("won_SB_RTG");
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
         // recupero partite da vincere
@@ -199,13 +193,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // controllo completamento task rtg
         if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
             // setting stato task RTG a true (completato)
-            if (win) {
-                won++; // incremento numero partite vinte
-                if (missionID == 2 && won==wonRTG) {
-                    DataUserManager.setProgress("completed_RTG", true); // progresso compiuto
-                    completedRTG = true;
+            if (win && missionID == 2) {
+                wonInRow++; // incremento numero partite vinte
+
+                if (wonInRow==wonRTG) {
+                    DataUserManager.setProgress("completed_RTG", true); // completamento task RTG
+                    completedRTG = true; // cambio stato per l'icona di notifica
                 }
-                else DataUserManager.setProgress("won_SB_RTG", won); // aggiornamento partite vinte
+                else DataUserManager.setProgress("won_SB_RTG", wonInRow); // aggiornamento partite vinte
             }
         }
     }
@@ -272,9 +267,30 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // salvataggio progressi livelli
     public void saveLevelProgress() {
-        // incremento livello
+        // recupero numero carte => per semplificare la scrittura nell'assegnazione premi
+        int numSuperLaser = (int) DataUserManager.getProgress("num_super_laser");
+        int numDoublePoints = (int) DataUserManager.getProgress("num_double_points");
+        int numFragments = (int) DataUserManager.getProgress("alpha_fragments");
+
+        // assegnazione premi
+        switch (numLevel) {
+            case 1 -> DataUserManager.setProgress("num_super_laser", numSuperLaser+1);
+            case 5 -> DataUserManager.setProgress("num_double_points", numDoublePoints+1);
+            case 10, 20, 30, 40 -> DataUserManager.setProgress("alpha_fragments", numFragments+1);
+
+            case 11 -> DataUserManager.setProgress("num_super_laser", numSuperLaser+2);
+            case 15 -> DataUserManager.setProgress("num_double_points", numDoublePoints+2);
+
+            case 21 -> DataUserManager.setProgress("num_super_laser", numSuperLaser+3);
+            case 25 -> DataUserManager.setProgress("num_double_points", numDoublePoints+3);
+
+            case 31 -> DataUserManager.setProgress("num_super_laser", numSuperLaser+4);
+            case 35 -> DataUserManager.setProgress("num_double_points", numDoublePoints+4);
+        }
+
+        // incremento livello raggiunto
         if (numLevel<40) DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
-        // setting stato livello da acquistare
+        // setting stato livello successivo da acquistare
         DataUserManager.setProgress("level_bought", false);
     }
 
@@ -382,7 +398,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
                     // suono completamento RTG
                     if (!completedRTGSoundPlayed) {
-                        completedRTGSound.play(); // suono
+                        soundManager.playCompletedRTG(); // riproduzione suono
                         completedRTGSoundPlayed=true; // evita di riprodurre infinite volte il suono
                     }
                     // stampa messaggio completamento task RTG
@@ -422,14 +438,17 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             }
         }
         else { // vittoria
-            // pulsanti hover // todo: impostare correttamente la posizione del pulsante hover
+            // pulsanti hover //
             if (isBtnLHover) screen.draw(btnHoverL, 398, 48);
             // testo pulsante // todo: impostare correttamente la posizione del testo
             fontBoldWhite50.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 420, 105);
 
             // stampa immagine premio + testo descrittivo
             int currentLevel = isRewardClaimed ? ((int) DataUserManager.getProgress("level")-2) : ((int) DataUserManager.getProgress("level")-1);
-            screen.draw(listImgReward.get(currentLevel), 462, 320);
+
+            int xImg = 500-(listImgReward.get(currentLevel).getWidth()/2);
+            int yImg = 350+(listImgReward.get(currentLevel).getHeight()/2);
+            screen.draw(listImgReward.get(currentLevel), xImg, yImg); // immagine premio
 
             // testi al centro della pagina con lunghezza variabile //
             // testo LIVELLO COMPLETATO
@@ -515,10 +534,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
                 // livello corrente
                 if (!isLevel) game.setScreen(new LobbyManager(game));
-                else {
-                    //if (win) saveLevelProgress(); // TODO: rimuoverlo da qua una volta settato il range claim
-                    game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
-                }
+                else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
 
@@ -623,6 +639,35 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     }
     // rilascio risorse
     @Override public void dispose() {
+        // dispose fonts
+        font.dispose();
+        fontBoldWhite25.dispose();
+        fontBoldWhite50.dispose();
+        fontBoldWhite60.dispose();
+
+        // dispose textures
+        gameOverCG.dispose();
+        gameOverSB.dispose();
+        victorySB.dispose();
+        levelCompleted.dispose();
+        levelDefeat.dispose();
+        guardianG1.dispose();
+        guardianG2.dispose();
+        guardianG3.dispose();
+        guardianG4.dispose();
+        rectSelectCard.dispose();
+        bannerRTG.dispose();
+        btnHoverL.dispose();
+        btnHoverR.dispose();
+
+        // dispose reward textures list
+        for (Texture texture : listImgReward) {
+            texture.dispose();
+        }
+
+        // dispose sound manager
+        soundManager.dispose();
+
         screen.dispose();
     }
 
