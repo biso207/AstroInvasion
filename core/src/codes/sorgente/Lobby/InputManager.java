@@ -31,7 +31,7 @@ public class InputManager implements InputProcessor {
     private final Map<Rectangle, Integer> clickableAreas = new HashMap<>();
 
     // variabili per mostrare le schermate in sovra impressione
-    protected static boolean secondScreen=false, open4=false, open14=false, open16=false, open17=false,
+    protected static boolean secondScreen=false, open14=false, open16=false, open17=false,
         open18=false, open19=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
@@ -67,8 +67,8 @@ public class InputManager implements InputProcessor {
     // percentuale audio
     public static float soundPercent, musicPercent;
 
-    protected static float scrollY = 2300; // posizione iniziale dello scroll/pagina
-    private final float maxScrollY = 2300; // altezza massima della schermata scrollabile (immagine - altezza schermo)
+    protected static float scrollY = 2300, scrollY2 = 2800; // posizioni iniziali delle pagine scrollabili
+    private final float maxScrollY = 2300, maxScrollY2 = 2800; // altezza massima delle schermate scrollabili
 
 
     // costruttore
@@ -138,8 +138,14 @@ public class InputManager implements InputProcessor {
 
     // controlla il margine di scorrimento del mouse
     private void clampScroll() {
-        if (scrollY < 0) scrollY = 0;
-        if (scrollY > maxScrollY) scrollY = maxScrollY;
+        if (page==4) { // scroll pagina navicelle
+            if (scrollY < 0) scrollY = 0;
+            if (scrollY > maxScrollY) scrollY = maxScrollY;
+        }
+        else { // scroll pagina info di gioco
+            if (scrollY2 < 0) scrollY2 = 0;
+            if (scrollY2 > maxScrollY2) scrollY2 = maxScrollY2;
+        }
     }
 
     // ************************************** //
@@ -184,6 +190,7 @@ public class InputManager implements InputProcessor {
                 HitBox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
                     if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
+                    if (hb.targetPage==12) scrollY2 = 2800;// reset altezza pagina info di gioco, si apre partendo dall'alto
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
                     break;
@@ -466,8 +473,9 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            // X sp => chiusura pagina 'spacecrafts'
-            if ((screenX >= 908 && screenX <= 948) && (+(maxScrollY - scrollY) >= 74 && +(maxScrollY - scrollY) <= 114)) {
+            // X sp => chiusura pagina navicelle/info di gioco
+            if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (((screenY+(maxScrollY - scrollY)) >= 66 && (screenY+(maxScrollY - scrollY)) <= 106)
+                || ((screenY+(maxScrollY2 - scrollY2)) >= 66 && (screenY+(maxScrollY2 - scrollY2)) <= 106))) {
                 page = previousPage;
             }
 
@@ -491,12 +499,6 @@ public class InputManager implements InputProcessor {
                         y += 66 + 45; // 66 larghezza img, 45 distanza di y tra immagini
                     }
                 }
-            }
-            System.out.println(screenX + " " + screenY);
-            // chiusura pagina navicelle
-            if (page==4 && (screenX >= 907 && screenX <= 947) && (screenY >= 68 && screenY <= 106)) {
-                open4 = false;
-                page = previousPage;
             }
 
             // X => chiusura pagina istruzioni; info profilo-difficoltà; avatar
@@ -669,8 +671,11 @@ public class InputManager implements InputProcessor {
     // gestisce lo scorrimento del mouse sulla schermata
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        // diminuzione di Y => deve essere tra 2300 e 0 compresi
+        // diminuzione di Y per la pagina delle navicelle => deve essere tra 2300 e 0 compresi
         scrollY -= amountY * 50f;
+        // diminuzione di Y per la pagina delle info => deve essere tra 3500 e 0 compresi
+        scrollY2 -= amountY * 700f;
+
         // controllo posizione
         clampScroll();
         return true;

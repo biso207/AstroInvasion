@@ -28,7 +28,7 @@ public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner;
+        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2;
 
     // textureRegione per definire l'area di completamento della task corrente in RTG
     private TextureRegion progressBarRegion;
@@ -232,6 +232,8 @@ public class UIManager implements ResourceLoader {
 
         // X chiusura pagina 'spacecrafts'
         topBanner = new Texture("images/top_banner.png");
+        // X chiusura pagina 'how to play'
+        topBanner2 = new Texture("images/top_banner2.png");
     }
 
     // creazione grafica delle navicelle
@@ -259,9 +261,9 @@ public class UIManager implements ResourceLoader {
             {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
             {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
             {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
-            {2, 2, 0}, {1, 2, 30}, {2, 1, 30}, {1, 3, 0},
-            {3, 2, 0}, {1, 3, 40}, {3, 1, 40}, {2, 3, 0},
-            {3, 3, 0}, {1, 3, 50}, {3, 1, 50}, {3, 3, 10}
+            {2, 2, 0}, {0, 2, 30}, {2, 0, 30}, {1, 3, 0},
+            {3, 2, 0}, {0, 3, 40}, {3, 0, 40}, {2, 3, 0},
+            {3, 3, 0}, {0, 3, 50}, {3, 0, 50}, {3, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -328,9 +330,9 @@ public class UIManager implements ResourceLoader {
             {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
             {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
             {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
-            {2, 2, 0}, {1, 2, 30}, {2, 1, 30}, {1, 3, 0},
-            {3, 2, 0}, {1, 3, 40}, {3, 1, 40}, {2, 3, 0},
-            {3, 3, 0}, {1, 3, 50}, {3, 1, 50}, {3, 3, 10}
+            {2, 2, 0}, {0, 2, 30}, {2, 0, 30}, {1, 3, 0},
+            {3, 2, 0}, {0, 3, 40}, {3, 0, 40}, {2, 3, 0},
+            {3, 3, 0}, {0, 3, 50}, {3, 0, 50}, {3, 3, 10}
         };
 
         // popolamento della mappa navicelle
@@ -490,8 +492,8 @@ public class UIManager implements ResourceLoader {
             InputManager.isSPChanged = false; // cambio stato selezione navicella
         }
 
-        // background principale (NO la pagina 4, viene mostrata dal suo metodo)
-        if (InputManager.page != 4) screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
+        if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
@@ -715,6 +717,15 @@ public class UIManager implements ResourceLoader {
                     x+=161;
                     if ((i+1)%5==0) { x=145; y-=111; } // reset posizione alla nuova riga
                 }
+                break;
+
+            // pagina 'how to play'
+            case 12:
+                // immagine di sfondo
+                screen.draw(mapLobby.get(12), 0, -InputManager.scrollY2);
+                // banner in alto fisso
+                screen.draw(topBanner2, 14, 514); // DEVE STARE QUI PERCHÈ STA SOPRA OGNI ALTRO ELEMENTO DELLA PAGINA
+                break;
         }
 
         // disegno eventuale schermo sovrapposto
@@ -786,6 +797,7 @@ public class UIManager implements ResourceLoader {
         bgSpacecraftSelection.dispose();
         spacecraftSelectionBox.dispose();
         topBanner.dispose();
+        topBanner2.dispose();
 
         rectSelectCard.dispose();
         claimPrize.dispose();
