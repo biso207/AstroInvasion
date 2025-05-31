@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.GameMods;
 
 // import librerie e codici
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.Entities.Alien;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
@@ -120,6 +121,9 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     private float timePassed=0;
     private final float shieldTime=30f;
 
+    /// istanza per lo shape renderer delle hitboxes
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
     // costruttore
     public ClassicGame(Main game, Spacecraft selectedSp, boolean isLevel) {
         this.game = game;
@@ -149,7 +153,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         };
 
         // rettangolo che rappresenta la navicella
-        spaceship = new Rectangle(400, 20, 70, 64);
+        spaceship = new Rectangle(398, 20, 102, 70);
 
         // init parametri in base alla difficoltà di gioco
         int difficulty=1;
@@ -353,7 +357,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     // metodo per generare il laser
     private void spawnLaser() {
         Rectangle laser = laserPool.obtain();
-        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 30, 40);
+        laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 20, 40);
 
         // TODO: fare diverse prove per verificare che non si verifichino lag o problemi con il super laser non limitato a 2.
         /*
@@ -420,7 +424,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
 
             Alien alien = new Alien(
                 alienTextures[type],
-                new Rectangle(MathUtils.random(20, Gdx.graphics.getWidth() - 84), 700, 64, 64)
+                new Rectangle(MathUtils.random(20, Gdx.graphics.getWidth() - 84), 700, 40, 32)
             );
             aliens.add(alien);
             spawnTimer = 0;
@@ -598,14 +602,37 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
 
         // stampa laser
         for (Rectangle laser : lasers) {
-            if (!superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
-            else screen.draw(superLaserImg, laser.x, laser.y);
+            if (!superLaser) screen.draw(selectedSp.getLaserTexture(), laser.x-23, laser.y);
+            else screen.draw(superLaserImg, laser.x-22, laser.y);
         }
 
         // stampa alieni
         for (Alien alien : aliens) {
             screen.draw(alien.getImg(), alien.getAlienRect().x, alien.getAlienRect().y);
         }
+
+        /** Il codice seguente serve solo per mostrare le hitboxes di alieni, navicella utente e laser utente
+        // Debug hitbox (collisioni)
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);  // Puoi usare anche verde o blu
+
+        // Disegna la hitbox della navicella
+        shapeRenderer.rect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
+
+        // Disegna le hitbox degli alieni
+        for (Alien alien : aliens) {
+            Rectangle hitbox = alien.getAlienRect();
+            shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        }
+
+        // Disegna le hitbox dei laser
+        for (Rectangle laser : lasers) {
+            shapeRenderer.rect(laser.x, laser.y, laser.width, laser.height);
+        }
+
+        shapeRenderer.end();
+
+        /// fine shape renderer **/
 
         // stampa animazioni di collisione
         Iterator<CollisionAnimation> iterator = activeAnimations.iterator();

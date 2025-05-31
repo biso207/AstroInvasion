@@ -124,8 +124,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // stato livello e vittoria/sconfitta partita
     private final boolean win, isLevel;
-    // stato premio raccolto
-    private boolean isRewardClaimed;
 
     // istanza del soundManager per riprodurre i suoni
     private final SoundManager soundManager;
@@ -167,6 +165,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // caricamento immagini di base
         loadImages();
+
+        // salvataggio progresso livello completato
+        if (isLevel && win) saveLevelProgress();
 
         // aggiornamento progressi di gioco. DA NON METTERE DENTRO METODI CHE VENGONO RIPETUTI
         switch (mod) {
@@ -440,14 +441,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         else { // vittoria
             // pulsanti hover //
             if (isBtnLHover) screen.draw(btnHoverL, 398, 48);
-            // testo pulsante // todo: impostare correttamente la posizione del testo
-            fontBoldWhite50.draw(screen, isRewardClaimed ? "CLOSE" : "CLAIM", 420, 105);
+            // testo pulsante //
+            fontBoldWhite50.draw(screen, "CLOSE", 420, 105);
 
             // stampa immagine premio + testo descrittivo
-            int currentLevel = isRewardClaimed ? ((int) DataUserManager.getProgress("level")-2) : ((int) DataUserManager.getProgress("level")-1);
+            int currentLevel = (int) DataUserManager.getProgress("level")-2;
 
             int xImg = 500-(listImgReward.get(currentLevel).getWidth()/2);
-            int yImg = 350+(listImgReward.get(currentLevel).getHeight()/2);
+            int yImg = 350-(listImgReward.get(currentLevel).getHeight()/2);
             screen.draw(listImgReward.get(currentLevel), xImg, yImg); // immagine premio
 
             // testi al centro della pagina con lunghezza variabile //
@@ -501,13 +502,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (win && isLevel) { // vittoria nei livelli
-            // 'claim reward' button
-            if (!isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
-                saveLevelProgress();
-                isRewardClaimed = true;
-            }
             // 'back to galaxies' button
-            if (isRewardClaimed && (screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+            if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
