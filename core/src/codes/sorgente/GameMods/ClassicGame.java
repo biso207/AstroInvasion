@@ -37,6 +37,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
 
+/*
+Todo:Non è un todo ma così si illumina e lo vedi, ma ora il suono di space battle va bene? A me sembra globale
+ */
+
 public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;

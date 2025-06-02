@@ -20,12 +20,8 @@ import java.util.Iterator;
 import java.util.Random;
 
 /*
- todo: cambiare il volume dei suoni in base al volume globale dei suoni per l'utente, controlla in Classic Game o altre
-    classi per come fare. se ricordo bene, basta aggiungere una variabile dentro alle parentesi del metodo .play() dei suoni
  todo: aggiungere il testo in gioco (nome utente e avversario, o quello che volevi fare te)
- todo: controllare la collisione tra i laser che si devono eliminare a vicenda quando collidono
  todo: il super laser non deve rompere il laser utente ma distrugge quelli avversi perforandoli
- todo: quando si clicca su "YES" per quittare va nel game over dando la vittoria all'utente, deve dare la sconfitta
  todo: implementare i metodi loadImages e loadFont dell'interfaccia ResourceLoader, lo facciamo in tutte le classi e
     ti basta spostare le righe dal costruttore, in cui carichi le risorse, nei rispettivi metodi. è solo per organizzare
     meglio il codice
@@ -59,11 +55,13 @@ public class SpaceBattle implements Screen, InputProcessor {
     private int playerLives, enemyLives;
     private boolean isPaused = false, quit = false, gameClosed = false;
 
-    private final BitmapFont font, fontBoldWhite60;
+    private final BitmapFont font, fontBoldWhite60, fontBoldWhite20;
     private final Texture topBar, stopImg, playImg, quitMatch, btnHoverR, btnHoverL;
 
     private Texture superLaserImg = new Texture("images/spacecrafts/_super_laser.png");;
     private boolean superLaser=false, goldHeart=false;
+
+    private String enemyPicture;
 
     // stato sparo del laser
     private boolean shootPressed = false;
@@ -134,6 +132,7 @@ public class SpaceBattle implements Screen, InputProcessor {
         font.setColor(Color.WHITE);
 
         fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
+        fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 35
 
         topBar = new Texture("images/top_bar_space_battle.png");
 
@@ -158,8 +157,9 @@ public class SpaceBattle implements Screen, InputProcessor {
 
         System.out.println(selection);
         System.out.println(laserTextures.get(selection));
-
+        enemyPicture = enemySpacecraft(selection);
         enemyTexture = enemyTextures.get(selection);
+        for (int i = 1; i < 22; i++) i++;
         laserTexture = laserTextures.get(selection);
 
         // attivazione carte utente
@@ -194,7 +194,7 @@ public class SpaceBattle implements Screen, InputProcessor {
             case 1:
                 playerSpeed = 200 + selectedSp.getSpSpeed() * 100;
                 laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
-                enemySpeed = 300;
+                enemySpeed = 400;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.3f;
                 totalLives = 4;
@@ -205,9 +205,9 @@ public class SpaceBattle implements Screen, InputProcessor {
             case 2:
                 playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
                 laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
-                enemySpeed = 400;
+                enemySpeed = 500;
                 playerLaserCooldown = 0.3f;
-                enemyLaserCooldown = 0.3f;
+                enemyLaserCooldown = 0.25f;
                 totalLives = 3;
                 totalEnemyLives = 4;
                 playerLives = totalLives;
@@ -216,9 +216,9 @@ public class SpaceBattle implements Screen, InputProcessor {
             case 3:
                 playerSpeed = 400 + selectedSp.getSpSpeed() * 100;
                 laserSpeed = 400 + selectedSp.getLaserSpeed() * 100;
-                enemySpeed = 500;
+                enemySpeed = 600;
                 playerLaserCooldown = 0.3f;
-                enemyLaserCooldown = 0.3f;
+                enemyLaserCooldown = 0.2f;
                 totalLives = 2;
                 totalEnemyLives = 4;
                 playerLives = totalLives;
@@ -273,6 +273,21 @@ public class SpaceBattle implements Screen, InputProcessor {
                 laserPool.free(laser);
             }
         }
+
+        for (Iterator<Rectangle> it1 = playerLasers.iterator(); it1.hasNext(); ) {
+            Rectangle pLaser = it1.next();
+            for (Iterator<Rectangle> it2 = enemyLasers.iterator(); it2.hasNext(); ) {
+                Rectangle eLaser = it2.next();
+                if (pLaser.overlaps(eLaser)) {
+                    it1.remove();
+                    it2.remove();
+                    laserPool.free(pLaser);
+                    laserPool.free(eLaser);
+                    break;
+                }
+            }
+        }
+
 
 
 
@@ -350,7 +365,7 @@ public class SpaceBattle implements Screen, InputProcessor {
 
             // click YES => interruzione gioco
             if ((screenX >= 270 && screenX <= 470) && (screenY >= 405 && screenY <= 480)) {
-                gameOver(true);
+                gameOver(false);
                 gameClosed = true;
                 return; // uscita
             }
@@ -404,6 +419,13 @@ public class SpaceBattle implements Screen, InputProcessor {
         if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
             screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 893, 640);
         }
+
+        // stampa nome utente
+        fontBoldWhite20.draw(screen, "Spaceship " + selectedSp.getName() + "(you)", 155, 665);
+
+        //Stampa nome nemico
+        fontBoldWhite20.draw(screen, "Spaceship " + enemyPicture + "(bot)", 605, 665);
+
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
         else screen.draw(playImg, 472, 637);
@@ -435,6 +457,56 @@ public class SpaceBattle implements Screen, InputProcessor {
         //Non funziona bene
         goldHeart = false;
         superLaser = false;
+    }
+
+    private String enemySpacecraft(int i){
+        i++;
+        switch(i){
+            case 1:
+                return "Alpha";
+            case 2:
+                return "Andvari";
+            case 3:
+                return "Ares";
+            case 4:
+                return "Asgard";
+            case 5:
+                return "Beowulf";
+            case 6:
+                return "Zephyr";
+            case 7:
+                return "Centauro";
+            case 8:
+                return "Malloc";
+            case 9:
+                return "Fenixia";
+            case 10:
+                return "Galahad";
+            case 11:
+                return "Omega";
+            case 12:
+                return "Siko";
+            case 13:
+                return "Seraphis";
+            case 14:
+                return "Idra";
+            case 15:
+                return "Orion";
+            case 16:
+                return "Pegaso";
+            case 17:
+                return "Efron";
+            case 18:
+                return "Scylla";
+            case 19:
+                return "Selen";
+            case 20:
+                return "Keto";
+            case 21:
+                return "Woka";
+
+        }
+        return " ";
     }
 
 
