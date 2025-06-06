@@ -184,24 +184,24 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
     public void checkCompletedRTG() {
         // recupero partite vinte fin'ora
-        int wonInRow = (int) DataUserManager.getProgress("won_SB_RTG");
+        int winsRTG = (int) DataUserManager.getProgress("won_SB_RTG");
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
         // recupero partite da vincere
-        int wonRTG = UIManager.RTGs[missionID-1].calcNumObjMission();
+        int toWinRTG = UIManager.RTGs[missionID-1].calcNumObjMission();
 
 
         // controllo completamento task rtg
         if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
             // setting stato task RTG a true (completato)
             if (win && missionID == 2) {
-                wonInRow++; // incremento numero partite vinte
+                winsRTG++; // incremento numero partite vinte
 
-                if (wonInRow==wonRTG) {
+                if (winsRTG==toWinRTG) {
                     DataUserManager.setProgress("completed_RTG", true); // completamento task RTG
                     completedRTG = true; // cambio stato per l'icona di notifica
                 }
-                else DataUserManager.setProgress("won_SB_RTG", wonInRow); // aggiornamento partite vinte
+                else DataUserManager.setProgress("won_SB_RTG", winsRTG); // aggiornamento partite vinte
             }
         }
     }
@@ -398,7 +398,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (superLaser) screen.draw(rectSelectCard, 831, 388);
 
                     // suono completamento RTG
-                    if (!completedRTGSoundPlayed) {
+                    if (!completedRTGSoundPlayed && completedRTG) {
                         soundManager.playCompletedRTG(); // riproduzione suono
                         completedRTGSoundPlayed=true; // evita di riprodurre infinite volte il suono
                     }
