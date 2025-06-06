@@ -5,7 +5,7 @@
     "total_credits": 18997,
     "mission_id": 4,
     "state_product_5": false,
-    "cons_won_SB": 13,
+    "cons_won_SB": 19,
     "points": 3224560,
     "num_shield": 4,
     "spacecraft": 8,
@@ -21,7 +21,7 @@
     "num_aliens_hit_RTG": 0,
     "points_RTG": 0,
     "level": 17,
-    "avatar": 2,
+    "avatar": 0,
     "won_SB_RTG": 0,
     "diff_classic_game": 3,
     "shot_type": 1,
@@ -29,6 +29,6 @@
     "num_aliens_hit": 30874,
     "movement_type": 1,
     "sound_volume": 0,
-    "won_SB": 32,
+    "won_SB": 39,
     "num_super_laser": 0
 }
