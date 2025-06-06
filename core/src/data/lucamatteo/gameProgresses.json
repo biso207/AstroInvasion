@@ -9,7 +9,7 @@
     "points": 4065660,
     "num_shield": 34,
     "spacecraft": 9,
-    "completed_RTG": false,
+    "completed_RTG": true,
     "num_double_points": 11,
     "music_volume": 0.2975,
     "num_mission": 107,
