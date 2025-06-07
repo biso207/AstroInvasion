@@ -32,6 +32,7 @@ import sorgente.Lobby.UIManager;
 import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -128,25 +129,26 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // istanza del soundManager per riprodurre i suoni
     private final SoundManager soundManager;
 
-    /*
-     todo:
-        aggiungere la raccolta del premio, con essa cambia il testo da CLAIM e CLOSE e il range cambia funzione
-        da click per raccogliere il premio a click per tornare alla mappa dei livelli.
-     */
+    // crediti utente vinti in space battle
+    private int creditsSB;
 
     // costruttore
     public GameOver(Main game, Spacecraft selectedSp, int mod, int[] stats, boolean win, boolean isLevel) {
         // set gioco
         this.game = game;
 
-        // recupero progressi
+        // assegnazione variabili
         this.selectedSp = selectedSp;
         this.mod = mod;
+        this.win = win;
+        this.isLevel = isLevel;
+
+        // azzeramento statistiche in caso di livello
+        if (isLevel) Arrays.fill(stats, 0);
+        // recupero progressi partita
         this.points = stats[0];
         this.credits = stats[1];
         this.aliensHit = stats[2];
-        this.win = win;
-        this.isLevel = isLevel;
 
         // istanza del soundManager per riprodurre i suoni
         soundManager = new SoundManager(InputManager.soundPercent);
@@ -175,6 +177,22 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 writeFileCG();
                 break;
             case 1:
+                // calcolo crediti utente vinti
+                int diff = (int) DataUserManager.getProgress("diff_space_battle");
+                int streak = (int) DataUserManager.getProgress("cons_won_SB");
+
+                if (win) {
+                    if (streak>=1) {
+                        switch (diff) {
+                            case 1 -> creditsSB = (int) (10 * (Math.pow(1.2, streak)));
+                            case 2 -> creditsSB = (int) (20 * (Math.pow(1.2, streak)));
+                            case 3 -> creditsSB = (int) (30 * (Math.pow(1.2, streak)));
+                        }
+                    }
+                    else creditsSB = diff*10;
+                }
+                else creditsSB = 0;
+
                 checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
                 writeFileSpaceBattle();
                 break;
@@ -183,25 +201,36 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare il completamento della task del 'road to glory' (RTG)
     public void checkCompletedRTG() {
-        // recupero partite vinte fin'ora
-        int winsRTG = (int) DataUserManager.getProgress("won_SB_RTG");
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
+
         // recupero partite da vincere
         int toWinRTG = UIManager.RTGs[missionID-1].calcNumObjMission();
+        // recupero partite vinte fin'ora
+        int winsRTG = (int) DataUserManager.getProgress("won_SB_RTG");
+
+        // recupero crediti vinti e da vincere
+        int creditsToWin = UIManager.RTGs[missionID-1].calcNumObjMission();
+        int creditsWon = (int) DataUserManager.getProgress("credits_RTG");
 
 
         // controllo completamento task rtg
-        if (!(boolean) DataUserManager.getProgress("completed_RTG")) {
+        if (!(boolean) DataUserManager.getProgress("completed_RTG") && win) {
             // setting stato task RTG a true (completato)
-            if (win && missionID == 2) {
+            if (missionID == 2) {
                 winsRTG++; // incremento numero partite vinte
 
                 if (winsRTG==toWinRTG) {
-                    DataUserManager.setProgress("completed_RTG", true); // completamento task RTG
+                    DataUserManager.setProgress("completed_RTG", true); // stato task completata
                     completedRTG = true; // cambio stato per l'icona di notifica
                 }
-                else DataUserManager.setProgress("won_SB_RTG", winsRTG); // aggiornamento partite vinte
+                DataUserManager.setProgress("won_SB_RTG", winsRTG); // aggiornamento partite vinte
+            }
+            else if (missionID == 4) {
+                if (creditsWon+creditsSB>=creditsToWin) {
+                    DataUserManager.setProgress("completed_RTG", true); // stato task completata
+                    completedRTG = true; // cambio stato per l'icona di notifica
+                }
             }
         }
     }
@@ -244,25 +273,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         int missionID = (int) DataUserManager.getProgress("mission_id");
 
         // salvataggio progressi
-        DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
-        DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
-        DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
-        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
+        DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+creditsSB);
+        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+creditsSB);
 
-        // aggiornamento progresso task RTG
-        switch (missionID) {
-            case 1:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("num_aliens_hit_RTG", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG"));
-                break;
-            case 3:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("points_RTG", points + (int) DataUserManager.getProgress("points_RTG"));
-                break;
-            case 4:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
-                break;
+        // aggiornamento progresso task RTG dei crediti
+        if (missionID==4) {
+            System.out.println(completedRTG);
+            if (completedRTG) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
+            else DataUserManager.setProgress("credits_RTG", creditsSB + (int) DataUserManager.getProgress("credits_RTG"));
         }
     }
 
@@ -359,22 +377,25 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // schermata base
                     screen.draw(gameOverCG, 0, 0);
 
+                    // testo da aggiungere per le navicelle con bonus punti
+                    String textToAdd = selectedSp.getBonusPoints()>0 ? " (with " + selectedSp.getBonusPoints() + "% bonus)" : "";
+
                     // scritte progressi partita
-                    fontBoldWhite25.draw(screen, formatter.format(points), 195, 457);
-                    fontBoldWhite25.draw(screen, formatter.format(credits), 205, 397);
-                    fontBoldWhite25.draw(screen, formatter.format(aliensHit), 235, 337);
+                    fontBoldWhite25.draw(screen, formatter.format(points) + textToAdd, 190, 457);
+                    fontBoldWhite25.draw(screen, formatter.format(credits), 200, 397);
+                    fontBoldWhite25.draw(screen, formatter.format(aliensHit), 230, 337);
 
                     // numero carte speciali
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 375);
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 837, 375);
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 702, 262);
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 837, 262);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 650, 375);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 730, 375);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 809, 375);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 890, 375);
 
                     // stampa rettangolo selezione carta
-                    if (goldHeart) screen.draw(rectSelectCard, 693, 388);
-                    if (shield) screen.draw(rectSelectCard, 831, 388);
-                    if (superLaser) screen.draw(rectSelectCard, 693, 275);
-                    if (doublePoints) screen.draw(rectSelectCard, 831, 275);
+                    if (goldHeart) screen.draw(rectSelectCard, 642, 387);
+                    if (shield) screen.draw(rectSelectCard, 722, 387);
+                    if (superLaser) screen.draw(rectSelectCard, 802, 387);
+                    if (doublePoints) screen.draw(rectSelectCard, 882, 387);
                 }
                 // grafica completamento/sconfitta livello di tipo Classic Game
                 else graphicLevel();
@@ -384,14 +405,12 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // schermata base
                     screen.draw(win ? victorySB : gameOverSB, 0, 0);
 
-                   // scritte progressi partita
-                    font.draw(screen, formatter.format(points), 195, 457);
-                    fontBoldWhite25.draw(screen, formatter.format(credits), 205, 397);
-                    fontBoldWhite25.draw(screen, formatter.format(aliensHit), 235, 337);
+                    // scritta crediti vinti
+                    fontBoldWhite25.draw(screen, formatter.format(creditsSB), 200, 457);
 
                     // numero carte speciali
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 702, 365);
-                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 702, 252);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 701, 374);
+                    font.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 838, 374);
 
                     // stampa rettangolo selezione carta
                     if (goldHeart) screen.draw(rectSelectCard, 693, 388);
@@ -447,15 +466,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // stampa immagine premio + testo descrittivo
             int currentLevel = (int) DataUserManager.getProgress("level")-2;
 
+            // posizione immagine del premio
             int xImg = 500-(listImgReward.get(currentLevel).getWidth()/2);
             int yImg = 350-(listImgReward.get(currentLevel).getHeight()/2);
             screen.draw(listImgReward.get(currentLevel), xImg, yImg); // immagine premio
 
             // testi al centro della pagina con lunghezza variabile //
             // testo LIVELLO COMPLETATO
-            // crea un layout per calcolare la dimensione del testo
             GlyphLayout layout = new GlyphLayout();
-            String txtCompletedLevel = "LEVEL " + currentLevel + " COMPLETED";
+            String txtCompletedLevel = "LEVEL " + (currentLevel+1) + " COMPLETED";
             // calcola la dimensione reale del testo con il font
             layout.setText(fontBoldWhite50, txtCompletedLevel);
 
@@ -501,6 +520,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        System.out.println("x: " + screenX + " y: " + screenY);
         if (win && isLevel) { // vittoria nei livelli
             // 'back to galaxies' button
             if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
@@ -572,7 +592,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         boolean canDisableDoublePoints = (int) DataUserManager.getProgress("num_double_points") > 0 && !selectedSp.getName().equals("Drakar");
 
         // gold heart
-        if (canDisableGoldHeart && (screenX >= 685 && screenX <= 755) && (screenY >= 242 && screenY <= 309)) {
+        if (canDisableGoldHeart && (screenX >= 634 && screenX <= 704) && (screenY >= 242 && screenY <= 309)) {
             goldHeart = !goldHeart;
             if (canDisableShield) shield = false;
             if (canDisableSuperLaser) superLaser = false;
@@ -580,7 +600,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // shield
-        if ((screenX >= 824 && screenX <= 892) && (screenY >= 242 && screenY <= 309)) {
+        if ((screenX >= 714 && screenX <= 784) && (screenY >= 242 && screenY <= 309)) {
             if (mod==0 && canDisableShield) shield = !shield; // selezione shield
             else if (mod==1 && canDisableSuperLaser) superLaser = !superLaser; // selezione super laser
             else return; // uscita
@@ -592,7 +612,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // super laser
-        if (mod==0 && canDisableSuperLaser && (screenX >= 685 && screenX <= 755) && (screenY >= 354 && screenY <= 422)) {
+        if (mod==0 && canDisableSuperLaser && (screenX >= 794 && screenX <= 864) && (screenY >= 242 && screenY <= 309)) {
             superLaser = !superLaser;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;
@@ -600,7 +620,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // double points
-        if (mod == 0 && canDisableDoublePoints && (screenX >= 824 && screenX <= 892) && (screenY >= 354 && screenY <= 422)) {
+        if (mod == 0 && canDisableDoublePoints && (screenX >= 874 && screenX <= 944) && (screenY >= 242 && screenY <= 309)) {
             doublePoints = !doublePoints;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;

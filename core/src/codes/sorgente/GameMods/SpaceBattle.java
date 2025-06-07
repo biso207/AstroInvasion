@@ -327,10 +327,6 @@ public class SpaceBattle implements Screen, InputProcessor {
     }
 
 
-
-
-
-
     //Movimento sfondo
     private void updateBackground(float delta) {
         backgroundY1 -= 50 * delta;
@@ -461,52 +457,30 @@ public class SpaceBattle implements Screen, InputProcessor {
 
     private String enemySpacecraft(int i){
         i++;
-        switch(i){
-            case 1:
-                return "Alpha";
-            case 2:
-                return "Andvari";
-            case 3:
-                return "Ares";
-            case 4:
-                return "Asgard";
-            case 5:
-                return "Beowulf";
-            case 6:
-                return "Zephyr";
-            case 7:
-                return "Centauro";
-            case 8:
-                return "Malloc";
-            case 9:
-                return "Fenixia";
-            case 10:
-                return "Galahad";
-            case 11:
-                return "Omega";
-            case 12:
-                return "Siko";
-            case 13:
-                return "Seraphis";
-            case 14:
-                return "Idra";
-            case 15:
-                return "Orion";
-            case 16:
-                return "Pegaso";
-            case 17:
-                return "Efron";
-            case 18:
-                return "Scylla";
-            case 19:
-                return "Selen";
-            case 20:
-                return "Keto";
-            case 21:
-                return "Woka";
-
-        }
-        return " ";
+        return switch (i) {
+            case 1 -> "Alpha";
+            case 2 -> "Andvari";
+            case 3 -> "Ares";
+            case 4 -> "Asgard";
+            case 5 -> "Beowulf";
+            case 6 -> "Zephyr";
+            case 7 -> "Centauro";
+            case 8 -> "Malloc";
+            case 9 -> "Fenixia";
+            case 10 -> "Galahad";
+            case 11 -> "Omega";
+            case 12 -> "Siko";
+            case 13 -> "Seraphis";
+            case 14 -> "Idra";
+            case 15 -> "Orion";
+            case 16 -> "Pegaso";
+            case 17 -> "Efron";
+            case 18 -> "Scylla";
+            case 19 -> "Selen";
+            case 20 -> "Keto";
+            case 21 -> "Woka";
+            default -> " ";
+        };
     }
 
 

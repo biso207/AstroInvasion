@@ -660,7 +660,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         }
 
         // stampa cuore d'oro se attivato
-        if (goldHeart && lives == 0 && !isLevel) screen.draw(goldHeartImg, 93, 640);
+        if (goldHeart && lives == 0 && !isLevel) screen.draw(goldHeartImg, 95, 638);
 
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);

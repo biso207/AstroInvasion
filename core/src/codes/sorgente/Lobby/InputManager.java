@@ -294,12 +294,10 @@ public class InputManager implements InputProcessor {
             }
             // shield
             if (((screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323))) {
-                if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0)) {
+                if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0) && !nameSp.equals("Astrid")) {
                     shield = !shield;
-                    if (!nameSp.equals("Rorik")) superLaser = false;
-                } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0)) {
+                } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !nameSp.equals("Rorik")) {
                     superLaser = !superLaser;
-                    if (!nameSp.equals("Astrid")) shield = false;
                 }
 
                 // disattivazione altre carte

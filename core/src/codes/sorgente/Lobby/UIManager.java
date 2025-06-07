@@ -317,14 +317,10 @@ public class UIManager implements ResourceLoader {
             "images/spacecrafts/basics/keto.png", "images/spacecrafts/basics/efron.png", "images/spacecrafts/basics/drakar.png",
             "images/spacecrafts/basics/rorik.png", "images/spacecrafts/basics/astrid.png", "images/spacecrafts/basics/alpha.png"};
         // percorsi immagine laser
-        String[] laserPaths = {"images/lasers/laser_omega.png", "images/lasers/laser_idra.png", "images/lasers/laser_pegaso.png",
-            "images/lasers/laser_woka.png", "images/lasers/laser_beowulf.png", "images/lasers/laser_andvari.png",
-            "images/lasers/laser_siko.png", "images/lasers/laser_fenixia.png", "images/lasers/laser_ares.png",
-            "images/lasers/laser_asgard.png", "images/lasers/laser_galahad.png", "images/lasers/laser_malloc.png",
-            "images/lasers/laser_orion.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
-            "images/lasers/laser_phoenix.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
-            "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png",
-            "images/lasers/laser_centauro.png", "images/lasers/laser_centauro.png", "images/lasers/laser_alpha.png"};
+        String[] laserPaths = new String[24];
+        for (int i=0; i<24; i++) {
+            laserPaths[i] = "images/lasers/laser (" + (i+1) + ").png";
+        }
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
             {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
@@ -462,12 +458,13 @@ public class UIManager implements ResourceLoader {
                     fontBoldWhite18.draw(screen, "?", X, y-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, "?", X, (y-37)-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, "?", X, (y-74)-InputManager.scrollY);
-                    fontBoldWhite18.draw(screen, s.getMission(), X, (y-107)-InputManager.scrollY);
-
-                    // stampa immagine di alpha
+                    // stampa immagine+missione di alpha
                     if (i*j==15) {
-                        screen.draw(alphaFragments[(int) DataUserManager.getProgress("alpha_fragments")], X-132, (y-92)-InputManager.scrollY);
+                        int fragAchieved = (int) DataUserManager.getProgress("alpha_fragments");
+                        fontBoldWhite18.draw(screen, "Fragments: " + fragAchieved + "/4", X, (y-107)-InputManager.scrollY);
+                        screen.draw(alphaFragments[fragAchieved], X-132, (y-92)-InputManager.scrollY);
                     }
+                    else fontBoldWhite18.draw(screen, s.getMission(), X, (y-107)-InputManager.scrollY);
                 }
 
                 if (j==1)  y-=168; // passaggio alla riga seguente
@@ -562,6 +559,22 @@ public class UIManager implements ResourceLoader {
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
+                // testo "crediti X vittoria"
+                // calcolo crediti utente vinti
+                int diff = (int) DataUserManager.getProgress("diff_space_battle");
+                int streak = (int) DataUserManager.getProgress("cons_won_SB");
+                int creditsSB = 0;
+
+                if (streak>=1) {
+                    System.out.println(streak);
+                    switch (diff) {
+                        case 1 -> creditsSB = (int) (10 * (Math.pow(1.2, streak)));
+                        case 2 -> creditsSB = (int) (20 * (Math.pow(1.2, streak)));
+                        case 3 -> creditsSB = (int) (30 * (Math.pow(1.2, streak)));
+                    }
+                }
+                else creditsSB = diff*10;
+                fontBoldWhite20.draw(screen, "+" + creditsSB, 691, 270);
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -605,7 +618,7 @@ public class UIManager implements ResourceLoader {
             // pagina 'space journey'
             case 2:
                 // testi //
-                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 394, 412); // livello
+                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 394, 410); // livello
                 fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 484, 380); // galassia corrente
 
                 // NAVICELLA //
