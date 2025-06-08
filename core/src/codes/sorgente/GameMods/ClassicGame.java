@@ -15,7 +15,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -31,6 +30,7 @@ import sorgente.Main;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.UIManager;
 import sorgente.ResourceLoader;
+import sorgente.SoundManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

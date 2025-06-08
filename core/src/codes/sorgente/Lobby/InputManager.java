@@ -16,6 +16,7 @@ import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
+import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
@@ -70,7 +71,6 @@ public class InputManager implements InputProcessor {
     protected static float scrollY = 2300, scrollY2 = 2800; // posizioni iniziali delle pagine scrollabili
     private final float maxScrollY = 2300, maxScrollY2 = 2800; // altezza massima delle schermate scrollabili
 
-
     // costruttore
     public InputManager() {
         // definizione delle aree cliccabili
@@ -94,9 +94,6 @@ public class InputManager implements InputProcessor {
         // recupero volume audio
         soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
         musicPercent = ((Number) DataUserManager.getProgress("music_volume")).floatValue();
-
-        // reset alla prima pagina per ogni creazione di istanza
-        //page = 0;
     }
 
     // metodo per definire le aree di gioco cliccabili
@@ -171,6 +168,10 @@ public class InputManager implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // todo: si potrebbe eseguire un controllo accurato per riprodurlo solo quando si clicca su dei pulsanti
+        // riproduzione suono click
+        SoundManager.playClickButton(soundPercent);
+
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
         di altre pagine dove non è possibile e poter cambiare le schermate della lobby.
@@ -296,13 +297,17 @@ public class InputManager implements InputProcessor {
             if (((screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323))) {
                 if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0) && !nameSp.equals("Astrid")) {
                     shield = !shield;
+                    // disattivazione altre carte
+                    if (!nameSp.equals("Alpha")) goldHeart = false;
+                    if (!nameSp.equals("Drakar")) doublePoints = false;
+                    if (!nameSp.equals("Rorik")) superLaser = false;
                 } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !nameSp.equals("Rorik")) {
                     superLaser = !superLaser;
+                    // disattivazione altre carte
+                    if (!nameSp.equals("Alpha")) goldHeart = false;
+                    if (!nameSp.equals("Drakar")) doublePoints = false;
+                    if (!nameSp.equals("Astrid")) shield = false;
                 }
-
-                // disattivazione altre carte
-                if (!nameSp.equals("Alpha")) goldHeart = false;
-                if (!nameSp.equals("Drakar")) doublePoints = false;
             }
             // super laser
             if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438))) {
@@ -588,6 +593,15 @@ public class InputManager implements InputProcessor {
                     draggingMusic = true;
                 }
 
+                // azzeramento volume musica/suoni al click sulle icone
+                if (screenX>=224 && screenX<=269 && screenY>=505 && screenY<=550) {
+                    musicPercent=0;
+                    DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica
+                }
+                if (screenX>=224 && screenX<=269 && screenY>=435 && screenY<=480) {
+                    soundPercent=0;
+                    DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
+                }
             }
         }
 

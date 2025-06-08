@@ -14,7 +14,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import org.json.JSONObject;
+import sorgente.DataUserManager;
 
+import javax.xml.crypto.Data;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -73,12 +75,11 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
-        FileHandle checkUser = Gdx.files.local("data/is_user.txt");
+        FileHandle checkUser = Gdx.files.local("data/is_user.txt"); // file di verifica della presenza di almeno un utente
         if (!checkUser.exists()) {
-            checkUser.writeString("exists", false);
             state = 1; // apertura schermata di registrazione
+            checkUser.writeString("exists", false); // creazione file
         } else {
-            String isUser = checkUser.readString();
             state = 0; // apertura schermata login
         }
     }
@@ -106,6 +107,7 @@ public class AuthAlgorithms implements InputProcessor {
             if (!generalFolder.exists()) {
                 generalFolder.mkdirs();
 
+                // nickname e password NUOVO utente
                 nickname = String.valueOf(nicknameInput);
                 password = String.valueOf(passwordInput);
 
@@ -142,15 +144,31 @@ public class AuthAlgorithms implements InputProcessor {
             String filePassword = json.getString("password");
             date = json.getString("date");
 
+            /// Il pezzo di codice seguente diventa effettivo alla pubblicazione del gioco. Funziona già ed è stato testato
+            /*
+
+            // istanza di DataUserManager
+            new DataUserManager(nickname);
+
+            // lettura delle due chiavi - nick e psw
+            String fileNickname = (String) DataUserManager.getProgress("nickname");
+            String filePassword = (String) DataUserManager.getProgress("password");
+            date = (String) DataUserManager.getProgress("date");
+
+            */
+
+            /// Il codice seguente è da lasciare invariato
+
             // controllo correttezza digitazione nick e psw
             if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
                 error = true;
             }
             else {
+                // assegnazione dei nick e psw (corretti) digitati da un utente già registrato
                 nickname = String.valueOf(nicknameInput);
                 password = String.valueOf(passwordInput);
 
-                // successo
+                // passaggio alla lobby con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
                 state = 2;
 
                 // manda la notifica di apertura gioco
@@ -231,6 +249,61 @@ public class AuthAlgorithms implements InputProcessor {
         } catch (IOException e) {
             System.err.println("Errore durante la scrittura del file: " + e.getMessage());
         }
+
+
+        /// Il pezzo di codice seguente diventa effettivo alla pubblicazione del gioco. Funziona già ed è stato testato
+        /*
+
+        // istanza di DataUserManager
+        new DataUserManager(nickname);
+
+        // data di registrazione utente
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
+        date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
+
+        // setting dati del nuovo utente
+        DataUserManager.setProgress("nickname", nickname); // nickname
+        DataUserManager.setProgress("password", password); // password
+        DataUserManager.setProgress("date", date); // data di registrazione
+
+        // setting progressi di base del nuovo utente
+        DataUserManager.setProgress("avatar", 0);
+        DataUserManager.setProgress("credits", 0);
+        DataUserManager.setProgress("credits_RTG", 0);
+        DataUserManager.setProgress("total_credits", 0);
+        DataUserManager.setProgress("completed_RTG", false);
+        DataUserManager.setProgress("diff_classic_game", 1);
+        DataUserManager.setProgress("diff_space_battle", 1);
+        DataUserManager.setProgress("mission_id", 1);
+        DataUserManager.setProgress("level", 1);
+        DataUserManager.setProgress("movement_type", 1);
+        DataUserManager.setProgress("shot_type", 1);
+        DataUserManager.setProgress("spacecraft", 0);
+        DataUserManager.setProgress("num_double_points", 1);
+        DataUserManager.setProgress("num_gold_heart", 1);
+        DataUserManager.setProgress("num_shield", 1);
+        DataUserManager.setProgress("num_super_laser", 1);
+        DataUserManager.setProgress("num_mission", 1);
+        DataUserManager.setProgress("won_SB_RTG", 0);
+        DataUserManager.setProgress("num_aliens_hit", 0);
+        DataUserManager.setProgress("num_aliens_hit_RTG", 0);
+        DataUserManager.setProgress("matches_CG", 0);
+        DataUserManager.setProgress("matches_SB", 0);
+        DataUserManager.setProgress("won_SB", 0);
+        DataUserManager.setProgress("win_streak_SB", 0); // todo: controllare dove veniva letta cons_won_SB
+        DataUserManager.setProgress("points", 0);
+        DataUserManager.setProgress("points_RTG", 0);
+        DataUserManager.setProgress("state_product_5", false);
+        DataUserManager.setProgress("state_product_6", false);
+        DataUserManager.setProgress("level_bought", false);
+        DataUserManager.setProgress("sound_volume", 0.5);
+        DataUserManager.setProgress("music_volume", 0.5);
+        DataUserManager.setProgress("alpha_fragments", 0);
+
+        // salvataggio su file dei progressi e dati utente iniziali
+        DataUserManager.saveProgresses();
+
+        */
     }
 
     // ************************************** //
@@ -259,7 +332,7 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
-        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             if (state==0) state = 1;
             else state=0;
             error = false;
@@ -299,7 +372,7 @@ public class AuthAlgorithms implements InputProcessor {
             isHover1=true;
         }
         // pulsante cambio pagina
-        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             isHover2=true;
         }
 

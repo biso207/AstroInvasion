@@ -246,7 +246,7 @@ public class UIManager implements ResourceLoader {
             "Complete Level 12", "Complete Level 14", "Complete Level 16", "Complete Level 18",
             "Complete Level 22", "Complete Level 24", "Complete Level 26", "Complete Level 28",
             "Complete Level 32", "Complete Level 34", "Complete Level 36", "Complete Level 38",
-            "Buy in the Market", "Buy in the Market", "Win 100 SB", "Collect all 4 fragments"
+            "Buy in the Marketplace", "Buy in the Marketplace", "Win 100 SB", "Collect all 4 fragments"
         };
         // lore delle navicelle
         String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
@@ -341,8 +341,8 @@ public class UIManager implements ResourceLoader {
     // metodo per selezionare la navicella: viene chiamato alla creazione della Lobby e al cambio navicella
     public static Spacecraft selectSpacecraft() {
         // recupero navicella utente
-        Object spacecraft = DataUserManager.getProgress("spacecraft");
-        return mapSpacecrafts.get((int) spacecraft); // return navicella
+        int spacecraft = (int) DataUserManager.getProgress("spacecraft");
+        return mapSpacecrafts.get(spacecraft); // return oggetto navicella
     }
 
     public void createMissions() {
@@ -563,10 +563,10 @@ public class UIManager implements ResourceLoader {
                 // calcolo crediti utente vinti
                 int diff = (int) DataUserManager.getProgress("diff_space_battle");
                 int streak = (int) DataUserManager.getProgress("cons_won_SB");
-                int creditsSB = 0;
+                int creditsSB=0, pointsSB=0;
 
+                // calcolo crediti vinti
                 if (streak>=1) {
-                    System.out.println(streak);
                     switch (diff) {
                         case 1 -> creditsSB = (int) (10 * (Math.pow(1.2, streak)));
                         case 2 -> creditsSB = (int) (20 * (Math.pow(1.2, streak)));
@@ -574,7 +574,16 @@ public class UIManager implements ResourceLoader {
                     }
                 }
                 else creditsSB = diff*10;
-                fontBoldWhite20.draw(screen, "+" + creditsSB, 691, 270);
+
+                // calcolo punti vinti
+                switch (diff) {
+                    case 1 -> pointsSB = 1000;
+                    case 2 -> pointsSB = 2000;
+                    case 3 -> pointsSB = 3000;
+                }
+
+                fontBoldWhite20.draw(screen, "+" + formatter.format(creditsSB), 691, 275);
+                fontBoldWhite20.draw(screen, "+" + formatter.format(pointsSB), 691, 200);
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -833,9 +842,30 @@ public class UIManager implements ResourceLoader {
             prize.dispose();
         }
 
+        for (Texture fragment : alphaFragments) {
+            fragment.dispose();
+        }
+
+        fontBlue20.dispose();
+        fontMediumBlue15.dispose();
+        fontMediumBlue20.dispose();
+        fontBoldBlue20.dispose();
+        fontMediumWhite20.dispose();
+        fontBoldWhite15.dispose();
+        fontBoldWhite18.dispose();
+        fontBoldWhite20.dispose();
+        fontBoldWhite25.dispose();
+        fontItalicBoldWhite15.dispose();
+        fontBoldWhite60.dispose();
+
+        spImg.dispose();
+        infoBanner.dispose();
+
         mouse.dispose();
         mouseOver.dispose();
         cursor.dispose();
         cursorOver.dispose();
+
+
     }
 }

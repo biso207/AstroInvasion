@@ -5,7 +5,7 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.GameMods;
+package sorgente;
 
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
@@ -17,12 +17,10 @@ public class SoundManager {
     private final float volume;
     private final HashMap<String, Long> lastPlayedTimeMap;
 
-    private final Sound shotSound;
-    private final Sound hitSound;
-    private final Sound creditSound;
-    private final Sound completedSound;
+    private final Sound shotSound, hitSound, creditSound, completedSound, winSound, defeatSound;
+    private static final Sound clickButtonSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click_button.wav"));
 
-    // Intervallo minimo (in ms) tra due riproduzioni dello stesso suono
+    // intervallo minimo (in ms) tra due riproduzioni dello stesso suono
     private static final long MIN_INTERVAL_SHOT = 50;  // 20 volte al secondo
     private static final long MIN_INTERVAL_HIT = 100;  // 10 volte al secondo
 
@@ -31,11 +29,13 @@ public class SoundManager {
         this.volume = volume;
         this.lastPlayedTimeMap = new HashMap<>();
 
-        // Caricamento suoni
+        // caricamento suoni
         shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
         hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.wav"));
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
-        completedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.wav"));
+        completedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+        winSound = Gdx.audio.newSound(Gdx.files.internal("sounds/victory.wav"));
+        defeatSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_over.wav"));
     }
 
     /** Metodi con controllo di "throttle" **/
@@ -60,6 +60,21 @@ public class SoundManager {
         completedSound.play(volume);
     }
 
+    // metodo per il suono di vittoria di una partita
+    public void playWin() {
+        winSound.play(volume);
+    }
+
+    // metodo per il suono della sconfitta di una partita
+    public void playDefeat() {
+        defeatSound.play(volume);
+    }
+
+    // metodo per riprodurre il click dei pulsanti
+    public static void playClickButton(float volume) {
+        clickButtonSound.play(volume);
+    }
+
     private void playThrottled(String key, Sound sound, long minIntervalMillis) {
         long now = System.currentTimeMillis();
         Long lastPlayed = lastPlayedTimeMap.getOrDefault(key, 0L);
@@ -75,6 +90,9 @@ public class SoundManager {
         hitSound.dispose();
         creditSound.dispose();
         completedSound.dispose();
+        winSound.dispose();
+        defeatSound.dispose();
+        clickButtonSound.dispose();
     }
 }
 
