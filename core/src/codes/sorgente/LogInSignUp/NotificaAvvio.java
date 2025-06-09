@@ -12,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.net.URLEncoder;
 
 public class NotificaAvvio {

@@ -19,6 +19,7 @@ public class SoundManager {
 
     private final Sound shotSound, hitSound, creditSound, completedSound, winSound, defeatSound;
     private static final Sound clickButtonSound = Gdx.audio.newSound(Gdx.files.internal("sounds/click_button.wav"));
+    private static final Sound digitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/digit.wav"));
 
     // intervallo minimo (in ms) tra due riproduzioni dello stesso suono
     private static final long MIN_INTERVAL_SHOT = 50;  // 20 volte al secondo
@@ -33,7 +34,7 @@ public class SoundManager {
         shotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shot_sound.mp3"));
         hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/hit_sound.wav"));
         creditSound = Gdx.audio.newSound(Gdx.files.internal("sounds/credit_sound.wav"));
-        completedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_rtg.mp3"));
+        completedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/completed_Missions.mp3"));
         winSound = Gdx.audio.newSound(Gdx.files.internal("sounds/victory.wav"));
         defeatSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game_over.wav"));
     }
@@ -55,8 +56,8 @@ public class SoundManager {
         creditSound.play(volume);
     }
 
-    // metodo per il suono di completamento della missione RTG
-    public void playCompletedRTG() {
+    // metodo per il suono di completamento della missione Missions
+    public void playCompletedMissions() {
         completedSound.play(volume);
     }
 
@@ -73,6 +74,11 @@ public class SoundManager {
     // metodo per riprodurre il click dei pulsanti
     public static void playClickButton(float volume) {
         clickButtonSound.play(volume);
+    }
+
+    // metodo per riprodurre il suono della digitazione
+    public static void playDigitSound(float volume) {
+        digitSound.play(volume);
     }
 
     private void playThrottled(String key, Sound sound, long minIntervalMillis) {
@@ -93,6 +99,7 @@ public class SoundManager {
         winSound.dispose();
         defeatSound.dispose();
         clickButtonSound.dispose();
+        digitSound.dispose();
     }
 }
 

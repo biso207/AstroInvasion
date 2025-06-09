@@ -1,6 +1,6 @@
 /*
-Astro Invasion - class RTG (RoadToGlory) -
-Crea la missione corrente della modalità Road To Glory
+Astro Invasion - class Missions -
+Crea la missione corrente della modalità delle missioni di gioco
 Developed by BIGA©. All rights reserved.
 */
 
@@ -13,12 +13,12 @@ import sorgente.DataUserManager;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class RTG {
+public class Missions {
     public final String text1, text2, prize, path;
     private final int objMission;
 
     // costruttore
-    public RTG(String text1, int objMission, String text2, String prize, String path) {
+    public Missions(String text1, int objMission, String text2, String prize, String path) {
         this.text1 = text1;
         this.text2 = text2;
         this.prize = prize;

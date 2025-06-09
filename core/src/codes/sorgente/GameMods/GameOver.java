@@ -53,7 +53,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // immagini
     private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
-    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR, bannerRTG;
+    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR, bannerMissions;
     // lista immagine premi
     private final List<Texture> listImgReward = new ArrayList<>();
     // lista testi premi
@@ -109,13 +109,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     // oggetto navicella utente
     private final Spacecraft selectedSp;
 
-    // stato completamento missione RTG
-    private boolean completedRTG=false;
-    // tempo per mostrare la notifica di completamento RTG
+    // stato completamento missione Missions
+    private boolean completedMissions=false;
+    // tempo per mostrare la notifica di completamento Missions
     private float elapsedTime = 0;
 
-    // stato suono completamento RTG
-    private boolean completedRTGSoundPlayed=false;
+    // stato suono completamento Missions
+    private boolean completedMissionsSoundPlayed=false;
 
     // boolean per le carte speciali e disattivazione
     private boolean goldHeart=false, shield=false, superLaser=false, doublePoints=false;
@@ -184,7 +184,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 break;
             case 1:
                 calcProgressSB(); // calcolo crediti vinti in space battle
-                checkCompletedRTG(); // controllo completamento task rtg
+                checkCompletedMissions(); // controllo completamento task Missions
                 writeFileSpaceBattle(); // salvataggio progresso space battle
                 break;
         }
@@ -217,46 +217,46 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         else creditsSB = 0;
     }
 
-    // metodo per controllare il completamento della task del 'road to glory' (RTG)
-    public void checkCompletedRTG() {
+    // metodo per controllare il completamento della task del 'road to glory' (Missions)
+    public void checkCompletedMissions() {
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
 
         // recupero partite da vincere e vinte
-        int toWinRTG = UIManager.RTGs[missionID-1].calcNumObjMission();
-        int winsRTG = (int) DataUserManager.getProgress("won_SB_RTG");
+        int toWinMissions = UIManager.Missions[missionID-1].calcNumObjMission();
+        int winsMissions = (int) DataUserManager.getProgress("wins_SB_missions");
 
         // recupero crediti vinti e da vincere
-        int creditsToWin = UIManager.RTGs[missionID-1].calcNumObjMission();
-        int creditsWon = (int) DataUserManager.getProgress("credits_RTG");
+        int creditsToWin = UIManager.Missions[missionID-1].calcNumObjMission();
+        int creditsWon = (int) DataUserManager.getProgress("credits_missions");
 
         // recupero punti fatti fin'ora e da fare
-        int pointsToWin = UIManager.RTGs[missionID-1].calcNumObjMission();
-        int pointsWon = (int) DataUserManager.getProgress("points_RTG");
+        int pointsToWin = UIManager.Missions[missionID-1].calcNumObjMission();
+        int pointsWon = (int) DataUserManager.getProgress("points_missions");
 
 
-        // controllo completamento task rtg
-        if (!(boolean) DataUserManager.getProgress("completed_RTG") && win) {
+        // controllo completamento task Missions
+        if (!(boolean) DataUserManager.getProgress("completed_mission") && win) {
             // controlli in base al tipo di missione
             if (missionID == 2) { // vittorie in space battle
-                winsRTG++; // incremento numero partite vinte
+                winsMissions++; // incremento numero partite vinte
 
-                if (winsRTG==toWinRTG) {
-                    DataUserManager.setProgress("completed_RTG", true); // stato task completata
-                    completedRTG = true; // cambio stato per l'icona di notifica
+                if (winsMissions==toWinMissions) {
+                    DataUserManager.setProgress("completed_mission", true); // stato task completata
+                    completedMissions = true; // cambio stato per l'icona di notifica
                 }
-                DataUserManager.setProgress("won_SB_RTG", winsRTG); // aggiornamento partite vinte
+                DataUserManager.setProgress("wins_SB_missions", winsMissions); // aggiornamento partite vinte
             }
             else if (missionID==3) { // punti raccolti in space battle + classic game
                 if (pointsWon+pointsSB>=pointsToWin) {
-                    DataUserManager.setProgress("completed_RTG", true); // stato task completata
-                    completedRTG = true; // cambio stato per l'icona di notifica
+                    DataUserManager.setProgress("completed_mission", true); // stato task completata
+                    completedMissions = true; // cambio stato per l'icona di notifica
                 }
             }
             else if (missionID == 4) { // crediti raccolti in space battle + classic game
                 if (creditsWon+creditsSB>=creditsToWin) {
-                    DataUserManager.setProgress("completed_RTG", true); // stato task completata
-                    completedRTG = true; // cambio stato per l'icona di notifica
+                    DataUserManager.setProgress("completed_mission", true); // stato task completata
+                    completedMissions = true; // cambio stato per l'icona di notifica
                 }
             }
         }
@@ -277,19 +277,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
 
-        // aggiornamento progresso task RTG
+        // aggiornamento progresso task Missions
         switch (missionID) {
             case 1:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("num_aliens_hit_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("num_aliens_hit_RTG", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_RTG"));
+                if ((boolean) DataUserManager.getProgress("completed_mission")) DataUserManager.setProgress("num_aliens_hit_missions", UIManager.Missions[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("num_aliens_hit_missions", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_Missions"));
                 break;
             case 3:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("points_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("points_RTG", points + (int) DataUserManager.getProgress("points_RTG"));
+                if ((boolean) DataUserManager.getProgress("completed_mission")) DataUserManager.setProgress("points_missions", UIManager.Missions[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("points_missions", points + (int) DataUserManager.getProgress("points_missions"));
                 break;
             case 4:
-                if ((boolean) DataUserManager.getProgress("completed_RTG")) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("credits_RTG", credits + (int) DataUserManager.getProgress("credits_RTG"));
+                if ((boolean) DataUserManager.getProgress("completed_mission")) DataUserManager.setProgress("credits_missions", UIManager.Missions[missionID-1].calcNumObjMission());
+                else DataUserManager.setProgress("credits_missions", credits + (int) DataUserManager.getProgress("credits_missions"));
                 break;
         }
     }
@@ -304,14 +304,14 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+creditsSB);
         DataUserManager.setProgress("points",  (int) DataUserManager.getProgress("points")+pointsSB);
 
-        // aggiornamento progressi task RTG dei crediti
+        // aggiornamento progressi task Missions dei crediti
         if (missionID==4) {
-            if (completedRTG) DataUserManager.setProgress("credits_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-            else DataUserManager.setProgress("credits_RTG", creditsSB + (int) DataUserManager.getProgress("credits_RTG"));
+            if (completedMissions) DataUserManager.setProgress("credits_missions", UIManager.Missions[missionID-1].calcNumObjMission());
+            else DataUserManager.setProgress("credits_missions", creditsSB + (int) DataUserManager.getProgress("credits_missions"));
         }
         else if (missionID==3) {
-            if (completedRTG) DataUserManager.setProgress("points_RTG", UIManager.RTGs[missionID-1].calcNumObjMission());
-            else DataUserManager.setProgress("points_RTG", pointsSB + (int) DataUserManager.getProgress("points_RTG"));
+            if (completedMissions) DataUserManager.setProgress("points_missions", UIManager.Missions[missionID-1].calcNumObjMission());
+            else DataUserManager.setProgress("points_missions", pointsSB + (int) DataUserManager.getProgress("points_missions"));
         }
     }
 
@@ -374,8 +374,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             listImgReward.add(new Texture(Gdx.files.internal("images/levels_rewards/reward" + i + ".png")));
         }
 
-        // notifica completamente RTG
-        bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
+        // notifica completamente Missions
+        bannerMissions = new Texture("images/completed_Missions_notification_eng.png");
 
         // pulsanti hover
         btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
@@ -445,15 +445,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (goldHeart) screen.draw(rectSelectCard, 642, 387);
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
 
-                    // suono completamento RTG
-                    if (!completedRTGSoundPlayed && completedRTG) {
-                        soundManager.playCompletedRTG(); // riproduzione suono
-                        completedRTGSoundPlayed=true; // evita di riprodurre infinite volte il suono
+                    // suono completamento Missions
+                    if (!completedMissionsSoundPlayed && completedMissions) {
+                        soundManager.playCompletedMissions(); // riproduzione suono
+                        completedMissionsSoundPlayed=true; // evita di riprodurre infinite volte il suono
                     }
-                    // stampa messaggio completamento task RTG
-                    if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
+                    // stampa messaggio completamento task Missions
+                    if (completedMissions && elapsedTime <= 4f) { // 4f = 4 secondi
                         elapsedTime += delta; // conteggio tempo per mostrare la notifica
-                        screen.draw(bannerRTG, 400, 515); // banner di notifica
+                        screen.draw(bannerMissions, 400, 515); // banner di notifica
                     }
                 }
                 else graphicLevel();
@@ -549,6 +549,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // riproduzione suono click
+        SoundManager.playClickButton(InputManager.soundPercent);
+
         System.out.println("x: " + screenX + " y: " + screenY);
         if (win && isLevel) { // vittoria nei livelli
             // 'back to galaxies' button
@@ -704,7 +707,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         guardianG3.dispose();
         guardianG4.dispose();
         rectSelectCard.dispose();
-        bannerRTG.dispose();
+        bannerMissions.dispose();
         btnHoverL.dispose();
         btnHoverR.dispose();
 

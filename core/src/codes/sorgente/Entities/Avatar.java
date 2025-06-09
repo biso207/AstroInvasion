@@ -10,7 +10,7 @@ import sorgente.DataUserManager;
 
 public class Avatar {
     // nome e missione dell'avatar
-    private String nome, missione;
+    private final String nome, missione;
 
     // costruttore
     public Avatar(String nome, String missione) {
@@ -28,7 +28,7 @@ public class Avatar {
         int  points = (int) DataUserManager.getProgress("points");
         // vittorie space battle
         int winSB = (int) DataUserManager.getProgress("won_SB");
-        // numero missione RTG
+        // numero missione
         int numMission = (int) DataUserManager.getProgress("num_mission");
 
         // return stato avatar => true=sbloccato; false=bloccato

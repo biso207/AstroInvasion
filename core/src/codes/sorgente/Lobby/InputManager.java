@@ -33,10 +33,10 @@ public class InputManager implements InputProcessor {
 
     // variabili per mostrare le schermate in sovra impressione
     protected static boolean secondScreen=false, open14=false, open16=false, open17=false,
-        open18=false, open19=false;
+        open18=false, open19=false, open20=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
-        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false;
+        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -75,8 +75,6 @@ public class InputManager implements InputProcessor {
     public InputManager() {
         // definizione delle aree cliccabili
         hitAreas();
-        // definizione aree navicelle cliccabili
-        selectSPAreas();
 
         // reset stato carte speciali
         goldHeart=shield=superLaser=doublePoints=false;
@@ -101,7 +99,7 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(0, new HitBox(50, 182, 270, 200, 0, false));  // 'classic game'
         hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
         hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
-        hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'road to glory'
+        hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'missions'
         hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, true)); // 'spacecrafts'
         hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
         hitBoxes.put(12, new HitBox(50, 493, 270, 511, 12, true));  // 'instructions'
@@ -151,7 +149,7 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19)) {
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20)) {
             open14 = true;
             secondScreen = true;
             return true;
@@ -183,7 +181,7 @@ public class InputManager implements InputProcessor {
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
-        if (!listSecondPages.contains(page) && !open18 && !open14 && !open19 && !open16 && !open17) {
+        if (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
 
             // CAMBIO PAGINE LOBBY
             // for-each per iterare i vari range e controllare i cambi pagina
@@ -328,8 +326,8 @@ public class InputManager implements InputProcessor {
                 if (!nameSp.equals("Astrid")) shield = false;
             }
 
-            // claim reward del RTG
-            if (page == 3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) {
+            // claim reward delle missions
+            if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) {
                 // missione corrente
                 int mission = (int) DataUserManager.getProgress("num_mission");
                 // id missione corrente
@@ -343,24 +341,24 @@ public class InputManager implements InputProcessor {
 
                 switch (missionID) {
                     case 1:
-                        DataUserManager.setProgress("num_aliens_hit_RTG", 0); // progressi missione azzerati
+                        DataUserManager.setProgress("num_aliens_hit_missions", 0); // progressi missione azzerati
                         DataUserManager.setProgress("num_gold_heart", numGoldHeart + 1); // aggiunta carta
                         missionID++;
                         break;
                     case 2:
-                        DataUserManager.setProgress("won_SB_RTG", 0); // azzeramento partite vinte
+                        DataUserManager.setProgress("wins_SB_missions", 0); // azzeramento partite vinte
                         DataUserManager.setProgress("num_shield", numShield + 1); // aggiunta carta
                         missionID++;
                         break;
                     case 3:
-                        DataUserManager.setProgress("points_RTG", 0); // progressi missione azzerati
+                        DataUserManager.setProgress("points_missions", 0); // progressi missione azzerati
                         DataUserManager.setProgress("credits", credits + 100);// aggiunta 100 crediti
                         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits") + 100);// aggiunta 100 crediti totali
                         currentCredit+=100;
                         missionID++;
                         break;
                     case 4:
-                        DataUserManager.setProgress("credits_RTG", 0); // progressi missione azzerati
+                        DataUserManager.setProgress("credits_missions", 0); // progressi missione azzerati
                         DataUserManager.setProgress("num_super_laser", numSuperLaser + 1); // aggiunta carta
                         missionID = 1;
                         break;
@@ -368,7 +366,7 @@ public class InputManager implements InputProcessor {
 
                 DataUserManager.setProgress("num_mission", mission + 1);
                 DataUserManager.setProgress("mission_id", missionID);
-                DataUserManager.setProgress("completed_RTG", false); // RTG non più completata
+                DataUserManager.setProgress("completed_mission", false); // Missions non più completata
             }
 
             // acquisti nel negozio
@@ -448,12 +446,15 @@ public class InputManager implements InputProcessor {
         else {
             // controllo selezione navicella
             if (page == 4) {
-                int selectedId = -1; // id navicella iniziale
+                // posto qui per aggiornare la mappa in caso di nuovo sblocco quando si rimane nella stessa istanza
+                selectSPAreas(); // definizione aree navicelle cliccabili
+
+                int selectedId; // id navicella
                 for (Map.Entry<Rectangle, Integer> entry : clickableAreas.entrySet()) {
                     Rectangle area = entry.getKey();
-                    System.out.println(screenY + " " + scrollY);
                     if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
+                        System.out.println(selectedId);
                         // salvataggio navicella scelta se sbloccata
                         if (SpacecraftData.isAchieved(selectedId)) {
                             DataUserManager.setProgress("spacecraft", selectedId);
@@ -476,14 +477,10 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            // X sp => chiusura pagina navicelle/info di gioco
-            if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (((screenY+(maxScrollY - scrollY)) >= 66 && (screenY+(maxScrollY - scrollY)) <= 106)
-                || ((screenY+(maxScrollY2 - scrollY2)) >= 66 && (screenY+(maxScrollY2 - scrollY2)) <= 106))) {
-                page = previousPage;
-            }
-
             // apertura pagina 7 'avatar'
-            if (page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
+            if (!open20 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
+            // apertura pagina "gloria utente"
+            if (page == 6 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) secondScreen = open20 = true;
 
             // selezione avatar
             if (page == 7) {
@@ -504,8 +501,19 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            // X => chiusura pagina istruzioni; info profilo-difficoltà; avatar
-            if ((screenX >= 908 && screenX <= 948) && (screenY >= 84 && screenY <= 124)) {
+            // X sp => chiusura pagina navicelle/info di gioco
+            if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (((screenY+(maxScrollY - scrollY)) >= 66 && (screenY+(maxScrollY - scrollY)) <= 106)
+                || ((screenY+(maxScrollY2 - scrollY2)) >= 66 && (screenY+(maxScrollY2 - scrollY2)) <= 106))) {
+                page = previousPage;
+            }
+
+            // X glory => chiusura pagina glory
+            if ((secondScreen && open20) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
+                secondScreen = open20 = false;
+            }
+
+            // X others => chiusura pagina info profilo-difficoltà-carte; avatar
+            if (!open20 && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
                 if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;
             }
@@ -516,12 +524,12 @@ public class InputManager implements InputProcessor {
             }
 
             // NO logout => si continua nella sessione di gioco
-            if ((secondScreen && open14) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open14) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
                 secondScreen = open14 = false;
             }
 
             // YES logout => back to the Authentication Page
-            if ((secondScreen && open14) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open14) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
                 secondScreen = open14 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
@@ -612,24 +620,27 @@ public class InputManager implements InputProcessor {
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
-        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=false;
+        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=isBtnGloryHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
 
         // CAMBIO STILE PULSANTI
         // YES logout / OK warning / YES purchase
-        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
+        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
             isBtnLHover=true;
         }
 
         // NO logout / PLAY warning / NO purchase
-        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
+        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
             isBtnRHover=true;
         }
 
-        if (!listSecondPages.contains(page) && !open18 && !open14 && !open19 && !open16 && !open17) {
-            // rtg
-            if (page == 3 && ((boolean) DataUserManager.getProgress("completed_RTG")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
+        // profile info
+        if (page==6 && !open20 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+
+        if (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
+            // Missions
+            if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
 
             // market
             if (page==5) {

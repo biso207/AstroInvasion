@@ -55,7 +55,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     private final Pool<Rectangle> laserPool;
 
     private Texture goldHeartImg, shieldImg, superLaserImg, topBar, topBarLevel, shieldBanner, shieldIcon, playImg,
-        stopImg, quitMatch, bannerRTG, btnHoverR, btnHoverL;
+        stopImg, quitMatch, bannerMissions, btnHoverR, btnHoverL;
 
     // matrice per le immagini delle vite rimanenti
     private Texture[][] livesTextures;
@@ -81,15 +81,15 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     // stato sparo del laser
     private boolean shootPressed = false;
 
-    // tempo per mostrare la notifica di completamento RTG
+    // tempo per mostrare la notifica di completamento missione
     private float elapsedTime = 0;
 
     // stato quit match per la stampa dell'immagine
     private boolean quit = false;
     // stato game over per evitare doppie letture progressi
     private boolean gameClosed = false;
-    // stato completamento missione RTG
-    private boolean completedRTG = false;
+    // stato completamento missione
+    private boolean completedMissions = false;
 
     // dichiarazione font
     private BitmapFont font, fontGold, fontBoldWhite60;
@@ -99,8 +99,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     // istanza del soundManager per riprodurre i suoni
     private final SoundManager soundManager;
 
-    // stato suono completamento RTG
-    private boolean completedRTGSoundPlayed=false;
+    // stato suono completamento missione
+    private boolean completedMissionsSoundPlayed=false;
 
     // movimento in gioco
     public int moveLeftKey, moveRightKey, shotType;
@@ -124,6 +124,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     // tempo trascorso per lo scudo
     private float timePassed=0;
     private final float shieldTime=30f;
+
+    private int difficulty;
 
     /// istanza per lo shape renderer delle hitboxes
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -159,8 +161,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         // rettangolo che rappresenta la navicella
         spaceship = new Rectangle(398, 20, 102, 70);
 
-        // init parametri in base alla difficoltà di gioco
-        int difficulty=1;
         if (!isLevel) difficulty = (int) DataUserManager.getProgress("diff_classic_game");
         else {
             switch ((int) Math.ceil((double) numLevel / 10)) {
@@ -228,7 +228,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         // disattivazione generica in caso si stia giocando un livello
         if (isLevel) goldHeart=shield=superLaser=doublePoints=false;
 
-        /// Per provare le carte basta settare tutte le variabili a 'true'
+        /// Per provare le carte basta settare una variabile a 'true'
+        if (isLevel && difficulty==3) superLaser = true;
     }
 
     // metodo per modificare gli attributi navicella/alieni in base alla difficoltà scelta
@@ -267,24 +268,32 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         }
         spacecraftSpeed += selectedSp.getSpSpeed()*100;
         laserSpeed += selectedSp.getLaserSpeed()*100;
+
+        // cambio vite per la modalità a livelli
+        if (isLevel) {
+            switch (difficulty) {
+                case 1, 3 -> lives = totalLives = 2; // 2 vite x la difficoltà 1 e 3 (galassia 1 e 4 che ha il super laser)
+                case 2 -> lives = totalLives = 3; // 3 vite x la difficoltà 2 (galassia 2 e 3)
+            }
+        }
     }
 
-    // metodo per controllare il completamento della task del 'road to glory' (RTG)
-    public void checkCompletedRTG() {
-        // controllo completamento task rtg
-        if (!(boolean) DataUserManager.getProgress("completed_RTG") && !gameClosed) {
+    // metodo per controllare il completamento della task delle Missions
+    public void checkCompletedMissions() {
+        // controllo completamento task
+        if (!(boolean) DataUserManager.getProgress("completed_mission") && !gameClosed) {
             int missionID = (int) DataUserManager.getProgress("mission_id");
             int progress = switch (missionID) {
-                case 1 -> aliensHit + ((int) DataUserManager.getProgress("num_aliens_hit_RTG"));
-                case 3 -> points + (int) DataUserManager.getProgress("points_RTG");
-                case 4 -> credits + (int) DataUserManager.getProgress("credits_RTG");
+                case 1 -> aliensHit + ((int) DataUserManager.getProgress("num_aliens_hit_missions"));
+                case 3 -> points + (int) DataUserManager.getProgress("points_missions");
+                case 4 -> credits + (int) DataUserManager.getProgress("credits_missions");
                 default -> -1;
             };
 
-            // setting stato task RTG a true (completato)
-            if (progress >= UIManager.RTGs[missionID-1].calcNumObjMission() && progress != -1) {
-                DataUserManager.setProgress("completed_RTG", true);
-                completedRTG = true;
+            // setting stato task Missions a true (completato)
+            if (progress >= UIManager.Missions[missionID-1].calcNumObjMission() && progress != -1) {
+                DataUserManager.setProgress("completed_mission", true);
+                completedMissions = true;
             }
         }
     }
@@ -332,8 +341,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         // icona dello scudo
         shieldIcon = new Texture("images/lives/shield_icon.png");
 
-        // notifica completamente RTG
-        bannerRTG = new Texture("images/completed_rtg_notification_eng.png");
+        // notifica completamente Missions
+        bannerMissions = new Texture("images/completed_Missions_notification_eng.png");
 
         // pulsanti hover
         btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
@@ -552,7 +561,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         // diminuzione carte speciali
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
         if (usedShield && !selectedSp.getName().equals("Astrid")) DataUserManager.setProgress("num_shield", (int) DataUserManager.getProgress("num_shield")-1);
-        if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
+        if (superLaser && !selectedSp.getName().equals("Rorik") && !isLevel && difficulty!=3) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
         if (doublePoints && !selectedSp.getName().equals("Drakar")) DataUserManager.setProgress("num_double_points", (int) DataUserManager.getProgress("num_double_points")-1);
 
         // incremento partite giocate
@@ -694,19 +703,19 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
             font.draw(screen, formatter.format(aliensHit), 800, 670);
         }
 
-        // stampa messaggio completamento task RTG
+        // stampa messaggio completamento task Missions
         if (!isLevel) {
-            checkCompletedRTG(); // chiamata metodo per controllare il completamento della mission RTG
+            checkCompletedMissions(); // chiamata metodo per controllare il completamento della mission Missions
 
             // riproduzione suono notifica di completamento
-            if (!completedRTGSoundPlayed && completedRTG) {
-                soundManager.playCompletedRTG();
-                completedRTGSoundPlayed=true;
+            if (!completedMissionsSoundPlayed && completedMissions) {
+                soundManager.playCompletedMissions();
+                completedMissionsSoundPlayed=true;
             }
-            if (completedRTG && elapsedTime <= 4f) { // 4f = 4 secondi
+            if (completedMissions && elapsedTime <= 4f) { // 4f = 4 secondi
                 // conteggio tempo per mostrare la notifica
                 elapsedTime += delta;
-                screen.draw(bannerRTG, 400, 515); // banner di notifica
+                screen.draw(bannerMissions, 400, 515); // banner di notifica
             }
         }
 
@@ -747,12 +756,18 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
 
             // click NO => si continua a giocare
             if ((screenX >= 510 && screenX <= 715) && (screenY >= 403 && screenY <= 475)) {
+                // riproduzione suono click
+                SoundManager.playClickButton(InputManager.soundPercent);
+
                 quit = !quit;
                 isPaused = !isPaused;
             }
 
             // click YES => interruzione gioco
             if ((screenX >= 269 && screenX <= 484) && (screenY >= 403 && screenY <= 475)) {
+                // riproduzione suono click
+                SoundManager.playClickButton(InputManager.soundPercent);
+
                 // perdita completa dei progressi di gioco
                 points=credits=aliensHit=0;
 
@@ -760,7 +775,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
                 gameClosed = true;
                 return; // uscita
             }
-
         }
 
         // gioco in pausa

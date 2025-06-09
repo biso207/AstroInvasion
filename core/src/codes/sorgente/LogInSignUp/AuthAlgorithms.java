@@ -15,8 +15,8 @@ import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import org.json.JSONObject;
 import sorgente.DataUserManager;
+import sorgente.SoundManager;
 
-import javax.xml.crypto.Data;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -210,9 +210,9 @@ public class AuthAlgorithms implements InputProcessor {
         /// Le seguenti variabili possono avere dei valori alti per testare il gioco
         gameProgresses.put("avatar", 0);
         gameProgresses.put("credits", 0);
-        gameProgresses.put("credits_RTG", 0);
+        gameProgresses.put("credits_missions", 0);
         gameProgresses.put("total_credits", 0);
-        gameProgresses.put("completed_RTG", false);
+        gameProgresses.put("completed_mission", false);
         gameProgresses.put("diff_classic_game", 1);
         gameProgresses.put("diff_space_battle", 1);
         gameProgresses.put("mission_id", 1);
@@ -225,15 +225,15 @@ public class AuthAlgorithms implements InputProcessor {
         gameProgresses.put("num_shield", 1);
         gameProgresses.put("num_super_laser", 1);
         gameProgresses.put("num_mission", 1);
-        gameProgresses.put("won_SB_RTG", 0);
+        gameProgresses.put("wins_SB_missions", 0);
         gameProgresses.put("num_aliens_hit", 0);
-        gameProgresses.put("num_aliens_hit_RTG", 0);
+        gameProgresses.put("num_aliens_hit_missions", 0);
         gameProgresses.put("matches_CG", 0);
         gameProgresses.put("matches_SB", 0);
         gameProgresses.put("won_SB", 0);
         gameProgresses.put("cons_won_SB", 0);
         gameProgresses.put("points", 0);
-        gameProgresses.put("points_RTG", 0);
+        gameProgresses.put("points_missions", 0);
         gameProgresses.put("state_product_5", false);
         gameProgresses.put("state_product_6", false);
         gameProgresses.put("level_bought", false);
@@ -269,9 +269,9 @@ public class AuthAlgorithms implements InputProcessor {
         // setting progressi di base del nuovo utente
         DataUserManager.setProgress("avatar", 0);
         DataUserManager.setProgress("credits", 0);
-        DataUserManager.setProgress("credits_RTG", 0);
+        DataUserManager.setProgress("credits_missions", 0);
         DataUserManager.setProgress("total_credits", 0);
-        DataUserManager.setProgress("completed_RTG", false);
+        DataUserManager.setProgress("completed_mission", false);
         DataUserManager.setProgress("diff_classic_game", 1);
         DataUserManager.setProgress("diff_space_battle", 1);
         DataUserManager.setProgress("mission_id", 1);
@@ -284,15 +284,15 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("num_shield", 1);
         DataUserManager.setProgress("num_super_laser", 1);
         DataUserManager.setProgress("num_mission", 1);
-        DataUserManager.setProgress("won_SB_RTG", 0);
+        DataUserManager.setProgress("wins_SB_missions", 0);
         DataUserManager.setProgress("num_aliens_hit", 0);
-        DataUserManager.setProgress("num_aliens_hit_RTG", 0);
+        DataUserManager.setProgress("num_aliens_hit_missions", 0);
         DataUserManager.setProgress("matches_CG", 0);
         DataUserManager.setProgress("matches_SB", 0);
         DataUserManager.setProgress("won_SB", 0);
         DataUserManager.setProgress("win_streak_SB", 0); // todo: controllare dove veniva letta cons_won_SB
         DataUserManager.setProgress("points", 0);
-        DataUserManager.setProgress("points_RTG", 0);
+        DataUserManager.setProgress("points_missions", 0);
         DataUserManager.setProgress("state_product_5", false);
         DataUserManager.setProgress("state_product_6", false);
         DataUserManager.setProgress("level_bought", false);
@@ -311,6 +311,9 @@ public class AuthAlgorithms implements InputProcessor {
     // ************************************** //
     // metodo per rilevare il click da tastiera
     @Override public boolean keyTyped(char character) {
+        // riproduzione suono digitazione
+        SoundManager.playDigitSound(50); // volume al 50% di default
+
         // scelta del campo da modificare
         StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
 
@@ -331,6 +334,9 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // riproduzione suono click
+        SoundManager.playClickButton(50); // volume al 50% di default
+
         // cambio pagina - accesso => registrazione
         if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             if (state==0) state = 1;

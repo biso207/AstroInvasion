@@ -287,11 +287,6 @@ public class SpaceBattle implements Screen, InputProcessor {
                 }
             }
         }
-
-
-
-
-
     }
 
 

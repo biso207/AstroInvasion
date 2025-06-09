@@ -16,6 +16,8 @@ import sorgente.GameMods.SpaceBattle;
 import sorgente.Lobby.InputManager;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
+import sorgente.SoundManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +115,10 @@ public class SpaceJourney implements Screen, InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        // todo: si potrebbe eseguire un controllo accurato per riprodurlo solo quando si clicca su dei pulsanti
+        // riproduzione suono click
+        SoundManager.playClickButton(InputManager.soundPercent);
+
         System.out.println("x:" + screenX + " y:" + screenY);
         // click per apertura di una galassia
         if (numGalaxy==0) {

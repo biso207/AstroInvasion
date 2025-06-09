@@ -16,21 +16,20 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.Missions.RTG;
+import sorgente.Missions.Missions;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
 
-import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.*;
 
 public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
-        claimPrize, progressRTG, notifyCompletedRTG, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
+        claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2;
 
-    // textureRegione per definire l'area di completamento della task corrente in RTG
+    // textureRegione per definire l'area di completamento della task corrente in Missions
     private TextureRegion progressBarRegion;
 
     // texture per gli avatar
@@ -38,9 +37,9 @@ public class UIManager implements ResourceLoader {
     private Texture[] avatarsCovered;
     private Texture selectedAvatar;
 
-    // premi RTG
-    private Texture[] RTGPrizes;
-    public static RTG[] RTGs;
+    // premi Missions
+    private Texture[] MissionsPrizes;
+    public static Missions[] Missions;
 
     // immagine navicella + immagine space battle bloccato
     private Texture spImg, infoBanner;
@@ -78,7 +77,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
-        this.buttonsOver = new Texture[9];
+        this.buttonsOver = new Texture[10];
         this.alphaFragments = new Texture[5];
 
         // mouse
@@ -139,11 +138,11 @@ public class UIManager implements ResourceLoader {
     @Override
     public void loadImages() {
         // popolamento mappa lobby
-        for (int i = 0; i < 20; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 21; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
-        // "pulsante" raccolta premio RTG
+        // "pulsante" raccolta premio Missions
         Texture img_special = new Texture("images/rect_claim_reward_eng.png");
         mapLobby.put(35, img_special);
 
@@ -173,7 +172,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 10; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -186,26 +185,26 @@ public class UIManager implements ResourceLoader {
         diffSB2 = new Texture("images/diff2_spacebattle.png");
         diffSB3 = new Texture("images/diff3_spacebattle.png");
 
-        // immagini dei premi del RTG
-        RTGPrizes = new Texture[4];
+        // immagini dei premi del Missions
+        MissionsPrizes = new Texture[4];
         // load texture
         for (int i=0; i<4; i++) {
-            RTGPrizes[i] = new Texture("images/cards/mini_card" + (i+1) + ".png");
+            MissionsPrizes[i] = new Texture("images/cards/mini_card" + (i+1) + ".png");
         }
 
-        // immagine per raccogliere il premio RTG
+        // immagine per raccogliere il premio Missions
         claimPrize = new Texture("images/rect_claim_reward_eng.png");
-        // icona di notifica del completamento della missione RTG
-        notifyCompletedRTG = new Texture("images/notify_completed_RTG.png");
+        // icona di notifica del completamento della missione Missions
+        notifyCompletedMissions = new Texture("images/notify_completed_Missions.png");
 
         // immagine spunta per completamento missione o selezione oggetti
         tickImg = new Texture("images/tick2.png");
         // rettangolo selezione carta
         rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
 
-        // immagine di progresso missione RTG
-        progressRTG = new Texture("images/progress.png");
-        progressBarRegion = new TextureRegion(progressRTG);
+        // immagine di progresso missione Missions
+        progressMissions = new Texture("images/progress.png");
+        progressBarRegion = new TextureRegion(progressMissions);
 
         // immagini per la pagina di selezione delle navicelle
         bgSpacecraftSelection = new Texture("lobby_screens/lobby (4).png");
@@ -346,40 +345,40 @@ public class UIManager implements ResourceLoader {
     }
 
     public void createMissions() {
-        RTGs = new RTG[4];
+        Missions = new Missions[4];
 
         // creazione oggetti
-        RTG RTG0 = new RTG("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
-        RTG RTG1 = new RTG("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
-        RTG RTG2 = new RTG("Earn", 10000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
-        RTG RTG3 = new RTG("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
+        Missions Missions0 = new Missions("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
+        Missions Missions1 = new Missions("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
+        Missions Missions2 = new Missions("Earn", 10000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
+        Missions Missions3 = new Missions("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
-        RTGs[0] = RTG0;
-        RTGs[1] = RTG1;
-        RTGs[2] = RTG2;
-        RTGs[3] = RTG3;
+        Missions[0] = Missions0;
+        Missions[1] = Missions1;
+        Missions[2] = Missions2;
+        Missions[3] = Missions3;
     }
 
-    // metodo per disegnare la barra di progresso della task corrente del RTG
-    public void drawRTGPage(SpriteBatch screen, int missionID) {
+    // metodo per disegnare la barra di progresso della task corrente del Missions
+    public void drawMissionsPage(SpriteBatch screen, int missionID) {
         // immagine premio //
-        screen.draw(RTGPrizes[missionID-1], 660, 100);
+        screen.draw(MissionsPrizes[missionID-1], 660, 100);
 
         // pulsante raccolta premio //
-        if ((boolean) DataUserManager.getProgress("completed_RTG")) screen.draw(claimPrize, 767, 100);
+        if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(claimPrize, 767, 100);
 
         int progress, maxProgress;
 
         progress = switch (missionID) {
-            case 1 -> (int) DataUserManager.getProgress("num_aliens_hit_RTG");
-            case 2 -> (int) DataUserManager.getProgress("won_SB_RTG");
-            case 3 -> (int) DataUserManager.getProgress("points_RTG");
-            case 4 -> (int) DataUserManager.getProgress("credits_RTG");
+            case 1 -> (int) DataUserManager.getProgress("num_aliens_hit_missions");
+            case 2 -> (int) DataUserManager.getProgress("wins_SB_missions");
+            case 3 -> (int) DataUserManager.getProgress("points_missions");
+            case 4 -> (int) DataUserManager.getProgress("credits_missions");
             default -> 0;
         };
 
         // progresso totale da compiere
-        maxProgress = RTGs[missionID-1].calcNumObjMission();
+        maxProgress = Missions[missionID-1].calcNumObjMission();
 
         // lunghezza barra riempita
         float filledWidth = (progress / (float) maxProgress) * 380;
@@ -480,6 +479,12 @@ public class UIManager implements ResourceLoader {
         screen.draw(topBanner, 14, 514); // DEVE STARE QUI PERCHÈ STA SOPRA OGNI ALTRO ELEMENTO DELLA PAGINA
     }
 
+    // metodo per la grafica delle missioni utente
+    public void drawGloryPage(SpriteBatch screen) {
+        // background base
+        screen.draw(mapLobby.get(20), 250, 125);
+    }
+
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         // cambio navicella in caso di nuova selezione
@@ -496,8 +501,8 @@ public class UIManager implements ResourceLoader {
         if (!listSecondPages.contains(InputManager.page)) {
             // avatar
             screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
-            // icona notifica completamento RTG
-            if ((boolean) DataUserManager.getProgress("completed_RTG")) screen.draw(notifyCompletedRTG, 27, 338);
+            // icona notifica completamento Missions
+            if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(notifyCompletedMissions, 27, 338);
         }
 
         // switch delle pagine per stampare i vari elementi
@@ -649,11 +654,11 @@ public class UIManager implements ResourceLoader {
 
                 break;
 
-            // pagina 'rtg'
+            // pagina 'Missions'
             case 3:
                 // recupero missione corrente
                 int missionID = (int) DataUserManager.getProgress("mission_id");
-                RTG m = RTGs[missionID-1];
+                Missions m = Missions[missionID-1];
 
                 // testi //
                 fontMediumBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
@@ -661,7 +666,7 @@ public class UIManager implements ResourceLoader {
                 fontMediumBlue20.draw(screen, "x" + m.prize, 720, 231); // premio missione
 
                 // progresso completamento task corrente
-                drawRTGPage(screen, missionID);
+                drawMissionsPage(screen, missionID);
 
                 break;
 
@@ -698,9 +703,9 @@ public class UIManager implements ResourceLoader {
             case 6:
                 // testi //
                 // SCRITTE A SX
-                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 387); // nickname
-                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 347); // password
-                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 308); // data registrazione
+                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 413); // nickname
+                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 373); // password
+                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 334); // data registrazione
 
                 // SCRITTE A DX
                 fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 615, 412); // punti
@@ -715,6 +720,8 @@ public class UIManager implements ResourceLoader {
 
                 // immagini //
                 screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
+
+                if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 40, 145);
                 break;
 
             // pagina avatars
@@ -793,6 +800,7 @@ public class UIManager implements ResourceLoader {
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
             }
             else if (InputManager.open17) drawSettingsPage(screen); // impostazioni di gioco
+            else if (InputManager.open20) drawGloryPage(screen);
         }
     }
 
@@ -823,8 +831,8 @@ public class UIManager implements ResourceLoader {
 
         rectSelectCard.dispose();
         claimPrize.dispose();
-        progressRTG.dispose();
-        notifyCompletedRTG.dispose();
+        progressMissions.dispose();
+        notifyCompletedMissions.dispose();
         txtSoldOut.dispose();
 
         soundOn.dispose();
@@ -838,7 +846,7 @@ public class UIManager implements ResourceLoader {
             btn.dispose();
         }
 
-        for (Texture prize : RTGPrizes) {
+        for (Texture prize : MissionsPrizes) {
             prize.dispose();
         }
 

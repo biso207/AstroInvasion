@@ -32,7 +32,7 @@ public class SpacecraftData {
         boolean state6 = (boolean) DataUserManager.getProgress("state_product_6");
         // numero vittorie SB
         int winSB = (int) DataUserManager.getProgress("won_SB");
-        // task raggiunto nel RTG
+        // task raggiunto nel Missions
         int fragments = (int) DataUserManager.getProgress("alpha_fragments");
 
         // return stato avatar => true=sbloccato; false=bloccato
@@ -54,8 +54,8 @@ public class SpacecraftData {
             case 17 -> level > 34;
             case 18 -> level > 36;
             case 19 -> level > 38;
-            case 20 -> state5;
-            case 21 -> state6;
+            case 20 -> state6;
+            case 21 -> state5;
             case 22 -> winSB >= 100;
             case 23 -> fragments == 4;
             default -> false;
