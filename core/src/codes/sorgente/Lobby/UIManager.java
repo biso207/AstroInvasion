@@ -716,7 +716,7 @@ public class UIManager implements ResourceLoader {
 
                 // button confirm-purchase and reset hover
                 if (InputManager.isBtnBuyHover) screen.draw(buttonsOver[4], 510, 74);
-                if (InputManager.isBtnResetHover) screen.draw(buttonsOver[5], 791, 68);
+                if (InputManager.isBtnResetHover) screen.draw(buttonsOver[5], 799, 76);
 
                 // prezzo finale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 530, 108); // prezzo d'acquisto finale

@@ -131,11 +131,11 @@ public class SpaceJourney implements Screen, InputProcessor {
 
         // click su un livello => il for è solo per i 10 livelli della galassia aperta e se ci si trova in una galassia
         if (numGalaxy > 0) {
-            int startX = 50;
+            int startX = 42;
             int startY = 278;
             int spacingX = 205;
             int spacingY = 224;
-            int levelSize = 80;
+            int levelSize = 78;
 
             List<Level> levels = galaxies.get(numGalaxy - 1).getLevels();
 

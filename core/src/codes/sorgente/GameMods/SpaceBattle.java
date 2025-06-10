@@ -16,6 +16,7 @@ import sorgente.Main;
 import sorgente.Lobby.InputManager;
 import sorgente.SoundManager;
 
+import javax.xml.crypto.Data;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -441,6 +442,9 @@ public class SpaceBattle implements Screen, InputProcessor {
         // diminuzione carte speciali
         if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
         if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
+
+        // aggiornamento partite giocate
+        DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
 
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
