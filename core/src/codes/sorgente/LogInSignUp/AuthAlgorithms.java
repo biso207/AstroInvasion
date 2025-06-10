@@ -343,20 +343,23 @@ public class AuthAlgorithms implements InputProcessor {
             else state=0;
             error = false;
         }
+
         // click per avviare il gioco
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             processLoginOrSignup();
         }
+
         // click per nascondere/mostrare la password
         if ((screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
             showPS = !showPS;
         }
-        // click per attivare la digitazione della password
-        if (!enteringNickname && ((screenX>=250 && screenX<=731) && (screenY>=275 && screenY<=317))) {
+        System.out.println(screenX + " " + screenY);
+        // click per attivare la digitazione della password/nickname
+        if (!enteringNickname && ((screenX>=249 && screenX<=730) && (screenY>=277 && screenY<=319))) {
             enteringNickname=true;
             enteringPassword=false;
         }
-        if (!enteringPassword && ((screenX>=250 && screenX<=731) && (screenY>=373 && screenY<=415)) &&
+        if (!enteringPassword && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417)) &&
             !(screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
             enteringPassword=true;
             enteringNickname=false;

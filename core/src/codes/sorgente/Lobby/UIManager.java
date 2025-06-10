@@ -491,12 +491,6 @@ public class UIManager implements ResourceLoader {
         // background base
         screen.draw(mapLobby.get(20), 250, 125);
 
-        // recupero progressi di gioco
-        int points = (int) DataUserManager.getProgress("points");
-        int winsSB = (int) DataUserManager.getProgress("won_SB");
-        int numTask = (int) DataUserManager.getProgress("num_mission");
-        int credits = (int) DataUserManager.getProgress("total_credits");
-
         int cont = 0; // numero task completate
 
         // controllo completamento missioni

@@ -24,6 +24,7 @@ import java.util.Random;
 public class LoadingScreen implements Screen {
     private final SpriteBatch screen;
     private float loadingProgress = 0; // Progresso di caricamento attuale
+    private final float randLoadTime; // tempo di caricamento per la sessione (randomico)
     public boolean loadingFinished = false;
     private final ShapeRenderer shapeRenderer;
     private final Main game;// variabile di riferimento tipo gioco
@@ -49,6 +50,8 @@ public class LoadingScreen implements Screen {
         Music openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack home 2023.mp3")); // file audio
         openSound.setLooping(false); // true=loop music; false=no loop
         openSound.play(); // avvio musica
+
+        randLoadTime = (float)(Math.random() * 2 + 3); // tempo randomico tra 3 e 5
     }
 
     @Override
@@ -62,7 +65,7 @@ public class LoadingScreen implements Screen {
 
         // incrementa il progresso del caricamento in base al tempo trascorso
         loadingProgress += delta;
-        float loadingTime = 1f; // 5 secondi // todo: impostare a 5 secondi, ora è a 1 per le prove
+        float loadingTime = randLoadTime; // 5 secondi todo: impostare a 5 secondi, ora è a 1 per le prove
         if (loadingProgress >= loadingTime) {
             loadingProgress = loadingTime;
             loadingFinished = true; // caricamento completato

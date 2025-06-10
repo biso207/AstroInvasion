@@ -96,13 +96,13 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(0, new HitBox(50, 182, 270, 200, 0, false));  // 'classic game'
-        hitBoxes.put(1, new HitBox(50, 232, 270, 250, 1, false)); // 'space battle'
-        hitBoxes.put(2, new HitBox(50, 285, 270, 303, 2, false)); // 'space journey'
-        hitBoxes.put(3, new HitBox(50, 336, 270, 354, 3, false)); // 'missions'
-        hitBoxes.put(4, new HitBox(50, 389, 270, 407, 4, true)); // 'spacecrafts'
-        hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
-        hitBoxes.put(12, new HitBox(50, 493, 270, 511, 12, true));  // 'instructions'
+        hitBoxes.put(0, new HitBox(42, 182, 247, 200, 0, false));  // 'classic game'
+        hitBoxes.put(1, new HitBox(44, 232, 241, 250, 1, false)); // 'space battle'
+        hitBoxes.put(2, new HitBox(42, 285, 260, 303, 2, false)); // 'space journey'
+        hitBoxes.put(3, new HitBox(43, 336, 194, 354, 3, false)); // 'missions'
+        hitBoxes.put(4, new HitBox(44, 389, 241, 407, 4, true)); // 'spacecrafts'
+        hitBoxes.put(5, new HitBox(44, 441, 247, 463, 5, false)); // 'marketplace'
+        hitBoxes.put(12, new HitBox(45, 493, 236, 514, 12, true));  // 'instructions'
         // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
     }
@@ -204,17 +204,17 @@ public class InputManager implements InputProcessor {
                 page=4;
             }
             // apertura pagina 'software infos'
-            if ((screenX>=105 && screenX<=135) && (screenY>=600 && screenY<=630)) {
+            if ((screenX>=99 && screenX<=126) && (screenY>=600 && screenY<=630)) {
                 open18 = true;
                 secondScreen = true;
             }
             // apertura pagina 'logout'
-            if ((screenX>=162 && screenX<=192) && (screenY>=600 && screenY<=630)) {
+            if ((screenX>=154 && screenX<=183) && (screenY>=600 && screenY<=630)) {
                 open14 = true;
                 secondScreen = true;
             }
             // apertura pagina 'settings'
-            if ((screenX>=50 && screenX<=90) && (screenY>=600 && screenY<=630)) {
+            if ((screenX>=44 && screenX<=71) && (screenY>=600 && screenY<=630)) {
                 open17 = true;
                 secondScreen = true;
             }

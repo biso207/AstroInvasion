@@ -57,7 +57,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     @Override
     public void loadFont() {
         try {
-            font = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_30.fnt")); // inter-bold blue 30
+            font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
             fontBoldRed20 = new BitmapFont(Gdx.files.internal("font/inter/bold_red_20.fnt")); // inter-regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
@@ -118,8 +118,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         screen.draw(alg.enteringNickname ? digitAreaON : digitAreaOFF, 257, 379);
         screen.draw(alg.enteringPassword ? digitAreaON : digitAreaOFF, 257, 281);
 
-        if (alg.showPS) screen.draw(showPS, 690,289);
-        else screen.draw(coverPS, 690,289);
+        if (alg.showPS) screen.draw(showPS, 690,288);
+        else screen.draw(coverPS, 690,288);
 
         if (alg.isHover1) screen.draw(continueBtnHover, 422, 185);
         if (alg.isHover2) {

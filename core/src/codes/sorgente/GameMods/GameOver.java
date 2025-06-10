@@ -281,7 +281,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         switch (missionID) {
             case 1:
                 if ((boolean) DataUserManager.getProgress("completed_mission")) DataUserManager.setProgress("num_aliens_hit_missions", UIManager.Missions[missionID-1].calcNumObjMission());
-                else DataUserManager.setProgress("num_aliens_hit_missions", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_Missions"));
+                else DataUserManager.setProgress("num_aliens_hit_missions", aliensHit + (int) DataUserManager.getProgress("num_aliens_hit_missions"));
                 break;
             case 3:
                 if ((boolean) DataUserManager.getProgress("completed_mission")) DataUserManager.setProgress("points_missions", UIManager.Missions[missionID-1].calcNumObjMission());
