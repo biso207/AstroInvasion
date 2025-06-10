@@ -53,7 +53,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // immagini
     private Texture gameOverCG, gameOverSB, victorySB, levelCompleted, levelDefeat, rectSelectCard,
-    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR, bannerMissions;
+    guardianG1, guardianG2, guardianG3, guardianG4, btnHoverL, btnHoverR, bannerMissions,
+        diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3;
+
     // lista immagine premi
     private final List<Texture> listImgReward = new ArrayList<>();
     // lista testi premi
@@ -130,6 +132,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private int creditsSB, pointsSB;
 
     private final String textToAdd; // testo da aggiungere per le navicelle con il bonus punti
+
+    // difficoltà classic game e space battle
+    private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
+    private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
 
     // costruttore
     public GameOver(Main game, Spacecraft selectedSp, int mod, int[] stats, boolean win, boolean isLevel) {
@@ -374,6 +380,15 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             listImgReward.add(new Texture(Gdx.files.internal("images/levels_rewards/reward" + i + ".png")));
         }
 
+        // icona difficoltà classic game
+        diffCG1 = new Texture("images/diff1_classicgame.png");
+        diffCG2 = new Texture("images/diff2_classicgame.png");
+        diffCG3 = new Texture("images/diff3_classicgame.png");
+        // icona difficoltà space battle
+        diffSB1 = new Texture("images/diff1_spacebattle.png");
+        diffSB2 = new Texture("images/diff2_spacebattle.png");
+        diffSB3 = new Texture("images/diff3_spacebattle.png");
+
         // notifica completamente Missions
         bannerMissions = new Texture("images/completed_Missions_notification_eng.png");
 
@@ -424,11 +439,25 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (shield) screen.draw(rectSelectCard, 722, 387);
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
                     if (doublePoints) screen.draw(rectSelectCard, 882, 387);
+
+                    // difficoltà todo: cambiare la posizione delle immagini
+                    switch ((int)DataUserManager.getProgress("diff_classic_game")) {
+                        case 1:
+                            screen.draw(diffCG1, 843 ,259);
+                            break;
+                        case 2:
+                            screen.draw(diffCG2, 843 ,259);
+                            break;
+                        case 3:
+                            screen.draw(diffCG3, 843 ,259);
+                            break;
+                    }
                 }
                 // grafica completamento/sconfitta livello di tipo Classic Game
                 else graphicLevel();
                 break;
             case 1:
+                // grafica sconfitta/vittoria Space Battle
                 if (!isLevel) {
                     // schermata base
                     screen.draw(win ? victorySB : gameOverSB, 0, 0);
@@ -445,6 +474,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (goldHeart) screen.draw(rectSelectCard, 642, 387);
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
 
+                    // difficoltà todo: cambiare la posizione delle immagini
+                    switch ((int)DataUserManager.getProgress("diff_space_battle")) {
+                        case 1:
+                            screen.draw(diffSB1, 843 ,259);
+                            break;
+                        case 2:
+                            screen.draw(diffSB2, 843 ,259);
+                            break;
+                        case 3:
+                            screen.draw(diffSB3, 843 ,259);
+                            break;
+                    }
+
                     // suono completamento Missions
                     if (!completedMissionsSoundPlayed && completedMissions) {
                         soundManager.playCompletedMissions(); // riproduzione suono
@@ -456,6 +498,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                         screen.draw(bannerMissions, 400, 515); // banner di notifica
                     }
                 }
+                // grafica sconfitta/vittoria livello di tipo Space Battle
                 else graphicLevel();
                 break;
         }
@@ -553,6 +596,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         SoundManager.playClickButton(InputManager.soundPercent);
 
         System.out.println("x: " + screenX + " y: " + screenY);
+        // riavvio partita o chiusura sessione
         if (win && isLevel) { // vittoria nei livelli
             // 'back to galaxies' button
             if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
@@ -583,6 +627,39 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 // livello corrente
                 if (!isLevel) game.setScreen(new LobbyManager(game));
                 else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+            }
+        }
+
+        // cambio difficoltà NON nei livelli
+        if (!isLevel) {
+            // incremento classic game
+            if (mod == 0 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431)) {
+                if (diffCG < 3) {
+                    diffCG++;
+                    DataUserManager.setProgress("diff_classic_game", diffCG);
+                }
+            }
+            // decremento classic game
+            if (mod == 0 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431)) {
+                if (diffCG > 1) {
+                    diffCG--;
+                    DataUserManager.setProgress("diff_classic_game", diffCG);
+                }
+            }
+
+            // incremento space battle
+            if (mod == 1 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431)) {
+                if (diffSB < 3) {
+                    diffSB++;
+                    DataUserManager.setProgress("diff_space_battle", diffSB);
+                }
+            }
+            // decremento space battle
+            if (mod == 1 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431)) {
+                if (diffSB > 1) {
+                    diffSB--;
+                    DataUserManager.setProgress("diff_space_battle", diffSB);
+                }
             }
         }
 
