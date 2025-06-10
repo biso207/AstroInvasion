@@ -56,7 +56,7 @@ public class SpacecraftData {
             case 19 -> level > 38;
             case 20 -> state6;
             case 21 -> state5;
-            case 22 -> winSB >= 100;
+            case 22 -> winSB >= 200;
             case 23 -> fragments == 4;
             default -> false;
         };

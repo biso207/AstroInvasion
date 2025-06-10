@@ -252,7 +252,7 @@ public class UIManager implements ResourceLoader {
             "Complete Level 12", "Complete Level 14", "Complete Level 16", "Complete Level 18",
             "Complete Level 22", "Complete Level 24", "Complete Level 26", "Complete Level 28",
             "Complete Level 32", "Complete Level 34", "Complete Level 36", "Complete Level 38",
-            "Buy in the Marketplace", "Buy in the Marketplace", "Win 100 SB", "Collect all 4 fragments"
+            "Buy in the Marketplace", "Buy in the Marketplace", "Win 200 SB", "Collect all 4 fragments"
         };
         // lore delle navicelle
         String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
@@ -302,7 +302,7 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(14, new Avatar("MarcusG", "Complete Level 37"));
         mapAvatars.put(15, new Avatar("Sarah", "Complete Level 39"));
         mapAvatars.put(16, new Avatar("Matthew", "Claim 50K Credits"));
-        mapAvatars.put(17, new Avatar("Kiara", "Win 100 SB Matches"));
+        mapAvatars.put(17, new Avatar("Kiara", "Win 200 SB Matches"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 5M Points"));
         mapAvatars.put(19, new Avatar("Emma", "Complete Task 100"));
     }
