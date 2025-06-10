@@ -290,7 +290,7 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("matches_CG", 0);
         DataUserManager.setProgress("matches_SB", 0);
         DataUserManager.setProgress("won_SB", 0);
-        DataUserManager.setProgress("win_streak_SB", 0); // todo: controllare dove veniva letta cons_won_SB
+        DataUserManager.setProgress("win_streak_SB", 0); // todo: controllare dove veniva letta cons_won_SB e rinominarli
         DataUserManager.setProgress("points", 0);
         DataUserManager.setProgress("points_missions", 0);
         DataUserManager.setProgress("state_product_5", false);
