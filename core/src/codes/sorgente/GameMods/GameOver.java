@@ -345,9 +345,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         }
 
         // incremento livello raggiunto
-        if (numLevel<40) DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
+        DataUserManager.setProgress("level", (int) DataUserManager.getProgress("level")+1);
+
         // setting stato livello successivo da acquistare
-        DataUserManager.setProgress("level_bought", false);
+        if (numLevel<40) DataUserManager.setProgress("level_bought", false);
     }
 
     // ************************************** //
@@ -535,8 +536,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // testo pulsante //
             fontBoldWhite50.draw(screen, "CLOSE", 420, 105);
 
-            // stampa immagine premio + testo descrittivo
-            int currentLevel = (int) DataUserManager.getProgress("level")-2;
+            // livello corrente già aggiornato al successivo
+            int currentLevel = (int) DataUserManager.getProgress("level");
+            System.out.println("qua invece è: " + currentLevel);
+            currentLevel-=2; // valore corretto per l'indice delle liste
 
             // posizione immagine del premio
             int xImg = 500-(listImgReward.get(currentLevel).getWidth()/2);

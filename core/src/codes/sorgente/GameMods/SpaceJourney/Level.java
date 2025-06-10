@@ -46,10 +46,8 @@ public class Level {
         int credits = (int) DataUserManager.getProgress("credits");
         // costo di sblocco
         int cost = id*100; // il prezzo cresce sempre di 100 arrivando fino a 4000
-        System.out.println(cost);
         // sblocco livello
         if (credits >= cost) {
-            System.out.println("dio porco");
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
             DataUserManager.setProgress("level_bought", true); // cambio stato "livello acquistato"
         }

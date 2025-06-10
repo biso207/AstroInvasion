@@ -514,7 +514,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
                     }
 
                     // aggiornamento statistiche partita //
-                    aliensHit++; // incremento alieni colpiti
+                    aliensHit+=100; // incremento alieni colpiti
                     // controllo completamento livello
                     if (isLevel && aliensHit >= (numLevel*10)) gameOver(true);
 

@@ -655,8 +655,10 @@ public class UIManager implements ResourceLoader {
             // pagina 'space journey'
             case 2:
                 // testi //
-                fontMediumWhite20.draw(screen, String.valueOf((int)DataUserManager.getProgress("level")), 394, 410); // livello
-                fontMediumWhite20.draw(screen, String.valueOf((((int)DataUserManager.getProgress("level"))) / 10 + 1), 484, 380); // galassia corrente
+                int level = ((int)DataUserManager.getProgress("level"));
+                if (level==41) level = 40;
+                fontMediumWhite20.draw(screen, String.valueOf(level), 394, 410); // livello
+                fontMediumWhite20.draw(screen, String.valueOf((level) / 10 + 1), 484, 380); // galassia corrente
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'

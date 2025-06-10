@@ -235,7 +235,7 @@ public class InputManager implements InputProcessor {
             }
 
             // controllo per avviare le modalità di gioco
-            if ((screenX >= 778 && screenX <= 928) && (screenY >= 552 && screenY <= 592)) {
+            if ((screenX >= 769 && screenX <= 920) && (screenY >= 550 && screenY <= 593)) {
                 // avvio modalità di gioco
                 if (page == 0) {
                     // controllo per l'avviso difficoltà
@@ -651,7 +651,7 @@ public class InputManager implements InputProcessor {
             }
 
             // avvio modalità di gioco
-            if ((page==0 || page==2 || (page==1 && ((int)DataUserManager.getProgress("level") > 10))) && (screenX >= 778 && screenX <= 928) && (screenY >= 552 && screenY <= 592)) {
+            if ((page==0 || page==2 || (page==1 && ((int)DataUserManager.getProgress("level") > 10))) && (screenX >= 769 && screenX <= 920) && (screenY >= 550 && screenY <= 593)) {
                 isBtnStartHover=true;
             }
 

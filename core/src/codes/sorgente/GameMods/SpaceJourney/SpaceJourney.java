@@ -169,7 +169,6 @@ public class SpaceJourney implements Screen, InputProcessor {
 
             // SI sblocco livello
             if (buyLevel && (currentCredits-price>=0) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
-                System.out.println(numLevel);
                 // sblocco livello
                 new Level(numLevel).unlock();
 
