@@ -440,7 +440,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
                     if (doublePoints) screen.draw(rectSelectCard, 882, 387);
 
-                    // difficoltà todo: cambiare la posizione delle immagini
+                    // difficoltà
                     switch ((int)DataUserManager.getProgress("diff_classic_game")) {
                         case 1:
                             screen.draw(diffCG1, 843 ,259);
@@ -474,7 +474,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (goldHeart) screen.draw(rectSelectCard, 642, 387);
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
 
-                    // difficoltà todo: cambiare la posizione delle immagini
+                    // difficoltà
                     switch ((int)DataUserManager.getProgress("diff_space_battle")) {
                         case 1:
                             screen.draw(diffSB1, 843 ,259);
