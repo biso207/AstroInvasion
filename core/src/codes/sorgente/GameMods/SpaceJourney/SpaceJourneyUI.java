@@ -243,7 +243,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         // sfondo base
         screen.draw(infoLevels[SpaceJourney.numGalaxy-1], 143, 100);
 
-        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 420, 169);
+        if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 425, 174);
 
         // testi //
         fontBoldWhite60_1.draw(screen, "Level " + numLevel, 194, 560); // numero livello

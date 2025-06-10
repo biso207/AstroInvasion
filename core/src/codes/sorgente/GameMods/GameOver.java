@@ -224,7 +224,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // recupero partite da vincere e vinte
         int toWinMissions = UIManager.Missions[missionID-1].calcNumObjMission();
-        int winsMissions = (int) DataUserManager.getProgress("wins_SB_missions");
+        int winsMissions = (int) DataUserManager.getProgress("cons_won_SB");
 
         // recupero crediti vinti e da vincere
         int creditsToWin = UIManager.Missions[missionID-1].calcNumObjMission();

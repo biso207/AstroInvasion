@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.Missions.CheckRTG;
 import sorgente.Missions.Missions;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
@@ -45,7 +46,7 @@ public class UIManager implements ResourceLoader {
     private Texture spImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
-    private final Texture[] buttonsOver, alphaFragments;
+    private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
         fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60;
@@ -79,6 +80,7 @@ public class UIManager implements ResourceLoader {
         mapSpacecrafts = new HashMap<>();
         this.buttonsOver = new Texture[10];
         this.alphaFragments = new Texture[5];
+        this.badgesRTG = new Texture[5];
 
         // mouse
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
@@ -151,6 +153,11 @@ public class UIManager implements ResourceLoader {
 
         // immagine navicella
         spImg = new Texture(selectedSp.getPathImg());
+
+        // immagini badges RTG
+        for (int i=0; i<5; i++) {
+            badgesRTG[i] = new Texture("images/badges_rtg/badge" + (i+1) + ".png");
+        }
 
         // immagini frammenti alpha
         for (int i=0; i<4; i++) {
@@ -448,7 +455,7 @@ public class UIManager implements ResourceLoader {
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
                     // disegno rettangolo di selezione
-                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-177, (y-145)-InputManager.scrollY);
+                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
 
                     // disegno di alpha completata
                     if (i*j==15) screen.draw(alphaFragments[4], X-125, (y-79)-InputManager.scrollY);
@@ -483,6 +490,28 @@ public class UIManager implements ResourceLoader {
     public void drawGloryPage(SpriteBatch screen) {
         // background base
         screen.draw(mapLobby.get(20), 250, 125);
+
+        // recupero progressi di gioco
+        int points = (int) DataUserManager.getProgress("points");
+        int winsSB = (int) DataUserManager.getProgress("won_SB");
+        int numTask = (int) DataUserManager.getProgress("num_mission");
+        int credits = (int) DataUserManager.getProgress("total_credits");
+
+        int cont = 0; // numero task completate
+
+        // controllo completamento missioni
+        int x=334, y=417;
+        for (int i=0; i<5; i++) {
+            // stampa ultimo badge
+            if (cont==4) screen.draw(badgesRTG[4], x, y);
+
+            // stampa badge completamento
+            if (i<4 && CheckRTG.checkMission(i)) {
+                cont++;
+                screen.draw(badgesRTG[i], x, y);
+            }
+            y-=62; // decremento y per il badge successivo
+        }
     }
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)

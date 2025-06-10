@@ -104,7 +104,7 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(5, new HitBox(50, 441, 270, 459, 5, false)); // 'marketplace'
         hitBoxes.put(12, new HitBox(50, 493, 270, 511, 12, true));  // 'instructions'
         // le pagine seguenti hanno da memorizzare previousPage
-        hitBoxes.put(6, new HitBox(862, 62, 950, 145, 6, true));  // 'profile infos'
+        hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
     }
 
     // metodo per popolare le aree cliccabili nella selezione delle navicelle
