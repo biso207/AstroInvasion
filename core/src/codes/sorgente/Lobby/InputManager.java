@@ -253,7 +253,7 @@ public class InputManager implements InputProcessor {
                 } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false)); // avvio space battle
+                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false, (int) DataUserManager.getProgress("diff_space_battle"))); // avvio space battle
                 } else if (page == 2) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica

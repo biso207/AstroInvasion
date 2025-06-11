@@ -1,6 +1,7 @@
 package sorgente.GameMods;
 
 // import codici e librerie
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
@@ -36,7 +37,10 @@ import java.util.Random;
 public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;
-    private Texture backgroundTexture, enemyTexture, playerTexture, laserTexture;
+    private Texture backgroundTexture, playerTexture;
+    private TextureRegion enemyTexture, laserTexture;
+    private Array<Texture> enemyBaseTextures = new Array<>();
+    private Array<Texture> laserBaseTextures = new Array<>();
     private final Rectangle playerShip, enemyShip;
     private final Array<Rectangle> playerLasers = new Array<>();
     private final Array<Rectangle> enemyLasers = new Array<>();
@@ -44,8 +48,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     private float backgroundY1, backgroundY2;
     private float playerSpeed, laserSpeed, enemySpeed;
-    private Array<Texture> laserTextures;
-    private Array<Texture> enemyTextures;
+    private Array<TextureRegion> laserTextures;
+    private Array<TextureRegion> enemyTextures;
     private float playerCooldown = 0, enemyCooldown = 0;
     private float playerLaserCooldown, enemyLaserCooldown;
 
@@ -92,8 +96,11 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     Texture[][] livesTextures;
 
+    private int hit_level = 0;
 
-    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
+    private int hits_level = 0;
+
+    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel, int level) {
 
 
         this.game = game;
@@ -110,8 +117,29 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         enemyShip = new Rectangle(400, 520, 70, 64);
 
 
-        int difficulty = (int) DataUserManager.getProgress("diff_space_battle");
-        setupGameParameters(difficulty);
+        int difficulty = 0;
+
+
+        if (isLevel && level <= 10 && level >= 0){
+            difficulty = 1;
+            setupGameParameters(difficulty);
+        }
+        if (isLevel && level <= 20  && level >= 11){
+            difficulty = 2;
+            setupGameParameters(difficulty);
+        }
+        if (isLevel && level <= 30  && level >= 21){
+            difficulty = 2;
+            setupGameParameters(difficulty);
+        }
+        if (isLevel && level <= 40  && level >= 31){
+            difficulty = 3;
+            setupGameParameters(difficulty);
+        }
+        if (!isLevel){
+            difficulty = (int) DataUserManager.getProgress("diff_space_battle");
+            setupGameParameters(difficulty);
+        }
 
         laserPool = new Pool<>() {
             @Override
@@ -121,7 +149,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         };
 
 
-        enemyTextures = new Array<Texture>();
+        enemyTextures = new Array<TextureRegion>();
 
         Random random = new Random();
         int selection = random.nextInt(20) + 1;
@@ -159,6 +187,13 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         // setting comando di sparo
         if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
         else shotType = 2;
+
+
+        goldHeart = selectedSp.getName().equals("Alpha") || InputManager.goldHeart;
+        superLaser = selectedSp.getName().equals("Rorik") || InputManager.superLaser;
+
+        InputManager.goldHeart = false;
+        InputManager.superLaser = false;
 
 
     }
@@ -219,8 +254,15 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
             if (laser.overlaps(enemyShip)) {
                 enemyLives--;
                 it.remove();
+                hit_level ++;
                 soundManager.playHit();
-                if (enemyLives <= 0){
+                if (enemyLives <= 0 && !isLevel){
+                    gameOver(true);
+                    DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
+                    DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
+                }
+                hits_level = getHits();
+                if (hit_level >= hits_level && isLevel){
                     gameOver(true);
                     DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
                     DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
@@ -345,9 +387,26 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     private void loadEnemyTextures() {
         enemyTextures = new Array<>();
         laserTextures = new Array<>();
-        for (int i = 1; i < 22; i++) enemyTextures.add(new Texture("images/spacecrafts/enemies/enemy" + i + ".png"));
-        for (int i = 0; i < 24; i++) laserTextures.add(new Texture("images/lasers/laser (" + (i+1) + ").png"));
+
+        for (int i = 1; i < 25; i++) {
+            Texture texture = new Texture("images/spacecrafts/sp" + i + ".png");
+            enemyBaseTextures.add(texture);
+            TextureRegion flipped = new TextureRegion(texture);
+            flipped.flip(false, true);
+            enemyTextures.add(flipped);
+
+        }
+
+        for (int i = 0; i < 24; i++) {
+            Texture texture = new Texture("images/lasers/laser (" + (i+1) + ").png");
+            laserBaseTextures.add(texture);
+            TextureRegion flipped = new TextureRegion(texture);
+            flipped.flip(false, true);
+            laserTextures.add(flipped);
+
+        }
     }
+
 
 
     //Movimento sfondo
@@ -415,6 +474,11 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         }
     }
 
+    private int getHits(){
+        return 2;
+
+    }
+
     private void renderGame() {
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
@@ -480,8 +544,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
 
 
-        if (InputManager.goldHeart) InputManager.goldHeart = false;
-        if (InputManager.superLaser) InputManager.superLaser = false;
     }
 
     private String enemySpacecraft(int i){
@@ -530,15 +592,16 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     @Override public void dispose() {
         screen.dispose();
         playerTexture.dispose();
-        enemyTexture.dispose();
+        //enemyTexture.dispose();
         backgroundTexture.dispose();
         font.dispose();
-        for (Texture t : enemyTextures) {
+        for (Texture t : enemyBaseTextures) {
             t.dispose();
         }
-        for (Texture t : laserTextures) {
+        for (Texture t : laserBaseTextures) {
             t.dispose();
         }
+
     }
 
     // ************************************** //
