@@ -163,9 +163,9 @@ public class UIManager implements ResourceLoader {
 
         // immagini frammenti alpha
         for (int i=0; i<4; i++) {
-            alphaFragments[i] = new Texture("images/spacecrafts/basics/alpha_frag" + i + ".png");
+            alphaFragments[i] = new Texture("images/spacecrafts/alpha/alpha_frag" + i + ".png");
         }
-        alphaFragments[4] = new Texture("images/spacecrafts/basics/alpha.png"); // imm alpha completa
+        alphaFragments[4] = new Texture("images/spacecrafts/alpha/alpha.png"); // imm alpha completa
 
         // testo informativo space battle bloccato
         infoBanner = new Texture("images/warning_txt_space_battle.png");
