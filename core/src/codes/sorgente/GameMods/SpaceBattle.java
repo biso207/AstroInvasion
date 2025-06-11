@@ -100,6 +100,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     private int hits_level = 0;
 
+    private int level;
+
     public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel, int level) {
 
 
@@ -173,6 +175,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         // disattivazione generica in caso si stia giocando un livello
         if (isLevel) goldHeart=superLaser=false;
+        if (level > 30) superLaser = true;
+        System.out.println(level);
 
         // setting comando di movimento
         if (((int) DataUserManager.getProgress("movement_type")) == 1) {
@@ -195,6 +199,9 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         InputManager.goldHeart = false;
         InputManager.superLaser = false;
 
+        hits_level = level;
+
+        this.level = level;
 
     }
 
@@ -252,22 +259,28 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
             Rectangle laser = it.next();
             laser.y += step;
             if (laser.overlaps(enemyShip)) {
-                enemyLives--;
                 it.remove();
-                hit_level ++;
                 soundManager.playHit();
-                if (enemyLives <= 0 && !isLevel){
-                    gameOver(true);
-                    DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
-                    DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
+
+                if (!isLevel) {
+                    enemyLives--;
+                    if (enemyLives <= 0) {
+                        gameOver(true);
+                        DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
+                        DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
+                    }
+                } else {
+                    hit_level++;
+                    System.out.println("Figlio di Troia");
+                    if (hit_level >= hits_level) {
+                        gameOver(true);
+                        DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
+                        DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
+                        DataUserManager.setProgress("diff_classic_game", 3);
+                    }
                 }
-                hits_level = getHits();
-                if (hit_level >= hits_level && isLevel){
-                    gameOver(true);
-                    DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
-                    DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
-                }
-            } else if (laser.y > Gdx.graphics.getHeight()) {
+
+        } else if (laser.y > Gdx.graphics.getHeight()) {
                 it.remove();
                 laserPool.free(laser);
             }
@@ -282,6 +295,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
                     gameOver(false);
                     DataUserManager.setProgress("cons_won_SB", 0);
+                    DataUserManager.setProgress("diff_classic_game", level);
                 }
             } else if (laser.y < 0) {
                 it.remove();
@@ -474,11 +488,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         }
     }
 
-    private int getHits(){
-        return 2;
-
-    }
-
     private void renderGame() {
         ScreenUtils.clear(0, 0, 0, 1);
         screen.begin();
@@ -549,27 +558,30 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     private String enemySpacecraft(int i){
         i++;
         return switch (i) {
-            case 1 -> "Alpha";
-            case 2 -> "Andvari";
-            case 3 -> "Ares";
-            case 4 -> "Asgard";
-            case 5 -> "Beowulf";
-            case 6 -> "Zephyr";
-            case 7 -> "Centauro";
-            case 8 -> "Malloc";
-            case 9 -> "Fenixia";
-            case 10 -> "Galahad";
-            case 11 -> "Omega";
-            case 12 -> "Siko";
-            case 13 -> "Seraphis";
-            case 14 -> "Idra";
-            case 15 -> "Orion";
-            case 16 -> "Pegaso";
-            case 17 -> "Efron";
+            case 1 -> "Omega";
+            case 2 -> "Idra";
+            case 3 -> "Woka";
+            case 4 -> "Pegaso";
+            case 5 -> "Ares";
+            case 6 -> "Andvari";
+            case 7 -> "Siko";
+            case 8 -> "Fenixia";
+            case 9 -> "Selen";
+            case 10 -> "Centauro";
+            case 11 -> "Zephyr";
+            case 12 -> "Malloc";
+            case 13 -> "Orion";
+            case 14 -> "Asgard";
+            case 15 -> "Galahad";
+            case 16 -> "Seraphis";
+            case 17 -> "Beowulf";
             case 18 -> "Scylla";
-            case 19 -> "Selen";
-            case 20 -> "Keto";
-            case 21 -> "Woka";
+            case 19 -> "Keto";
+            case 20 -> "Efron";
+            case 21 -> "Drakar";
+            case 22 -> "Rorik";
+            case 23 -> "Astrid";
+            case 24 -> "Alpha";
             default -> " ";
         };
     }
