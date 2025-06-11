@@ -354,17 +354,18 @@ public class AuthAlgorithms implements InputProcessor {
             showPS = !showPS;
         }
         System.out.println(screenX + " " + screenY);
-        // click per attivare la digitazione della password/nickname
+        // click per attivare la digitazione della password
         if (!enteringNickname && ((screenX>=249 && screenX<=730) && (screenY>=277 && screenY<=319))) {
             enteringNickname=true;
             enteringPassword=false;
         }
-        if (!enteringPassword && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417)) &&
-            !(screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
+        // click per attivare la digitazione del nickname
+        if (!enteringPassword && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417))) {
             enteringPassword=true;
             enteringNickname=false;
         }
         return true;
+        //!(screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)
     }
 
     // cambio icona mouse al passaggio sugli elementi

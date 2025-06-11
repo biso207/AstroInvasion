@@ -49,7 +49,8 @@ public class UIManager implements ResourceLoader {
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60;
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60,
+        fontSemiboldYellow25;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -128,7 +129,8 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
-            //fontRed20 = new BitmapFont(Gdx.files.internal("font/inter/regular_red_20.fnt")); // inter regular red 20
+            // yellow
+            fontSemiboldYellow25 = new BitmapFont(Gdx.files.internal("font/inter/semibold_yellow_25.fnt"));
         } catch (Exception e) {
             // dichiarazione font
             BitmapFont font = new BitmapFont(); // font di default (arial)
@@ -532,9 +534,13 @@ public class UIManager implements ResourceLoader {
         switch (InputManager.page) {
             // pagina 'classic game'
             case 0:
+                // titolo e sottotitolo pagina
+                fontSemiboldYellow25.draw(screen, "CLASSIC GAME", 323, 494);
+                fontMediumWhite20.draw(screen, "The new Space Invaders", 323, 457);
+
                 // testi //
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 402, 400); // punti totali
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 370); // partite giocate
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 402, 410); // punti totali
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 381); // partite giocate
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
@@ -580,10 +586,14 @@ public class UIManager implements ResourceLoader {
 
             // pagina 'space battle'
             case 1:
+                // titolo e sottotitolo pagina
+                fontSemiboldYellow25.draw(screen, "SPACE BATTLE", 323, 494);
+                fontMediumWhite20.draw(screen, "Enjoy a 1v1 Battle", 323, 457);
+
                 // testi //
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 425, 415); // vittorie
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 445, 385); // vittorie consecutive
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 425, 355); // partite giocate
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 425, 411); // vittorie
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 445, 381); // vittorie consecutive
+                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 425, 351); // partite giocate
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
@@ -654,6 +664,10 @@ public class UIManager implements ResourceLoader {
 
             // pagina 'space journey'
             case 2:
+                // titolo e sottotitolo pagina
+                fontSemiboldYellow25.draw(screen, "SPACE JOURNEY", 323, 494);
+                fontMediumWhite20.draw(screen, "Explore and conquire all the space's galaxies", 323, 457);
+
                 // testi //
                 int level = ((int)DataUserManager.getProgress("level"));
                 if (level==41) level = 40;
@@ -681,6 +695,10 @@ public class UIManager implements ResourceLoader {
 
             // pagina 'Missions'
             case 3:
+                // titolo e sottotitolo pagina
+                fontSemiboldYellow25.draw(screen, "MISSIONS", 323, 494);
+                fontMediumWhite20.draw(screen, "Complete different tasks to receive prizes", 323, 457);
+
                 // recupero missione corrente
                 int missionID = (int) DataUserManager.getProgress("mission_id");
                 Missions m = Missions[missionID-1];
@@ -701,6 +719,10 @@ public class UIManager implements ResourceLoader {
                 break;
             // pagina 'marketplace'
             case 5:
+                // titolo e sottotitolo pagina
+                fontSemiboldYellow25.draw(screen, "MARKETPLACE", 323, 494);
+                fontMediumWhite20.draw(screen, "Use your credits to buy cards and unique objectes", 323, 457);
+
                 // testi //
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
 
