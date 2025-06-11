@@ -194,8 +194,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         InputManager.goldHeart = false;
         InputManager.superLaser = false;
-
-
     }
 
     //Valori di inizio gioco

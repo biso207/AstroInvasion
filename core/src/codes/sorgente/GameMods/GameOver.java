@@ -619,6 +619,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                         game.setScreen(new ClassicGame(game, selectedSp, isLevel));
                         break;
                     case 1:
+                        // stato carte speciali
+                        InputManager.goldHeart = goldHeart;
+                        InputManager.superLaser = superLaser;
+
                         game.setScreen(new SpaceBattle(game, selectedSp, isLevel, (int) DataUserManager.getProgress("diff_space_battle")));
                         break;
                 }
