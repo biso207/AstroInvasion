@@ -348,7 +348,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         enemyTextures = new Array<>();
         laserTextures = new Array<>();
         for (int i = 1; i < 22; i++) enemyTextures.add(new Texture("images/spacecrafts/enemies/enemy" + i + ".png"));
-        for (int i = 1; i < 22; i++) laserTextures.add(new Texture("images/spacecrafts/enemies/laser" + i + ".png"));
+        for (int i = 0; i < 24; i++) laserTextures.add(new Texture("images/lasers/laser (" + (i+1) + ").png"));
     }
 
 
@@ -481,7 +481,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
 
-        
+
         if (InputManager.goldHeart) InputManager.goldHeart = false;
         if (InputManager.superLaser) InputManager.superLaser = false;
     }
