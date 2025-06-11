@@ -189,8 +189,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 writeFileCG(); // salvataggio progressi classic game
                 break;
             case 1:
-                calcProgressSB(); // calcolo crediti vinti in space battle
-                checkCompletedMissions(); // controllo completamento task Missions
+                if (!isLevel) {
+                    calcProgressSB(); // calcolo crediti vinti in space battle
+                    checkCompletedMissions(); // controllo completamento task Missions
+                }
                 writeFileSpaceBattle(); // salvataggio progresso space battle
                 break;
         }
@@ -253,13 +255,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 }
                 DataUserManager.setProgress("wins_SB_missions", winsMissions); // aggiornamento partite vinte
             }
-            else if (missionID==3) { // punti raccolti in space battle + classic game
+            else if (missionID==3) { // punti raccolti in space battle e classic game
                 if (pointsWon+pointsSB>=pointsToWin) {
                     DataUserManager.setProgress("completed_mission", true); // stato task completata
                     completedMissions = true; // cambio stato per l'icona di notifica
                 }
             }
-            else if (missionID == 4) { // crediti raccolti in space battle + classic game
+            else if (missionID == 4) { // crediti raccolti in space battle e classic game
                 if (creditsWon+creditsSB>=creditsToWin) {
                     DataUserManager.setProgress("completed_mission", true); // stato task completata
                     completedMissions = true; // cambio stato per l'icona di notifica
@@ -538,7 +540,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
             // livello corrente già aggiornato al successivo
             int currentLevel = (int) DataUserManager.getProgress("level");
-            System.out.println("qua invece è: " + currentLevel);
             currentLevel-=2; // valore corretto per l'indice delle liste
 
             // posizione immagine del premio

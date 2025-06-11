@@ -266,17 +266,11 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                     enemyLives--;
                     if (enemyLives <= 0) {
                         gameOver(true);
-                        DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
-                        DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
                     }
                 } else {
                     hit_level++;
-                    System.out.println("Figlio di Troia");
                     if (hit_level >= hits_level) {
                         gameOver(true);
-                        DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
-                        DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
-                        DataUserManager.setProgress("diff_classic_game", 3);
                     }
                 }
 
@@ -294,8 +288,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 soundManager.playHit();
                 if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
                     gameOver(false);
-                    DataUserManager.setProgress("cons_won_SB", 0);
-                    DataUserManager.setProgress("diff_classic_game", level);
                 }
             } else if (laser.y < 0) {
                 it.remove();
@@ -542,17 +534,28 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per constatare vittoria/sconfitta
     private void gameOver(boolean win) {
-        // diminuzione carte speciali
-        if (goldHeart && !selectedSp.getName().equals("Alpha")) DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart")-1);
-        if (superLaser && !selectedSp.getName().equals("Rorik")) DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser")-1);
 
-        // aggiornamento partite giocate
-        DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
+        if (!isLevel) {
+            // diminuzione carte speciali
+            if (goldHeart && !selectedSp.getName().equals("Alpha"))
+                DataUserManager.setProgress("num_gold_heart", (int) DataUserManager.getProgress("num_gold_heart") - 1);
+            if (superLaser && !selectedSp.getName().equals("Rorik"))
+                DataUserManager.setProgress("num_super_laser", (int) DataUserManager.getProgress("num_super_laser") - 1);
+
+            if (win) {
+                DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
+                DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
+            }
+            else {
+                DataUserManager.setProgress("cons_won_SB", 0);
+            }
+
+            // aggiornamento partite giocate
+            DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB") + 1);
+        }
 
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
-
-
     }
 
     private String enemySpacecraft(int i){
