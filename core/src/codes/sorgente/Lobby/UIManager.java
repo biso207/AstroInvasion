@@ -700,9 +700,9 @@ public class UIManager implements ResourceLoader {
                 Missions m = Missions[missionID-1];
 
                 // testi //
-                fontMediumBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_mission")), 565, 407); // numero missione raggiunta
+                fontMediumBlue20.draw(screen, "Task " + formatter.format((int) DataUserManager.getProgress("num_mission")), 514, 407); // numero missione raggiunta
                 fontMediumBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
-                fontMediumBlue20.draw(screen, "x" + m.prize, 720, 231); // premio missione
+                fontMediumBlue20.draw(screen, "Prize: x" + m.prize, 660, 231); // premio missione
 
                 // progresso completamento task corrente
                 drawMissionsPage(screen, missionID);

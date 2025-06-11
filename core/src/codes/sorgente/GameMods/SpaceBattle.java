@@ -31,8 +31,6 @@ import java.util.Random;
  e se aggiungessimo x punti alla vittoria di ogni space battle? potremmo dare, quando si vince, tanti punti quanti la
  difficoltà, per esempio: difficoltà 1 => 100 punti; difficoltà 2 => 200 e difficoltà 3 300. così, anche space battle
  è importante per fare punti e crediti.
-
- ah, fai le cose nei todos. altrimenti? ti licenzio, semplice. :) #buttgay #suckmydick
 */
 
 public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
