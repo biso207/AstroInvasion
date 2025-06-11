@@ -595,20 +595,19 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // riproduzione suono click
-        SoundManager.playClickButton(InputManager.soundPercent);
-
         System.out.println("x: " + screenX + " y: " + screenY);
         // riavvio partita o chiusura sessione
         if (win && isLevel) { // vittoria nei livelli
             // 'back to galaxies' button
             if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
             }
         }
         else { // vittoria-sconfitta space battle + sconfitta livelli
             // click YES => avvio nuova partita
             if ((screenX >= 272 && screenX <= 472) && (screenY >= 573 && screenY <= 650)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
                 switch (mod) {
                     case 0:
                         // stato carte speciali
@@ -627,6 +626,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
             // click NO => ritorno alla Lobby o mappa livelli
             if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
                 // livello corrente
                 if (!isLevel) game.setScreen(new LobbyManager(game));
                 else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
@@ -636,33 +636,29 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // cambio difficoltà NON nei livelli
         if (!isLevel) {
             // incremento classic game
-            if (mod == 0 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431)) {
-                if (diffCG < 3) {
-                    diffCG++;
-                    DataUserManager.setProgress("diff_classic_game", diffCG);
-                }
+            if (mod == 0 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431) && diffCG < 3) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                diffCG++;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
             }
             // decremento classic game
-            if (mod == 0 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431)) {
-                if (diffCG > 1) {
-                    diffCG--;
-                    DataUserManager.setProgress("diff_classic_game", diffCG);
-                }
+            if (mod == 0 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431) && diffCG > 1) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                diffCG--;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
             }
 
             // incremento space battle
-            if (mod == 1 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431)) {
-                if (diffSB < 3) {
-                    diffSB++;
-                    DataUserManager.setProgress("diff_space_battle", diffSB);
-                }
+            if (mod == 1 && (screenX >= 900 && screenX <= 920) && (screenY >= 411 && screenY <= 431) && diffSB < 3) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                diffSB++;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
             }
             // decremento space battle
-            if (mod == 1 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431)) {
-                if (diffSB > 1) {
-                    diffSB--;
-                    DataUserManager.setProgress("diff_space_battle", diffSB);
-                }
+            if (mod == 1 && (screenX >= 789 && screenX <= 809) && (screenY >= 411 && screenY <= 431) && diffSB > 1) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                diffSB--;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
             }
         }
 
@@ -705,6 +701,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // gold heart
         if (canDisableGoldHeart && (screenX >= 634 && screenX <= 704) && (screenY >= 242 && screenY <= 309)) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             goldHeart = !goldHeart;
             if (canDisableShield) shield = false;
             if (canDisableSuperLaser) superLaser = false;
@@ -713,12 +710,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // shield
         if (mod==0 && (screenX >= 714 && screenX <= 784) && (screenY >= 242 && screenY <= 309)) {
-            /*
-            if (mod==0 && canDisableShield) shield = !shield; // selezione shield
-            else if (mod==1 && canDisableSuperLaser) superLaser = !superLaser; // selezione super laser
-            else return; // uscita
-
-             */
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             shield = !shield;
             // disattivazione altre carte speciali
             if (canDisableGoldHeart) goldHeart = false;
@@ -728,6 +720,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // super laser
         if (canDisableSuperLaser && (screenX >= 794 && screenX <= 864) && (screenY >= 242 && screenY <= 309)) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             superLaser = !superLaser;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;
@@ -736,6 +729,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // double points
         if (mod==0 && canDisableDoublePoints && (screenX >= 874 && screenX <= 944) && (screenY >= 242 && screenY <= 309)) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             doublePoints = !doublePoints;
             if (canDisableGoldHeart) goldHeart = false;
             if (canDisableShield) shield = false;

@@ -166,9 +166,7 @@ public class InputManager implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // todo: si potrebbe eseguire un controllo accurato per riprodurlo solo quando si clicca su dei pulsanti
-        // riproduzione suono click
-        SoundManager.playClickButton(soundPercent);
+        //SoundManager.playClickButton(soundPercent); // riproduzione suono click
 
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
@@ -186,6 +184,7 @@ public class InputManager implements InputProcessor {
             for (Map.Entry<Integer, HitBox> entry : hitBoxes.entrySet()) {
                 HitBox hb = entry.getValue();
                 if (hb.isInside(screenX, screenY)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                     if (hb.targetPage==12) scrollY2 = 2800;// reset altezza pagina info di gioco, si apre partendo dall'alto
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
@@ -197,37 +196,44 @@ public class InputManager implements InputProcessor {
             // CLICK NELLE PAGINE
             // apertura pagina 'spacecrafts' cliccando sulla navicella
             if ((page==0||page==1||page==2) && (screenX>=314 && screenX<=538) && (screenY>=461 && screenY<=594)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                 previousPage = page;
                 page=4;
             }
             // apertura pagina 'software infos'
             if ((screenX>=99 && screenX<=126) && (screenY>=600 && screenY<=630)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 open18 = true;
                 secondScreen = true;
             }
             // apertura pagina 'logout'
             if ((screenX>=154 && screenX<=183) && (screenY>=600 && screenY<=630)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 open14 = true;
                 secondScreen = true;
             }
             // apertura pagina 'settings'
             if ((screenX>=44 && screenX<=71) && (screenY>=600 && screenY<=630)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 open17 = true;
                 secondScreen = true;
             }
             // apertura pagina 10/11 (difficulty infos classic game/space battle)
             if ((screenX>=614 && screenX<=694) && (screenY>=551 && screenY<=592)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 if (page == 0) { previousPage = page; page = 10; }
                 else if (page == 1) { previousPage = page; page = 11; }
             }
             // apertura pagina 20 (cards infos)
             if ((page == 0 || page == 1) && (screenX>=880 && screenX<=905) && (screenY>=255 && screenY<=280)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 previousPage = page;
                 page = 8;
             }
             // apertura pagina 21 (credits x win infos)
             if (page==1 && (screenX>=880 && screenX<=905) && (screenY>=397 && screenY<=422)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 previousPage = page;
                 page = 9;
             }
@@ -240,50 +246,51 @@ public class InputManager implements InputProcessor {
                     if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
                         secondScreen = open19 = true;
                     } else {
+                        SoundManager.playClickButton(soundPercent); // riproduzione suono click
                         LobbyManager.soundtrack.stop(); // interruzione musica
                         LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
                     }
                 } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false)); // avvio space battle
                 } else if (page == 2) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp, 0)); // apertura mappa space journey
                 }
             }
 
             // cambio difficoltà classic game
-            if (page == 0 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
-                if (diffCG < 3) {
-                    diffCG++;
-                    DataUserManager.setProgress("diff_classic_game", diffCG);
-                }
+            if (page == 0 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584) && diffCG < 3) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                diffCG++;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
             }
-            if (page == 0 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584)) {
-                if (diffCG > 1) {
-                    diffCG--;
-                    DataUserManager.setProgress("diff_classic_game", diffCG);
-                }
+            if (page == 0 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584) && diffCG > 1) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                diffCG--;
+                DataUserManager.setProgress("diff_classic_game", diffCG);
             }
 
             // cambio difficoltà space battle
-            if (page == 1 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584)) {
-                if (diffSB < 3) {
-                    diffSB++;
-                    DataUserManager.setProgress("diff_space_battle", diffSB);
-                }
+            if (page == 1 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584) && diffSB < 3) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                diffSB++;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
             }
-            if (page == 1 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584)) {
-                if (diffSB > 1) {
-                    diffSB--;
-                    DataUserManager.setProgress("diff_space_battle", diffSB);
-                }
+            if (page == 1 && (screenX >= 587 && screenX <= 607) && (screenY >= 560 && screenY <= 584) && diffSB > 1) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                diffSB--;
+                DataUserManager.setProgress("diff_space_battle", diffSB);
             }
 
             // selezione carte speciali //
             // gold heart
             if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 goldHeart = !goldHeart;
+
                 // disattivazione altre carte
                 if (!nameSp.equals("Astrid")) shield = false;
                 if (!nameSp.equals("Rorik")) superLaser = false;
@@ -292,13 +299,17 @@ public class InputManager implements InputProcessor {
             // shield
             if (((screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323))) {
                 if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0) && !nameSp.equals("Astrid")) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     shield = !shield;
+
                     // disattivazione altre carte
                     if (!nameSp.equals("Alpha")) goldHeart = false;
                     if (!nameSp.equals("Drakar")) doublePoints = false;
                     if (!nameSp.equals("Rorik")) superLaser = false;
                 } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !nameSp.equals("Rorik")) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     superLaser = !superLaser;
+
                     // disattivazione altre carte
                     if (!nameSp.equals("Alpha")) goldHeart = false;
                     if (!nameSp.equals("Drakar")) doublePoints = false;
@@ -307,6 +318,7 @@ public class InputManager implements InputProcessor {
             }
             // super laser
             if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 superLaser = !superLaser;
 
                 // disattivazione altre carte
@@ -316,6 +328,7 @@ public class InputManager implements InputProcessor {
             }
             // double points
             if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && ((screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 doublePoints = !doublePoints;
 
                 // disattivazione altre carte
@@ -326,6 +339,8 @@ public class InputManager implements InputProcessor {
 
             // claim reward delle missions
             if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+
                 // missione corrente
                 int mission = (int) DataUserManager.getProgress("num_mission");
                 // id missione corrente
@@ -371,58 +386,74 @@ public class InputManager implements InputProcessor {
             if (page == 5) {
                 // rimozione prodotto
                 if ((screenX >= 344 && screenX <= 364 && screenY >= 385 && screenY <= 405) && item1 > 0) { // item 1
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item1--;
                     currentCredit += 50;
                 }
                 if ((screenX >= 494 && screenX <= 514 && screenY >= 385 && screenY <= 405) && item2 > 0) { // item 2
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item2--;
                     currentCredit += 100;
                 }
                 if ((screenX >= 644 && screenX <= 664 && screenY >= 385 && screenY <= 405) && item3 > 0) { // item 3
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item3--;
                     currentCredit += 200;
                 }
                 if ((screenX >= 794 && screenX <= 814 && screenY >= 385 && screenY <= 405) && item4 > 0) { // item 4
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item4--;
                     currentCredit += 300;
                 }
                 if ((screenX >= 442 && screenX <= 462 && screenY >= 538 && screenY <= 558) && item5 > 0) { // item 5
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item5--;
                     currentCredit += 20000;
                 }
                 if ((screenX >= 688 && screenX <= 708 && screenY >= 538 && screenY <= 558) && item6 > 0) { // item 6
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item6--;
                     currentCredit += 30000;
                 }
 
                 // aggiunta prodotto
                 if ((screenX >= 409 && screenX <= 429 && screenY >= 385 && screenY <= 405) && (currentCredit - 50 >= 0)) { // item 1
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item1++;
                     currentCredit -= 50;
                 }
                 if ((screenX >= 559 && screenX <= 579 && screenY >= 385 && screenY <= 405) && (currentCredit - 100 >= 0)) { // item 2
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item2++;
                     currentCredit -= 100;
                 }
                 if ((screenX >= 709 && screenX <= 729 && screenY >= 385 && screenY <= 405) && (currentCredit - 200 >= 0)) { // item 3
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item3++;
                     currentCredit -= 200;
                 }
                 if ((screenX >= 859 && screenX <= 879 && screenY >= 385 && screenY <= 405) && (currentCredit - 300 >= 0)) { // item 4
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item4++;
                     currentCredit -= 300;
                 }
                 if ((screenX >= 506 && screenX <= 526 && screenY >= 538 && screenY <= 558) && (currentCredit - 20000 >= 0 && item5 < 1 && !((boolean) DataUserManager.getProgress("state_product_5")))) { // item 5
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item5++;
                     currentCredit -= 20000;
                 }
                 if ((screenX >= 752 && screenX <= 772 && screenY >= 538 && screenY <= 558) && (currentCredit - 30000 >= 0 && item6 < 1 && !((boolean) DataUserManager.getProgress("state_product_6")))) { // item 6
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item6++;
                     currentCredit -= 30000;
                 }
 
+                // prezzo finale
+                finalPrize = ((int) DataUserManager.getProgress("credits")) - currentCredit;
+
                 // pulsante reset
-                if (screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624) {
+                if (screenX >= 790 && screenX <= 922 && screenY >= 580 && screenY <= 624 && finalPrize>0) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     item1 = item2 = item3 = item4 = item5 = item6 = 0; // reset item 1-6
                     finalPrize = 0; // reset final prize
                     currentCredit = ((int) DataUserManager.getProgress("credits")); // reset crediti
@@ -430,11 +461,9 @@ public class InputManager implements InputProcessor {
 
                 // pulsante per confermare l'acquisto
                 if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize > 0) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     secondScreen = open16 = true;
                 }
-
-                // prezzo finale
-                finalPrize = ((int) DataUserManager.getProgress("credits")) - currentCredit;
             }
         }
 
@@ -452,9 +481,12 @@ public class InputManager implements InputProcessor {
                     Rectangle area = entry.getKey();
                     if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
-                        System.out.println(selectedId);
-                        // salvataggio navicella scelta se sbloccata
+
+
+                        // cambio navicella e salvataggio navicella scelta se sbloccata
                         if (SpacecraftData.isAchieved(selectedId)) {
+                            SoundManager.playClickButton(soundPercent); // riproduzione suono click
+
                             DataUserManager.setProgress("spacecraft", selectedId);
                             // cambio stato selezione a true
                             isSPChanged = true;
@@ -464,6 +496,7 @@ public class InputManager implements InputProcessor {
 
                             // reset stato carte per sicurezza
                             goldHeart=shield=superLaser=doublePoints=false;
+
                             // riattivazione carte speciali se selezionata una navicella premium
                             if (nameSp.equals("Alpha")) goldHeart = true;
                             if (nameSp.equals("Astrid")) shield = true;
@@ -476,16 +509,25 @@ public class InputManager implements InputProcessor {
             }
 
             // apertura pagina 7 'avatar'
-            if (!open20 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) page = 7;
+            if (!open20 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                page = 7;
+            }
             // apertura pagina "gloria utente"
-            if (page == 6 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) secondScreen = open20 = true;
+            if (page == 6 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                secondScreen = open20 = true;
+            }
 
             // selezione avatar
             if (page == 7) {
                 int x = 133, y = 220; // posizione avatar 1
                 for (int i = 0; i <= 19; i++) {
                     if ((screenX >= x && screenX <= x + 66) && (screenY >= y && screenY <= y + 66)) {
+
+                        // selezione avatar e salvataggio scelta in memoria
                         if (Avatar.isAchieved(i)) {
+                            SoundManager.playClickButton(soundPercent); // riproduzione suono click
                             DataUserManager.setProgress("avatar", i);
                         }
                     }
@@ -498,9 +540,10 @@ public class InputManager implements InputProcessor {
                     }
                 }
             }
-            System.out.println(screenX + " " + screenY);
+
             // X sp => chiusura pagina navicelle/info di gioco
             if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (screenY >= 67 && screenY <= 107)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 page = previousPage;
             }
 
@@ -508,27 +551,32 @@ public class InputManager implements InputProcessor {
 
             // X glory => chiusura pagina glory
             if ((secondScreen && open20) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open20 = false;
             }
 
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
             if (!open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;
             }
 
             // chiusura software infos
             if ((secondScreen && open18) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open18 = false;
             }
 
             // NO logout => si continua nella sessione di gioco
             if ((secondScreen && open14) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open14 = false;
             }
 
             // YES logout => back to the Authentication Page
             if ((secondScreen && open14) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open14 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
@@ -536,11 +584,13 @@ public class InputManager implements InputProcessor {
 
             // OK warning => close warning and back to lobby
             if ((secondScreen && open19) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open19 = false;
             }
 
             // PLAY warning => play classic game
             if ((secondScreen && open19) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open19 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
@@ -548,6 +598,7 @@ public class InputManager implements InputProcessor {
 
             // YES => conferma acquisto
             if ((secondScreen && open16) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 // salvataggio crediti rimasti
                 DataUserManager.setProgress("credits", currentCredit);
 
@@ -571,41 +622,59 @@ public class InputManager implements InputProcessor {
 
             // NO => annulla acquisto
             if ((secondScreen && open16) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open16 = false;
             }
 
             // chiusura pagina impostazioni
             if ((secondScreen && open17) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open17 = false;
             }
 
             // setting impostazioni
             if ((secondScreen && open17)) {
                 // tipo di movimento
-                if ((screenX >= 259 && screenX <= 421) && (screenY >= 195 && screenY <= 272)) DataUserManager.setProgress("movement_type", 1);
-                if ((screenX >= 259 && screenX <= 421) && (screenY >= 290 && screenY <= 367)) DataUserManager.setProgress("movement_type", 2);
+                if ((screenX >= 259 && screenX <= 421) && (screenY >= 195 && screenY <= 272)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    DataUserManager.setProgress("movement_type", 1);
+                }
+                if ((screenX >= 259 && screenX <= 421) && (screenY >= 290 && screenY <= 367)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    DataUserManager.setProgress("movement_type", 2);
+                }
 
                 // tipo di sparo
-                if ((screenX >= 549 && screenX <= 711) && (screenY >= 195 && screenY <= 272)) DataUserManager.setProgress("shot_type", 1);
-                if ((screenX >= 549 && screenX <= 711) && (screenY >= 290 && screenY <= 367)) DataUserManager.setProgress("shot_type", 2);
+                if ((screenX >= 549 && screenX <= 711) && (screenY >= 195 && screenY <= 272)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    DataUserManager.setProgress("shot_type", 1);
+                }
+                if ((screenX >= 549 && screenX <= 711) && (screenY >= 290 && screenY <= 367)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    DataUserManager.setProgress("shot_type", 2);
+                }
 
                 // cambio volume suoni
                 if ((screenY >= 459 - 10 && screenY <= 459 + 10) &&
                     (screenX >= 285 && screenX <= 685)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     draggingSound = true;
                 }
                 // cambio volume musica
                 if ((screenY >= 530 - 10 && screenY <= 530 + 10) &&
                     (screenX >= 285 && screenX <= 685)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     draggingMusic = true;
                 }
 
                 // azzeramento volume musica/suoni al click sulle icone
                 if (screenX>=224 && screenX<=269 && screenY>=505 && screenY<=550) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     musicPercent=0;
                     DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica
                 }
                 if (screenX>=224 && screenX<=269 && screenY>=435 && screenY<=480) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     soundPercent=0;
                     DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
                 }

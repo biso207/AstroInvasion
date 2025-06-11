@@ -115,16 +115,16 @@ public class SpaceJourney implements Screen, InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // todo: si potrebbe eseguire un controllo accurato per riprodurlo solo quando si clicca su dei pulsanti
-        // riproduzione suono click
-        SoundManager.playClickButton(InputManager.soundPercent);
-
-        System.out.println("x:" + screenX + " y:" + screenY);
         // click per apertura di una galassia
         if (numGalaxy==0) {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, screenX, screenY)) {
-                    if ((int) Math.ceil((double) numLevel / 10) >= galaxy.getId()) numGalaxy = galaxy.getId();
+
+                    // selezione galassia
+                    if ((int) Math.ceil((double) numLevel / 10) >= galaxy.getId()) {
+                        SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                        numGalaxy = galaxy.getId();
+                    }
                 }
             }
         }
@@ -151,8 +151,9 @@ public class SpaceJourney implements Screen, InputProcessor {
                 // controllo click su un singolo livello
                 if (screenX >= x && screenX <= x + levelSize &&
                     screenY <= y + levelSize && screenY >= y) {
-                    if (levels.get(i).getState() == LevelState.UNLOCKED) infoLevel=true;
-                    else if (levels.get(i).getState() == LevelState.TO_BUY) buyLevel=true;
+                    SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                    if (levels.get(i).getState() == LevelState.UNLOCKED) infoLevel=true; // apertura info livello
+                    else if (levels.get(i).getState() == LevelState.TO_BUY) buyLevel=true; // apertura schermata sblocco livello
                 }
             }
 
@@ -162,13 +163,20 @@ public class SpaceJourney implements Screen, InputProcessor {
 
             // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE //
             // chiusura info level
-            if (infoLevel && (screenX >= 760 && screenX <= 800) && (screenY >= 139 && screenY <= 180)) infoLevel=false;
+            if (infoLevel && (screenX >= 760 && screenX <= 800) && (screenY >= 139 && screenY <= 180)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                infoLevel=false;
+            }
 
             // NO sblocco livello
-            if (buyLevel && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) buyLevel=false;
+            if (buyLevel && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+                buyLevel=false;
+            }
 
             // SI sblocco livello
             if (buyLevel && (currentCredits-price>=0) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+                SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
                 // sblocco livello
                 new Level(numLevel).unlock();
 
@@ -180,12 +188,14 @@ public class SpaceJourney implements Screen, InputProcessor {
 
         // back to lobby cliccando l'icona della terra
         if (((screenX >= 25 && screenX <= 122) && (screenY >= 418 && screenY <= 518)) && numGalaxy == 0) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             soundtrack.stop(); // stop della musica
             game.setScreen(new LobbyManager(game)); // back to lobby
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
         if (!infoLevel && !buyLevel && (screenX >= 898 && screenX <= 940) && (screenY >= 84 && screenY <= 124)) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
                 game.setScreen(new LobbyManager(game)); // back to lobby
@@ -195,6 +205,7 @@ public class SpaceJourney implements Screen, InputProcessor {
 
         // avvio livello
         if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
+            SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             infoLevel=false; // chiusura pagina in sovra impressione
             soundtrack.stop(); // interruzione musica
             if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp, true));
