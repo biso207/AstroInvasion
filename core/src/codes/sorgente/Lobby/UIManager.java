@@ -651,7 +651,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 159);
+                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 463);
 
                 // button fight hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 777, 105);
