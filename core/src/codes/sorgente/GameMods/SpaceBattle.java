@@ -226,7 +226,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                     gameOver(true);
                     DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
                     DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
-                    DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
                 }
             } else if (laser.y > Gdx.graphics.getHeight()) {
                 it.remove();
@@ -243,7 +242,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
                     gameOver(false);
                     DataUserManager.setProgress("cons_won_SB", 0);
-                    DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
                 }
             } else if (laser.y < 0) {
                 it.remove();
@@ -483,12 +481,9 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
 
-
-
+        
         if (InputManager.goldHeart) InputManager.goldHeart = false;
         if (InputManager.superLaser) InputManager.superLaser = false;
-
-
     }
 
     private String enemySpacecraft(int i){
