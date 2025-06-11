@@ -166,7 +166,7 @@ public class InputManager implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        //SoundManager.playClickButton(soundPercent); // riproduzione suono click
+        System.out.println(screenX + " " + screenY);
 
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura

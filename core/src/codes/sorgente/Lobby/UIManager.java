@@ -535,8 +535,8 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "The new Space Invaders", 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 402, 410); // punti totali
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 425, 381); // partite giocate
+                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int)DataUserManager.getProgress("points")), 332, 410); // punti totali
+                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int)DataUserManager.getProgress("matches_CG")), 332, 381); // partite giocate
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
@@ -587,9 +587,9 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Enjoy a 1v1 Battle", 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 425, 411); // vittorie
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 445, 381); // vittorie consecutive
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 425, 351); // partite giocate
+                fontMediumWhite20.draw(screen, "Victories: " + formatter.format((int)DataUserManager.getProgress("won_SB")), 332, 411); // vittorie
+                fontMediumWhite20.draw(screen, "Win Streak: " + formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 332, 381); // vittorie consecutive
+                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int)DataUserManager.getProgress("matches_SB")), 332, 351); // partite giocate
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
@@ -667,8 +667,8 @@ public class UIManager implements ResourceLoader {
                 // testi //
                 int level = ((int)DataUserManager.getProgress("level"));
                 if (level==41) level = 40;
-                fontMediumWhite20.draw(screen, String.valueOf(level), 394, 410); // livello
-                fontMediumWhite20.draw(screen, String.valueOf((level) / 10 + 1), 484, 380); // galassia corrente
+                fontMediumWhite20.draw(screen, "Level: " + level, 332, 410); // livello
+                fontMediumWhite20.draw(screen, "Current Galaxy: " + ((level) / 10 + 1), 332, 380); // galassia corrente
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
