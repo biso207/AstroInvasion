@@ -37,6 +37,9 @@ public class AuthAlgorithms implements InputProcessor {
     // variabile per controllare l'errore nel nick o psw
     protected boolean error = false;
 
+    // file per verificare la presenza di almeno un utente di gioco
+    private final FileHandle checkUser = Gdx.files.local("data/is_user.txt");
+
     /* pagina di riferimento
         0 = LogIn
         1 = SignUp
@@ -75,12 +78,10 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
-        FileHandle checkUser = Gdx.files.local("data/is_user.txt"); // file di verifica della presenza di almeno un utente
-        if (!checkUser.exists()) {
-            state = 1; // apertura schermata di registrazione
-            checkUser.writeString("exists", false); // creazione file
+        if (!checkUser.exists()) { // apre la schermata di registrazione se non ci sono utenti registrati
+            state = 1; // schermata di registrazione
         } else {
-            state = 0; // apertura schermata login
+            state = 0; // schermata login
         }
     }
 
@@ -115,7 +116,10 @@ public class AuthAlgorithms implements InputProcessor {
                 createFiles();
 
                 // successo
-                state = 2;
+                state = 2; // schermata lobby
+
+                // creazione file alla prima apertura del gioco
+                if (!checkUser.exists()) checkUser.writeString("exists", false);
 
                 // manda la notifica di apertura gioco
                 //notify.sendMessage();
@@ -168,8 +172,8 @@ public class AuthAlgorithms implements InputProcessor {
                 nickname = String.valueOf(nicknameInput);
                 password = String.valueOf(passwordInput);
 
-                // passaggio alla lobby con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
-                state = 2;
+                // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
+                state = 2; // schermata lobby
 
                 // manda la notifica di apertura gioco
                 //notify.sendMessage();
@@ -312,7 +316,7 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per rilevare il click da tastiera
     @Override public boolean keyTyped(char character) {
         // riproduzione suono digitazione
-        SoundManager.playDigitSound(50); // volume al 50% di default
+        SoundManager.playDigitSound(50); // suono del click
 
         // scelta del campo da modificare
         StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
@@ -334,11 +338,9 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // riproduzione suono click
-        SoundManager.playClickButton(50); // volume al 50% di default
-
         // cambio pagina - accesso => registrazione
         if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+            SoundManager.playClickButton(50); // suono del click
             if (state==0) state = 1;
             else state=0;
             error = false;
@@ -346,26 +348,29 @@ public class AuthAlgorithms implements InputProcessor {
 
         // click per avviare il gioco
         if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
+            SoundManager.playClickButton(50); // suono del click
             processLoginOrSignup();
         }
 
         // click per nascondere/mostrare la password
         if ((screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)) {
+            SoundManager.playClickButton(50); // suono del click
             showPS = !showPS;
         }
-        System.out.println(screenX + " " + screenY);
+
         // click per attivare la digitazione della password
         if (!enteringNickname && ((screenX>=249 && screenX<=730) && (screenY>=277 && screenY<=319))) {
+            SoundManager.playClickButton(50); // suono del click
             enteringNickname=true;
             enteringPassword=false;
         }
         // click per attivare la digitazione del nickname
         if (!enteringPassword && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417))) {
+            SoundManager.playClickButton(50); // suono del click
             enteringPassword=true;
             enteringNickname=false;
         }
         return true;
-        //!(screenX >= 682 && screenX <= 712) && (screenY >= 384 && screenY <= 404)
     }
 
     // cambio icona mouse al passaggio sugli elementi
