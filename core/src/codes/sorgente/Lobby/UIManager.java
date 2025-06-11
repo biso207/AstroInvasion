@@ -315,19 +315,15 @@ public class UIManager implements ResourceLoader {
         String[] names = {"Omega", "Idra", "Woka", "Pegaso", "Ares", "Andvari", "Siko", "Fenixia", "Selen", "Centauro",
             "Zephyr", "Malloc", "Orion", "Asgard", "Galahad", "Seraphis", "Beowulf", "Scylla", "Keto", "Efron",
             "Drakar", "Rorik", "Astrid", "Alpha"};
-        // percorsi immagine navicelle
-        String[] imagePaths = {"images/spacecrafts/basics/omega.png", "images/spacecrafts/basics/idra.png", "images/spacecrafts/basics/woka.png",
-            "images/spacecrafts/basics/pegaso.png", "images/spacecrafts/basics/ares.png", "images/spacecrafts/basics/andvari.png",
-            "images/spacecrafts/basics/siko.png", "images/spacecrafts/basics/fenixia.png", "images/spacecrafts/basics/selen.png",
-            "images/spacecrafts/basics/centauro.png", "images/spacecrafts/basics/zephyr.png", "images/spacecrafts/basics/malloc.png",
-            "images/spacecrafts/basics/orion.png", "images/spacecrafts/basics/asgard.png", "images/spacecrafts/basics/galahad.png",
-            "images/spacecrafts/basics/seraphis.png", "images/spacecrafts/basics/beowulf.png", "images/spacecrafts/basics/scylla.png",
-            "images/spacecrafts/basics/keto.png", "images/spacecrafts/basics/efron.png", "images/spacecrafts/basics/drakar.png",
-            "images/spacecrafts/basics/rorik.png", "images/spacecrafts/basics/astrid.png", "images/spacecrafts/basics/alpha.png"};
+        // percorsi immagine navicelle e laser navicelle
+        String[] imagePaths = new String[24];
         // percorsi immagine laser
         String[] laserPaths = new String[24];
+
+        // popolamento array texture navicelle
         for (int i=0; i<24; i++) {
             laserPaths[i] = "images/lasers/laser (" + (i+1) + ").png";
+            imagePaths[i] = "images/spacecrafts/sp" + (i+1) + ".png";
         }
         // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
         int[][] attributes = {
