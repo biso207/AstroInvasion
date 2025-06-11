@@ -4,6 +4,8 @@ package sorgente.GameMods;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.utils.Pool;
 import sorgente.DataUserManager;
 import sorgente.Main;
 import sorgente.Lobby.InputManager;
+import sorgente.ResourceLoader;
 import sorgente.SoundManager;
 
 import javax.xml.crypto.Data;
@@ -21,11 +24,6 @@ import java.util.Iterator;
 import java.util.Random;
 
 /*
- todo: aggiungere il testo in gioco (nome utente e avversario, o quello che volevi fare te)
- todo: il super laser non deve rompere il laser utente ma distrugge quelli avversi perforandoli
- todo: implementare i metodi loadImages e loadFont dell'interfaccia ResourceLoader, lo facciamo in tutte le classi e
-    ti basta spostare le righe dal costruttore, in cui carichi le risorse, nei rispettivi metodi. è solo per organizzare
-    meglio il codice
  todo: implementare la modalità a livelli dove non contano le vite ma le hit al nemico
  todo: dare i crediti al giocatore che ha vinto una partita in corrispondenza alle vittorie consecutive fatte
  todo: nei livelli, quando si vince, non si vince nulla se non il premio del livello. NO crediti e NO punti
@@ -37,10 +35,10 @@ import java.util.Random;
  ah, fai le cose nei todos. altrimenti? ti licenzio, semplice. :) #buttgay #suckmydick
 */
 
-public class SpaceBattle implements Screen, InputProcessor {
+public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     private final Main game;
     private final SpriteBatch screen;
-    private final Texture backgroundTexture, enemyTexture, playerTexture, laserTexture;
+    private Texture backgroundTexture, enemyTexture, playerTexture, laserTexture;
     private final Rectangle playerShip, enemyShip;
     private final Array<Rectangle> playerLasers = new Array<>();
     private final Array<Rectangle> enemyLasers = new Array<>();
@@ -56,10 +54,10 @@ public class SpaceBattle implements Screen, InputProcessor {
     private int playerLives, enemyLives;
     private boolean isPaused = false, quit = false, gameClosed = false;
 
-    private final BitmapFont font, fontBoldWhite60, fontBoldWhite20;
-    private final Texture topBar, stopImg, playImg, quitMatch, btnHoverR, btnHoverL;
+    private BitmapFont font, fontBoldWhite60, fontBoldWhite20;
+    private Texture topBar, stopImg, playImg, quitMatch, btnHoverR, btnHoverL;
 
-    private Texture superLaserImg = new Texture("images/spacecrafts/_super_laser.png");;
+    private Texture superLaserImg;
     private boolean superLaser=false, goldHeart=false;
 
     private String enemyPicture;
@@ -86,22 +84,20 @@ public class SpaceBattle implements Screen, InputProcessor {
     // variabile controllo se il gioco è un livello
     private final boolean isLevel;
 
-    //Texture cuori
-    Texture life1 = new Texture("images/lives/heart 100%.png");
-    Texture life2 = new Texture("images/lives/heart 75%.png");
-    Texture life3 = new Texture("images/lives/heart 66%.png");
-    Texture life4 = new Texture("images/lives/heart 50%.png");
-    Texture life5 = new Texture("images/lives/heart 33%.png");
-    Texture life6 = new Texture("images/lives/heart 25%.png");
-    Texture goldHeartImg = new Texture("images/lives/gold heart.png");
+    Texture life1;
+    Texture life2;
+    Texture life3;
+    Texture life4;
+    Texture life5;
+    Texture life6;
+    Texture goldHeartImg;
 
-    Texture[][] livesTextures = new Texture[][]{
-        {life4, life1}, // totalLives = 2
-        {life5, life3, life1}, // totalLives = 3
-        {life6, life4, life2, life1} // totalLives = 4
-    };
+    Texture[][] livesTextures;
+
 
     public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
+
+
         this.game = game;
         this.screen = game.screen;
         this.selectedSp = selectedSp;
@@ -110,14 +106,11 @@ public class SpaceBattle implements Screen, InputProcessor {
         // istanza del soundManager per riprodurre i suoni
         soundManager = new SoundManager(InputManager.soundPercent);
 
-        backgroundTexture = new Texture("images/bgInGame.png");
         playerTexture = new Texture(selectedSp.getPathImg());
 
         playerShip = new Rectangle(400, 20, 70, 64);
         enemyShip = new Rectangle(400, 520, 70, 64);
 
-        backgroundY1 = 0;
-        backgroundY2 = backgroundTexture.getHeight();
 
         int difficulty = (int) DataUserManager.getProgress("diff_space_battle");
         setupGameParameters(difficulty);
@@ -129,25 +122,6 @@ public class SpaceBattle implements Screen, InputProcessor {
             }
         };
 
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
-
-        fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
-        fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 35
-
-        topBar = new Texture("images/top_bar_space_battle.png");
-
-        playImg = new Texture("images/play.png");
-        stopImg = new Texture("images/stop.png");
-
-        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
-        gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
-
-        // quit match
-        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));
-        // pulsanti hover
-        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
-        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
 
         enemyTextures = new Array<Texture>();
 
@@ -187,6 +161,8 @@ public class SpaceBattle implements Screen, InputProcessor {
         // setting comando di sparo
         if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
         else shotType = 2;
+
+
     }
 
     //Valori di inizio gioco
@@ -231,11 +207,9 @@ public class SpaceBattle implements Screen, InputProcessor {
     //Laser
     private void spawnLaser(Rectangle origin, Array<Rectangle> targetArray) {
         Rectangle laser = laserPool.obtain();
-        if (superLaser) screen.draw(superLaserImg, laser.x, laser.y);
-        else {
-            laser.set(origin.x + origin.width / 2 - 5, origin.y + (origin == playerShip ? origin.height : -20), 10, 20);
-            targetArray.add(laser);
-        }
+        //if (superLaser) screen.draw(superLaserImg, laser.x, laser.y);
+        laser.set(origin.x + origin.width / 2 - 5, origin.y + (origin == playerShip ? origin.height : -20), 10, 20);
+        targetArray.add(laser);
     }
 
     //Aggiorna i laser
@@ -252,6 +226,7 @@ public class SpaceBattle implements Screen, InputProcessor {
                     gameOver(true);
                     DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB")+1);
                     DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB")+1);
+                    DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
                 }
             } else if (laser.y > Gdx.graphics.getHeight()) {
                 it.remove();
@@ -268,6 +243,7 @@ public class SpaceBattle implements Screen, InputProcessor {
                 if ((playerLives <= 0 && !goldHeart) || (goldHeart && playerLives == -1)){
                     gameOver(false);
                     DataUserManager.setProgress("cons_won_SB", 0);
+                    DataUserManager.setProgress("matches_SB", (int) DataUserManager.getProgress("matches_SB")+1);
                 }
             } else if (laser.y < 0) {
                 it.remove();
@@ -280,14 +256,69 @@ public class SpaceBattle implements Screen, InputProcessor {
             for (Iterator<Rectangle> it2 = enemyLasers.iterator(); it2.hasNext(); ) {
                 Rectangle eLaser = it2.next();
                 if (pLaser.overlaps(eLaser)) {
-                    it1.remove();
+                    if (!superLaser) it1.remove();
                     it2.remove();
-                    laserPool.free(pLaser);
+                    if (!superLaser) laserPool.free(pLaser);
                     laserPool.free(eLaser);
                     break;
                 }
             }
         }
+
+
+
+
+
+    }
+
+    @Override
+    public void loadImages(){
+        //Texture cuori
+        life1 = new Texture("images/lives/heart 100%.png");
+        life2 = new Texture("images/lives/heart 75%.png");
+        life3 = new Texture("images/lives/heart 66%.png");
+        life4 = new Texture("images/lives/heart 50%.png");
+        life5 = new Texture("images/lives/heart 33%.png");
+        life6 = new Texture("images/lives/heart 25%.png");
+        goldHeartImg = new Texture("images/lives/gold heart.png");
+
+
+        livesTextures = new Texture[][]{
+            {life4, life1}, // totalLives = 2
+            {life5, life3, life1}, // totalLives = 3
+            {life6, life4, life2, life1} // totalLives = 4
+        };
+
+        topBar = new Texture("images/top_bar_space_battle.png");
+
+        playImg = new Texture("images/play.png");
+        stopImg = new Texture("images/stop.png");
+
+        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
+        gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
+
+        // quit match
+        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));
+        // pulsanti hover
+        btnHoverL = new Texture("images/btns_hover/hover_btn8.png");
+        btnHoverR = new Texture("images/btns_hover/hover_btn9.png");
+
+        backgroundTexture = new Texture("images/bgInGame.png");
+
+        backgroundY1 = 0;
+        backgroundY2 = backgroundTexture.getHeight();
+
+        superLaserImg = new Texture("images/spacecrafts/_super_laser.png");
+
+    }
+
+    @Override
+    public void loadFont(){
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+
+        fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
+        fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 35
     }
 
 
@@ -395,8 +426,10 @@ public class SpaceBattle implements Screen, InputProcessor {
         screen.draw(backgroundTexture, 0, backgroundY2);
         screen.draw(playerTexture, playerShip.x, playerShip.y);
         screen.draw(enemyTexture, enemyShip.x, enemyShip.y);
-        for (Rectangle laser : playerLasers)
+        for (Rectangle laser : playerLasers) {
             screen.draw(selectedSp.getLaserTexture(), laser.x, laser.y);
+            if (superLaser) screen.draw(superLaserImg, laser.x, laser.y);
+        }
         for (Rectangle laser : enemyLasers)
             screen.draw(laserTexture, laser.x, laser.y);
         screen.draw(topBar, 20, 600);
@@ -432,6 +465,7 @@ public class SpaceBattle implements Screen, InputProcessor {
             // scritte pulsanti
             fontBoldWhite60.draw(screen, "YES", 320, 280);
             fontBoldWhite60.draw(screen, "NO", 577, 280);
+
         }
 
         screen.end();
@@ -449,9 +483,12 @@ public class SpaceBattle implements Screen, InputProcessor {
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
 
-        //Non funziona bene
-        goldHeart = false;
-        superLaser = false;
+
+
+        if (InputManager.goldHeart) InputManager.goldHeart = false;
+        if (InputManager.superLaser) InputManager.superLaser = false;
+
+
     }
 
     private String enemySpacecraft(int i){
@@ -556,7 +593,10 @@ public class SpaceBattle implements Screen, InputProcessor {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public void resize(int width, int height) {}
-    @Override public void show() {}
+    @Override public void show() {
+        loadImages();
+        loadFont();
+    }
     @Override public void pause() {}
     @Override public void resume() {}
 }
