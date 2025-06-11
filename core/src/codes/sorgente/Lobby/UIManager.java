@@ -750,20 +750,20 @@ public class UIManager implements ResourceLoader {
             case 6:
                 // testi //
                 // SCRITTE A SX
-                fontMediumWhite20.draw(screen, AuthAlgorithms.nickname, 172, 413); // nickname
-                fontMediumWhite20.draw(screen, AuthAlgorithms.password, 172, 373); // password
-                fontMediumWhite20.draw(screen, AuthAlgorithms.date, 185, 334); // data registrazione
+                fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 413); // nickname
+                fontMediumWhite20.draw(screen, "Password: " + AuthAlgorithms.password, 67, 373); // password
+                fontMediumWhite20.draw(screen, "Creation ID: " + AuthAlgorithms.date, 67, 334); // data registrazione
 
                 // SCRITTE A DX
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("points")), 615, 412); // punti
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("level")), 605, 372); // livello
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_mission")), 625, 332); // numero missione
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_aliens_hit")), 645, 292); // alieni colpiti
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("credits")), 625, 252); // crediti
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("total_credits")), 680, 212); // crediti totali
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_CG")), 680, 172); // partite classic game
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("matches_SB")), 680, 132); // partite space battle
-                fontMediumWhite20.draw(screen, formatter.format((int)DataUserManager.getProgress("won_SB")), 680, 92); // vittorie space battle
+                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int)DataUserManager.getProgress("points")), 540, 412); // punti
+                fontMediumWhite20.draw(screen, "Level: " + formatter.format((int)DataUserManager.getProgress("level")), 540, 372); // livello
+                fontMediumWhite20.draw(screen, "Mission: " + formatter.format((int)DataUserManager.getProgress("num_mission")), 540, 332); // numero missione
+                fontMediumWhite20.draw(screen, "Aliens Hit: " + formatter.format((int)DataUserManager.getProgress("num_aliens_hit")), 540, 292); // alieni colpiti
+                fontMediumWhite20.draw(screen, "Credits: " + formatter.format((int)DataUserManager.getProgress("credits")), 540, 252); // crediti
+                fontMediumWhite20.draw(screen, "All Time Credits: " + formatter.format((int)DataUserManager.getProgress("total_credits")), 540, 212); // crediti totali
+                fontMediumWhite20.draw(screen, "C.G. Matches: " + formatter.format((int)DataUserManager.getProgress("matches_CG")), 540, 172); // partite classic game
+                fontMediumWhite20.draw(screen, "S.B. Matches: " + formatter.format((int)DataUserManager.getProgress("matches_SB")), 540, 132); // partite space battle
+                fontMediumWhite20.draw(screen, "S.B. Victories: " + formatter.format((int)DataUserManager.getProgress("won_SB")), 540, 92); // vittorie space battle
 
                 // immagini //
                 screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar

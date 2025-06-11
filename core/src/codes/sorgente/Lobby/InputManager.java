@@ -176,8 +176,6 @@ public class InputManager implements InputProcessor {
         esempio: l'utente NON può avviare il 'classic game' da una pagina in sovra impressione o esterna che riempe lo schermo
         */
 
-        System.out.println(screenX + " " + screenY);
-
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
@@ -500,12 +498,13 @@ public class InputManager implements InputProcessor {
                     }
                 }
             }
-
+            System.out.println(screenX + " " + screenY);
             // X sp => chiusura pagina navicelle/info di gioco
-            if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (((screenY+(maxScrollY - scrollY)) >= 66 && (screenY+(maxScrollY - scrollY)) <= 106)
-                || ((screenY+(maxScrollY2 - scrollY2)) >= 66 && (screenY+(maxScrollY2 - scrollY2)) <= 106))) {
+            if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (screenY >= 67 && screenY <= 107)) {
                 page = previousPage;
             }
+
+            //((screenY+(maxScrollY2 - scrollY2)) >= 67 && (screenY+(maxScrollY2 - scrollY2)) <= 107))
 
             // X glory => chiusura pagina glory
             if ((secondScreen && open20) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
@@ -513,7 +512,7 @@ public class InputManager implements InputProcessor {
             }
 
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
-            if (!open20 && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
+            if (!open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
                 if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
                 else page = previousPage;
             }
