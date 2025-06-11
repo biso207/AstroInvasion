@@ -203,7 +203,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         this.level = level;
 
-    }
+    }//ciao
 
     //Valori di inizio gioco
     private void setupGameParameters(int difficulty) {
