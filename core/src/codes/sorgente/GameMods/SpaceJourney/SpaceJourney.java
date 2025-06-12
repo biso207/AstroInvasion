@@ -208,7 +208,7 @@ public class SpaceJourney implements Screen, InputProcessor {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             infoLevel=false; // chiusura pagina in sovra impressione
             soundtrack.stop(); // interruzione musica
-            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp, true, numLevel));
+            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp, true));
             else game.setScreen(new ClassicGame(game, selectedSp, true));
         }
 

@@ -21,8 +21,7 @@ import sorgente.ResourceLoader;
 import sorgente.SoundManager;
 
 import javax.xml.crypto.Data;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 /*
  todo: implementare la modalità a livelli dove non contano le vite ma le hit al nemico
@@ -50,6 +49,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     private float playerSpeed, laserSpeed, enemySpeed;
     private Array<TextureRegion> laserTextures;
     private Array<TextureRegion> enemyTextures;
+    private final Map<Integer, TextureRegion> enemyTextureJourney = new HashMap<>();
+    private final Map<Integer, TextureRegion> laserTextureJourney = new HashMap<>();
     private float playerCooldown = 0, enemyCooldown = 0;
     private float playerLaserCooldown, enemyLaserCooldown;
 
@@ -100,10 +101,9 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     private int hits_level = 0;
 
-    private int level;
+    public int level = (int)DataUserManager.getProgress("level");
 
-    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel, int level) {
-
+    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
 
         this.game = game;
         this.screen = game.screen;
@@ -158,12 +158,14 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         loadEnemyTextures();
 
-        System.out.println(selection);
-        System.out.println(laserTextures.get(selection));
         enemyPicture = enemySpacecraft(selection);
-        enemyTexture = enemyTextures.get(selection);
-        for (int i = 1; i < 22; i++) i++;
-        laserTexture = laserTextures.get(selection);
+        if(!isLevel)enemyTexture = enemyTextures.get(selection);
+        //for (int i = 1; i < 22; i++) i++;
+        if(!isLevel)laserTexture = laserTextures.get(selection);
+        if(isLevel){
+            enemyTexture = enemyTextureJourney.get(level);
+            laserTexture = laserTextureJourney.get(level);
+        }
 
         // attivazione carte utente
         if (selectedSp.getName().equals("Rorik")) superLaser = true;
@@ -175,7 +177,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         // disattivazione generica in caso si stia giocando un livello
         if (isLevel) goldHeart=superLaser=false;
-        if (level > 30) superLaser = true;
+        if (level > 30) InputManager.superLaser = true;
         System.out.println(level);
 
         // setting comando di movimento
@@ -201,9 +203,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         hits_level = level;
 
-        this.level = level;
 
-    }//ciao
+    }
 
     //Valori di inizio gioco
     private void setupGameParameters(int difficulty) {
@@ -220,8 +221,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 enemyLives = totalEnemyLives;
                 break;
             case 2:
-                playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
+                playerSpeed = 250 + selectedSp.getSpSpeed() * 100;
+                laserSpeed = 250 + selectedSp.getLaserSpeed() * 100;
                 enemySpeed = 500;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.25f;
@@ -231,8 +232,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 enemyLives = totalEnemyLives;
                 break;
             case 3:
-                playerSpeed = 400 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 400 + selectedSp.getLaserSpeed() * 100;
+                playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
+                laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
                 enemySpeed = 600;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.2f;
@@ -362,7 +363,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         font.setColor(Color.WHITE);
 
         fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt")); // inter-bold white 60
-        fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 35
+        fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
     }
 
 
@@ -394,23 +395,55 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         enemyTextures = new Array<>();
         laserTextures = new Array<>();
 
-        for (int i = 1; i < 25; i++) {
-            Texture texture = new Texture("images/spacecrafts/sp" + i + ".png");
-            enemyBaseTextures.add(texture);
-            TextureRegion flipped = new TextureRegion(texture);
-            flipped.flip(false, true);
-            enemyTextures.add(flipped);
+
+        if (!isLevel){
+            for (int i = 1; i < 25; i++) {
+                Texture texture = new Texture("images/spacecrafts/sp" + i + ".png");
+                enemyBaseTextures.add(texture);
+                TextureRegion flipped = new TextureRegion(texture);
+                flipped.flip(false, true);
+                enemyTextures.add(flipped);
+
+            }
+
+            for (int i = 0; i < 24; i++) {
+                Texture texture = new Texture("images/lasers/laser (" + (i+1) + ").png");
+                laserBaseTextures.add(texture);
+                TextureRegion flipped = new TextureRegion(texture);
+                flipped.flip(false, true);
+                laserTextures.add(flipped);
+
+            }
+        }
+
+        else {
+            Set<Integer> flippedLevels = Set.of(2, 4, 6, 8, 12, 14, 16, 18, 22, 24, 26, 28, 32, 34, 36, 38);
+
+            for (int lvl = 1; lvl <= 40; lvl++) {
+                int enemyIndex = ((lvl - 1) % 15) + 5;
+                int laserIndex = ((lvl - 1) % 15) + 5;
+                System.out.println(enemyIndex);
+                System.out.println(laserIndex);
+
+                Texture enemyTexture = new Texture("images/spacecrafts/sp" + enemyIndex + ".png");
+                TextureRegion enemyRegion = new TextureRegion(enemyTexture);
+
+                Texture laserTexture = new Texture("images/lasers/laser (" + laserIndex + ").png");
+                TextureRegion laserRegion = new TextureRegion(laserTexture);
+
+                if (flippedLevels.contains(lvl)) {
+                    enemyRegion.flip(false, true);
+                    laserRegion.flip(false, true);
+                }
+
+                enemyTextureJourney.put(lvl, enemyRegion);
+                laserTextureJourney.put(lvl, laserRegion);
+            }
+
+
 
         }
 
-        for (int i = 0; i < 24; i++) {
-            Texture texture = new Texture("images/lasers/laser (" + (i+1) + ").png");
-            laserBaseTextures.add(texture);
-            TextureRegion flipped = new TextureRegion(texture);
-            flipped.flip(false, true);
-            laserTextures.add(flipped);
-
-        }
     }
 
 
@@ -502,15 +535,21 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         if (goldHeart && playerLives == 0 && !isLevel) screen.draw(goldHeartImg, 75, 640);
 
         // stampa vite rimanenti
-        if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
-            screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 893, 640);
+        if (!isLevel) {
+            if (totalEnemyLives >= 2 && totalEnemyLives <= 4 && enemyLives >= 1 && enemyLives <= totalEnemyLives) {
+                screen.draw(livesTextures[totalEnemyLives - 2][enemyLives - 1], 893, 640);
+            }
+        }
+        else if (isLevel){
+            fontBoldWhite20.draw(screen, hit_level + "/" + hits_level, 825, 671);
+
         }
 
         // stampa nome utente
-        fontBoldWhite20.draw(screen, "Spaceship " + selectedSp.getName() + "(you)", 155, 665);
+        fontBoldWhite20.draw(screen, selectedSp.getName(), 155, 671);
 
         //Stampa nome nemico
-        fontBoldWhite20.draw(screen, "Spaceship " + enemyPicture + "(bot)", 605, 665);
+        fontBoldWhite20.draw(screen, enemyPicture, 560, 671);
 
         // stampa icona pausa
         if (isPaused) screen.draw(stopImg, 472, 637);
