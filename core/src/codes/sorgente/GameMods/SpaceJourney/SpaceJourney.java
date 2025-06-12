@@ -204,7 +204,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         }
 
         // avvio livello
-        if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523)) {
+        if ((screenX >= 417 && screenX <= 567) && (screenY >= 483 && screenY <= 523) && infoLevel) {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             infoLevel=false; // chiusura pagina in sovra impressione
             soundtrack.stop(); // interruzione musica
