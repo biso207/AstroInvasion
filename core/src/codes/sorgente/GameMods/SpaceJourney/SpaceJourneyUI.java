@@ -12,10 +12,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
-import sorgente.Main;
 import sorgente.ResourceLoader;
 
-import javax.xml.crypto.Data;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;

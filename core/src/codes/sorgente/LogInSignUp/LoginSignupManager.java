@@ -10,7 +10,6 @@ package sorgente.LogInSignUp;
 // import codici e librerie
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -105,8 +104,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 break;
             case 2:
                 // caricamento risorse utente
-                //new DataUserManager(AuthAlgorithms.nickname); // in futuro si userà questa riga
-                new DataUserManager("data/" + AuthAlgorithms.nickname + "/gameProgresses.json");
+                new DataUserManager(AuthAlgorithms.nickname); // in futuro si userà questa riga
                 // apertura lobby
                 game.setScreen(new LobbyManager(game));
                 break;
@@ -144,5 +142,14 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         if (fontBoldRed20 != null) fontBoldRed20.dispose();
         img1.dispose();
         img2.dispose();
+        digitAreaON.dispose();
+        digitAreaOFF.dispose();
+        showPS.dispose();
+        coverPS.dispose();
+        loginPageBtnHover.dispose();
+        signupPageBtnHover.dispose();
+        continueBtnHover.dispose();
+
+        alg.dispose(); // rilascio risorse della classe degli algoritmi
     }
 }

@@ -406,10 +406,10 @@ public class UIManager implements ResourceLoader {
         screen.draw(mapLobby.get(17), 175, 25);
 
         // comandi movimento navicella
-        if ((int)DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
+        if ((int) DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
         else screen.draw(selectedSetting, 268, 332);
         // comando sparo laser
-        if ((int)DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
+        if ((int) DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
         else screen.draw(selectedSetting, 558, 332);
 
         // disegno icone musica/suono
@@ -453,7 +453,7 @@ public class UIManager implements ResourceLoader {
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
                     // disegno rettangolo di selezione
-                    if (spID == (int)DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    if (spID == (int) DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
 
                     // disegno di alpha completata
                     if (i*j==15) screen.draw(alphaFragments[4], X-125, (y-79)-InputManager.scrollY);
@@ -535,12 +535,12 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "The new Space Invaders", 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int)DataUserManager.getProgress("points")), 332, 410); // punti totali
-                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int)DataUserManager.getProgress("matches_CG")), 332, 381); // partite giocate
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
+                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 332, 410); // punti totali
+                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_CG")), 332, 381); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -557,7 +557,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
-                switch ((int)DataUserManager.getProgress("diff_classic_game")) {
+                switch ((int) DataUserManager.getProgress("diff_classic_game")) {
                     case 1:
                         screen.draw(diffCG1, 640 ,108);
                         break;
@@ -587,16 +587,16 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Enjoy a 1v1 Battle", 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, "Victories: " + formatter.format((int)DataUserManager.getProgress("won_SB")), 332, 411); // vittorie
-                fontMediumWhite20.draw(screen, "Win Streak: " + formatter.format((int)DataUserManager.getProgress("cons_won_SB")), 332, 381); // vittorie consecutive
-                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int)DataUserManager.getProgress("matches_SB")), 332, 351); // partite giocate
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
-                fontBoldBlue20.draw(screen, formatter.format((int)DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
+                fontMediumWhite20.draw(screen, "Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 332, 411); // vittorie
+                fontMediumWhite20.draw(screen, "Win Streak: " + formatter.format((int) DataUserManager.getProgress("win_streak_SB")), 332, 381); // vittorie consecutive
+                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_SB")), 332, 351); // partite giocate
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
                 // testo "crediti X vittoria"
                 // calcolo crediti utente vinti
                 int diff = (int) DataUserManager.getProgress("diff_space_battle");
-                int streak = (int) DataUserManager.getProgress("cons_won_SB");
+                int streak = (int) DataUserManager.getProgress("win_streak_SB");
                 int creditsSB=0, pointsSB=0;
 
                 // calcolo crediti vinti
@@ -634,7 +634,7 @@ public class UIManager implements ResourceLoader {
                 if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
-                switch ((int)DataUserManager.getProgress("diff_space_battle")) {
+                switch ((int) DataUserManager.getProgress("diff_space_battle")) {
                     case 1:
                         screen.draw(diffSB1, 640 ,108);
                         break;
@@ -651,7 +651,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int)DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 463);
+                if ((int) DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 463);
 
                 // button fight hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 777, 105);
@@ -665,7 +665,7 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Explore and conquire all the space's galaxies", 323, 457);
 
                 // testi //
-                int level = ((int)DataUserManager.getProgress("level"));
+                int level = ((int) DataUserManager.getProgress("level"));
                 if (level==41) level = 40;
                 fontMediumWhite20.draw(screen, "Level: " + level, 332, 410); // livello
                 fontMediumWhite20.draw(screen, "Current Galaxy: " + ((level) / 10 + 1), 332, 380); // galassia corrente
@@ -751,18 +751,18 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Creation ID: " + AuthAlgorithms.date, 67, 334); // data registrazione
 
                 // SCRITTE A DX
-                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int)DataUserManager.getProgress("points")), 540, 412); // punti
-                fontMediumWhite20.draw(screen, "Level: " + formatter.format((int)DataUserManager.getProgress("level")), 540, 372); // livello
-                fontMediumWhite20.draw(screen, "Mission: " + formatter.format((int)DataUserManager.getProgress("num_mission")), 540, 332); // numero missione
-                fontMediumWhite20.draw(screen, "Aliens Hit: " + formatter.format((int)DataUserManager.getProgress("num_aliens_hit")), 540, 292); // alieni colpiti
-                fontMediumWhite20.draw(screen, "Credits: " + formatter.format((int)DataUserManager.getProgress("credits")), 540, 252); // crediti
-                fontMediumWhite20.draw(screen, "All Time Credits: " + formatter.format((int)DataUserManager.getProgress("total_credits")), 540, 212); // crediti totali
-                fontMediumWhite20.draw(screen, "C.G. Matches: " + formatter.format((int)DataUserManager.getProgress("matches_CG")), 540, 172); // partite classic game
-                fontMediumWhite20.draw(screen, "S.B. Matches: " + formatter.format((int)DataUserManager.getProgress("matches_SB")), 540, 132); // partite space battle
-                fontMediumWhite20.draw(screen, "S.B. Victories: " + formatter.format((int)DataUserManager.getProgress("won_SB")), 540, 92); // vittorie space battle
+                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 540, 412); // punti
+                fontMediumWhite20.draw(screen, "Level: " + formatter.format((int) DataUserManager.getProgress("level")), 540, 372); // livello
+                fontMediumWhite20.draw(screen, "Mission: " + formatter.format((int) DataUserManager.getProgress("num_mission")), 540, 332); // numero missione
+                fontMediumWhite20.draw(screen, "Aliens Hit: " + formatter.format((int) DataUserManager.getProgress("num_aliens_hit")), 540, 292); // alieni colpiti
+                fontMediumWhite20.draw(screen, "Credits: " + formatter.format((int) DataUserManager.getProgress("credits")), 540, 252); // crediti
+                fontMediumWhite20.draw(screen, "All Time Credits: " + formatter.format((int) DataUserManager.getProgress("total_credits")), 540, 212); // crediti totali
+                fontMediumWhite20.draw(screen, "C.G. Matches: " + formatter.format((int) DataUserManager.getProgress("matches_CG")), 540, 172); // partite classic game
+                fontMediumWhite20.draw(screen, "S.B. Matches: " + formatter.format((int) DataUserManager.getProgress("matches_SB")), 540, 132); // partite space battle
+                fontMediumWhite20.draw(screen, "S.B. Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 540, 92); // vittorie space battle
 
                 // immagini //
-                screen.draw(mapAvatarsImgs.get((int)DataUserManager.getProgress("avatar")), 461, 513); // avatar
+                screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 461, 513); // avatar
 
                 if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 40, 145);
                 break;

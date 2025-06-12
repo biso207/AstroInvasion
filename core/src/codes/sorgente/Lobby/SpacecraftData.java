@@ -6,7 +6,6 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.Lobby;
 
-import com.badlogic.gdx.graphics.Texture;
 import sorgente.DataUserManager;
 
 public class SpacecraftData {

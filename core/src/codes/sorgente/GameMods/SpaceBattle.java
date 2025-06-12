@@ -158,7 +158,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         //for (int i = 1; i < 22; i++) i++;
         else{
             enemyPicture = enemySpacecraftlevel(level);
-            System.out.println(level);
             enemyTexture = enemyTextureJourney.get(level);
             laserTexture = laserTextureJourney.get(level);
         }
@@ -177,7 +176,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         // disattivazione generica in caso si stia giocando un livello
         if (isLevel && level < 30) goldHeart=superLaser=false;
         if (level > 30 && isLevel) superLaser = true;
-        //System.out.println(level);
 
         // setting comando di movimento
         if (((int) DataUserManager.getProgress("movement_type")) == 1) {

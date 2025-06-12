@@ -51,8 +51,8 @@ public class InputManager implements InputProcessor {
     protected static boolean isSPChanged = false;
 
     // difficoltà classic game e space battle
-    private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
-    private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
+    private int diffCG = (int) DataUserManager.getProgress("diff_classic_game");
+    private int diffSB = (int) DataUserManager.getProgress("diff_space_battle");
 
     // oggetti negozio
     protected static int item1, item2, item3, item4, item5, item6;
@@ -166,8 +166,6 @@ public class InputManager implements InputProcessor {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println(screenX + " " + screenY);
-
         /*
         'page' deve essere diverso da certe pagine per non generare l'apertura
         di altre pagine dove non è possibile e poter cambiare le schermate della lobby.
@@ -250,7 +248,7 @@ public class InputManager implements InputProcessor {
                         LobbyManager.soundtrack.stop(); // interruzione musica
                         LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
                     }
-                } else if (page == 1 && ((int)DataUserManager.getProgress("level") > 10)) {
+                } else if (page == 1 && ((int) DataUserManager.getProgress("level") > 10)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
                     LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false)); // avvio space battle
@@ -719,7 +717,7 @@ public class InputManager implements InputProcessor {
             }
 
             // avvio modalità di gioco
-            if ((page==0 || page==2 || (page==1 && ((int)DataUserManager.getProgress("level") > 10))) && (screenX >= 769 && screenX <= 920) && (screenY >= 550 && screenY <= 593)) {
+            if ((page==0 || page==2 || (page==1 && ((int) DataUserManager.getProgress("level") > 10))) && (screenX >= 769 && screenX <= 920) && (screenY >= 550 && screenY <= 593)) {
                 isBtnStartHover=true;
             }
 

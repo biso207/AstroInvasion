@@ -137,7 +137,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         this.isLevel = isLevel;
 
         numLevel = (int) DataUserManager.getProgress("level");
-        System.out.println(numLevel);
         // navicella utente inizializzata
         this.selectedSp = selectedSp;
 
@@ -210,7 +209,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         }
 
         // setting comando di sparo
-        if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
+        if (((int) DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
         else shotType = 2;
 
         // attivazione carte utente
@@ -372,20 +371,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         Rectangle laser = laserPool.obtain();
         laser.set(spaceship.x + spaceship.width / 2 - 8, spaceship.y + spaceship.height, 20, 40);
 
-        // TODO: fare diverse prove per verificare che non si verifichino lag o problemi con il super laser non limitato a 2.
-        /*
-        if (superLaser) {
-            // Assicura che non ci siano più superLaser del previsto
-            if (lasers.size < 2) {
-                lasers.add(laser);
-            } else {
-                laserPool.free(laser); // Se ce ne sono già 2, evita di aggiungerne altri
-            }
-        } else {
-            lasers.add(laser);
-        }
-
-         */
+        // aggiunta laser alla lista
         lasers.add(laser);
     }
 
@@ -570,7 +556,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         // aggiunta bonus punti
         if (!isLevel) points = points+((points*(selectedSp.getBonusPoints()))/100); // aggiunta percentuale di bonus
 
-        // TODO: passare lo stato giusto e aggiungere parametro che specifichi che si arriva da un livello
         int[] stats = {points, credits, aliensHit};
         // apertura pagina di game over
         game.setScreen(new GameOver(game, selectedSp, mod, stats, win, isLevel));
@@ -884,7 +869,23 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
             texture.dispose();
         }
         font.dispose();
+        fontGold.dispose();
+        fontBoldWhite60.dispose();
+        goldHeartImg.dispose();
+        shieldImg.dispose();
+        superLaserImg.dispose();
+        topBar.dispose();
+        topBarLevel.dispose();
+        shieldBanner.dispose();
+        shieldIcon.dispose();
+        playImg.dispose();
+        stopImg.dispose();
+        quitMatch.dispose();
+        bannerMissions.dispose();
+        btnHoverL.dispose();
+        btnHoverR.dispose();
         soundManager.dispose(); // rilascio risorse audio
+
     }
 
     @Override public void resize(int width, int height) {}

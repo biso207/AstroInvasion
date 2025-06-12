@@ -5,7 +5,7 @@ buildscript {
   }
   dependencies {
     classpath "io.github.fourlastor:construo:1.4.2"
-    if(enableGraalNative == 'true') {
+    if (enableGraalNative.toBoolean()) {
       classpath "org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.28"
     }
   }
@@ -21,10 +21,10 @@ sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'com.biga.astroinvasion.lwjgl3.Lwjgl3Launcher'
 application.setMainClass(mainClassName)
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 14
-java.targetCompatibility = 14
+java.sourceCompatibility = 17
+java.targetCompatibility = 17
 if (JavaVersion.current().isJava9Compatible()) {
-        compileJava.options.release.set(14)
+        compileJava.options.release.set(17)
 }
 
 dependencies {
@@ -32,7 +32,7 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
 
-  if(enableGraalNative == 'true') {
+  if (enableGraalNative.toBoolean()) {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
     }
 
@@ -127,6 +127,6 @@ distributions {
 startScripts.dependsOn(':lwjgl3:jar')
 startScripts.classpath = project.tasks.jar.outputs.files
 
-if(enableGraalNative == 'true') {
+if (enableGraalNative.toBoolean()) {
   apply from: file("nativeimage.gradle")
 }

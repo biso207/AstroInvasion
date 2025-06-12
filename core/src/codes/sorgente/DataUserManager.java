@@ -19,56 +19,96 @@ numerosi dati di progressi utente.
 // package di appartenenza
 package sorgente;
 
-// import librerie e codici
+// import codici e librerie
+import com.badlogic.gdx.Gdx;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.json.JSONObject;
+import java.util.Base64;
 
 public class DataUserManager {
-    // percorso dei file
-    private static String filePath;
-    // hashmap dei progressi
-    private static final Map<String, Object> progressi = new HashMap<>();
+
+    private static String filePath; // percorso utente
+    private static final Map<String, Object> progressi = new HashMap<>(); // hashmap per i dati
 
     // costruttore
-    public DataUserManager(String path) {
-        DataUserManager.filePath = path;
+    public DataUserManager(String username) {
+        // percorso cartella utente
+        filePath = getUserProgressPath(username);
+
+        // creazione directory se l'utente è nuovo
+        createUserDirectoryIfNotExists(username);
+
+        // debug percorso
+        System.out.println("Percorso file user_data.dat -> " + filePath);
+
+        // caricamento progressi utente
         loadProgresses();
     }
 
-    // metodo per caricare tutti i progressi in memoria (HashMap)
-    private void loadProgresses() {
-        try {
-            String contenuto = Files.readString(Path.of(filePath));
-            JSONObject json = new JSONObject(contenuto); // istanza di un json
+    // costruisce il percorso assoluto del file dell'utente
+    private String getUserProgressPath(String username) {
+        String basePath = UserDataPath.getBaseUserPath();
+        return basePath + username + File.separator + "user_data.dat";
+    }
 
-            // for-each per recuperare i vari valori
-            for (String key : json.keySet()) {
-                progressi.put(key, json.get(key)); // qualunque tipo di dato è ammesso
+    // crea la directory dell'utente se non esiste
+    private void createUserDirectoryIfNotExists(String username) {
+        try {
+            Path userDir = Path.of(UserDataPath.getUserPath(username));
+            if (!Files.exists(userDir)) {
+                Files.createDirectories(userDir);
             }
         } catch (IOException e) {
-            System.err.println("Errore nella lettura del file: " + filePath);
+            System.err.println("Errore nella creazione della directory utente: " + e.getMessage());
         }
     }
 
-    // metodo per recuperare un valore/progresso specifico
+    // carica i progressi da file (decodifica Base64 + parsing JSON)
+    private void loadProgresses() {
+        try {
+            Path path = Path.of(filePath);
+            if (!Files.exists(path)) return;
+
+            String encoded = Files.readString(path);
+            byte[] decodedBytes = Base64.getDecoder().decode(encoded);
+            String jsonText = new String(decodedBytes);
+
+            JSONObject json = new JSONObject(jsonText);
+            for (String key : json.keySet()) {
+                progressi.put(key, json.get(key));
+            }
+        } catch (IOException e) {
+            System.err.println("Errore nella lettura dei progressi: " + e.getMessage());
+        }
+    }
+
+    // recupera un progresso specifico
     public static Object getProgress(String nome) {
         return progressi.getOrDefault(nome, null);
     }
 
-    // metodo per aggiornare un singolo valore/progresso nell'HashMap e aggiornare il json
+    // aggiorna un valore e salva tutto
     public static void setProgress(String nome, Object valore) {
-        progressi.put(nome, valore); // aggiornamento HashMap
-        saveProgresses(); // aggiornamento del json
+        progressi.put(nome, valore);
+        saveProgresses();
     }
 
-    // metodo per aggiornare il json
-    private static void saveProgresses() {
-        try (FileWriter file = new FileWriter(filePath)) {
-            file.write(new JSONObject(progressi).toString(4)); // indenta per leggibilità
+    // salva i progressi su file (JSON → Base64 → scrittura)
+    public static void saveProgresses() {
+        try {
+            JSONObject json = new JSONObject(progressi);
+            String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());
+            Files.writeString(Path.of(filePath), encoded);
         } catch (IOException e) {
-            System.err.println("Errore nel salvataggio del file: " + filePath);
+            System.err.println("Errore nel salvataggio dei progressi: " + e.getMessage());
         }
+    }
+
+    // metodo extra per resettare i progressi
+    public static void resetProgress() {
+        progressi.clear();
+        saveProgresses();
     }
 }

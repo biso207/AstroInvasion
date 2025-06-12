@@ -16,13 +16,17 @@ import com.badlogic.gdx.graphics.Pixmap;
 import org.json.JSONObject;
 import sorgente.DataUserManager;
 import sorgente.SoundManager;
+import sorgente.UserDataPath;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static sorgente.UserDataPath.getIsUserFilePath;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
@@ -38,7 +42,8 @@ public class AuthAlgorithms implements InputProcessor {
     protected boolean error = false;
 
     // file per verificare la presenza di almeno un utente di gioco
-    private final FileHandle checkUser = Gdx.files.local("data/is_user.txt");
+    //private final FileHandle checkUser = Gdx.files.local(USER_FILE);
+    private final Path checkUser = getIsUserFilePath();
 
     /* pagina di riferimento
         0 = LogIn
@@ -47,11 +52,15 @@ public class AuthAlgorithms implements InputProcessor {
     protected int state = 0;
 
     // mouse
-    private final Pixmap mouse, mouseOver; // immagini
+    private final Pixmap mouse; // immagini
     private final Cursor cursor; // oggetto cursore
 
     // istanza classe per mandare la notifica di avvio
     private NotificaAvvio notify;
+
+    // file che verifica la presenza di almeno un utente
+    private static final String USER_FILE = "data/is_user.txt";
+
 
     // costruttore
     public AuthAlgorithms() {
@@ -64,7 +73,6 @@ public class AuthAlgorithms implements InputProcessor {
         passwordInput = new StringBuilder();
 
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
-        mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
 
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
 
@@ -72,13 +80,23 @@ public class AuthAlgorithms implements InputProcessor {
         notify = new NotificaAvvio();
     }
 
+    // metodo per il rilascio delle risorse
+    public void dispose() {
+        mouse.dispose();
+    }
+
     // ************************** //
     // PROCESSI DI AUTENTICAZIONE //
     // ************************** //
 
+    // metodo per pulire il nickname da caratteri non adatti alle cartelle
+    public static String sanitizeNickname(String input) {
+        return input.replaceAll("[\\\\/:*?\"<>|]", "_");
+    }
+
     // metodo per direzionare l'utente alla pagina LogIn o SignUp
     public void userOperations() {
-        if (!checkUser.exists()) { // apre la schermata di registrazione se non ci sono utenti registrati
+        if (!Files.exists(checkUser)) { // apre la schermata di registrazione se non ci sono utenti registrati
             state = 1; // schermata di registrazione
         } else {
             state = 0; // schermata login
@@ -101,16 +119,17 @@ public class AuthAlgorithms implements InputProcessor {
 
     // algoritmo di registrazione
     public void SignUpAlg() {
+        // recupero nickname digitato con pulizia da caratteri non adatti
+        nickname = sanitizeNickname(nicknameInput.toString());
+
         try {
             // percorsi nuovo utente
-            FileHandle generalFolder = Gdx.files.local("data/" + nicknameInput);
+            Path userFolderPath = Path.of(UserDataPath.getUserPath(nickname));
 
-            if (!generalFolder.exists()) {
-                generalFolder.mkdirs();
-
-                // nickname e password NUOVO utente
-                nickname = String.valueOf(nicknameInput);
-                password = String.valueOf(passwordInput);
+            if (!Files.exists(userFolderPath)) {
+                Files.createDirectories(userFolderPath);
+                //password NUOVO utente
+                password = passwordInput.toString();
 
                 // creazione file utente
                 createFiles();
@@ -119,38 +138,26 @@ public class AuthAlgorithms implements InputProcessor {
                 state = 2; // schermata lobby
 
                 // creazione file alla prima apertura del gioco
-                if (!checkUser.exists()) checkUser.writeString("exists", false);
+                if (!Files.exists(checkUser)) Files.writeString(checkUser, "exists");
 
                 // manda la notifica di apertura gioco
                 //notify.sendMessage();
             }
-            else if (generalFolder.exists() && (nicknameInput.length()>=1 || passwordInput.length()>=1)) {
+            else if (!nickname.isEmpty() && passwordInput.length()>=1) {
                 error = true;
             }
         }
-        catch (Exception ignored) {
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     // algoritmo di accesso
     public void LogInAlg() {
+        // recupero nickname digitato con pulizia da caratteri non adatti
+        nickname = sanitizeNickname(nicknameInput.toString());
+
         try {
-            System.out.println(nicknameInput);
-            // lettura password nickname e password dai file
-            String filePath = "data/" + nicknameInput + "/userData.json"; // percorso file json
-            FileHandle fileHandle = Gdx.files.local(filePath); // creazione oggetto fileHandle
-
-            String contenuto = fileHandle.readString();
-            JSONObject json = new JSONObject(contenuto); // oggetto json per la lettura dei valori
-
-            // lettura delle due chiavi - nick e psw
-            String fileNickname = json.getString("nickname");
-            String filePassword = json.getString("password");
-            date = json.getString("date");
-
-            /// Il pezzo di codice seguente diventa effettivo alla pubblicazione del gioco. Funziona già ed è stato testato
-            /*
-
             // istanza di DataUserManager
             new DataUserManager(nickname);
 
@@ -159,24 +166,19 @@ public class AuthAlgorithms implements InputProcessor {
             String filePassword = (String) DataUserManager.getProgress("password");
             date = (String) DataUserManager.getProgress("date");
 
-            */
-
-            /// Il codice seguente è da lasciare invariato
-
             // controllo correttezza digitazione nick e psw
-            if (!filePassword.equals(String.valueOf(passwordInput)) || !fileNickname.equals(String.valueOf(nicknameInput))) {
+            if (!filePassword.contentEquals(passwordInput) || !fileNickname.equals(nickname)) {
                 error = true;
             }
             else {
                 // assegnazione dei nick e psw (corretti) digitati da un utente già registrato
-                nickname = String.valueOf(nicknameInput);
-                password = String.valueOf(passwordInput);
+                password = passwordInput.toString();
 
                 // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
                 state = 2; // schermata lobby
 
                 // manda la notifica di apertura gioco
-                //notify.sendMessage();
+                notify.sendMessage(); // todo: togliere il commento prima della pubblicazione
             }
         }
         catch(Exception e){
@@ -187,77 +189,6 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per creare i file per i progressi utente
     public void createFiles() {
-        // mappa per i dati utente
-        JSONObject userData = new JSONObject();
-
-        // aggiunta nick e psw del nuovo utente creato
-        userData.put("nickname", nickname);
-        userData.put("password", password);
-
-        // oggetti per salvare giorno di creazione profilo
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
-        date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
-        userData.put("date", date);
-
-        // scrittura del JSON
-        Path filePath1 = Paths.get("data/" + nicknameInput + "/", "userData.json");
-        try (FileWriter fileWriter = new FileWriter(filePath1.toString())) {
-            // indentazione di 4
-            fileWriter.write(userData.toString(4));
-        } catch (IOException e) {
-            System.err.println("Errore durante la scrittura del file: " + e.getMessage());
-        }
-
-        // -------------------------- //
-        // mappa per i progressi utente
-        JSONObject gameProgresses = new JSONObject();
-        /// Le seguenti variabili possono avere dei valori alti per testare il gioco
-        gameProgresses.put("avatar", 0);
-        gameProgresses.put("credits", 0);
-        gameProgresses.put("credits_missions", 0);
-        gameProgresses.put("total_credits", 0);
-        gameProgresses.put("completed_mission", false);
-        gameProgresses.put("diff_classic_game", 1);
-        gameProgresses.put("diff_space_battle", 1);
-        gameProgresses.put("mission_id", 1);
-        gameProgresses.put("level", 1);
-        gameProgresses.put("movement_type", 1);
-        gameProgresses.put("shot_type", 1);
-        gameProgresses.put("spacecraft", 0);
-        gameProgresses.put("num_double_points", 1);
-        gameProgresses.put("num_gold_heart", 1);
-        gameProgresses.put("num_shield", 1);
-        gameProgresses.put("num_super_laser", 1);
-        gameProgresses.put("num_mission", 1);
-        gameProgresses.put("wins_SB_missions", 0);
-        gameProgresses.put("num_aliens_hit", 0);
-        gameProgresses.put("num_aliens_hit_missions", 0);
-        gameProgresses.put("matches_CG", 0);
-        gameProgresses.put("matches_SB", 0);
-        gameProgresses.put("won_SB", 0);
-        gameProgresses.put("cons_won_SB", 0);
-        gameProgresses.put("points", 0);
-        gameProgresses.put("points_missions", 0);
-        gameProgresses.put("state_product_5", false);
-        gameProgresses.put("state_product_6", false);
-        gameProgresses.put("level_bought", false);
-        gameProgresses.put("sound_volume", 0.5);
-        gameProgresses.put("music_volume", 0.5);
-        gameProgresses.put("alpha_fragments", 0);
-
-        // scrittura del JSON
-        Path filePath2 = Paths.get("data/" + nicknameInput + "/", "gameProgresses.json");
-        try (FileWriter fileWriter = new FileWriter(filePath2.toString())) {
-            // indentato di 4
-            fileWriter.write(gameProgresses.toString(4));
-        } catch (IOException e) {
-            System.err.println("Errore durante la scrittura del file: " + e.getMessage());
-        }
-
-
-        /// Il pezzo di codice seguente diventa effettivo alla pubblicazione del gioco. Funziona già ed è stato testato
-        /*
-
         // istanza di DataUserManager
         new DataUserManager(nickname);
 
@@ -294,7 +225,7 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("matches_CG", 0);
         DataUserManager.setProgress("matches_SB", 0);
         DataUserManager.setProgress("won_SB", 0);
-        DataUserManager.setProgress("win_streak_SB", 0); // todo: controllare dove veniva letta cons_won_SB e rinominarli
+        DataUserManager.setProgress("win_streak_SB", 0);
         DataUserManager.setProgress("points", 0);
         DataUserManager.setProgress("points_missions", 0);
         DataUserManager.setProgress("state_product_5", false);
@@ -306,13 +237,17 @@ public class AuthAlgorithms implements InputProcessor {
 
         // salvataggio su file dei progressi e dati utente iniziali
         DataUserManager.saveProgresses();
-
-        */
     }
 
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
+
+    // metodo per validare gli input
+    private boolean isValidInput() {
+        return nicknameInput.length() >= 1 && passwordInput.length() >= 1;
+    }
+
     // metodo per rilevare il click da tastiera
     @Override public boolean keyTyped(char character) {
         // riproduzione suono digitazione
@@ -327,7 +262,7 @@ public class AuthAlgorithms implements InputProcessor {
                 enteringPassword=true;
                 enteringNickname=false;
             }
-            else if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1)) processLoginOrSignup();
+            else if (isValidInput()) processLoginOrSignup();
         }
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
@@ -339,7 +274,7 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
-        if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if (Files.exists(checkUser) && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             SoundManager.playClickButton(50); // suono del click
             if (state==0) state = 1;
             else state=0;
@@ -347,7 +282,7 @@ public class AuthAlgorithms implements InputProcessor {
         }
 
         // click per avviare il gioco
-        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
+        if (isValidInput() && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             SoundManager.playClickButton(50); // suono del click
             processLoginOrSignup();
         }
@@ -383,11 +318,11 @@ public class AuthAlgorithms implements InputProcessor {
             Gdx.graphics.setCursor(cursor);
         }
         // pulsante accesso gioco
-        if ((nicknameInput.length() >= 1 && passwordInput.length() >= 1) && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
+        if (isValidInput() && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             isHover1=true;
         }
         // pulsante cambio pagina
-        if (Gdx.files.local("data/is_user.txt").exists() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if (Files.exists(checkUser) && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             isHover2=true;
         }
 

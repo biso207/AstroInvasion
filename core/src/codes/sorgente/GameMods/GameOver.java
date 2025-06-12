@@ -134,8 +134,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     private final String textToAdd; // testo da aggiungere per le navicelle con il bonus punti
 
     // difficoltà classic game e space battle
-    private int diffCG = (int)DataUserManager.getProgress("diff_classic_game");
-    private int diffSB = (int)DataUserManager.getProgress("diff_space_battle");
+    private int diffCG = (int) DataUserManager.getProgress("diff_classic_game");
+    private int diffSB = (int) DataUserManager.getProgress("diff_space_battle");
 
     // costruttore
     public GameOver(Main game, Spacecraft selectedSp, int mod, int[] stats, boolean win, boolean isLevel) {
@@ -202,7 +202,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
     public void calcProgressSB() {
         // calcolo crediti e punti vinti
         int diff = (int) DataUserManager.getProgress("diff_space_battle");
-        int streak = (int) DataUserManager.getProgress("cons_won_SB");
+        int streak = (int) DataUserManager.getProgress("win_streak_SB");
 
         if (win) {
             // calcolo crediti vinti
@@ -444,7 +444,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (doublePoints) screen.draw(rectSelectCard, 882, 387);
 
                     // difficoltà
-                    switch ((int)DataUserManager.getProgress("diff_classic_game")) {
+                    switch ((int) DataUserManager.getProgress("diff_classic_game")) {
                         case 1:
                             screen.draw(diffCG1, 843 ,259);
                             break;
@@ -478,7 +478,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     if (superLaser) screen.draw(rectSelectCard, 802, 387);
 
                     // difficoltà
-                    switch ((int)DataUserManager.getProgress("diff_space_battle")) {
+                    switch ((int) DataUserManager.getProgress("diff_space_battle")) {
                         case 1:
                             screen.draw(diffSB1, 843 ,259);
                             break;
@@ -597,7 +597,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("x: " + screenX + " y: " + screenY);
         // riavvio partita o chiusura sessione
         if (win && isLevel) { // vittoria nei livelli
             // 'back to galaxies' button

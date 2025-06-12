@@ -12,11 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.DataUserManager;
-import sorgente.Entities.Spacecraft;
 import sorgente.Main;
-
-import java.math.BigDecimal;
 
 public class LobbyManager implements Screen {
     protected static Main game; // variabile di riferimento tipo gioco
