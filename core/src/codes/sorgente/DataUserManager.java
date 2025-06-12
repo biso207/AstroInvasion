@@ -37,9 +37,6 @@ public class DataUserManager {
         // percorso cartella utente
         filePath = getUserProgressPath(username);
 
-        // creazione directory se l'utente è nuovo
-        createUserDirectoryIfNotExists(username);
-
         // debug percorso
         System.out.println("Percorso file user_data.dat -> " + filePath);
 
@@ -51,18 +48,6 @@ public class DataUserManager {
     private String getUserProgressPath(String username) {
         String basePath = UserDataPath.getBaseUserPath();
         return basePath + username + File.separator + "user_data.dat";
-    }
-
-    // crea la directory dell'utente se non esiste
-    private void createUserDirectoryIfNotExists(String username) {
-        try {
-            Path userDir = Path.of(UserDataPath.getUserPath(username));
-            if (!Files.exists(userDir)) {
-                Files.createDirectories(userDir);
-            }
-        } catch (IOException e) {
-            System.err.println("Errore nella creazione della directory utente: " + e.getMessage());
-        }
     }
 
     // carica i progressi da file (decodifica Base64 + parsing JSON)

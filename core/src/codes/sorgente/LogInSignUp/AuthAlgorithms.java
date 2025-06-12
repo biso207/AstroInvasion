@@ -141,7 +141,7 @@ public class AuthAlgorithms implements InputProcessor {
                 if (!Files.exists(checkUser)) Files.writeString(checkUser, "exists");
 
                 // manda la notifica di apertura gioco
-                //notify.sendMessage();
+                notify.sendMessage();
             }
             else if (!nickname.isEmpty() && passwordInput.length()>=1) {
                 error = true;
@@ -178,7 +178,7 @@ public class AuthAlgorithms implements InputProcessor {
                 state = 2; // schermata lobby
 
                 // manda la notifica di apertura gioco
-                notify.sendMessage(); // todo: togliere il commento prima della pubblicazione
+                notify.sendMessage();
             }
         }
         catch(Exception e){
