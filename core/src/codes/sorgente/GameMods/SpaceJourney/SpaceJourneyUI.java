@@ -213,11 +213,15 @@ public class SpaceJourneyUI implements ResourceLoader {
                 screen.draw(imagesByState.get(state).get(galaxy - 1), X, Y);
 
                 // prezzo sblocco livello
+                int price;
+                if (galaxy==1) price = numLevel*50;
+                else price = numLevel*100;
+
                 if (i==numLevel && l.getState()==LevelState.TO_BUY) { // raggiunto ma da pagare
                     // stampa rettangolo
                     screen.draw(priceRect, X2+40, Y2);
                     // stampa prezzo
-                    fontBoldWhite20.draw(screen, formatter.format(numLevel* 100L), X2+50, Y2+28);
+                    fontBoldWhite20.draw(screen, formatter.format(price), X2+50, Y2+28);
                 }
 
                 // stampa numero livello
@@ -294,13 +298,16 @@ public class SpaceJourneyUI implements ResourceLoader {
         // sfondo base
         screen.draw(buyLevelImg, 250, 175);
 
-        // prezzo livello
-        boolean higherPrice = currentCredits>=numLevel* 100L;
+        // prezzo del livello
+        int price;
+        if (numLevel/10+1==1) price = numLevel*50;
+        else price = numLevel*100;
+
+        boolean higherPrice = currentCredits>=price;
         BitmapFont font = higherPrice ? fontBoldGreen25 : fontBoldRed25;
-        font.draw(screen, formatter.format(currentCredits) + "/" + formatter.format(numLevel* 100L), 390, 347);
+        font.draw(screen, formatter.format(currentCredits) + "/" + formatter.format(price), 390, 347);
 
         // stampa pulsanti hover
-        int price = 100*numLevel; // prezzo del livello
         if (SpaceJourney.isBtnLHover && (currentCredits-price>=0)) screen.draw(btnHoverL, 277, 217);
         else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 519, 217);
 

@@ -406,10 +406,10 @@ public class UIManager implements ResourceLoader {
         screen.draw(mapLobby.get(17), 175, 25);
 
         // comandi movimento navicella
-        if ((int) DataUserManager.getProgress("movement_type")==1) screen.draw(selectedSetting, 268, 427);
+        if (InputManager.movementType==1) screen.draw(selectedSetting, 268, 427);
         else screen.draw(selectedSetting, 268, 332);
         // comando sparo laser
-        if ((int) DataUserManager.getProgress("shot_type")==1) screen.draw(selectedSetting, 558, 427);
+        if (InputManager.shotType==1) screen.draw(selectedSetting, 558, 427);
         else screen.draw(selectedSetting, 558, 332);
 
         // disegno icone musica/suono
@@ -453,7 +453,7 @@ public class UIManager implements ResourceLoader {
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
                     // disegno rettangolo di selezione
-                    if (spID == (int) DataUserManager.getProgress("spacecraft")) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
 
                     // disegno di alpha completata
                     if (i*j==15) screen.draw(alphaFragments[4], X-125, (y-79)-InputManager.scrollY);
@@ -508,12 +508,9 @@ public class UIManager implements ResourceLoader {
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
-        // cambio navicella in caso di nuova selezione
-        if (InputManager.isSPChanged) {
-            selectedSp = selectSpacecraft(); // nuovo oggetto navicella
-            spImg = new Texture(selectedSp.getPathImg()); // caricamento della nuova immagine
-            InputManager.isSPChanged = false; // cambio stato selezione navicella
-        }
+        selectedSp = selectSpacecraft(); // nuovo oggetto navicella
+        spImg = new Texture(selectedSp.getPathImg()); // caricamento della nuova immagine
+
 
         // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
         if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);
@@ -748,7 +745,7 @@ public class UIManager implements ResourceLoader {
                 // SCRITTE A SX
                 fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 413); // nickname
                 fontMediumWhite20.draw(screen, "Password: " + AuthAlgorithms.password, 67, 373); // password
-                fontMediumWhite20.draw(screen, "Creation ID: " + AuthAlgorithms.date, 67, 334); // data registrazione
+                fontMediumWhite20.draw(screen, "Creation ID: " + DataUserManager.getProgress("date"), 67, 334); // data registrazione
 
                 // SCRITTE A DX
                 fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 540, 412); // punti
@@ -783,7 +780,7 @@ public class UIManager implements ResourceLoader {
                     }
 
                     // riquadro selezione
-                    if ((int) DataUserManager.getProgress("avatar") == i) screen.draw(selectedAvatar, x-5, y-5);
+                    if (InputManager.selectedAvatar == i) screen.draw(selectedAvatar, x-5, y-5);
 
                     // posizione oggetti
                     x+=161;

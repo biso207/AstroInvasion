@@ -48,9 +48,9 @@ public class InputManager implements InputProcessor {
     // nome navicella
     private String nameSp = UIManager.selectedSp.getName();
     // stato cambio navicella
-    protected static boolean isSPChanged = false;
+    protected static boolean isSPChanged=false, isAVChanged=false;
 
-    // difficoltà classic game e space battle
+    // recupero difficoltà classic game e space battle
     private int diffCG = (int) DataUserManager.getProgress("diff_classic_game");
     private int diffSB = (int) DataUserManager.getProgress("diff_space_battle");
 
@@ -67,9 +67,14 @@ public class InputManager implements InputProcessor {
 
     // percentuale audio
     public static float soundPercent, musicPercent;
+    // comandi di gioco
+    public static int movementType, shotType;
+
+    // elementi selezionati cambiati => verranno aggiornati sul server non a ogni click
+    public static int numSelectedSP, selectedAvatar;
 
     protected static float scrollY = 2300, scrollY2 = 2800; // posizioni iniziali delle pagine scrollabili
-    private final float maxScrollY = 2300, maxScrollY2 = 2800; // altezza massima delle schermate scrollabili
+    private final float maxScrollY = 2300;
 
     // costruttore
     public InputManager() {
@@ -139,6 +144,8 @@ public class InputManager implements InputProcessor {
         }
         else { // scroll pagina info di gioco
             if (scrollY2 < 0) scrollY2 = 0;
+            // altezza massima delle schermate scrollabili
+            float maxScrollY2 = 2800;
             if (scrollY2 > maxScrollY2) scrollY2 = maxScrollY2;
         }
     }
@@ -479,13 +486,12 @@ public class InputManager implements InputProcessor {
                     Rectangle area = entry.getKey();
                     if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
-
+                        numSelectedSP = selectedId;
 
                         // cambio navicella e salvataggio navicella scelta se sbloccata
                         if (SpacecraftData.isAchieved(selectedId)) {
                             SoundManager.playClickButton(soundPercent); // riproduzione suono click
 
-                            DataUserManager.setProgress("spacecraft", selectedId);
                             // cambio stato selezione a true
                             isSPChanged = true;
                             // cambio nome navicella con creazione nuovo oggetto
@@ -526,7 +532,8 @@ public class InputManager implements InputProcessor {
                         // selezione avatar e salvataggio scelta in memoria
                         if (Avatar.isAchieved(i)) {
                             SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                            DataUserManager.setProgress("avatar", i);
+                            selectedAvatar = i;
+                            isAVChanged = true;
                         }
                     }
 
@@ -541,6 +548,9 @@ public class InputManager implements InputProcessor {
 
             // X sp => chiusura pagina navicelle/info di gioco
             if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (screenY >= 67 && screenY <= 107)) {
+                // salvataggio navicella selezionata
+                if (page==4) DataUserManager.setProgress("spacecraft", numSelectedSP);
+
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 page = previousPage;
             }
@@ -556,7 +566,12 @@ public class InputManager implements InputProcessor {
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
             if (!open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                if (page == 7) page = 6; // evita di tornare alla lobby dalla pagina degli avatar
+                if (page == 7) {
+                    page = 6; // evita di tornare alla lobby dalla pagina degli avatar
+
+                    // salvataggio avatar selezionato
+                    if (isAVChanged) DataUserManager.setProgress("avatar", selectedAvatar);
+                }
                 else page = previousPage;
             }
 
@@ -601,10 +616,10 @@ public class InputManager implements InputProcessor {
                 DataUserManager.setProgress("credits", currentCredit);
 
                 // aggiornamento numero carte
-                DataUserManager.setProgress("num_gold_heart", ((int) DataUserManager.getProgress("num_gold_heart") + item1));
-                DataUserManager.setProgress("num_shield", ((int) DataUserManager.getProgress("num_shield") + item2));
-                DataUserManager.setProgress("num_super_laser", ((int) DataUserManager.getProgress("num_super_laser") + item3));
-                DataUserManager.setProgress("num_double_points", ((int) DataUserManager.getProgress("num_double_points") + item4));
+                if (item1  >= 1) DataUserManager.setProgress("num_gold_heart", ((int) DataUserManager.getProgress("num_gold_heart") + item1));
+                if (item2  >= 1) DataUserManager.setProgress("num_shield", ((int) DataUserManager.getProgress("num_shield") + item2));
+                if (item3  >= 1) DataUserManager.setProgress("num_super_laser", ((int) DataUserManager.getProgress("num_super_laser") + item3));
+                if (item4  >= 1) DataUserManager.setProgress("num_double_points", ((int) DataUserManager.getProgress("num_double_points") + item4));
 
                 // aggiornamento stato prodotto 5
                 if (item5 == 1) DataUserManager.setProgress("state_product_5", true);
@@ -628,6 +643,13 @@ public class InputManager implements InputProcessor {
             if ((secondScreen && open17) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open17 = false;
+                // salvataggio impostazioni //
+                // comandi
+                DataUserManager.setProgress("movement_type", movementType);
+                DataUserManager.setProgress("movement_type", shotType);
+                // audio
+                DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
+                DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica
             }
 
             // setting impostazioni
@@ -635,21 +657,21 @@ public class InputManager implements InputProcessor {
                 // tipo di movimento
                 if ((screenX >= 259 && screenX <= 421) && (screenY >= 195 && screenY <= 272)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                    DataUserManager.setProgress("movement_type", 1);
+                    movementType=1;
                 }
                 if ((screenX >= 259 && screenX <= 421) && (screenY >= 290 && screenY <= 367)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                    DataUserManager.setProgress("movement_type", 2);
+                    movementType=2;
                 }
 
                 // tipo di sparo
                 if ((screenX >= 549 && screenX <= 711) && (screenY >= 195 && screenY <= 272)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                    DataUserManager.setProgress("shot_type", 1);
+                    shotType=1;
                 }
                 if ((screenX >= 549 && screenX <= 711) && (screenY >= 290 && screenY <= 367)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                    DataUserManager.setProgress("shot_type", 2);
+                    shotType=2;
                 }
 
                 // cambio volume suoni
@@ -669,12 +691,10 @@ public class InputManager implements InputProcessor {
                 if (screenX>=224 && screenX<=269 && screenY>=505 && screenY<=550) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     musicPercent=0;
-                    DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica
                 }
                 if (screenX>=224 && screenX<=269 && screenY>=435 && screenY<=480) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     soundPercent=0;
-                    DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
                 }
             }
         }
@@ -746,12 +766,10 @@ public class InputManager implements InputProcessor {
         if (secondScreen && open17) {
             if (draggingSound) {
                 soundPercent = Math.min(1f, Math.max(0f, (screenX - 285) / (float) (685 - 285)));
-                DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
             }
 
             if (draggingMusic) {
                 musicPercent = Math.min(1f, Math.max(0f, (screenX - 285) / (float) (685 - 285)));
-                DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica
             }
         }
         return true;

@@ -21,7 +21,7 @@ public class Main extends Game {
         screen = new SpriteBatch();
 
         // chiamata alla schermata di caricamento
-        this.setScreen(new LoadingScreen(this));
+        this.setScreen(new LoadingScreen(this, true));
 
         // limite a 60 fps
         Gdx.graphics.setForegroundFPS(60);

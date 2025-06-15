@@ -279,11 +279,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // recupero id missione
         int missionID = (int) DataUserManager.getProgress("mission_id");
 
-        // salvataggio progressi
-        DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit")+aliensHit);
-        DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points")+points);
-        DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+credits);
-        DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+credits);
+        // salvataggio progressi solo se si sono colpiti degli alieni
+        if (aliensHit>=1) {
+            DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit") + aliensHit);
+            DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points") + points);
+            DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits") + credits);
+            DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits") + credits);
+        }
 
         // aggiornamento progresso task Missions
         switch (missionID) {

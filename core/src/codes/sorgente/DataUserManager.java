@@ -25,48 +25,67 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import org.json.JSONObject;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.LogInSignUp.GlobalProgressManager;
+import sorgente.LogInSignUp.LoadCallback;
+
 import java.util.Base64;
 
-public class DataUserManager {
-
-    private static String filePath; // percorso utente
+public class DataUserManager implements LoadCallback {
     private static final Map<String, Object> progressi = new HashMap<>(); // hashmap per i dati
 
     // costruttore
-    public DataUserManager(String username) {
-        // percorso cartella utente
-        filePath = getUserProgressPath(username);
-
-        // debug percorso
-        System.out.println("Percorso file user_data.dat -> " + filePath);
-
-        // caricamento progressi utente
-        loadProgresses();
+    public DataUserManager() throws IOException {
     }
 
-    // costruisce il percorso assoluto del file dell'utente
-    private String getUserProgressPath(String username) {
-        String basePath = UserDataPath.getBaseUserPath();
-        return basePath + username + File.separator + "user_data.dat";
-    }
-
-    // carica i progressi da file (decodifica Base64 + parsing JSON)
-    private void loadProgresses() {
-        try {
-            Path path = Path.of(filePath);
-            if (!Files.exists(path)) return;
-
-            String encoded = Files.readString(path);
-            byte[] decodedBytes = Base64.getDecoder().decode(encoded);
-            String jsonText = new String(decodedBytes);
-
-            JSONObject json = new JSONObject(jsonText);
-            for (String key : json.keySet()) {
-                progressi.put(key, json.get(key));
+    // carica i progressi utente (decodifica Base64 + parsing JSON)
+    public static void loadProgresses() throws IOException {
+        // caricamento da cloud in remoto
+        FirestoreStorage.downloadDatAsync(AuthAlgorithms.nickname, new LoadCallback() {
+            @Override
+            public void onProgress(int progress) {
+                // aggiorna la barra di caricamento
+                GlobalProgressManager.notifyProgress(progress);
             }
-        } catch (IOException e) {
-            System.err.println("Errore nella lettura dei progressi: " + e.getMessage());
-        }
+
+            @Override
+            public void onComplete(boolean success, String result) {
+                if (success) {
+                    // decrypt della stringa passata
+                    byte[] decodedBytes = Base64.getDecoder().decode(result);
+                    String jsonText = new String(decodedBytes);
+
+                    // salvataggio dati nella mappa dei progressi utente
+                    JSONObject json = new JSONObject(jsonText);
+                    for (String key : json.keySet()) {
+                        progressi.put(key, json.get(key));
+                    }
+                } else {
+                    System.out.println("Errore nel download dei progressi utente: " + result);
+                }
+            }
+        });
+    }
+
+    // salva i progressi su file (JSON → Base64 → scrittura)
+    public static void saveProgresses() {
+        JSONObject json = new JSONObject(progressi);
+        String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());
+
+        // salvataggio dati utente in cloud remoto
+        FirestoreStorage.uploadDatAsync(AuthAlgorithms.nickname, encoded, new LoadCallback() {
+            @Override
+            public void onProgress(int progress) {
+                // aggiorna la barra di caricamento
+                if (GlobalProgressManager.isInitialLoading) {
+                    GlobalProgressManager.notifyProgress(progress);
+                }
+            }
+
+            @Override
+            public void onComplete(boolean success, String result) {}
+        });
     }
 
     // recupera un progresso specifico
@@ -80,20 +99,18 @@ public class DataUserManager {
         saveProgresses();
     }
 
-    // salva i progressi su file (JSON → Base64 → scrittura)
-    public static void saveProgresses() {
-        try {
-            JSONObject json = new JSONObject(progressi);
-            String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());
-            Files.writeString(Path.of(filePath), encoded);
-        } catch (IOException e) {
-            System.err.println("Errore nel salvataggio dei progressi: " + e.getMessage());
-        }
-    }
-
     // metodo extra per resettare i progressi
     public static void resetProgress() {
         progressi.clear();
         saveProgresses();
     }
+
+    // ************************************ //
+    // METODI DELL'INTERFACCIA LoadCallback //
+    // ************************************ //
+    // da lasciare vuoti per non creare errori
+    @Override
+    public void onProgress(int progress) {}
+    @Override
+    public void onComplete(boolean success, String result) {}
 }

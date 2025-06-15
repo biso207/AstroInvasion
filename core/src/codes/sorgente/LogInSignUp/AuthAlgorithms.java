@@ -10,19 +10,15 @@ package sorgente.LogInSignUp;
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import org.json.JSONObject;
 import sorgente.DataUserManager;
 import sorgente.SoundManager;
-import sorgente.UserDataPath;
 
-import java.io.FileWriter;
+import java.net.InetAddress;
+
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -32,7 +28,7 @@ public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
     protected boolean enteringNickname, enteringPassword;
     // variabili per recuperare nick e psw utente
-    public static String nickname, password, date;
+    public static String nickname, password;
     // variabili per comporre le stringhe digitate di nick e psw
     protected final StringBuilder nicknameInput, passwordInput;
 
@@ -40,10 +36,8 @@ public class AuthAlgorithms implements InputProcessor {
     protected boolean showPS=false, isHover1=false, isHover2=false;
     // variabile per controllare l'errore nel nick o psw
     protected boolean error = false;
-
-    // file per verificare la presenza di almeno un utente di gioco
-    //private final FileHandle checkUser = Gdx.files.local(USER_FILE);
-    private final Path checkUser = getIsUserFilePath();
+    // variabile per controllare l'assenza di internet
+    protected boolean error2 = false;
 
     /* pagina di riferimento
         0 = LogIn
@@ -56,16 +50,13 @@ public class AuthAlgorithms implements InputProcessor {
     private final Cursor cursor; // oggetto cursore
 
     // istanza classe per mandare la notifica di avvio
-    private NotificaAvvio notify;
-
-    // file che verifica la presenza di almeno un utente
-    private static final String USER_FILE = "data/is_user.txt";
+    private final NotificaAvvio notify;
 
 
     // costruttore
     public AuthAlgorithms() {
-        // digitazione attiva
-        this.enteringNickname = true;
+        // attivazione area di digitazione
+        this.enteringNickname = checkInternetConnection();
         this.enteringPassword = false;
 
         // dichiarazione dei stringBuilder
@@ -78,6 +69,9 @@ public class AuthAlgorithms implements InputProcessor {
 
         // creazione istanza notifica
         notify = new NotificaAvvio();
+
+        // apertura schermata login
+        state = 0;
     }
 
     // metodo per il rilascio delle risorse
@@ -94,14 +88,17 @@ public class AuthAlgorithms implements InputProcessor {
         return input.replaceAll("[\\\\/:*?\"<>|]", "_");
     }
 
-    // metodo per direzionare l'utente alla pagina LogIn o SignUp
-    public void userOperations() {
-        if (!Files.exists(checkUser)) { // apre la schermata di registrazione se non ci sono utenti registrati
-            state = 1; // schermata di registrazione
-        } else {
-            state = 0; // schermata login
+    // metodo per verifica che il PC sia connesso ad internet, in caso negativo ogni operazione è bloccata
+    public static boolean checkInternetConnection() {
+        // esegue un ping su google.com, in caso di risposta positiva vuol dire che il PC è connesso a internet
+        try {
+            InetAddress address = InetAddress.getByName("www.google.com");
+            return address.isReachable(3000);
+        } catch (Exception e) {
+            return false;
         }
     }
+
 
     // metodo per direzione all'algoritmo di registrazione o accesso
     public void processLoginOrSignup() {
@@ -123,13 +120,16 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            // percorsi nuovo utente
-            Path userFolderPath = Path.of(UserDataPath.getUserPath(nickname));
+            // controllo presenza utente
+            if (!FirestoreStorage.checkUsernameExists(nickname)) {
 
-            if (!Files.exists(userFolderPath)) {
-                Files.createDirectories(userFolderPath);
-                //password NUOVO utente
-                password = passwordInput.toString();
+                // salvataggio password utente in remoto
+                try {
+                    FirestoreStorage.savePassword(nickname, password);
+                }
+                catch (IOException e) {
+                    System.out.println("Errore nel salvataggio della password utente: " + e.getMessage());
+                }
 
                 // creazione file utente
                 createFiles();
@@ -137,13 +137,10 @@ public class AuthAlgorithms implements InputProcessor {
                 // successo
                 state = 2; // schermata lobby
 
-                // creazione file alla prima apertura del gioco
-                if (!Files.exists(checkUser)) Files.writeString(checkUser, "exists");
-
                 // manda la notifica di apertura gioco
-                notify.sendMessage();
+                //notify.sendMessage();
             }
-            else if (!nickname.isEmpty() && passwordInput.length()>=1) {
+            else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
                 error = true;
             }
         }
@@ -156,52 +153,53 @@ public class AuthAlgorithms implements InputProcessor {
     public void LogInAlg() {
         // recupero nickname digitato con pulizia da caratteri non adatti
         nickname = sanitizeNickname(nicknameInput.toString());
+        System.out.println(nickname);
 
         try {
-            // istanza di DataUserManager
-            new DataUserManager(nickname);
 
-            // lettura delle due chiavi - nick e psw
-            String fileNickname = (String) DataUserManager.getProgress("nickname");
-            String filePassword = (String) DataUserManager.getProgress("password");
-            date = (String) DataUserManager.getProgress("date");
+            // controllo esistenza del nickname
+            if (FirestoreStorage.checkUsernameExists(nickname)) {
+                String psw = FirestoreStorage.getPassword(nickname);
 
-            // controllo correttezza digitazione nick e psw
-            if (!filePassword.contentEquals(passwordInput) || !fileNickname.equals(nickname)) {
-                error = true;
+                // controllo correttezza digitazione nick e psw
+                if (!psw.contentEquals(passwordInput)) {
+                    error = true;
+                }
+                else {
+                    // assegnazione della psw corretta
+                    password = passwordInput.toString();
+
+                    // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
+                    state = 2; // schermata lobby
+
+                    // manda la notifica di apertura gioco
+                    //notify.sendMessage();
+                }
             }
             else {
-                // assegnazione dei nick e psw (corretti) digitati da un utente già registrato
-                password = passwordInput.toString();
-
-                // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
-                state = 2; // schermata lobby
-
-                // manda la notifica di apertura gioco
-                notify.sendMessage();
+                System.out.println("Nickname non trovato");
             }
         }
         catch(Exception e){
             error = true;
-            System.out.println("Errore: " + e.getMessage());
         }
     }
 
     // metodo per creare i file per i progressi utente
-    public void createFiles() {
+    public void createFiles() throws IOException {
         // istanza di DataUserManager
-        new DataUserManager(nickname);
+        new DataUserManager();
 
         // data di registrazione utente
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
-        date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
+        String date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
 
         // setting dati del nuovo utente
         DataUserManager.setProgress("nickname", nickname); // nickname
         DataUserManager.setProgress("password", password); // password
         DataUserManager.setProgress("date", date); // data di registrazione
 
-        // setting progressi di base del nuovo utente
+        // init progressi del nuovo utente
         DataUserManager.setProgress("avatar", 0);
         DataUserManager.setProgress("credits", 0);
         DataUserManager.setProgress("credits_missions", 0);
@@ -245,7 +243,7 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per validare gli input
     private boolean isValidInput() {
-        return nicknameInput.length() >= 1 && passwordInput.length() >= 1;
+        return !nicknameInput.isEmpty() && !passwordInput.isEmpty();
     }
 
     // metodo per rilevare il click da tastiera
@@ -259,14 +257,16 @@ public class AuthAlgorithms implements InputProcessor {
         // ENTER terminare la digitazione
         if ((character == '\n' || character == '\r')) {
             if (enteringNickname) {
-                enteringPassword=true;
-                enteringNickname=false;
+                enteringPassword = true;
+                enteringNickname = false;
+            } else if (isValidInput()) {
+                if (!checkInternetConnection()) error2=true;
+                else processLoginOrSignup();
             }
-            else if (isValidInput()) processLoginOrSignup();
         }
         // BACKSPACE per cancellare un carattere
-        else if (character == '\b' && currentInput.length() > 0) currentInput.deleteCharAt(currentInput.length() - 1);
-        // controllo digitazione caratteri validi
+        else if (character == '\b' && !currentInput.isEmpty()) currentInput.deleteCharAt(currentInput.length() - 1);
+            // controllo digitazione caratteri validi
         else if (character >= 32 && character < 127 && currentInput.length() <= 18) currentInput.append(character);
         return true;
     }
@@ -274,7 +274,7 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per controllare i click del mouse
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
-        if (Files.exists(checkUser) && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             SoundManager.playClickButton(50); // suono del click
             if (state==0) state = 1;
             else state=0;
@@ -284,7 +284,9 @@ public class AuthAlgorithms implements InputProcessor {
         // click per avviare il gioco
         if (isValidInput() && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             SoundManager.playClickButton(50); // suono del click
-            processLoginOrSignup();
+
+            if (!checkInternetConnection()) error2=true;
+            else processLoginOrSignup();
         }
 
         // click per nascondere/mostrare la password
@@ -322,7 +324,7 @@ public class AuthAlgorithms implements InputProcessor {
             isHover1=true;
         }
         // pulsante cambio pagina
-        if (Files.exists(checkUser) && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if (checkInternetConnection() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             isHover2=true;
         }
 

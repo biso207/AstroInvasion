@@ -14,9 +14,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
+import sorgente.LoadingScreen;
 import sorgente.Main;
 import sorgente.ResourceLoader;
 import sorgente.Lobby.LobbyManager;
+
+import java.io.IOException;
 
 public class LoginSignupManager extends ScreenAdapter implements ResourceLoader {
     // variabile di riferimento al gioco
@@ -28,10 +31,10 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final AuthAlgorithms alg;
 
     // font
-    private BitmapFont font, fontBoldRed20;
+    private BitmapFont font, fontBoldYellow20;
     // immagini
     private Texture img1, img2, digitAreaON, digitAreaOFF, showPS, coverPS, loginPageBtnHover,
-        signupPageBtnHover, continueBtnHover;
+        signupPageBtnHover, continueBtnHover, noInternet;
 
     // costruttore
     public LoginSignupManager(Main game) {
@@ -44,8 +47,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         // caricamento font e immagini
         this.loadFont();
         this.loadImages();
-
-        alg.userOperations();
     }
 
     // ******************* //
@@ -57,7 +58,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     public void loadFont() {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
-            fontBoldRed20 = new BitmapFont(Gdx.files.internal("font/inter/bold_red_20.fnt")); // inter-regular red 20
+            fontBoldYellow20 = new BitmapFont(Gdx.files.internal("font/inter/bold_yellow_20.fnt")); // inter-regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
         }
@@ -79,6 +80,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         loginPageBtnHover = new Texture("images/btns_hover/new_profile_button_hover.png");
         signupPageBtnHover = new Texture("images/btns_hover/login_button_hover.png");
         continueBtnHover = new Texture("images/btns_hover/continue_button_hover.png");
+        // icona internet assente
+        noInternet = new Texture("login_signup_screens/no_internet.png");
 
         alg.enteringNickname = true; // digitazione nickname attivata
     }
@@ -96,20 +99,37 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         switch (alg.state) {
             case 0:
                 screen.draw(img1, 0, 0);
-                if (alg.error) fontBoldRed20.draw(screen, "Nickname or Password wrong",362,72);
+                if (alg.error) fontBoldYellow20.draw(screen, "Password wrong",362,72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);
-                if (alg.error) fontBoldRed20.draw(screen, "Nickname already in use",388,72);
+                if (alg.error) fontBoldYellow20.draw(screen, "Nickname already in use",388,72);
                 break;
             case 2:
                 // caricamento risorse utente
-                new DataUserManager(AuthAlgorithms.nickname); // in futuro si userà questa riga
+                try {
+                    // recupero progressi utente
+                    DataUserManager.loadProgresses();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // schermata di caricamento per upload/download dati
+                LoadingScreen loadingScreen = new LoadingScreen(game, false);
+                GlobalProgressManager.setListener(loadingScreen);
+                game.setScreen(loadingScreen);
+
                 // apertura lobby
-                game.setScreen(new LobbyManager(game));
+                //game.setScreen(new LobbyManager(game));
                 break;
             default:
                 break;
+        }
+
+        // messaggio "internet assente"
+        if (alg.error2) {
+            screen.draw(noInternet, 364, 50);
+            fontBoldYellow20.draw(screen, "No Internet Connection",406,72);
         }
 
         // aree di testo
@@ -132,6 +152,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         else font.draw(screen, alg.passwordInput, 265, 315);
         screen.end();
     }
+
     // spegnimento controllo input
     @Override public void hide() {
         Gdx.input.setInputProcessor(null);
@@ -139,7 +160,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     // rilascio delle risorse
     @Override public void dispose() {
         if (font != null) font.dispose();
-        if (fontBoldRed20 != null) fontBoldRed20.dispose();
+        if (fontBoldYellow20 != null) fontBoldYellow20.dispose();
         img1.dispose();
         img2.dispose();
         digitAreaON.dispose();
@@ -149,6 +170,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         loginPageBtnHover.dispose();
         signupPageBtnHover.dispose();
         continueBtnHover.dispose();
+        noInternet.dispose();
 
         alg.dispose(); // rilascio risorse della classe degli algoritmi
     }
