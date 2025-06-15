@@ -64,12 +64,14 @@ public class FirestoreStorage {
 
     // metodo per salvare la password utente in cloud
     public static void savePassword(String username, String password) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username;
+        // URL con updateMask per aggiornare solo il campo "psw"
+        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=psw";
 
         Map<String, Object> fields = new HashMap<>();
         Map<String, Object> pswField = new HashMap<>();
         pswField.put("stringValue", password);
         fields.put("psw", pswField);
+
         Map<String, Object> document = new HashMap<>();
         document.put("fields", fields);
 
@@ -94,20 +96,23 @@ public class FirestoreStorage {
     public static void uploadDatAsync(String username, String datBase64, LoadCallback callback) {
         new Thread(() -> {
             try {
-                callback.onProgress(10);
+                if (callback != null) callback.onProgress(10);
 
-                String url = DATABASE_URL + "astroData/" + username;
+                // URL con updateMask per aggiornare solo il campo "dat"
+                String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=dat";
 
                 Map<String, Object> fields = new HashMap<>();
                 Map<String, Object> dataField = new HashMap<>();
                 dataField.put("stringValue", datBase64);
                 fields.put("dat", dataField);
+
                 Map<String, Object> document = new HashMap<>();
                 document.put("fields", fields);
+
                 Gson gson = new Gson();
                 String json = gson.toJson(document);
 
-                callback.onProgress(30);
+                if (callback != null) callback.onProgress(30);
 
                 OkHttpClient client = new OkHttpClient();
                 RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
@@ -118,15 +123,15 @@ public class FirestoreStorage {
                     .build();
 
                 Response response = client.newCall(request).execute();
-                System.out.println("UPLOAD: " + response.code());
                 response.close();
 
-                callback.onProgress(100);
-                callback.onComplete(true, null);
-
+                if (callback != null) {
+                    callback.onProgress(100);
+                    callback.onComplete(true, null);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-                callback.onComplete(false, e.getMessage());
+                if (callback != null) callback.onComplete(false, e.getMessage());
             }
         }).start();
     }
@@ -162,7 +167,6 @@ public class FirestoreStorage {
 
                 callback.onProgress(100);
                 callback.onComplete(true, datBase64);
-
             } catch (Exception e) {
                 e.printStackTrace();
                 callback.onComplete(false, e.getMessage());

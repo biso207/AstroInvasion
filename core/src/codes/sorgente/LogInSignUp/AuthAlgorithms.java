@@ -123,13 +123,8 @@ public class AuthAlgorithms implements InputProcessor {
             // controllo presenza utente
             if (!FirestoreStorage.checkUsernameExists(nickname)) {
 
-                // salvataggio password utente in remoto
-                try {
-                    FirestoreStorage.savePassword(nickname, password);
-                }
-                catch (IOException e) {
-                    System.out.println("Errore nel salvataggio della password utente: " + e.getMessage());
-                }
+                // assegnazione della psw digitata
+                password = passwordInput.toString();
 
                 // creazione file utente
                 createFiles();
@@ -153,10 +148,8 @@ public class AuthAlgorithms implements InputProcessor {
     public void LogInAlg() {
         // recupero nickname digitato con pulizia da caratteri non adatti
         nickname = sanitizeNickname(nicknameInput.toString());
-        System.out.println(nickname);
 
         try {
-
             // controllo esistenza del nickname
             if (FirestoreStorage.checkUsernameExists(nickname)) {
                 String psw = FirestoreStorage.getPassword(nickname);
@@ -169,7 +162,7 @@ public class AuthAlgorithms implements InputProcessor {
                     // assegnazione della psw corretta
                     password = passwordInput.toString();
 
-                    // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 108)
+                    // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
                     state = 2; // schermata lobby
 
                     // manda la notifica di apertura gioco
@@ -186,10 +179,7 @@ public class AuthAlgorithms implements InputProcessor {
     }
 
     // metodo per creare i file per i progressi utente
-    public void createFiles() throws IOException {
-        // istanza di DataUserManager
-        new DataUserManager();
-
+    public void createFiles() {
         // data di registrazione utente
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
         String date = LocalDate.now().format(formatter); // recupero giorno creazione profilo

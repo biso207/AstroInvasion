@@ -13,6 +13,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import org.checkerframework.checker.units.qual.A;
 import sorgente.DataUserManager;
 import sorgente.LoadingScreen;
 import sorgente.Main;
@@ -110,6 +111,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 try {
                     // recupero progressi utente
                     DataUserManager.loadProgresses();
+                    // salvataggio password in remoto
+                    FirestoreStorage.savePassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -118,9 +121,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 LoadingScreen loadingScreen = new LoadingScreen(game, false);
                 GlobalProgressManager.setListener(loadingScreen);
                 game.setScreen(loadingScreen);
-
-                // apertura lobby
-                //game.setScreen(new LobbyManager(game));
                 break;
             default:
                 break;

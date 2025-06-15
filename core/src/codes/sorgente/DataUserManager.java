@@ -20,9 +20,7 @@ numerosi dati di progressi utente.
 package sorgente;
 
 // import codici e librerie
-import com.badlogic.gdx.Gdx;
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 import org.json.JSONObject;
 import sorgente.LogInSignUp.AuthAlgorithms;
@@ -33,11 +31,7 @@ import sorgente.LogInSignUp.LoadCallback;
 import java.util.Base64;
 
 public class DataUserManager implements LoadCallback {
-    private static final Map<String, Object> progressi = new HashMap<>(); // hashmap per i dati
-
-    // costruttore
-    public DataUserManager() throws IOException {
-    }
+    private static final Map<String, Object> progressi = new HashMap<>();; // hashmap per i dati
 
     // carica i progressi utente (decodifica Base64 + parsing JSON)
     public static void loadProgresses() throws IOException {

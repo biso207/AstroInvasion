@@ -59,7 +59,7 @@ public class LoadingScreen implements Screen, ProgressListener {
     }
 
     public void setProgress(int progress) {
-        System.out.println("Progress: " + progress + "%");
+        //System.out.println("Progress: " + progress + "%");
         targetProgress = progress;
     }
 
