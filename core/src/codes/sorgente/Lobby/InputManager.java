@@ -17,6 +17,7 @@ import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
 import sorgente.LockManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
 import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.LogInSignUp.GlobalProgressManager;
 import sorgente.SoundManager;
@@ -597,6 +598,11 @@ public class InputManager implements InputProcessor {
                 LobbyManager.soundtrack.stop();
 
                 LockManager.stopHeartbeat(); // stop setting del lock a true
+
+                // sblocco stato di accesso
+                try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+                catch (Exception e) { System.out.println(e.getMessage()); }
+
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi
 
                 // apertura schermata di autenticazione

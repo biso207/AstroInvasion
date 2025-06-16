@@ -94,37 +94,26 @@ public class FirestoreStorage {
         String body = response.body().string();
         response.close();
 
-        Map responseMap = new Gson().fromJson(body, Map.class);
-        Map fields = (Map) responseMap.get("fields");
+        Map<String, Object> responseMap = new Gson().fromJson(body, Map.class);
+        Map<String, Object> fields = (Map<String, Object>) responseMap.get("fields");
 
         if (fields == null || !fields.containsKey("lock")) {
-            return false; // non esiste il campo lock, quindi non bloccato
+            return false; // non c'è il campo lock, quindi non bloccato
         }
 
         try {
-            Map lockMap = (Map) fields.get("lock");
-            Map mapValue = (Map) lockMap.get("mapValue");
-            Map lockFields = (Map) mapValue.get("fields");
+            Map<String, Object> lockMap = (Map<String, Object>) fields.get("lock");
+            Map<String, Object> mapValue = (Map<String, Object>) lockMap.get("mapValue");
+            Map<String, Object> lockFields = (Map<String, Object>) mapValue.get("fields");
 
-            Map lockedMap = (Map) lockFields.get("locked");
+            Map<String, Object> lockedMap = (Map<String, Object>) lockFields.get("locked");
             boolean locked = (boolean) lockedMap.get("booleanValue");
 
-            Map timestampMap = (Map) lockFields.get("timestamp");
-            long timestamp = Long.parseLong((String) timestampMap.get("integerValue"));
-
-            long currentTimestamp = System.currentTimeMillis();
-            long lockDurationMillis = 10000; // 10 secondi, regola come vuoi
-
-            if (!locked) {
-                return false;
-            }
-
-            // Se il lock è vecchio, consideriamo la sessione scaduta
-            return (currentTimestamp - timestamp) < lockDurationMillis;
+            return locked; // ritorna semplicemente il valore booleano
 
         } catch (Exception e) {
             e.printStackTrace();
-            return false; // in caso di errore consideriamo l'utente non lockato per sicurezza
+            return false; // per sicurezza, in caso di errore
         }
     }
 

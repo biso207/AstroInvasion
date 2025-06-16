@@ -165,7 +165,7 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            if (FirestoreStorage.checkUsernameExists(nickname)) {
+            if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
 
                 if (FirestoreStorage.isUserLocked(nickname)) {
                     error3 = true; // sessione già attiva
@@ -189,7 +189,7 @@ public class AuthAlgorithms implements InputProcessor {
                     }
                 }
             } else {
-                error1 = true;
+                error1 = true; // utente inesistente
             }
         } catch(Exception e){
             error = true;
