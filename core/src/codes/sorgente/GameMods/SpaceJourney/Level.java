@@ -45,7 +45,10 @@ public class Level {
         // recupero crediti utente
         int credits = (int) DataUserManager.getProgress("credits");
         // costo di sblocco
-        int cost = id*100; // il prezzo cresce sempre di 100 arrivando fino a 4000
+        int cost;
+        if (id/10+1==1) cost = id*50;
+        else cost = id*100;
+
         // sblocco livello
         if (credits >= cost) {
             DataUserManager.setProgress("credits", credits - cost); // aggiornamento crediti utente
