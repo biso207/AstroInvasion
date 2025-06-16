@@ -308,7 +308,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         font.draw(screen, formatter.format(currentCredits) + "/" + formatter.format(price), 390, 347);
 
         // stampa pulsanti hover
-        if (SpaceJourney.isBtnLHover && (currentCredits-price>=0)) screen.draw(btnHoverL, 277, 217);
+        if (SpaceJourney.isBtnLHover && higherPrice) screen.draw(btnHoverL, 277, 217);
         else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 519, 217);
 
         // scritte pulsanti

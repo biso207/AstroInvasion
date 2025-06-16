@@ -653,7 +653,7 @@ public class InputManager implements InputProcessor {
                 // salvataggio impostazioni //
                 // comandi
                 DataUserManager.setProgress("movement_type", movementType);
-                DataUserManager.setProgress("movement_type", shotType);
+                DataUserManager.setProgress("shot_type", shotType);
                 // audio
                 DataUserManager.setProgress("sound_volume", soundPercent); // salvataggio volume audio
                 DataUserManager.setProgress("music_volume", musicPercent); // salvataggio volume musica

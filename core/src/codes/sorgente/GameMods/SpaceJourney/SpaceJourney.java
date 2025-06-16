@@ -158,7 +158,12 @@ public class SpaceJourney implements Screen, InputProcessor {
             }
 
             int numLevel = (int) DataUserManager.getProgress("level"); // livello attuale utente
-            int price = 100*numLevel; // prezzo del livello
+
+            // prezzo del livello
+            int price;
+            if (numLevel/10+1==1) price = numLevel*50;
+            else price = numLevel*100;
+
             int currentCredits = (int) DataUserManager.getProgress("credits"); // crediti attuali dell'utente
 
             // CLICK NELLE PAGINE IN SOVRAIMPRESSIONE //
