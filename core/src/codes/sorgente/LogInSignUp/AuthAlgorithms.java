@@ -169,6 +169,9 @@ public class AuthAlgorithms implements InputProcessor {
                         // assegnazione della psw corretta
                         password = passwordInput.toString();
 
+                        // blocco accesso
+                        FirestoreStorage.setUserLock(nickname);
+
                         // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
                         state = 2; // schermata lobby
 
