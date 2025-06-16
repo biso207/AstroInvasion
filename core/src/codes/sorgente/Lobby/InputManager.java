@@ -12,14 +12,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
-import sorgente.LockManager;
+import sorgente.UserData.LockManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
-import sorgente.LogInSignUp.GlobalProgressManager;
+import sorgente.UserData.CloudStorageManager;
 import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
@@ -626,7 +625,7 @@ public class InputManager implements InputProcessor {
                 LockManager.stopHeartbeat(); // stop setting del lock a true
 
                 // sblocco stato di accesso
-                try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+                try { CloudStorageManager.setUserLock(AuthAlgorithms.nickname, false); }
                 catch (Exception e) { System.out.println(e.getMessage()); }
 
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi

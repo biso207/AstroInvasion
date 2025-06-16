@@ -13,9 +13,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.checkerframework.checker.units.qual.A;
 import sorgente.*;
-import sorgente.Lobby.LobbyManager;
+import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
+import sorgente.UserData.CloudStorageManager;
 
 import java.io.IOException;
 
@@ -104,12 +104,13 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
             case 1:
                 screen.draw(img2, 0, 0);
                 if (alg.error) fontBoldYellow20.draw(screen, "Nickname already in use",388,72);
+                if (alg.error4) fontBoldYellow20.draw(screen, "Nickname not valid",388,72);
                 break;
             case 2:
                 // caricamento risorse utente
                 try {
                     // salvataggio password in remoto
-                    FirestoreStorage.savePassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
+                    CloudStorageManager.savePassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

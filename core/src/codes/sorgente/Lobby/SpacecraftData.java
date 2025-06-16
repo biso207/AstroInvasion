@@ -6,7 +6,7 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.Lobby;
 
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 
 public class SpacecraftData {
     public int id;

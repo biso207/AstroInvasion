@@ -6,27 +6,26 @@ Developed by BIGA©. All rights reserved.
 
 /*
 Questa classe gestisce i metodi di scrittura e lettura dei progressi utente.
-Il metodo loadProgresses carica i progressi utente dal json dei progressi utente. I progressi sono mappati in un
+Il metodo loadProgresses carica i progressi utente dal server in cloud. I progressi sono mappati in un
 HashMap con una key String che fa riferimento al tipo di progresso e un value Object che prende i valori
 dei progressi indipendentemente dal loro tipo, verrà poi eseguito un casting dal chiamante per recuperare
 il tipo necessario.
-La scrittura sul json è eseguita a modifica o progresso compiuto mentre, la lettura, solo all'avvio di una sessione
-utente, le uniche cose che si modificano sono le value della HashMap. Così facendo non occupiamo memoria per salvare
-i progressi in diverse variabili e viene effettuata una scrittura ogni tanto leggendo una sola volta
-numerosi dati di progressi utente.
+La scrittura sulla mappa e sul server è eseguita a modifica o progresso compiuto mentre, il download dei dati e
+la loro decifrazione e lettura, solo all'avvio di una sessione utente, le uniche cose che si modificano
+sono le value della HashMap. Così facendo non occupiamo memoria per salvare i progressi in diverse variabili
+e viene effettuata una scrittura ogni tanto leggendo una sola volta numerosi dati di progressi utente.
 */
 
 // package di appartenenza
-package sorgente;
+package sorgente.UserData;
 
 // import codici e librerie
 import java.io.*;
 import java.util.*;
 import org.json.JSONObject;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
-import sorgente.LogInSignUp.GlobalProgressManager;
-import sorgente.LogInSignUp.LoadCallback;
+import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
+import sorgente.LogInSignUp.LoadingData.LoadCallback;
 
 import java.util.Base64;
 
@@ -36,7 +35,7 @@ public class DataUserManager implements LoadCallback {
     // carica i progressi utente (decodifica Base64 + parsing JSON)
     public static void loadProgresses() throws IOException {
         // caricamento da cloud in remoto
-        FirestoreStorage.downloadDatAsync(AuthAlgorithms.nickname, new LoadCallback() {
+        CloudStorageManager.downloadDatAsync(AuthAlgorithms.nickname, new LoadCallback() {
             @Override
             public void onProgress(int progress) {
                 // aggiorna la barra di caricamento
@@ -68,7 +67,7 @@ public class DataUserManager implements LoadCallback {
         String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());
 
         // salvataggio dati utente in cloud remoto
-        FirestoreStorage.uploadDatAsync(AuthAlgorithms.nickname, encoded, new LoadCallback() {
+        CloudStorageManager.uploadDatAsync(AuthAlgorithms.nickname, encoded, new LoadCallback() {
             @Override
             public void onProgress(int progress) {
                 // aggiorna la barra di caricamento

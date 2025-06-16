@@ -6,7 +6,7 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.GameMods.SpaceJourney;
 
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 
 public class Level {
     private final int id;

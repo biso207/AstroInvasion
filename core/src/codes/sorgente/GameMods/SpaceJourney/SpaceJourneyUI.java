@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.DataUserManager;
-import sorgente.LockManager;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.DataUserManager;
 import sorgente.ResourceLoader;
 
 import java.text.NumberFormat;

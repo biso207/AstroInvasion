@@ -12,18 +12,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import sorgente.DataUserManager;
-import sorgente.LockManager;
+import sorgente.UserData.DataUserManager;
+import sorgente.UserData.CloudStorageManager;
+import sorgente.ProfanityFilter;
 import sorgente.SoundManager;
 
 import java.net.InetAddress;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-import static sorgente.UserDataPath.getIsUserFilePath;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
@@ -41,6 +38,7 @@ public class AuthAlgorithms implements InputProcessor {
     protected boolean error1 = false; // "Nickname not found"
     protected boolean error2 = false; // "No Internet Connection"
     protected boolean error3 = false; // "Your session is already open on another device"
+    protected boolean error4 = false; // "Nickname not valid"
 
 
     /* pagina di riferimento
@@ -76,6 +74,9 @@ public class AuthAlgorithms implements InputProcessor {
 
         // apertura schermata login
         state = 0;
+
+        // caricamento lista di parole vietate per il nickname
+        ProfanityFilter.loadBlacklists();
     }
 
     // metodo per il rilascio delle risorse
@@ -124,8 +125,12 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
+            // nickname invalido, contiene parole invalide
+            if (!ProfanityFilter.isValidNickname(nickname)) {
+                System.out.println("Nickname not valid"); return; }
+
             // controllo presenza utente
-            if (!FirestoreStorage.checkUsernameExists(nickname)) {
+            if (!CloudStorageManager.checkUsernameExists(nickname)) {
 
                 // assegnazione della psw digitata
                 password = passwordInput.toString();
@@ -134,7 +139,7 @@ public class AuthAlgorithms implements InputProcessor {
                 createFiles();
 
                 // blocco accesso
-                FirestoreStorage.setUserLock(nickname, true);
+                CloudStorageManager.setUserLock(nickname, true);
 
                 // recupero progressi utente
                 DataUserManager.loadProgresses();
@@ -159,34 +164,30 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
+            // nickname non trovato
+            if (!CloudStorageManager.checkUsernameExists(nickname)) { error1 = true; return; }
 
-                if (FirestoreStorage.isUserLocked(nickname)) {
-                    error3 = true; // sessione già attiva
-                } else {
-                    // appena possibile blocca la sessione
-                    FirestoreStorage.setUserLock(nickname, true);
+            // sessione già attiva
+            if (CloudStorageManager.isUserLocked(nickname)) { error3 = true; return; }
 
-                    String psw = FirestoreStorage.getPassword(nickname);
+            // appena possibile blocca la sessione
+            CloudStorageManager.setUserLock(nickname, true);
 
-                    if (!psw.contentEquals(passwordInput)) {
-                        error = true;
+            // recupero password utente dal server
+            String psw = CloudStorageManager.getPassword(nickname);
 
-                        // password errata: libera subito il lock
-                        FirestoreStorage.clearUserLock(nickname);
-                    } else {
-                        password = passwordInput.toString();
+            // password errata => libera subito il lock
+            if (!psw.contentEquals(passwordInput)) { error = true; CloudStorageManager.clearUserLock(nickname); return; }
 
-                        DataUserManager.loadProgresses();
+            // password corretta => procede con la lobby
+            password = passwordInput.toString();
 
-                        state = 2;
-                    }
-                }
-            } else {
-                error1 = true; // utente inesistente
-            }
+            // caricamento progressi utente
+            DataUserManager.loadProgresses();
+            state = 2; // passaggio alla lobby
+
         } catch(Exception e){
-            error = true;
+            System.err.println(e.getMessage());
         }
     }
 
@@ -236,7 +237,7 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("alpha_fragments", 0);
 
         // salvataggio punti di base in remoto nel loro apposito campo
-        try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, 0); }
+        try { CloudStorageManager.setUserPoints(AuthAlgorithms.nickname, 0); }
         catch (Exception e) { System.out.println(e.getMessage()); }
 
         // salvataggio su file dei progressi e dati utente iniziali
@@ -292,7 +293,7 @@ public class AuthAlgorithms implements InputProcessor {
             SoundManager.playClickButton(50); // suono del click
 
             if (!checkInternetConnection()) error2=true;
-            else processLoginOrSignup();
+            else { processLoginOrSignup(); error2=false; }
         }
 
         // click per nascondere/mostrare la password

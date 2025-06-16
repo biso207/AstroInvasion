@@ -6,7 +6,7 @@ Developed by BIGA©. All rights reserved.
 
 package sorgente.Entities;
 
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 
 public class Avatar {
     // nome e missione dell'avatar

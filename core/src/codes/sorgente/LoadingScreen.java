@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.Lobby.LobbyManager;
 import sorgente.LogInSignUp.*;
+import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
+import sorgente.LogInSignUp.LoadingData.ProgressListener;
+import sorgente.UserData.LockManager;
 
 import java.util.Random;
 

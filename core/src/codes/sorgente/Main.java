@@ -13,7 +13,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.CloudStorageManager;
+import sorgente.UserData.LockManager;
 
 public class Main extends Game {
     public SpriteBatch screen;
@@ -32,7 +33,7 @@ public class Main extends Game {
     @Override
     public void dispose() {
         // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        try { CloudStorageManager.setUserLock(AuthAlgorithms.nickname, false); }
         catch (Exception e) { System.out.println(e.getMessage()); }
 
         // chiusura thread in esecuzione

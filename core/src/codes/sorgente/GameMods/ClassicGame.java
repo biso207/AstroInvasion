@@ -28,8 +28,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.UIManager;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.DataUserManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

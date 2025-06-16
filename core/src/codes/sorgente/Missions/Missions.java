@@ -8,7 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.Missions;
 
 // import librerie e codici
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 
 import java.text.NumberFormat;
 import java.util.Locale;

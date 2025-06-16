@@ -14,9 +14,9 @@ import sorgente.Entities.Avatar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.DataUserManager;
+import sorgente.UserData.DataUserManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.CloudStorageManager;
 import sorgente.Missions.CheckRTG;
 import sorgente.Missions.Missions;
 import sorgente.ResourceLoader;
@@ -512,9 +512,9 @@ public class UIManager implements ResourceLoader {
         // recupero progressi
         // ordinamento mappa secondo i punti
         TreeMap<String, Integer> sortedMap = new TreeMap<>(
-            (s1, s2) -> FirestoreStorage.userPointsMap.get(s2).compareTo(FirestoreStorage.userPointsMap.get(s1))
+            (s1, s2) -> CloudStorageManager.userPointsMap.get(s2).compareTo(CloudStorageManager.userPointsMap.get(s1))
         );
-        sortedMap.putAll(FirestoreStorage.userPointsMap);
+        sortedMap.putAll(CloudStorageManager.userPointsMap);
 
         // stampa tutto a monitor
         int y=450, index=1;

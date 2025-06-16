@@ -1,10 +1,15 @@
-package sorgente;
+/*
+Astro Invasion - class LockManager -
+Gestisce il lock sull'accesso dell'utente al server secondo un sistema di refresh del momento di accesso
+Developed by BIGA©. All rights reserved.
+*/
 
+// package di appartenenza
+package sorgente.UserData;
+
+// import librerie e codici
 import java.io.IOException;
 import java.util.concurrent.*;
-import com.google.gson.*;
-import okhttp3.*;
-import sorgente.LogInSignUp.FirestoreStorage;
 
 public class LockManager {
 
@@ -13,13 +18,13 @@ public class LockManager {
     private static final int MAX_FAILS = 5;
     private static int heartbeatFails = 0;
 
-    // Avvio heartbeat
+    // avvio heartbeat - by ChatGPT
     public static void startHeartbeat(String username) {
         stopHeartbeat(); // sicurezza
         heartbeatExecutor = Executors.newSingleThreadScheduledExecutor(createDaemonThreadFactory());
         heartbeatExecutor.scheduleAtFixedRate(() -> {
             try {
-                FirestoreStorage.setUserLock(username, true);
+                CloudStorageManager.setUserLock(username, true);
                 heartbeatFails = 0;
             } catch (IOException e) {
                 heartbeatFails++;
@@ -33,20 +38,20 @@ public class LockManager {
         }, 0, 30, TimeUnit.SECONDS);
     }
 
-    // Stop heartbeat
+    // stop heartbeat - byChatGPT
     public static void stopHeartbeat() {
         if (heartbeatExecutor != null && !heartbeatExecutor.isShutdown()) {
             heartbeatExecutor.shutdownNow();
         }
     }
 
-    // Avvio recovery
+    // avvio recovery - by ChatGPT
     public static void startRecovery(String username) {
         stopRecovery(); // sicurezza
         recoveryExecutor = Executors.newSingleThreadScheduledExecutor(createDaemonThreadFactory());
         recoveryExecutor.scheduleAtFixedRate(() -> {
             try {
-                if (!FirestoreStorage.isUserLocked(username)) {
+                if (!CloudStorageManager.isUserLocked(username)) {
                     System.out.println("Il lock è scaduto. Permettiamo rilogin.");
                     stopRecovery();
                     startHeartbeat(username);
@@ -61,20 +66,20 @@ public class LockManager {
         }, 0, 10, TimeUnit.SECONDS);
     }
 
-    // Stop recovery
+    // stop recovery - by ChatGPT
     public static void stopRecovery() {
         if (recoveryExecutor != null && !recoveryExecutor.isShutdown()) {
             recoveryExecutor.shutdownNow();
         }
     }
 
-    // Chiamare questo in uscita dal gioco per killare tutto
+    // metodo per interrompere ogni thread => da chiamare nel dispose() del main - by ChatGPT
     public static void shutdownAll() {
         stopHeartbeat();
         stopRecovery();
     }
 
-    // Factory per creare thread daemon
+    // factory per creare thread daemon - by ChatGPT
     private static ThreadFactory createDaemonThreadFactory() {
         return runnable -> {
             Thread t = new Thread(runnable);

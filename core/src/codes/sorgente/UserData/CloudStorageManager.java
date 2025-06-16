@@ -1,8 +1,17 @@
-package sorgente.LogInSignUp;
+/*
+Astro Invasion - class CloudStorageManager -
+Gestisce la lettura/scrittura dei dati utente sul Firestore Database
+Developed by BIGA©. All rights reserved.
+*/
 
+// package di appartenenza
+package sorgente.UserData;
+
+// import librerie e codici
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import okhttp3.*;
+import sorgente.LogInSignUp.LoadingData.LoadCallback;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,13 +19,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FirestoreStorage {
+public class CloudStorageManager {
     // mappa per i punti degli utenti
     public static Map<String, Integer> userPointsMap = new HashMap<>();
 
+    // dati del database per la connessione
     private static final String PROJECT_ID = "astroinvasioncloud"; // <-- cambia col tuo project id
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents/";
 
+    // metodo per recuperare il token che permette la comunicazione client-server
     private static String getAccessToken() throws IOException {
         GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("../service-account.json"))
             .createScoped("https://www.googleapis.com/auth/cloud-platform");

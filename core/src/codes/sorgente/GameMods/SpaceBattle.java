@@ -6,8 +6,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.*;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -16,10 +14,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.Lobby.InputManager;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.DataUserManager;
 
-import javax.xml.crypto.Data;
 import java.util.*;
 
 
@@ -91,7 +87,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     private int hits_level = 0;
 
-    public int level = (int)DataUserManager.getProgress("level");
+    public int level = (int) DataUserManager.getProgress("level");
 
     public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
 

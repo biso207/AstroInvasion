@@ -10,8 +10,6 @@ package sorgente;
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
 
 import java.util.HashMap;
 

@@ -24,7 +24,8 @@ import sorgente.Lobby.InputManager;
 import sorgente.Lobby.LobbyManager;
 import sorgente.Lobby.UIManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.FirestoreStorage;
+import sorgente.UserData.CloudStorageManager;
+import sorgente.UserData.DataUserManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -281,7 +282,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // salvataggio progressi solo se si sono colpiti degli alieni
         if (aliensHit>=1) {
             // salvataggio punti in remoto nel loro apposito campo
-            try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + points); }
+            try { CloudStorageManager.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + points); }
             catch (Exception e) { System.out.println(e.getMessage()); }
 
             DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit") + aliensHit);
@@ -318,7 +319,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("points",  (int) DataUserManager.getProgress("points")+pointsSB);
 
         // salvataggio punti in remoto nel loro apposito campo
-        try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + pointsSB); }
+        try { CloudStorageManager.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + pointsSB); }
         catch (Exception e) { System.out.println(e.getMessage()); }
 
         // aggiornamento progressi task Missions dei crediti
