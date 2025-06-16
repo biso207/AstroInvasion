@@ -106,6 +106,30 @@ public class FirestoreStorage {
         return (currentTimestamp - lockTimestamp) < lockDurationMillis;
     }
 
+    public static void clearUserLock(String username) throws IOException {
+        String url = DATABASE_URL + "astroData/" + username;
+
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("lock", null);  // cancella il campo lock
+
+        Map<String, Object> document = new HashMap<>();
+        document.put("fields", fields);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(document);
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer " + getAccessToken())
+            .patch(body)
+            .build();
+
+        Response response = client.newCall(request).execute();
+        response.close();
+    }
+
     // PASSWORD //
     // metodo per recuperare la password utente
     public static String getPassword(String username) throws IOException {

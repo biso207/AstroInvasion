@@ -157,46 +157,36 @@ public class AuthAlgorithms implements InputProcessor {
 
     // algoritmo di accesso
     public void LogInAlg() {
-        // recupero nickname digitato con pulizia da caratteri non adatti
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            // controllo esistenza del nickname
-            if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
+            if (FirestoreStorage.checkUsernameExists(nickname)) {
 
-                if (FirestoreStorage.isUserLocked(nickname)) { // utente già loggato
-                    error3 = true;
-                }
-                else { // sessione disponibile
-                    String psw = FirestoreStorage.getPassword(nickname); // recupero password utente
+                if (FirestoreStorage.isUserLocked(nickname)) {
+                    error3 = true; // sessione già attiva
+                } else {
+                    // appena possibile blocca la sessione
+                    FirestoreStorage.setUserLock(nickname);
 
-                    // controllo correttezza digitazione nick e psw
+                    String psw = FirestoreStorage.getPassword(nickname);
+
                     if (!psw.contentEquals(passwordInput)) {
                         error = true;
-                    }
-                    else {
-                        // assegnazione della psw corretta
+
+                        // password errata: libera subito il lock
+                        FirestoreStorage.clearUserLock(nickname);
+                    } else {
                         password = passwordInput.toString();
 
-                        // blocco accesso
-                        FirestoreStorage.setUserLock(nickname);
-
-                        // recupero progressi utente
                         DataUserManager.loadProgresses();
 
-                        // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
-                        state = 2; // schermata lobby
-
-                        // manda la notifica di apertura gioco
-                        //notify.sendMessage();
+                        state = 2;
                     }
                 }
-            }
-            else {
+            } else {
                 error1 = true;
             }
-        }
-        catch(Exception e){
+        } catch(Exception e){
             error = true;
         }
     }
