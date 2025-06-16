@@ -48,14 +48,14 @@ public class FirestoreStorage {
     // LOCK SULL'ACCESSO AL SERVER //
     // metodo per settare lo stato di accesso dell'utente al gioco
     public static void setUserLock(String username, boolean locked) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username;
+        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=lock";
 
         long timestamp = System.currentTimeMillis();
 
         Map<String, Object> fields = new HashMap<>();
         Map<String, Object> lockFields = new HashMap<>();
         lockFields.put("locked", Map.of("booleanValue", locked));
-        lockFields.put("timestamp", Map.of("integerValue", timestamp));
+        lockFields.put("timestamp", Map.of("integerValue", Long.toString(timestamp)));
 
         Map<String, Object> lockMap = new HashMap<>();
         lockMap.put("mapValue", Map.of("fields", lockFields));
@@ -129,7 +129,7 @@ public class FirestoreStorage {
     }
 
     public static void clearUserLock(String username) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username;
+        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=lock";
 
         Map<String, Object> fields = new HashMap<>();
         fields.put("lock", null);  // cancella il campo lock
