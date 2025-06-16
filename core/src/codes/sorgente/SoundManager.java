@@ -103,12 +103,6 @@ public class SoundManager {
         defeatSound.dispose();
         clickButtonSound.dispose();
         digitSound.dispose();
-
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
     }
 }
 

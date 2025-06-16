@@ -861,7 +861,6 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
 
     // rilascio risorse
     @Override public void dispose() {
-        screen.dispose();
         spaceshipTexture.dispose();
         backgroundTexture.dispose();
         for (Texture texture : alienTextures) {
@@ -885,11 +884,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         btnHoverR.dispose();
         soundManager.dispose(); // rilascio risorse audio
 
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
+        screen.dispose();
     }
 
     @Override public void resize(int width, int height) {}

@@ -274,12 +274,6 @@ public class SpaceJourney implements Screen, InputProcessor {
     // rilascio risorse
     @Override public void dispose() {
         ui.dispose();
-
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
     }
 
     // altri metodi

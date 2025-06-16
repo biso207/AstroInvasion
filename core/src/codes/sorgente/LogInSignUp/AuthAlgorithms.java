@@ -81,12 +81,6 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per il rilascio delle risorse
     public void dispose() {
         mouse.dispose();
-
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
     }
 
     // ************************** //
@@ -279,7 +273,7 @@ public class AuthAlgorithms implements InputProcessor {
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && !currentInput.isEmpty()) currentInput.deleteCharAt(currentInput.length() - 1);
             // controllo digitazione caratteri validi
-        else if (character >= 32 && character < 127 && currentInput.length() <= 18) currentInput.append(character);
+        else if (character >= 32 && character < 127 && currentInput.length() <= 10) currentInput.append(character);
         return true;
     }
 

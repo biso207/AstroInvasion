@@ -662,7 +662,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     @Override public void hide() { Gdx.input.setInputProcessor(null); }
     @Override public void dispose() {
-        screen.dispose();
         playerTexture.dispose();
         //enemyTexture.dispose();
         backgroundTexture.dispose();
@@ -674,11 +673,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
             t.dispose();
         }
 
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
+        screen.dispose();
     }
 
     // ************************************** //

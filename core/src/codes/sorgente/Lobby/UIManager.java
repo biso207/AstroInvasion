@@ -51,7 +51,7 @@ public class UIManager implements ResourceLoader {
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontItalicBoldWhite15, fontBoldWhite60,
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontBoldWhite27, fontItalicBoldWhite15, fontBoldWhite60,
         fontSemiboldYellow25;
 
     // hashmap/liste per diverse texture
@@ -71,9 +71,8 @@ public class UIManager implements ResourceLoader {
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
 
     // mouse
-    protected Pixmap mouse, mouseOver; // immagini
+    protected Pixmap mouse; // immagini
     protected static Cursor cursor;
-    protected Cursor cursorOver; // oggetto cursore
 
     // costruttore
     public UIManager() {
@@ -84,14 +83,6 @@ public class UIManager implements ResourceLoader {
         this.buttonsOver = new Texture[10];
         this.alphaFragments = new Texture[5];
         this.badgesRTG = new Texture[5];
-
-        // mouse
-        mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
-        mouseOver = new Pixmap(Gdx.files.internal("images/mouse_over.png"));
-
-        cursor = Gdx.graphics.newCursor(mouse, 0, 0);
-        cursorOver = Gdx.graphics.newCursor(mouseOver, 0, 0);
-
 
         // caricamento navicella utente
         createSpacecrafts();
@@ -129,6 +120,7 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite18 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_18.fnt")); // inter-bold white 18
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
+            fontBoldWhite27 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_27.fnt")); // inter-bold white 27
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
             // yellow
@@ -143,6 +135,10 @@ public class UIManager implements ResourceLoader {
     // metodo per caricare le immagini della Lobby
     @Override
     public void loadImages() {
+        // mouse
+        mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
+        cursor = Gdx.graphics.newCursor(mouse, 0, 0);
+
         // popolamento mappa lobby
         for (int i = 0; i < 21; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
@@ -511,11 +507,9 @@ public class UIManager implements ResourceLoader {
     // metodo per scrivere i dati sulla leaderboard
     public void drawLeaderboard(SpriteBatch screen) {
         // background base
-        screen.draw(mapLobby.get(20), 200, 80);
+        screen.draw(mapLobby.get(20), 200, 70);
 
         // recupero progressi
-        System.out.println(FirestoreStorage.userPointsMap);
-
         // ordinamento mappa secondo i punti
         TreeMap<String, Integer> sortedMap = new TreeMap<>(
             (s1, s2) -> FirestoreStorage.userPointsMap.get(s2).compareTo(FirestoreStorage.userPointsMap.get(s1))
@@ -523,7 +517,19 @@ public class UIManager implements ResourceLoader {
         sortedMap.putAll(FirestoreStorage.userPointsMap);
 
         // stampa tutto a monitor
-        System.out.println(sortedMap);
+        int y=450, index=1;
+        for (String name : sortedMap.keySet()) {
+            int points = sortedMap.get(name);
+
+            // stampa nome e punti
+            fontBoldWhite27.draw(screen, name, 330, y);
+            fontBoldWhite27.draw(screen, formatter.format(points), 575, y);
+
+            y-=73; // decremento y per le scritte
+            index++; // passaggio al prossimo utente
+
+            if (index==6) break; // stampa solo la top 5
+        }
     }
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
@@ -533,7 +539,7 @@ public class UIManager implements ResourceLoader {
 
 
         // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
-        if (InputManager.page !=4 && InputManager.page!=12 && InputManager.page!=20) screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
@@ -929,10 +935,6 @@ public class UIManager implements ResourceLoader {
         infoBanner.dispose();
 
         mouse.dispose();
-        mouseOver.dispose();
         cursor.dispose();
-        cursorOver.dispose();
-
-
     }
 }

@@ -369,11 +369,5 @@ public class SpaceJourneyUI implements ResourceLoader {
         fontBoldItalicWhite25.dispose();
         fontBoldGreen25.dispose();
         fontBoldRed25.dispose();
-
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
     }
 }

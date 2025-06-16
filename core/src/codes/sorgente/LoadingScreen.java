@@ -146,11 +146,7 @@ public class LoadingScreen implements Screen, ProgressListener {
             openSound.dispose();
         }
 
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
+        screen.dispose();
     }
 
     // metodo che "ascolta" il progresso di caricamento durante upload/download dati

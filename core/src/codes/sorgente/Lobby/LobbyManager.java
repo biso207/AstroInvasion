@@ -73,7 +73,6 @@ public class LobbyManager implements Screen {
 
         // chiusura screen
         screen.end();
-
     }
     // spegnimento controllo input
     @Override public void hide() {
@@ -82,17 +81,20 @@ public class LobbyManager implements Screen {
     // metodo per rilasciare le risorse
     @Override public void dispose() {
         ui.disposeUI();
-        LockManager.shutdownAll();
-
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
         screen.dispose();
+    }
+    // metodo per ricaricare le risorse in caso di minimize dello schermo
+    @Override public void resume() {
+        /* release delle risorse in memoria
+        ui.disposeUI();
+        // ricarica immagini e font
+        ui.loadImages();
+        ui.loadFont();
+
+         */
     }
 
     @Override public void show() {}
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}
-    @Override public void resume() {}
 }

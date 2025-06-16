@@ -98,9 +98,16 @@ public class InputManager implements InputProcessor {
         item1=item2=item3=item4=item5=item6=0;
         // recupero crediti
         currentCredit = (int) DataUserManager.getProgress("credits");
+
         // recupero volume audio
         soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
         musicPercent = ((Number) DataUserManager.getProgress("music_volume")).floatValue();
+        // recupero comandi
+        movementType = (int) DataUserManager.getProgress("movement_type");
+        shotType = (int) DataUserManager.getProgress("shot_type");
+        // recupero navicella e avatar
+        selectedAvatar = (int) DataUserManager.getProgress("avatar");
+        numSelectedSP = (int) DataUserManager.getProgress("spacecraft");
     }
 
     // metodo per definire le aree di gioco cliccabili
@@ -111,10 +118,8 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(3, new HitBox(43, 336, 194, 354, 3, false)); // 'missions'
         hitBoxes.put(4, new HitBox(44, 389, 241, 407, 4, true)); // 'spacecrafts'
         hitBoxes.put(5, new HitBox(44, 441, 247, 463, 5, false)); // 'marketplace'
-        hitBoxes.put(20, new HitBox(45, 493, 236, 514, 20, true));  // 'leaderboard'
-        hitBoxes.put(12, new HitBox(45, 550, 236, 565, 12, true));  // 'how to play'
-        // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
+        hitBoxes.put(12, new HitBox(45, 493, 236, 514, 12, true));  // 'how to play'
     }
 
     // todo: aggiungere la chiusura della schermata leaderboard
@@ -220,22 +225,28 @@ public class InputManager implements InputProcessor {
                 previousPage = page;
                 page=4;
             }
+            // apertura leaderboard
+            if ((screenX>=45 && screenX<=75) && (screenY>=597 && screenY<=627)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                open20 = true;
+                secondScreen = true;
+            }
+            // apertura pagina 'settings'
+            if ((screenX>=102 && screenX<=132) && (screenY>=597 && screenY<=627)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                open16 = true;
+                secondScreen = true;
+            }
             // apertura pagina 'software infos'
-            if ((screenX>=99 && screenX<=126) && (screenY>=600 && screenY<=630)) {
+            if ((screenX>=154 && screenX<=184) && (screenY>=597 && screenY<=627)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 open17 = true;
                 secondScreen = true;
             }
             // apertura pagina 'logout'
-            if ((screenX>=154 && screenX<=183) && (screenY>=600 && screenY<=630)) {
+            if ((screenX>=202 && screenX<=232) && (screenY>=597 && screenY<=627)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 open13 = true;
-                secondScreen = true;
-            }
-            // apertura pagina 'settings'
-            if ((screenX>=44 && screenX<=71) && (screenY>=600 && screenY<=630)) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                open16 = true;
                 secondScreen = true;
             }
             // apertura pagina 10/11 (difficulty infos classic game/space battle)
@@ -526,13 +537,6 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            // chiusura pagina leaderboard
-            if (page==20 && ((screenX >= 705 && screenX <= 755) && (screenY >= 130 && screenY <= 177))) {
-                SoundManager.playClickButton(soundPercent);
-                page = previousPage;
-                secondScreen = open20 = false;
-            }
-
             // apertura pagina 7 'avatar'
             if (!open19 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -576,8 +580,6 @@ public class InputManager implements InputProcessor {
                 page = previousPage;
             }
 
-            //((screenY+(maxScrollY2 - scrollY2)) >= 67 && (screenY+(maxScrollY2 - scrollY2)) <= 107))
-
             // X glory => chiusura pagina glory
             if ((secondScreen && open19) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -600,6 +602,13 @@ public class InputManager implements InputProcessor {
             if ((secondScreen && open17) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open17 = false;
+            }
+
+            // chiusura pagina leaderboard
+            if ((secondScreen && open20) && ((screenX >= 705 && screenX <= 755) && (screenY >= 130 && screenY <= 177))) {
+                SoundManager.playClickButton(soundPercent);
+                page = previousPage;
+                secondScreen = open20 = false;
             }
 
             // NO logout => si continua nella sessione di gioco

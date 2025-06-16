@@ -808,12 +808,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // dispose sound manager
         soundManager.dispose();
 
-        // sblocco stato di accesso
-        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
-        LockManager.shutdownAll();
-
         screen.dispose();
     }
 

@@ -35,7 +35,9 @@ public class Main extends Game {
         try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
         catch (Exception e) { System.out.println(e.getMessage()); }
 
+        // chiusura thread in esecuzione
         LockManager.shutdownAll();
+
         screen.dispose(); // rimozione risorse
     }
 }

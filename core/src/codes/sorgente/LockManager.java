@@ -37,7 +37,6 @@ public class LockManager {
     public static void stopHeartbeat() {
         if (heartbeatExecutor != null && !heartbeatExecutor.isShutdown()) {
             heartbeatExecutor.shutdownNow();
-            System.out.println("Heartbeat fermato.");
         }
     }
 
@@ -66,7 +65,6 @@ public class LockManager {
     public static void stopRecovery() {
         if (recoveryExecutor != null && !recoveryExecutor.isShutdown()) {
             recoveryExecutor.shutdownNow();
-            System.out.println("Recovery fermato.");
         }
     }
 
@@ -74,7 +72,6 @@ public class LockManager {
     public static void shutdownAll() {
         stopHeartbeat();
         stopRecovery();
-        System.out.println("LockManager completamente spento.");
     }
 
     // Factory per creare thread daemon
