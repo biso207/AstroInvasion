@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.Missions.CheckRTG;
 import sorgente.Missions.Missions;
 import sorgente.ResourceLoader;
@@ -23,6 +24,7 @@ import sorgente.Entities.Spacecraft;
 
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.TreeMap;
 
 public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
@@ -403,7 +405,7 @@ public class UIManager implements ResourceLoader {
 
     // metodo per disegnare la pagina delle impostazioni
     public void drawSettingsPage(SpriteBatch screen) {
-        screen.draw(mapLobby.get(17), 175, 25);
+        screen.draw(mapLobby.get(16), 175, 25);
 
         // comandi movimento navicella
         if (InputManager.movementType==1) screen.draw(selectedSetting, 268, 427);
@@ -487,7 +489,7 @@ public class UIManager implements ResourceLoader {
     // metodo per la grafica delle missioni utente
     public void drawGloryPage(SpriteBatch screen) {
         // background base
-        screen.draw(mapLobby.get(20), 250, 125);
+        screen.draw(mapLobby.get(19), 250, 125);
 
         int cont = 0; // numero task completate
 
@@ -506,6 +508,24 @@ public class UIManager implements ResourceLoader {
         }
     }
 
+    // metodo per scrivere i dati sulla leaderboard
+    public void drawLeaderboard(SpriteBatch screen) {
+        // background base
+        screen.draw(mapLobby.get(20), 200, 80);
+
+        // recupero progressi
+        System.out.println(FirestoreStorage.userPointsMap);
+
+        // ordinamento mappa secondo i punti
+        TreeMap<String, Integer> sortedMap = new TreeMap<>(
+            (s1, s2) -> FirestoreStorage.userPointsMap.get(s2).compareTo(FirestoreStorage.userPointsMap.get(s1))
+        );
+        sortedMap.putAll(FirestoreStorage.userPointsMap);
+
+        // stampa tutto a monitor
+        System.out.println(sortedMap);
+    }
+
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
         selectedSp = selectSpacecraft(); // nuovo oggetto navicella
@@ -513,7 +533,7 @@ public class UIManager implements ResourceLoader {
 
 
         // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
-        if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);
+        if (InputManager.page !=4 && InputManager.page!=12 && InputManager.page!=20) screen.draw(mapLobby.get(InputManager.page), 0, 0);
 
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
@@ -799,9 +819,9 @@ public class UIManager implements ResourceLoader {
 
         // disegno eventuale schermo sovrapposto
         if (InputManager.secondScreen) {
-            if (InputManager.open18) screen.draw(mapLobby.get(18), 250, 175); // info software
-            else if (InputManager.open14) { // chiusura gioco
-                screen.draw(mapLobby.get(14), 250, 175);
+            if (InputManager.open17) screen.draw(mapLobby.get(17), 250, 175); // info software
+            else if (InputManager.open13) { // chiusura gioco
+                screen.draw(mapLobby.get(13), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -811,8 +831,8 @@ public class UIManager implements ResourceLoader {
                 fontBoldWhite60.draw(screen, "YES", 320, 280);
                 fontBoldWhite60.draw(screen, "NO", 577, 280);
             }
-            else if (InputManager.open19) { // avviso difficoltà elevata
-                screen.draw(mapLobby.get(19), 250, 175);
+            else if (InputManager.open18) { // avviso difficoltà elevata
+                screen.draw(mapLobby.get(18), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -821,11 +841,9 @@ public class UIManager implements ResourceLoader {
                 // scritte pulsanti
                 fontBoldWhite60.draw(screen, "OK", 339, 280);
                 fontBoldWhite60.draw(screen, "PLAY", 548, 280);
-
-                // scritte pulsanti
             }
-            else if (InputManager.open16) { // conferma acquisto
-                screen.draw(mapLobby.get(15), 250, 175);
+            else if (InputManager.open14) { // conferma acquisto
+                screen.draw(mapLobby.get(14), 250, 175);
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde
@@ -839,8 +857,9 @@ public class UIManager implements ResourceLoader {
                 // testo prezzo totale
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
             }
-            else if (InputManager.open17) drawSettingsPage(screen); // impostazioni di gioco
-            else if (InputManager.open20) drawGloryPage(screen);
+            else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
+            else if (InputManager.open19) drawGloryPage(screen);
+            else if (InputManager.open20) drawLeaderboard(screen); // leaderboard
         }
     }
 

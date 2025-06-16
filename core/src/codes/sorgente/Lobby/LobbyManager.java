@@ -40,6 +40,9 @@ public class LobbyManager implements Screen {
         // istanza di InputManager
         input = new InputManager();
 
+        try { FirestoreStorage.loadAllUserPoints(); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
@@ -67,9 +70,6 @@ public class LobbyManager implements Screen {
         il volume deve cambiare dinamicamente
         */
         soundtrack.setVolume(InputManager.musicPercent); // volume musica
-
-        try { FirestoreStorage.loadAllUserPoints(); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
 
         // chiusura screen
         screen.end();

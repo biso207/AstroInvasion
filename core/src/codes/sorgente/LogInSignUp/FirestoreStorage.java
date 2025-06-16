@@ -9,9 +9,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class FirestoreStorage {
     // mappa per i punti degli utenti
@@ -183,11 +180,14 @@ public class FirestoreStorage {
 
         Response response = client.newCall(request).execute();
         String body = response.body().string();
+        System.out.println("Response code: " + response.code());
+        System.out.println("Firestore response: " + body);
         response.close();
 
         Map<String, Object> responseMap = new Gson().fromJson(body, Map.class);
 
         if (!responseMap.containsKey("documents")) {
+            System.out.println("Nessun documento trovato!");
             return;
         }
 
@@ -203,8 +203,8 @@ public class FirestoreStorage {
 
             if (fields.containsKey("points")) {
                 Map<String, Object> pointsMap = (Map<String, Object>) fields.get("points");
+                Object valueObj = pointsMap.get("integerValue");
 
-                Object valueObj = pointsMap.get("stringValue");  // qui il fix
                 if (valueObj != null) {
                     try {
                         int points = Integer.parseInt(valueObj.toString());
@@ -215,9 +215,6 @@ public class FirestoreStorage {
                 }
             }
         }
-
-        // solo per debug
-        System.out.println("Mappa punti caricata: " + userPointsMap);
     }
 
     // PASSWORD //

@@ -36,8 +36,8 @@ public class InputManager implements InputProcessor {
     private final Map<Rectangle, Integer> clickableAreas = new HashMap<>();
 
     // variabili per mostrare le schermate in sovra impressione
-    protected static boolean secondScreen=false, open14=false, open16=false, open17=false,
-        open18=false, open19=false, open20=false;
+    protected static boolean secondScreen=false, open13=false, open14=false, open16=false,
+        open17=false, open18=false, open19=false, open20=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
         isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false;
@@ -111,10 +111,13 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(3, new HitBox(43, 336, 194, 354, 3, false)); // 'missions'
         hitBoxes.put(4, new HitBox(44, 389, 241, 407, 4, true)); // 'spacecrafts'
         hitBoxes.put(5, new HitBox(44, 441, 247, 463, 5, false)); // 'marketplace'
-        hitBoxes.put(12, new HitBox(45, 493, 236, 514, 12, true));  // 'instructions'
+        hitBoxes.put(20, new HitBox(45, 493, 236, 514, 20, true));  // 'leaderboard'
+        hitBoxes.put(12, new HitBox(45, 550, 236, 565, 12, true));  // 'how to play'
         // le pagine seguenti hanno da memorizzare previousPage
         hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
     }
+
+    // todo: aggiungere la chiusura della schermata leaderboard
 
     // metodo per popolare le aree cliccabili nella selezione delle navicelle
     private void selectSPAreas() {
@@ -160,15 +163,15 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20)) {
-            open14 = true;
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20)) {
+            open13 = true;
             secondScreen = true;
             return true;
         }
 
         // click tasto esc per annullare il logout
-        if (keycode == Input.Keys.ESCAPE && (secondScreen&&open14)) {
-            open14 = false;
+        if (keycode == Input.Keys.ESCAPE && (secondScreen&&open13)) {
+            open13 = false;
             secondScreen = false;
         }
 
@@ -183,10 +186,12 @@ public class InputManager implements InputProcessor {
         esempio: l'utente NON può avviare il 'classic game' da una pagina in sovra impressione o esterna che riempe lo schermo
         */
 
+        System.out.println("screenX: "+screenX+" screenY: "+screenY);
+
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
-        if (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
+        if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
 
             // CAMBIO PAGINE LOBBY
             // for-each per iterare i vari range e controllare i cambi pagina
@@ -195,7 +200,12 @@ public class InputManager implements InputProcessor {
                 if (hb.isInside(screenX, screenY)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
-                    if (hb.targetPage==12) scrollY2 = 2800;// reset altezza pagina info di gioco, si apre partendo dall'alto
+                    if (hb.targetPage==12) scrollY2 = 2800; // reset altezza pagina info di gioco, si apre partendo dall'alto
+                    // pagina leaderboard
+                    if (hb.targetPage==20) {
+                        open20 = true; // apertura pagina in sovra impressione
+                        secondScreen = true;
+                    }
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
                     break;
@@ -213,19 +223,19 @@ public class InputManager implements InputProcessor {
             // apertura pagina 'software infos'
             if ((screenX>=99 && screenX<=126) && (screenY>=600 && screenY<=630)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                open18 = true;
+                open17 = true;
                 secondScreen = true;
             }
             // apertura pagina 'logout'
             if ((screenX>=154 && screenX<=183) && (screenY>=600 && screenY<=630)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                open14 = true;
+                open13 = true;
                 secondScreen = true;
             }
             // apertura pagina 'settings'
             if ((screenX>=44 && screenX<=71) && (screenY>=600 && screenY<=630)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                open17 = true;
+                open16 = true;
                 secondScreen = true;
             }
             // apertura pagina 10/11 (difficulty infos classic game/space battle)
@@ -253,7 +263,7 @@ public class InputManager implements InputProcessor {
                 if (page == 0) {
                     // controllo per l'avviso difficoltà
                     if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
-                        secondScreen = open19 = true;
+                        secondScreen = open18 = true;
                     } else {
                         SoundManager.playClickButton(soundPercent); // riproduzione suono click
                         LobbyManager.soundtrack.stop(); // interruzione musica
@@ -471,7 +481,7 @@ public class InputManager implements InputProcessor {
                 // pulsante per confermare l'acquisto
                 if ((screenX >= 503 && screenX <= 717 && screenY >= 580 && screenY <= 624) && finalPrize > 0) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                    secondScreen = open16 = true;
+                    secondScreen = open14 = true;
                 }
             }
         }
@@ -516,15 +526,22 @@ public class InputManager implements InputProcessor {
                 }
             }
 
+            // chiusura pagina leaderboard
+            if (page==20 && ((screenX >= 705 && screenX <= 755) && (screenY >= 130 && screenY <= 177))) {
+                SoundManager.playClickButton(soundPercent);
+                page = previousPage;
+                secondScreen = open20 = false;
+            }
+
             // apertura pagina 7 'avatar'
-            if (!open20 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
+            if (!open19 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 page = 7;
             }
             // apertura pagina "gloria utente"
             if (page == 6 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open20 = true;
+                secondScreen = open19 = true;
             }
 
             // selezione avatar
@@ -562,13 +579,13 @@ public class InputManager implements InputProcessor {
             //((screenY+(maxScrollY2 - scrollY2)) >= 67 && (screenY+(maxScrollY2 - scrollY2)) <= 107))
 
             // X glory => chiusura pagina glory
-            if ((secondScreen && open20) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
+            if ((secondScreen && open19) && (screenX>=670 && screenX<=710) && (screenY>=165 && screenY<=205)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open20 = false;
+                secondScreen = open19 = false;
             }
 
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
-            if (!open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
+            if (!open19 && !open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 if (page == 7) {
                     page = 6; // evita di tornare alla lobby dalla pagina degli avatar
@@ -580,21 +597,21 @@ public class InputManager implements InputProcessor {
             }
 
             // chiusura software infos
-            if ((secondScreen && open18) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
+            if ((secondScreen && open17) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open18 = false;
+                secondScreen = open17 = false;
             }
 
             // NO logout => si continua nella sessione di gioco
-            if ((secondScreen && open14) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
+            if ((secondScreen && open13) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open14 = false;
+                secondScreen = open13 = false;
             }
 
             // YES logout => back to the Authentication Page
-            if ((secondScreen && open14) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
+            if ((secondScreen && open13) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open14 = false;
+                secondScreen = open13 = false;
                 LobbyManager.soundtrack.stop();
 
                 LockManager.stopHeartbeat(); // stop setting del lock a true
@@ -610,21 +627,21 @@ public class InputManager implements InputProcessor {
             }
 
             // OK warning => close warning and back to lobby
-            if ((secondScreen && open19) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open18) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open19 = false;
+                secondScreen = open18 = false;
             }
 
             // PLAY warning => play classic game
-            if ((secondScreen && open19) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open18) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open19 = false;
+                secondScreen = open18 = false;
                 LobbyManager.soundtrack.stop();
                 LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
             }
 
             // YES => conferma acquisto
-            if ((secondScreen && open16) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open14) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 // salvataggio crediti rimasti
                 DataUserManager.setProgress("credits", currentCredit);
@@ -644,19 +661,19 @@ public class InputManager implements InputProcessor {
                 finalPrize = 0; // reset final prize
 
                 // chiusura schermata in sovra impressione
-                secondScreen = open16 = false;
+                secondScreen = open14 = false;
             }
 
             // NO => annulla acquisto
-            if ((secondScreen && open16) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
+            if ((secondScreen && open14) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open16 = false;
+                secondScreen = open14 = false;
             }
 
             // chiusura pagina impostazioni
-            if ((secondScreen && open17) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
+            if ((secondScreen && open16) && (screenX >= 720 && screenX <= 760) && (screenY >= 78 && screenY <= 118)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open17 = false;
+                secondScreen = open16 = false;
                 // salvataggio impostazioni //
                 // comandi
                 DataUserManager.setProgress("movement_type", movementType);
@@ -667,7 +684,7 @@ public class InputManager implements InputProcessor {
             }
 
             // setting impostazioni
-            if ((secondScreen && open17)) {
+            if ((secondScreen && open16)) {
                 // tipo di movimento
                 if ((screenX >= 259 && screenX <= 421) && (screenY >= 195 && screenY <= 272)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -726,19 +743,19 @@ public class InputManager implements InputProcessor {
 
         // CAMBIO STILE PULSANTI
         // YES logout / OK warning / YES purchase
-        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 270 && screenX <= 472) && (screenY >= 404 && screenY <= 480)) {
             isBtnLHover=true;
         }
 
         // NO logout / PLAY warning / NO purchase
-        if ((secondScreen && (open14 || open19 || open16)) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
+        if ((secondScreen && (open13 || open18 || open14)) && (screenX >= 510 && screenX <= 714) && (screenY >= 404 && screenY <= 480)) {
             isBtnRHover=true;
         }
 
         // profile info
-        if (page==6 && !open20 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+        if (page==6 && !open19 && !open20 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
 
-        if (!listSecondPages.contains(page) && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
+        if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
             // Missions
             if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
 
@@ -767,7 +784,7 @@ public class InputManager implements InputProcessor {
     // rilascio del mouse
     @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // stato di false per il movimento delle barre volume
-        if (secondScreen && open17) {
+        if (secondScreen && open16) {
             draggingSound = false;
             draggingMusic = false;
         }
@@ -777,7 +794,7 @@ public class InputManager implements InputProcessor {
     // click continuato e movimento del mouse
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
         // controlli per il movimento delle barre volume
-        if (secondScreen && open17) {
+        if (secondScreen && open16) {
             if (draggingSound) {
                 soundPercent = Math.min(1f, Math.max(0f, (screenX - 285) / (float) (685 - 285)));
             }
