@@ -71,7 +71,6 @@ public class FirestoreStorage {
             .build();
 
         Response response = client.newCall(request).execute();
-        System.out.println("Lock updated, response code: " + response.code());
         response.close();
     }
 
@@ -113,13 +112,10 @@ public class FirestoreStorage {
         heartbeatExecutor.scheduleAtFixedRate(() -> {
             try {
                 setUserLock(username);
-                System.out.println("Heartbeat inviato");
                 heartbeatFails = 0;
             } catch (IOException e) {
                 heartbeatFails++;
-                System.out.println("Heartbeat fallito (" + heartbeatFails + ")");
                 if (heartbeatFails >= MAX_FAILS) {
-                    System.out.println("Connessione persa, avvio recovery");
                     stopHeartbeat();
                     startRecovery(username);
                 }
@@ -140,16 +136,14 @@ public class FirestoreStorage {
         recoveryExecutor.scheduleAtFixedRate(() -> {
             try {
                 if (!isUserLocked(username)) {
-                    System.out.println("Il lock è scaduto. Permettiamo rilogin.");
                     recoveryExecutor.shutdownNow();
                     // qui puoi fare il rilogin automatico o notificare l'utente
                 } else {
-                    System.out.println("Lock ancora attivo, ma connessione ripristinata. Riprendo heartbeat.");
                     recoveryExecutor.shutdownNow();
                     startHeartbeat(username);
                 }
             } catch (IOException e) {
-                System.out.println("Ancora problemi di connessione...");
+                System.out.println(e.getMessage());
             }
         }, 0, 10, TimeUnit.SECONDS);
     }
@@ -204,7 +198,6 @@ public class FirestoreStorage {
             .build();
 
         Response response = client.newCall(request).execute();
-        System.out.println("Password saved: " + response.code());
         response.close();
     }
 

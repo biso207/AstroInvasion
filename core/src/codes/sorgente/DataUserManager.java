@@ -93,10 +93,9 @@ public class DataUserManager implements LoadCallback {
         saveProgresses();
     }
 
-    // metodo extra per resettare i progressi
+    // metodo per resettare i progressi al logout => evita sovrascritture
     public static void resetProgress() {
         progressi.clear();
-        saveProgresses();
     }
 
     // ************************************ //

@@ -596,6 +596,7 @@ public class InputManager implements InputProcessor {
                 LobbyManager.soundtrack.stop();
 
                 FirestoreStorage.stopHeartbeat(); // stop setting del lock a true
+                DataUserManager.resetProgress(); // pulizia mappa dei progressi
 
                 // apertura schermata di autenticazione
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));

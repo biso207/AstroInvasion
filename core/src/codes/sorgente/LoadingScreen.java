@@ -24,7 +24,7 @@ public class LoadingScreen implements Screen, ProgressListener {
 
     private int bg;
     private Texture background;
-    private final String[] colorsLoader = {"#FF3030", "#640414", "#033427", "#0B2353", "#0E2036"};
+    private final String[] colorsLoader = {"#FF3030", "#640414", "#033427", "#0B2353", "#0E2036", "#3A0150"};
 
     private Music openSound;
     private final boolean playMusic;
@@ -36,17 +36,15 @@ public class LoadingScreen implements Screen, ProgressListener {
         this.playMusic = playMusic;
         selectScreen();
 
-        // solo se richiesto, parte la musica
         if (playMusic) {
+            // musica di apertura
             openSound = Gdx.audio.newMusic(Gdx.files.internal("sounds/soundtrack home 2023.mp3"));
             openSound.setLooping(false);
             openSound.play();
-        }
 
-        if (playMusic) {
-            setProgress(100); // se è caricamento da upload la progressione arriva da altrove
+            setProgress(100); // tempo di 1 secondo per aprire la pagina iniziale
         } else {
-            // nel caso standard con musica simulo il caricamento
+            // pagina di caricamento dati utente o creazione id
             new Thread(() -> {
                 for (int i = 0; i <= 100; i++) {
                     try { Thread.sleep(50); } catch (InterruptedException ignored) {}
@@ -58,7 +56,6 @@ public class LoadingScreen implements Screen, ProgressListener {
     }
 
     public void setProgress(int progress) {
-        //System.out.println("Progress: " + progress + "%");
         targetProgress = progress;
     }
 
@@ -116,13 +113,16 @@ public class LoadingScreen implements Screen, ProgressListener {
 
     public void selectScreen() {
         Random r = new Random();
-        bg = r.nextInt(5);
+        if (playMusic) bg = r.nextInt(5);
+        else bg = 5;
+
         String[] bgPaths = {
             "loading_screens/loading_screen_0.png",
             "loading_screens/loading_screen_1.png",
             "loading_screens/loading_screen_2.png",
             "loading_screens/loading_screen_3.png",
-            "loading_screens/loading_screen_4.png"
+            "loading_screens/loading_screen_4.png",
+            "loading_screens/loading_screen_5.png"
         };
         background = new Texture(bgPaths[bg]);
     }
