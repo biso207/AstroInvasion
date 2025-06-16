@@ -7,15 +7,15 @@ import okhttp3.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class FirestoreStorage {
-    private static ScheduledExecutorService heartbeatExecutor;
-    private static int heartbeatFails = 0;
-    private static final int MAX_FAILS = 5;
+    // mappa per i punti degli utenti
+    public static Map<String, Integer> userPointsMap = new HashMap<>();
 
     private static final String PROJECT_ID = "astroinvasioncloud"; // <-- cambia col tuo project id
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents/";
@@ -139,6 +139,85 @@ public class FirestoreStorage {
 
         Response response = client.newCall(request).execute();
         response.close();
+    }
+
+    // PUNTI UTENTE //
+    // metodo per salvare i punti utente
+    public static void setUserPoints(String username, int points) throws IOException {
+        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=points";
+
+        Map<String, Object> pointsField = new HashMap<>();
+        pointsField.put("integerValue", Integer.toString(points));
+
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("points", pointsField);
+
+        Map<String, Object> document = new HashMap<>();
+        document.put("fields", fields);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(document);
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
+        Request request = new Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer " + getAccessToken())
+            .patch(body)
+            .build();
+
+        Response response = client.newCall(request).execute();
+        response.close();
+    }
+
+    // metodo per caricare i punti di tutti gli utenti
+    public static void loadAllUserPoints() throws IOException {
+        String url = DATABASE_URL + "astroData?pageSize=1000";
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer " + getAccessToken())
+            .get()
+            .build();
+
+        Response response = client.newCall(request).execute();
+        String body = response.body().string();
+        response.close();
+
+        Map<String, Object> responseMap = new Gson().fromJson(body, Map.class);
+
+        if (!responseMap.containsKey("documents")) {
+            return;
+        }
+
+        List<Map<String, Object>> documents = (List<Map<String, Object>>) responseMap.get("documents");
+        userPointsMap.clear();
+
+        for (Map<String, Object> doc : documents) {
+            String namePath = (String) doc.get("name");
+            String[] parts = namePath.split("/");
+            String username = parts[parts.length - 1];
+
+            Map<String, Object> fields = (Map<String, Object>) doc.get("fields");
+
+            if (fields.containsKey("points")) {
+                Map<String, Object> pointsMap = (Map<String, Object>) fields.get("points");
+
+                Object valueObj = pointsMap.get("stringValue");  // qui il fix
+                if (valueObj != null) {
+                    try {
+                        int points = Integer.parseInt(valueObj.toString());
+                        userPointsMap.put(username, points);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Valore non valido per 'points' dell'utente " + username);
+                    }
+                }
+            }
+        }
+
+        // solo per debug
+        System.out.println("Mappa punti caricata: " + userPointsMap);
     }
 
     // PASSWORD //

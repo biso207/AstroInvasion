@@ -241,6 +241,10 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("music_volume", 0.5);
         DataUserManager.setProgress("alpha_fragments", 0);
 
+        // salvataggio punti di base in remoto nel loro apposito campo
+        try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, 0); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         // salvataggio su file dei progressi e dati utente iniziali
         DataUserManager.saveProgresses();
     }

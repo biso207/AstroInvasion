@@ -280,6 +280,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // salvataggio progressi solo se si sono colpiti degli alieni
         if (aliensHit>=1) {
+            // salvataggio punti in remoto nel loro apposito campo
+            try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + points); }
+            catch (Exception e) { System.out.println(e.getMessage()); }
+
             DataUserManager.setProgress("num_aliens_hit", (int) DataUserManager.getProgress("num_aliens_hit") + aliensHit);
             DataUserManager.setProgress("points", (int) DataUserManager.getProgress("points") + points);
             DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits") + credits);
@@ -312,6 +316,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         DataUserManager.setProgress("credits", (int) DataUserManager.getProgress("credits")+creditsSB);
         DataUserManager.setProgress("total_credits", (int) DataUserManager.getProgress("total_credits")+creditsSB);
         DataUserManager.setProgress("points",  (int) DataUserManager.getProgress("points")+pointsSB);
+
+        // salvataggio punti in remoto nel loro apposito campo
+        try { FirestoreStorage.setUserPoints(AuthAlgorithms.nickname, (int) DataUserManager.getProgress("points") + pointsSB); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         // aggiornamento progressi task Missions dei crediti
         if (missionID==4) {

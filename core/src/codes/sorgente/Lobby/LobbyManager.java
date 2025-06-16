@@ -68,6 +68,10 @@ public class LobbyManager implements Screen {
         */
         soundtrack.setVolume(InputManager.musicPercent); // volume musica
 
+        //try { FirestoreStorage.loadAllUserPoints(); }
+        //catch (Exception e) { System.out.println(e.getMessage()); }
+        //System.out.println(FirestoreStorage.userPointsMap);
+
         // chiusura screen
         screen.end();
 
