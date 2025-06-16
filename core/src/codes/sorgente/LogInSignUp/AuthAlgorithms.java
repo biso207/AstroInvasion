@@ -134,6 +134,12 @@ public class AuthAlgorithms implements InputProcessor {
                 // creazione file utente
                 createFiles();
 
+                // blocco accesso
+                FirestoreStorage.setUserLock(nickname);
+
+                // recupero progressi utente
+                DataUserManager.loadProgresses();
+
                 // successo
                 state = 2; // schermata lobby
 
@@ -174,6 +180,9 @@ public class AuthAlgorithms implements InputProcessor {
 
                         // blocco accesso
                         FirestoreStorage.setUserLock(nickname);
+
+                        // recupero progressi utente
+                        DataUserManager.loadProgresses();
 
                         // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
                         state = 2; // schermata lobby
