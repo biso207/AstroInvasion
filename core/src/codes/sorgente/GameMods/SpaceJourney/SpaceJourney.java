@@ -15,6 +15,8 @@ import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.Lobby.InputManager;
 import sorgente.LockManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
 import sorgente.SoundManager;
@@ -272,6 +274,10 @@ public class SpaceJourney implements Screen, InputProcessor {
     // rilascio risorse
     @Override public void dispose() {
         ui.dispose();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
     }

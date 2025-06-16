@@ -13,6 +13,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.LockManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.Main;
 
 public class LobbyManager implements Screen {
@@ -78,6 +80,11 @@ public class LobbyManager implements Screen {
     @Override public void dispose() {
         ui.disposeUI();
         LockManager.shutdownAll();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         screen.dispose();
     }
 

@@ -47,15 +47,20 @@ public class FirestoreStorage {
 
     // LOCK SULL'ACCESSO AL SERVER //
     // metodo per settare lo stato di accesso dell'utente al gioco
-    public static void setUserLock(String username) throws IOException {
-        // Aggiungi updateMask per specificare quali campi aggiornare (solo 'lock')
-        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=lock";
+    public static void setUserLock(String username, boolean locked) throws IOException {
+        String url = DATABASE_URL + "astroData/" + username;
 
         long timestamp = System.currentTimeMillis();
+
         Map<String, Object> fields = new HashMap<>();
-        Map<String, Object> lockField = new HashMap<>();
-        lockField.put("integerValue", String.valueOf(timestamp)); // integerValue va come stringa
-        fields.put("lock", lockField);
+        Map<String, Object> lockFields = new HashMap<>();
+        lockFields.put("locked", Map.of("booleanValue", locked));
+        lockFields.put("timestamp", Map.of("integerValue", timestamp));
+
+        Map<String, Object> lockMap = new HashMap<>();
+        lockMap.put("mapValue", Map.of("fields", lockFields));
+
+        fields.put("lock", lockMap);
         Map<String, Object> document = new HashMap<>();
         document.put("fields", fields);
 
@@ -93,18 +98,26 @@ public class FirestoreStorage {
         Map fields = (Map) responseMap.get("fields");
 
         if (fields == null || !fields.containsKey("lock")) {
-            return false; // non esiste il campo lock, quindi non bloccato
+            return false;
         }
 
-        Map lockField = (Map) fields.get("lock");
-        long lockTimestamp = Long.parseLong((String) lockField.get("integerValue"));
+        Map lockMap = (Map) fields.get("lock");
+        Map lockFields = (Map) ((Map) lockMap.get("mapValue")).get("fields");
+
+        boolean locked = (boolean) lockFields.get("locked").get("booleanValue");
+        long timestamp = Long.parseLong((String) lockFields.get("timestamp").get("integerValue"));
         long currentTimestamp = System.currentTimeMillis();
 
-        // Qui puoi regolare il timeout come vuoi
         long lockDurationMillis = 10000; // 10 secondi
 
-        return (currentTimestamp - lockTimestamp) < lockDurationMillis;
+        if (!locked) {
+            return false;
+        }
+
+        // Se il lock è vecchio, consideriamo la sessione scaduta
+        return (currentTimestamp - timestamp) < lockDurationMillis;
     }
+
 
     public static void clearUserLock(String username) throws IOException {
         String url = DATABASE_URL + "astroData/" + username;

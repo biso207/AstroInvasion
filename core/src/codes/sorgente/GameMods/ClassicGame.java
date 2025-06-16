@@ -28,6 +28,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.UIManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -882,6 +884,10 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         btnHoverL.dispose();
         btnHoverR.dispose();
         soundManager.dispose(); // rilascio risorse audio
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
     }

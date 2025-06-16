@@ -12,6 +12,8 @@ package sorgente;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 
 public class Main extends Game {
     public SpriteBatch screen;
@@ -29,6 +31,10 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         LockManager.shutdownAll();
         screen.dispose(); // rimozione risorse
     }

@@ -23,6 +23,8 @@ import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.LobbyManager;
 import sorgente.Lobby.UIManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -797,6 +799,10 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // dispose sound manager
         soundManager.dispose();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
 

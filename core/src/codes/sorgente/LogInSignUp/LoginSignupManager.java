@@ -172,6 +172,10 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
         alg.dispose(); // rilascio risorse della classe degli algoritmi
 
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         LockManager.shutdownAll();
     }
 }

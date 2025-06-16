@@ -10,6 +10,9 @@ package sorgente;
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
+
 import java.util.HashMap;
 
 public class SoundManager {
@@ -100,6 +103,10 @@ public class SoundManager {
         defeatSound.dispose();
         clickButtonSound.dispose();
         digitSound.dispose();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
     }

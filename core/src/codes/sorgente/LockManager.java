@@ -19,8 +19,7 @@ public class LockManager {
         heartbeatExecutor = Executors.newSingleThreadScheduledExecutor(createDaemonThreadFactory());
         heartbeatExecutor.scheduleAtFixedRate(() -> {
             try {
-                FirestoreStorage.setUserLock(username);
-                System.out.println("Heartbeat inviato");
+                FirestoreStorage.setUserLock(username, true);
                 heartbeatFails = 0;
             } catch (IOException e) {
                 heartbeatFails++;

@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import sorgente.Lobby.InputManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 
 import javax.xml.crypto.Data;
 import java.util.*;
@@ -671,6 +673,10 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         for (Texture t : laserBaseTextures) {
             t.dispose();
         }
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
     }

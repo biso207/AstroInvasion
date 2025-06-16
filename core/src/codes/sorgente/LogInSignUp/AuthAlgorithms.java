@@ -81,6 +81,11 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per il rilascio delle risorse
     public void dispose() {
         mouse.dispose();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         LockManager.shutdownAll();
     }
 
@@ -135,7 +140,7 @@ public class AuthAlgorithms implements InputProcessor {
                 createFiles();
 
                 // blocco accesso
-                FirestoreStorage.setUserLock(nickname);
+                FirestoreStorage.setUserLock(nickname, true);
 
                 // recupero progressi utente
                 DataUserManager.loadProgresses();
@@ -166,7 +171,7 @@ public class AuthAlgorithms implements InputProcessor {
                     error3 = true; // sessione già attiva
                 } else {
                     // appena possibile blocca la sessione
-                    FirestoreStorage.setUserLock(nickname);
+                    FirestoreStorage.setUserLock(nickname, true);
 
                     String psw = FirestoreStorage.getPassword(nickname);
 

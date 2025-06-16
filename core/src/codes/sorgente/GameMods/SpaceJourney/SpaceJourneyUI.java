@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.DataUserManager;
 import sorgente.LockManager;
+import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.ResourceLoader;
 
 import java.text.NumberFormat;
@@ -367,6 +369,10 @@ public class SpaceJourneyUI implements ResourceLoader {
         fontBoldItalicWhite25.dispose();
         fontBoldGreen25.dispose();
         fontBoldRed25.dispose();
+
+        // sblocco stato di accesso
+        try { FirestoreStorage.setUserLock(AuthAlgorithms.nickname, false); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
 
         LockManager.shutdownAll();
     }
