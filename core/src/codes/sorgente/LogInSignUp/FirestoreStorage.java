@@ -98,26 +98,35 @@ public class FirestoreStorage {
         Map fields = (Map) responseMap.get("fields");
 
         if (fields == null || !fields.containsKey("lock")) {
-            return false;
+            return false; // non esiste il campo lock, quindi non bloccato
         }
 
-        Map lockMap = (Map) fields.get("lock");
-        Map lockFields = (Map) ((Map) lockMap.get("mapValue")).get("fields");
+        try {
+            Map lockMap = (Map) fields.get("lock");
+            Map mapValue = (Map) lockMap.get("mapValue");
+            Map lockFields = (Map) mapValue.get("fields");
 
-        boolean locked = (boolean) lockFields.get("locked").get("booleanValue");
-        long timestamp = Long.parseLong((String) lockFields.get("timestamp").get("integerValue"));
-        long currentTimestamp = System.currentTimeMillis();
+            Map lockedMap = (Map) lockFields.get("locked");
+            boolean locked = (boolean) lockedMap.get("booleanValue");
 
-        long lockDurationMillis = 10000; // 10 secondi
+            Map timestampMap = (Map) lockFields.get("timestamp");
+            long timestamp = Long.parseLong((String) timestampMap.get("integerValue"));
 
-        if (!locked) {
-            return false;
+            long currentTimestamp = System.currentTimeMillis();
+            long lockDurationMillis = 10000; // 10 secondi, regola come vuoi
+
+            if (!locked) {
+                return false;
+            }
+
+            // Se il lock è vecchio, consideriamo la sessione scaduta
+            return (currentTimestamp - timestamp) < lockDurationMillis;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // in caso di errore consideriamo l'utente non lockato per sicurezza
         }
-
-        // Se il lock è vecchio, consideriamo la sessione scaduta
-        return (currentTimestamp - timestamp) < lockDurationMillis;
     }
-
 
     public static void clearUserLock(String username) throws IOException {
         String url = DATABASE_URL + "astroData/" + username;
