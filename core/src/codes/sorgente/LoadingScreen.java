@@ -7,11 +7,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.utils.AnimationController;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.Lobby.LobbyManager;
-import sorgente.LogInSignUp.GlobalProgressManager;
-import sorgente.LogInSignUp.LoginSignupManager;
-import sorgente.LogInSignUp.ProgressListener;
+import sorgente.LogInSignUp.*;
 
 import java.util.Random;
 
@@ -94,7 +93,10 @@ public class LoadingScreen implements Screen, ProgressListener {
             if (playMusic) game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
             else {
                 GlobalProgressManager.isInitialLoading = false; // stato di caricamento iniziale dei dati
-                game.setScreen(new LobbyManager(game)); // dalla schermata di autenticazione passerà alla lobby
+                FirestoreStorage.startHeartbeat(AuthAlgorithms.nickname); // avvio setting temporale dello stato di lock
+
+                // apertura lobby
+                game.setScreen(new LobbyManager(game));
             }
         }
     }

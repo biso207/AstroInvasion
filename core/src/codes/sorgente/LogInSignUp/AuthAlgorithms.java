@@ -34,10 +34,13 @@ public class AuthAlgorithms implements InputProcessor {
 
     // variabile per nascondere/mostrare la password e cambiare stile pulsanti
     protected boolean showPS=false, isHover1=false, isHover2=false;
-    // variabile per controllare l'errore nel nick o psw
-    protected boolean error = false;
-    // variabile per controllare l'assenza di internet
-    protected boolean error2 = false;
+
+    // variabili per gli errori durante le autenticazioni
+    protected boolean error = false; // "Password wrong"/"Nickname already in use"
+    protected boolean error1 = false; // "Nickname not found"
+    protected boolean error2 = false; // "No Internet Connection"
+    protected boolean error3 = false; // "Your session is already open on another device"
+
 
     /* pagina di riferimento
         0 = LogIn
@@ -150,27 +153,32 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            // controllo esistenza del nickname
-            if (FirestoreStorage.checkUsernameExists(nickname)) {
-                String psw = FirestoreStorage.getPassword(nickname);
+            if (FirestoreStorage.isUserLocked(nickname)) {
+                error3 = true;
+            }
+            else { // utente già loggato
+                // controllo esistenza del nickname
+                if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
+                    String psw = FirestoreStorage.getPassword(nickname); // recupero password utente
 
-                // controllo correttezza digitazione nick e psw
-                if (!psw.contentEquals(passwordInput)) {
-                    error = true;
+                    // controllo correttezza digitazione nick e psw
+                    if (!psw.contentEquals(passwordInput)) {
+                        error = true;
+                    }
+                    else {
+                        // assegnazione della psw corretta
+                        password = passwordInput.toString();
+
+                        // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
+                        state = 2; // schermata lobby
+
+                        // manda la notifica di apertura gioco
+                        //notify.sendMessage();
+                    }
                 }
                 else {
-                    // assegnazione della psw corretta
-                    password = passwordInput.toString();
-
-                    // cambio schermata con tutti i progressi già caricati (classe LoginSignupManager.java, riga 113)
-                    state = 2; // schermata lobby
-
-                    // manda la notifica di apertura gioco
-                    //notify.sendMessage();
+                    error1 = true;
                 }
-            }
-            else {
-                System.out.println("Nickname non trovato");
             }
         }
         catch(Exception e){

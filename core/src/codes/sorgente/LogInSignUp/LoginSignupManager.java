@@ -101,6 +101,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
             case 0:
                 screen.draw(img1, 0, 0);
                 if (alg.error) fontBoldYellow20.draw(screen, "Password wrong",362,72);
+                if (alg.error1) fontBoldYellow20.draw(screen, "Nickname not found",362,72);
+                if (alg.error3) fontBoldYellow20.draw(screen, "Your session is already open on another device",330,72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);

@@ -16,6 +16,7 @@ import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
+import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.LogInSignUp.GlobalProgressManager;
 import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
@@ -593,6 +594,10 @@ public class InputManager implements InputProcessor {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open14 = false;
                 LobbyManager.soundtrack.stop();
+
+                FirestoreStorage.stopHeartbeat(); // stop setting del lock a true
+
+                // apertura schermata di autenticazione
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
             }
 
