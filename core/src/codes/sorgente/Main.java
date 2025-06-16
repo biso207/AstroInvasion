@@ -29,6 +29,7 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
+        LockManager.shutdownAll();
         screen.dispose(); // rimozione risorse
     }
 }

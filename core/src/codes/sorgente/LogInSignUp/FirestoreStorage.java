@@ -106,48 +106,6 @@ public class FirestoreStorage {
         return (currentTimestamp - lockTimestamp) < lockDurationMillis;
     }
 
-    // metodi per effettuare le chiamate di lock al server finché l'utente è ON
-    public static void startHeartbeat(String username) {
-        heartbeatExecutor = Executors.newSingleThreadScheduledExecutor();
-        heartbeatExecutor.scheduleAtFixedRate(() -> {
-            try {
-                setUserLock(username);
-                heartbeatFails = 0;
-            } catch (IOException e) {
-                heartbeatFails++;
-                if (heartbeatFails >= MAX_FAILS) {
-                    stopHeartbeat();
-                    startRecovery(username);
-                }
-            }
-        }, 0, 30, TimeUnit.SECONDS);
-    }
-
-    public static void stopHeartbeat() {
-        if (heartbeatExecutor != null && !heartbeatExecutor.isShutdown()) {
-            heartbeatExecutor.shutdownNow();
-        }
-    }
-
-    // sistema di recovery in caso l'utente riprenda la connessione ma abbia già un'altra sessione attiva
-    public static void startRecovery(String username) {
-        ScheduledExecutorService recoveryExecutor = Executors.newSingleThreadScheduledExecutor();
-
-        recoveryExecutor.scheduleAtFixedRate(() -> {
-            try {
-                if (!isUserLocked(username)) {
-                    recoveryExecutor.shutdownNow();
-                    // qui puoi fare il rilogin automatico o notificare l'utente
-                } else {
-                    recoveryExecutor.shutdownNow();
-                    startHeartbeat(username);
-                }
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-        }, 0, 10, TimeUnit.SECONDS);
-    }
-
     // PASSWORD //
     // metodo per recuperare la password utente
     public static String getPassword(String username) throws IOException {

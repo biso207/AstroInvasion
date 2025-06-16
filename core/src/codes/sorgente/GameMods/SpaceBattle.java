@@ -3,6 +3,7 @@ package sorgente.GameMods;
 // import codici e librerie
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
+import sorgente.*;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
@@ -14,11 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import sorgente.DataUserManager;
-import sorgente.Main;
 import sorgente.Lobby.InputManager;
-import sorgente.ResourceLoader;
-import sorgente.SoundManager;
 
 import javax.xml.crypto.Data;
 import java.util.*;
@@ -675,6 +672,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
             t.dispose();
         }
 
+        LockManager.shutdownAll();
     }
 
     // ************************************** //

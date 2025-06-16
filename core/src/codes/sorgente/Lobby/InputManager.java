@@ -16,6 +16,7 @@ import sorgente.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
+import sorgente.LockManager;
 import sorgente.LogInSignUp.FirestoreStorage;
 import sorgente.LogInSignUp.GlobalProgressManager;
 import sorgente.SoundManager;
@@ -595,7 +596,7 @@ public class InputManager implements InputProcessor {
                 secondScreen = open14 = false;
                 LobbyManager.soundtrack.stop();
 
-                FirestoreStorage.stopHeartbeat(); // stop setting del lock a true
+                LockManager.stopHeartbeat(); // stop setting del lock a true
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi
 
                 // apertura schermata di autenticazione

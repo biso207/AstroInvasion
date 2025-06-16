@@ -9,6 +9,7 @@ package sorgente.GameMods;
 
 // import librerie e codici
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import sorgente.*;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -18,14 +19,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.DataUserManager;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
-import sorgente.Main;
-import sorgente.ResourceLoader;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.LobbyManager;
 import sorgente.Lobby.UIManager;
-import sorgente.SoundManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -800,6 +797,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // dispose sound manager
         soundManager.dispose();
+
+        LockManager.shutdownAll();
 
         screen.dispose();
     }

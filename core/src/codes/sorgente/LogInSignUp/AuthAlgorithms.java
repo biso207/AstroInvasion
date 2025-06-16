@@ -13,6 +13,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
 import sorgente.DataUserManager;
+import sorgente.LockManager;
 import sorgente.SoundManager;
 
 import java.net.InetAddress;
@@ -80,6 +81,7 @@ public class AuthAlgorithms implements InputProcessor {
     // metodo per il rilascio delle risorse
     public void dispose() {
         mouse.dispose();
+        LockManager.shutdownAll();
     }
 
     // ************************** //
@@ -153,12 +155,13 @@ public class AuthAlgorithms implements InputProcessor {
         nickname = sanitizeNickname(nicknameInput.toString());
 
         try {
-            if (FirestoreStorage.isUserLocked(nickname)) {
-                error3 = true;
-            }
-            else { // utente già loggato
-                // controllo esistenza del nickname
-                if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
+            // controllo esistenza del nickname
+            if (FirestoreStorage.checkUsernameExists(nickname)) { // utente esistente
+
+                if (FirestoreStorage.isUserLocked(nickname)) { // utente già loggato
+                    error3 = true;
+                }
+                else { // sessione disponibile
                     String psw = FirestoreStorage.getPassword(nickname); // recupero password utente
 
                     // controllo correttezza digitazione nick e psw
@@ -179,9 +182,9 @@ public class AuthAlgorithms implements InputProcessor {
                         //notify.sendMessage();
                     }
                 }
-                else {
-                    error1 = true;
-                }
+            }
+            else {
+                error1 = true;
             }
         }
         catch(Exception e){

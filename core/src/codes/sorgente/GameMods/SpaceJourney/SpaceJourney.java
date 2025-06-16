@@ -14,6 +14,7 @@ import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.Lobby.InputManager;
+import sorgente.LockManager;
 import sorgente.Main;
 import sorgente.Lobby.LobbyManager;
 import sorgente.SoundManager;
@@ -271,6 +272,8 @@ public class SpaceJourney implements Screen, InputProcessor {
     // rilascio risorse
     @Override public void dispose() {
         ui.dispose();
+
+        LockManager.shutdownAll();
     }
 
     // altri metodi

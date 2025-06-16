@@ -9,6 +9,7 @@ package sorgente.GameMods;
 
 // import librerie e codici
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import sorgente.*;
 import sorgente.Entities.Alien;
 import sorgente.Entities.Spacecraft;
 import com.badlogic.gdx.Gdx;
@@ -25,12 +26,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
-import sorgente.DataUserManager;
-import sorgente.Main;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.UIManager;
-import sorgente.ResourceLoader;
-import sorgente.SoundManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -886,6 +883,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         btnHoverR.dispose();
         soundManager.dispose(); // rilascio risorse audio
 
+        LockManager.shutdownAll();
     }
 
     @Override public void resize(int width, int height) {}

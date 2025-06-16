@@ -90,7 +90,7 @@ public class LoadingScreen implements Screen, ProgressListener {
             if (playMusic) game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
             else {
                 GlobalProgressManager.isInitialLoading = false; // stato di caricamento iniziale dei dati
-                FirestoreStorage.startHeartbeat(AuthAlgorithms.nickname); // avvio setting temporale dello stato di lock
+                LockManager.startHeartbeat(AuthAlgorithms.nickname); // avvio setting temporale dello stato di lock
 
                 // apertura lobby
                 game.setScreen(new LobbyManager(game));
@@ -145,6 +145,8 @@ public class LoadingScreen implements Screen, ProgressListener {
         if (openSound != null) {
             openSound.dispose();
         }
+
+        LockManager.shutdownAll();
     }
 
     // metodo che "ascolta" il progresso di caricamento durante upload/download dati

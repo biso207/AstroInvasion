@@ -100,6 +100,8 @@ public class SoundManager {
         defeatSound.dispose();
         clickButtonSound.dispose();
         digitSound.dispose();
+
+        LockManager.shutdownAll();
     }
 }
 

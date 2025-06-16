@@ -14,10 +14,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.checkerframework.checker.units.qual.A;
-import sorgente.DataUserManager;
-import sorgente.LoadingScreen;
-import sorgente.Main;
-import sorgente.ResourceLoader;
+import sorgente.*;
 import sorgente.Lobby.LobbyManager;
 
 import java.io.IOException;
@@ -175,5 +172,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         noInternet.dispose();
 
         alg.dispose(); // rilascio risorse della classe degli algoritmi
+
+        LockManager.shutdownAll();
     }
 }
