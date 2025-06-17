@@ -228,6 +228,11 @@ public class InputManager implements InputProcessor {
             // apertura leaderboard
             if ((screenX>=45 && screenX<=75) && (screenY>=597 && screenY<=627)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
+
+                // recupero dal cloud di tutti i punti utente
+                try { CloudStorageManager.loadAllUserPoints(); }
+                catch (Exception e) { System.out.println(e.getMessage()); }
+
                 open20 = true;
                 secondScreen = true;
             }
