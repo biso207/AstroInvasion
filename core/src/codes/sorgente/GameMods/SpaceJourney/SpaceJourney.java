@@ -195,7 +195,12 @@ public class SpaceJourney implements Screen, InputProcessor {
         if (((screenX >= 25 && screenX <= 122) && (screenY >= 418 && screenY <= 518)) && numGalaxy == 0) {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             soundtrack.stop(); // stop della musica
-            game.setScreen(new LobbyManager(game)); // back to lobby
+
+            // rilascio risorse
+            dispose();
+
+            // apertura nuovo screen - lobby
+            game.setScreen(new LobbyManager(game));
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
@@ -203,7 +208,12 @@ public class SpaceJourney implements Screen, InputProcessor {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
-                game.setScreen(new LobbyManager(game)); // back to lobby
+
+                // rilascio risorse
+                dispose();
+
+                // apertura nuovo screen - lobby
+                game.setScreen(new LobbyManager(game));
             }
             else numGalaxy = 0;
         }

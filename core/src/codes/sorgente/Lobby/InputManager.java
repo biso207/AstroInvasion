@@ -16,13 +16,14 @@ import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
-import sorgente.UserData.LockManager;
+
 import sorgente.LogInSignUp.AuthAlgorithms;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
+import sorgente.UserData.SessionLockManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -604,7 +605,7 @@ public class InputManager implements InputProcessor {
             }
 
             // chiusura pagina leaderboard
-            if ((secondScreen && open20) && ((screenX >= 705 && screenX <= 755) && (screenY >= 130 && screenY <= 177))) {
+            if ((secondScreen && open20) && ((screenX >= 715 && screenX <= 755) && (screenY >= 125 && screenY <= 165))) {
                 SoundManager.playClickButton(soundPercent);
                 page = previousPage;
                 secondScreen = open20 = false;
@@ -622,11 +623,7 @@ public class InputManager implements InputProcessor {
                 secondScreen = open13 = false;
                 LobbyManager.soundtrack.stop();
 
-                LockManager.stopHeartbeat(); // stop setting del lock a true
-
-                // sblocco stato di accesso
-                try { CloudStorageManager.setUserLock(AuthAlgorithms.nickname, false); }
-                catch (Exception e) { System.out.println(e.getMessage()); }
+                SessionLockManager.shutdownAll(); // rilascia il lock
 
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi
 

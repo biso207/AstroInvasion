@@ -12,7 +12,6 @@ import sorgente.Lobby.LobbyManager;
 import sorgente.LogInSignUp.*;
 import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
 import sorgente.LogInSignUp.LoadingData.ProgressListener;
-import sorgente.UserData.LockManager;
 
 import java.util.Random;
 
@@ -92,7 +91,6 @@ public class LoadingScreen implements Screen, ProgressListener {
             if (playMusic) game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
             else {
                 GlobalProgressManager.isInitialLoading = false; // stato di caricamento iniziale dei dati
-                LockManager.startHeartbeat(AuthAlgorithms.nickname); // avvio setting temporale dello stato di lock
 
                 // apertura lobby
                 game.setScreen(new LobbyManager(game));

@@ -28,7 +28,7 @@ public class CloudStorageManager {
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents/";
 
     // metodo per recuperare il token che permette la comunicazione client-server
-    private static String getAccessToken() throws IOException {
+    protected static String getAccessToken() throws IOException {
         GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("../service-account.json"))
             .createScoped("https://www.googleapis.com/auth/cloud-platform");
         credentials.refreshIfExpired();
@@ -51,102 +51,6 @@ public class CloudStorageManager {
         response.close();
 
         return responseCode == 200;
-    }
-
-    // LOCK SULL'ACCESSO AL SERVER //
-    // metodo per settare lo stato di accesso dell'utente al gioco
-    public static void setUserLock(String username, boolean locked) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=lock";
-
-        long timestamp = System.currentTimeMillis();
-
-        Map<String, Object> fields = new HashMap<>();
-        Map<String, Object> lockFields = new HashMap<>();
-        lockFields.put("locked", Map.of("booleanValue", locked));
-        lockFields.put("timestamp", Map.of("integerValue", Long.toString(timestamp)));
-
-        Map<String, Object> lockMap = new HashMap<>();
-        lockMap.put("mapValue", Map.of("fields", lockFields));
-
-        fields.put("lock", lockMap);
-        Map<String, Object> document = new HashMap<>();
-        document.put("fields", fields);
-
-        Gson gson = new Gson();
-        String json = gson.toJson(document);
-
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
-        Request request = new Request.Builder()
-            .url(url)
-            .header("Authorization", "Bearer " + getAccessToken())
-            .patch(body)
-            .build();
-
-        Response response = client.newCall(request).execute();
-        response.close();
-    }
-
-    // metodo per controllare se l'utente ha già effettuato l'accesso
-    public static boolean isUserLocked(String username) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username;
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-            .url(url)
-            .header("Authorization", "Bearer " + getAccessToken())
-            .get()
-            .build();
-
-        Response response = client.newCall(request).execute();
-        String body = response.body().string();
-        response.close();
-
-        Map<String, Object> responseMap = new Gson().fromJson(body, Map.class);
-        Map<String, Object> fields = (Map<String, Object>) responseMap.get("fields");
-
-        if (fields == null || !fields.containsKey("lock")) {
-            return false; // non c'è il campo lock, quindi non bloccato
-        }
-
-        try {
-            Map<String, Object> lockMap = (Map<String, Object>) fields.get("lock");
-            Map<String, Object> mapValue = (Map<String, Object>) lockMap.get("mapValue");
-            Map<String, Object> lockFields = (Map<String, Object>) mapValue.get("fields");
-
-            Map<String, Object> lockedMap = (Map<String, Object>) lockFields.get("locked");
-            boolean locked = (boolean) lockedMap.get("booleanValue");
-
-            return locked; // ritorna semplicemente il valore booleano
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // per sicurezza, in caso di errore
-        }
-    }
-
-    public static void clearUserLock(String username) throws IOException {
-        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=lock";
-
-        Map<String, Object> fields = new HashMap<>();
-        fields.put("lock", null);  // cancella il campo lock
-
-        Map<String, Object> document = new HashMap<>();
-        document.put("fields", fields);
-
-        Gson gson = new Gson();
-        String json = gson.toJson(document);
-
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(json, MediaType.parse("application/json"));
-        Request request = new Request.Builder()
-            .url(url)
-            .header("Authorization", "Bearer " + getAccessToken())
-            .patch(body)
-            .build();
-
-        Response response = client.newCall(request).execute();
-        response.close();
     }
 
     // PUNTI UTENTE //
@@ -191,8 +95,6 @@ public class CloudStorageManager {
 
         Response response = client.newCall(request).execute();
         String body = response.body().string();
-        System.out.println("Response code: " + response.code());
-        System.out.println("Firestore response: " + body);
         response.close();
 
         Map<String, Object> responseMap = new Gson().fromJson(body, Map.class);
@@ -221,7 +123,7 @@ public class CloudStorageManager {
                         int points = Integer.parseInt(valueObj.toString());
                         userPointsMap.put(username, points);
                     } catch (NumberFormatException e) {
-                        System.out.println("Valore non valido per 'points' dell'utente " + username);
+                        System.err.println("Valore non valido per 'points' dell'utente " + username);
                     }
                 }
             }

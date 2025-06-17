@@ -99,7 +99,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 screen.draw(img1, 0, 0);
                 if (alg.error) fontBoldYellow20.draw(screen, "Password wrong",420,72);
                 if (alg.error1) fontBoldYellow20.draw(screen, "Nickname not found",402,72);
-                if (alg.error3) fontBoldYellow20.draw(screen, "Your session is already open on another device",270,72);
+                if (alg.error3) fontBoldYellow20.draw(screen, "Your session is already",270,72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);
@@ -125,7 +125,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         }
 
         // messaggio "internet assente"
-        if (alg.error2) {
+        if (!AuthAlgorithms.checkInternetConnection()) {
             screen.draw(noInternet, 364, 50);
             fontBoldYellow20.draw(screen, "No Internet Connection",406,72);
         }

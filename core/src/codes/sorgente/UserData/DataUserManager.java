@@ -61,7 +61,7 @@ public class DataUserManager implements LoadCallback {
         });
     }
 
-    // salva i progressi su file (JSON → Base64 → scrittura)
+    // salva i progressi sul server remoto (JSON → Base64 → scrittura)
     public static void saveProgresses() {
         JSONObject json = new JSONObject(progressi);
         String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());

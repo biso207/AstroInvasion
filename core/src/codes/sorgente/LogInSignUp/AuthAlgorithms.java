@@ -16,6 +16,8 @@ import sorgente.UserData.DataUserManager;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.ProfanityFilter;
 import sorgente.SoundManager;
+import sorgente.UserData.LockStatusManager;
+import sorgente.UserData.SessionLockManager;
 
 import java.net.InetAddress;
 
@@ -45,7 +47,7 @@ public class AuthAlgorithms implements InputProcessor {
         0 = LogIn
         1 = SignUp
     */
-    protected int state = 0;
+    protected int state;
 
     // mouse
     private final Pixmap mouse; // immagini
@@ -88,6 +90,11 @@ public class AuthAlgorithms implements InputProcessor {
     // PROCESSI DI AUTENTICAZIONE //
     // ************************** //
 
+    // metodo per resettare gli errori
+    public void resetErrors() {
+        error=error1=error2=error3=error4=false;
+    }
+
     // metodo per pulire il nickname da caratteri non adatti alle cartelle
     public static String sanitizeNickname(String input) {
         return input.replaceAll("[\\\\/:*?\"<>|]", "_");
@@ -104,6 +111,35 @@ public class AuthAlgorithms implements InputProcessor {
         }
     }
 
+    // metodo per resettare i testi dei campi digitati
+    public void resetTexts() {
+        // reset lunghezza
+        if (state==0) { // caso login
+            if (error) { // error solo password errata
+                passwordInput.setLength(0);
+                // reset campi digitabili
+                enteringNickname = false;
+                enteringPassword = true;
+                return;
+            }
+
+            // qualunque altro errore //
+            // reset lunghezza testi
+            nicknameInput.setLength(0);
+            passwordInput.setLength(0);
+            // reset campi digitabili
+            enteringNickname = true;
+            enteringPassword = false;
+        }
+
+        // caso signup - ogni testo e campo da resettare //
+        nicknameInput.setLength(0);
+        passwordInput.setLength(0);
+        // campi digitabili
+        enteringNickname = true;
+        enteringPassword = false;
+    }
+
 
     // metodo per direzione all'algoritmo di registrazione o accesso
     public void processLoginOrSignup() {
@@ -113,10 +149,7 @@ public class AuthAlgorithms implements InputProcessor {
             SignUpAlg(); // algoritmo di registrazione
         }
 
-        nicknameInput.setLength(0);
-        passwordInput.setLength(0);
-        enteringNickname = true;
-        enteringPassword = false;
+        resetTexts();
     }
 
     // algoritmo di registrazione
@@ -126,8 +159,7 @@ public class AuthAlgorithms implements InputProcessor {
 
         try {
             // nickname invalido, contiene parole invalide
-            if (!ProfanityFilter.isValidNickname(nickname)) {
-                System.out.println("Nickname not valid"); return; }
+            if (!ProfanityFilter.isValidNickname(nickname)) { error4=true; return; } // todo: migliorarlo perché non funziona
 
             // controllo presenza utente
             if (!CloudStorageManager.checkUsernameExists(nickname)) {
@@ -138,24 +170,20 @@ public class AuthAlgorithms implements InputProcessor {
                 // creazione file utente
                 createFiles();
 
-                // blocco accesso
-                CloudStorageManager.setUserLock(nickname, true);
+                // blocco del lock
+                LockStatusManager.setLockStatus(nickname, true);
 
-                // recupero progressi utente
-                DataUserManager.loadProgresses();
-
-                // successo
-                state = 2; // schermata lobby
-
-                // manda la notifica di apertura gioco
-                //notify.sendMessage();
+                SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
+                DataUserManager.loadProgresses(); // caricamento progressi utente
+                state = 2; // passaggio alla lobby
+                //notify.sendMessage(); // notifica di apertura gioco todo: togliere il comando prima del build finale
             }
             else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
                 error = true;
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
         }
     }
 
@@ -165,26 +193,30 @@ public class AuthAlgorithms implements InputProcessor {
 
         try {
             // nickname non trovato
-            if (!CloudStorageManager.checkUsernameExists(nickname)) { error1 = true; return; }
+            if (!CloudStorageManager.checkUsernameExists(nickname)) { resetErrors(); error1 = true; return; }
 
-            // sessione già attiva
-            if (CloudStorageManager.isUserLocked(nickname)) { error3 = true; return; }
+            // sessione scaduta => rilascio del lock
+            if (LockStatusManager.isSessionExpired(nickname)) { LockStatusManager.setLockStatus(nickname, false); }
 
-            // appena possibile blocca la sessione
-            CloudStorageManager.setUserLock(nickname, true);
+            // stato del lock => "true"=>impossibile accedere/"false"=>l'utente entra
+            if (LockStatusManager.isUserLocked(nickname)) { resetErrors(); error3 = true; return; }
+
+            // blocca subito la sessione
+            LockStatusManager.setLockStatus(nickname, true);
 
             // recupero password utente dal server
             String psw = CloudStorageManager.getPassword(nickname);
 
             // password errata => libera subito il lock
-            if (!psw.contentEquals(passwordInput)) { error = true; CloudStorageManager.clearUserLock(nickname); return; }
+            if (!psw.contentEquals(passwordInput)) { resetErrors(); error = true; LockStatusManager.setLockStatus(nickname, false); return; }
 
             // password corretta => procede con la lobby
             password = passwordInput.toString();
 
-            // caricamento progressi utente
-            DataUserManager.loadProgresses();
+            SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
+            DataUserManager.loadProgresses(); // caricamento progressi utente
             state = 2; // passaggio alla lobby
+            //notify.sendMessage(); // notifica di apertura gioco todo: togliere il comando prima del build finale
 
         } catch(Exception e){
             System.err.println(e.getMessage());
@@ -263,11 +295,20 @@ public class AuthAlgorithms implements InputProcessor {
 
         // ENTER terminare la digitazione
         if ((character == '\n' || character == '\r')) {
+            // passaggio alla digitazione della password
             if (enteringNickname) {
                 enteringPassword = true;
                 enteringNickname = false;
-            } else if (isValidInput()) {
-                if (!checkInternetConnection()) error2=true;
+            }
+            // controllo validità campi digitati
+            else if (isValidInput()) {
+                // connessione assente
+                if (!checkInternetConnection()) {
+                    resetErrors(); // reset di qualunque errore
+                    resetTexts(); // reset lunghezza campi digitati
+                    error2=true; // stampa errore
+                }
+                // processi di autenticazione
                 else processLoginOrSignup();
             }
         }
@@ -285,15 +326,17 @@ public class AuthAlgorithms implements InputProcessor {
             SoundManager.playClickButton(50); // suono del click
             if (state==0) state = 1;
             else state=0;
-            error = false;
+
+            resetErrors(); // reset errori
+            resetTexts(); // reset campi editabili
         }
 
         // click per avviare il gioco
         if (isValidInput() && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             SoundManager.playClickButton(50); // suono del click
 
-            if (!checkInternetConnection()) error2=true;
-            else { processLoginOrSignup(); error2=false; }
+            if (!checkInternetConnection()) { resetErrors(); error2=true; }
+            else { processLoginOrSignup(); }
         }
 
         // click per nascondere/mostrare la password
