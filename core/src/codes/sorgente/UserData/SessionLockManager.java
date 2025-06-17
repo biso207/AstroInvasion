@@ -8,9 +8,8 @@ public class SessionLockManager {
     private static ScheduledExecutorService heartbeatExecutor;
     private static ScheduledExecutorService recoveryExecutor;
 
-    private static final long HEARTBEAT_INTERVAL_MS = 10_000;  // 10 secondi => tempo di aggiornamento del timestamp
-    private static final long RECOVERY_INTERVAL_MS = 5_000;    // 5 secondi
-    private static final long SESSION_TIMEOUT_MS = 20_000;     // dopo 20 secondi, la sessione è considerata morta
+    private static final long HEARTBEAT_INTERVAL_MS = 5_000;  // 5 secondi => tempo di aggiornamento del timestamp
+    private static final long RECOVERY_INTERVAL_MS = 2_500;    // 2.5 secondi
     private static final int MAX_FAILS = 3;
 
     private static int heartbeatFails = 0;

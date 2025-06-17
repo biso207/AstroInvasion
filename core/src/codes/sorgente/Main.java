@@ -33,8 +33,6 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
-        if (AuthAlgorithms.nickname!=null) SessionLockManager.shutdownAll(); // rilascia il lock
-
         screen.dispose(); // rimozione risorse
     }
 }
