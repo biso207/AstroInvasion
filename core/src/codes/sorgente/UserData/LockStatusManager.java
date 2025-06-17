@@ -15,7 +15,7 @@ public class LockStatusManager {
     private static long refreshInterval = DEFAULT_REFRESH_INTERVAL_MS;
 
     // metodo per recuperare l'ultimo timestamp
-    public static long getLastTimestamp(String username) throws IOException {
+    private static long getLastTimestamp(String username) throws IOException {
         String url = DATABASE_URL + "astroData/" + username;
 
         OkHttpClient client = new OkHttpClient();
@@ -33,24 +33,22 @@ public class LockStatusManager {
         Map<String, Object> fields = (Map<String, Object>) responseMap.get("fields");
 
         if (fields == null || !fields.containsKey("lock")) {
-            return 0; // non c'è il campo lock, quindi non bloccato
+            return System.currentTimeMillis(); // Return current time if no lock field exists
         }
 
         try {
             Map<String, Object> lockMap = (Map<String, Object>) fields.get("lock");
             Map<String, Object> mapValue = (Map<String, Object>) lockMap.get("mapValue");
             Map<String, Object> lockFields = (Map<String, Object>) mapValue.get("fields");
-
-            Map<String, Object> lockedMap = (Map<String, Object>) lockFields.get("timestamp");
-            long timeStamp = (long) lockedMap.get("integerValue");
-
-            return timeStamp; // ritorna semplicemente il valore booleano
-
+            Map<String, Object> timestampMap = (Map<String, Object>) lockFields.get("timestamp");
+            String timestampStr = (String) timestampMap.get("integerValue");
+            return Long.parseLong(timestampStr);
         } catch (Exception e) {
             e.printStackTrace();
-            return 0; // per sicurezza, in caso di errore
+            return System.currentTimeMillis(); // Return current time in case of any error
         }
     }
+
 
     // metodo per controllare che la sessione utente sia ancora attiva
     public static boolean isSessionExpired(String username) throws IOException {
@@ -58,6 +56,7 @@ public class LockStatusManager {
         long currentTime = System.currentTimeMillis();
         // recupero dell'ultimo timestamp
         long lastTimestamp = getLastTimestamp(username);
+        System.out.println(lastTimestamp);
 
         return (currentTime - lastTimestamp) > (2 * refreshInterval);
     }
