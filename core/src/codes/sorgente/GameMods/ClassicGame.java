@@ -326,7 +326,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         stopImg = new Texture("images/stop.png");
 
         // quit match
-        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));
+        quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (15).png"));
 
         // scudo
         shieldImg = new Texture("images/spacecrafts/_shield.png");
