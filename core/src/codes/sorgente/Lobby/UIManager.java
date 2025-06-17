@@ -509,7 +509,10 @@ public class UIManager implements ResourceLoader {
         // background base
         screen.draw(mapLobby.get(20), 200, 70);
 
-        // recupero progressi
+        // recupero dal cloud di tutti i punti utente
+        try { CloudStorageManager.loadAllUserPoints(); }
+        catch (Exception e) { System.out.println(e.getMessage()); }
+
         // ordinamento mappa secondo i punti
         TreeMap<String, Integer> sortedMap = new TreeMap<>(
             (s1, s2) -> CloudStorageManager.userPointsMap.get(s2).compareTo(CloudStorageManager.userPointsMap.get(s1))

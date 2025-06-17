@@ -38,9 +38,6 @@ public class LobbyManager implements Screen {
         // istanza di InputManager
         input = new InputManager();
 
-        try { CloudStorageManager.loadAllUserPoints(); }
-        catch (Exception e) { System.out.println(e.getMessage()); }
-
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
         soundtrack.setLooping(true); // true=loop music; false=no loop
