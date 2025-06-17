@@ -27,7 +27,7 @@ public class SpaceJourney implements Screen, InputProcessor {
     private final SpriteBatch screen;
 
     // soundtrack
-    private Music soundtrack;
+    private final Music soundtrack;
 
     protected static List<Galaxy> galaxies;
     protected static int numGalaxy;
@@ -51,7 +51,7 @@ public class SpaceJourney implements Screen, InputProcessor {
         32, 34, 36, 38);
 
     // navicella utente
-    private Spacecraft selectedSp;
+    private final Spacecraft selectedSp;
 
     // costruttore
     public SpaceJourney(Main game, Spacecraft selectedSp, int numGalaxy) {
@@ -120,7 +120,7 @@ public class SpaceJourney implements Screen, InputProcessor {
             for (Galaxy galaxy : galaxies) {
                 if (isGalaxyClicked(galaxy, screenX, screenY)) {
 
-                    // selezione galassia
+                    // selezione galassia solo se raggiunta
                     if ((int) Math.ceil((double) numLevel / 10) >= galaxy.getId()) {
                         SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
                         numGalaxy = galaxy.getId();
@@ -141,8 +141,8 @@ public class SpaceJourney implements Screen, InputProcessor {
 
             // controllo click su un livello
             for (int i = 0; i < levels.size(); i++) {
-                int col = i % 5;       // colonna da 0 a 4
-                int row = i / 5;       // riga 0 (prima), 1 (seconda)
+                int col = i % 5; // colonna da 0 a 4
+                int row = i / 5; // riga 0 (prima), 1 (seconda)
 
                 // x e y dell'i-esimo livello
                 int x = startX + col * spacingX;
@@ -182,8 +182,10 @@ public class SpaceJourney implements Screen, InputProcessor {
             // SI sblocco livello
             if (buyLevel && (currentCredits-price>=0) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+
+                int diffCredits = currentCredits-price;
                 // sblocco livello
-                new Level(numLevel).unlock();
+                new Level(numLevel).unlock(diffCredits);
 
                 // chiusura pagina in sovra impressione
                 buyLevel=false;

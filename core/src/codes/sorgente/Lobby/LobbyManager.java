@@ -14,6 +14,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.Main;
+import sorgente.UserData.DataUserManager;
 
 public class LobbyManager implements Screen {
     protected static Main game; // variabile di riferimento tipo gioco

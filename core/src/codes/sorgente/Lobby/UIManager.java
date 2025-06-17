@@ -207,7 +207,7 @@ public class UIManager implements ResourceLoader {
         notifyCompletedMissions = new Texture("images/notify_completed_Missions.png");
 
         // immagine spunta per completamento missione o selezione oggetti
-        tickImg = new Texture("images/tick2.png");
+        tickImg = new Texture("images/tick_selection.png");
         // rettangolo selezione carta
         rectSelectCard = new Texture(Gdx.files.internal("secondary_screens/active_card.png"));
 
@@ -547,7 +547,7 @@ public class UIManager implements ResourceLoader {
             // avatar
             screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
             // icona notifica completamento Missions
-            if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(notifyCompletedMissions, 27, 338);
+            if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(notifyCompletedMissions, 27, 285);
             // crediti
             fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("credits")), 61, 516);
         }
@@ -836,6 +836,8 @@ public class UIManager implements ResourceLoader {
             }
             else if (InputManager.open18) { // avviso difficoltà elevata
                 screen.draw(mapLobby.get(18), 250, 175);
+
+                if (InputManager.isTickSelected) screen.draw(tickImg, 391, 330); // tick disattivazione messaggio
 
                 // button GREEN and RED hover
                 if (InputManager.isBtnLHover) screen.draw(buttonsOver[7], 277, 217); // pulsante verde

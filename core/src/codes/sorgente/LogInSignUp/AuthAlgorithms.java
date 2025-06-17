@@ -197,10 +197,9 @@ public class AuthAlgorithms implements InputProcessor {
 
             // sessione scaduta => rilascio del lock
             if (LockStatusManager.isSessionExpired(nickname)) { LockStatusManager.setLockStatus(nickname, false); }
-            else { resetErrors(); error3 = true; return; } // sessione attiva
 
             // stato del lock => "true"=>impossibile accedere/"false"=>l'utente entra
-            //if (LockStatusManager.isUserLocked(nickname)) { resetErrors(); error3 = true; return; }
+            if (LockStatusManager.isUserLocked(nickname)) { resetErrors(); error3 = true; return; }
 
             // blocca subito la sessione
             LockStatusManager.setLockStatus(nickname, true);
@@ -268,6 +267,7 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("sound_volume", 0.5);
         DataUserManager.setProgress("music_volume", 0.5);
         DataUserManager.setProgress("alpha_fragments", 0);
+        DataUserManager.setProgress("show_warning", true);
 
         // salvataggio punti di base in remoto nel loro apposito campo
         try { CloudStorageManager.setUserPoints(AuthAlgorithms.nickname, 0); }

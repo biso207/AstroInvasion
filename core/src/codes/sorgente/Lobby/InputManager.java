@@ -40,7 +40,7 @@ public class InputManager implements InputProcessor {
         open17=false, open18=false, open19=false, open20=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
-        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false;
+        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -279,7 +279,8 @@ public class InputManager implements InputProcessor {
                 // avvio modalità di gioco
                 if (page == 0) {
                     // controllo per l'avviso difficoltà
-                    if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka")) && diffCG == 3d) {
+                    if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka"))
+                        && diffCG == 3d && (boolean)DataUserManager.getProgress("show_warning")) {
                         secondScreen = open18 = true;
                     } else {
                         SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -415,7 +416,7 @@ public class InputManager implements InputProcessor {
 
                 DataUserManager.setProgress("num_mission", mission + 1);
                 DataUserManager.setProgress("mission_id", missionID);
-                DataUserManager.setProgress("completed_mission", false); // Missions non più completata
+                DataUserManager.setProgress("completed_mission", false); // mission non più completata
             }
 
             // acquisti nel negozio
@@ -605,13 +606,13 @@ public class InputManager implements InputProcessor {
             }
 
             // chiusura software infos
-            if ((secondScreen && open17) && (screenX >= 684 && screenX <= 724) && (screenY >= 206 && screenY <= 246)) {
+            if ((secondScreen && open17) && (screenX >= 675 && screenX <= 715) && (screenY >= 198 && screenY <= 238)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open17 = false;
             }
 
             // chiusura pagina leaderboard
-            if ((secondScreen && open20) && ((screenX >= 715 && screenX <= 755) && (screenY >= 125 && screenY <= 165))) {
+            if ((secondScreen && open20) && ((screenX >= 715 && screenX <= 755) && (screenY >= 122 && screenY <= 162))) {
                 SoundManager.playClickButton(soundPercent);
                 page = previousPage;
                 secondScreen = open20 = false;
@@ -637,18 +638,28 @@ public class InputManager implements InputProcessor {
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
             }
 
+            // not show again waring
+            if ((secondScreen && open18) && (screenX >= 375 && screenX <= 608) && (screenY >= 330 && screenY <= 375)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                isTickSelected = !isTickSelected;
+            }
+
             // OK warning => close warning and back to lobby
             if ((secondScreen && open18) && (screenX >= 281 && screenX <= 481) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open18 = false;
+                if (isTickSelected) DataUserManager.setProgress("show_warning", false); // disattivazione warning
+                secondScreen = open18 = false; // chiusura audio
             }
 
             // PLAY warning => play classic game
             if ((secondScreen && open18) && (screenX >= 519 && screenX <= 719) && (screenY >= 417 && screenY <= 497)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open18 = false;
-                LobbyManager.soundtrack.stop();
-                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
+                if (isTickSelected) DataUserManager.setProgress("show_warning", false); // disattivazione warning
+                secondScreen = open18 = false; // chiusura schermata
+                LobbyManager.soundtrack.stop(); // interruzione audio
+
+                // avvio cg
+                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false));
             }
 
             // YES => conferma acquisto
