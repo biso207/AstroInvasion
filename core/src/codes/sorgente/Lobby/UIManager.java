@@ -30,7 +30,7 @@ public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2;
+        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive;
 
     // textureRegione per definire l'area di completamento della task corrente in Missions
     private TextureRegion progressBarRegion;
@@ -150,6 +150,8 @@ public class UIManager implements ResourceLoader {
 
         // testo "SOLD OUT" per il marketplace
         txtSoldOut = new Texture("images/sold_item_txt.png");
+        // pulsante reset elementi attivo
+        btnResetActive = new Texture("images/btns_hover/active_reset_btn.png");
 
         // immagine navicella
         spImg = new Texture(selectedSp.getPathImg());
@@ -546,6 +548,8 @@ public class UIManager implements ResourceLoader {
             screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
             // icona notifica completamento Missions
             if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(notifyCompletedMissions, 27, 338);
+            // crediti
+            fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("credits")), 61, 516);
         }
 
         // switch delle pagine per stampare i vari elementi
@@ -619,7 +623,7 @@ public class UIManager implements ResourceLoader {
                 // calcolo crediti utente vinti
                 int diff = (int) DataUserManager.getProgress("diff_space_battle");
                 int streak = (int) DataUserManager.getProgress("win_streak_SB");
-                int creditsSB=0, pointsSB=0;
+                int creditsSB=0;
 
                 // calcolo crediti vinti
                 if (streak>=1) {
@@ -631,15 +635,7 @@ public class UIManager implements ResourceLoader {
                 }
                 else creditsSB = diff*10;
 
-                // calcolo punti vinti
-                switch (diff) {
-                    case 1 -> pointsSB = 1000;
-                    case 2 -> pointsSB = 2000;
-                    case 3 -> pointsSB = 3000;
-                }
-
                 fontBoldWhite20.draw(screen, "+" + formatter.format(creditsSB), 691, 275);
-                fontBoldWhite20.draw(screen, "+" + formatter.format(pointsSB), 691, 200);
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -673,7 +669,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.superLaser) screen.draw(rectSelectCard, 801, 375);
 
                 // testo informativo gioco bloccato
-                if ((int) DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 463);
+                if ((int) DataUserManager.getProgress("level")<11) screen.draw(infoBanner, 590, 165);
 
                 // button fight hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[1], 777, 105);
@@ -739,7 +735,7 @@ public class UIManager implements ResourceLoader {
             case 5:
                 // titolo e sottotitolo pagina
                 fontSemiboldYellow25.draw(screen, "MARKETPLACE", 323, 494);
-                fontMediumWhite20.draw(screen, "Use your credits to buy cards and unique objectes", 323, 457);
+                fontMediumWhite20.draw(screen, "Use your credits to buy cards and unique objects", 323, 457);
 
                 // testi //
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
@@ -756,6 +752,8 @@ public class UIManager implements ResourceLoader {
                 if ((boolean) DataUserManager.getProgress("state_product_5")) screen.draw(txtSoldOut, 435, 160);
                 if ((boolean) DataUserManager.getProgress("state_product_6")) screen.draw(txtSoldOut, 680, 160);
 
+                // pulsante reset attivo
+                if (InputManager.finalPrize>0) screen.draw(btnResetActive, 799, 76);
                 // button confirm-purchase and reset hover
                 if (InputManager.isBtnBuyHover) screen.draw(buttonsOver[4], 510, 74);
                 if (InputManager.isBtnResetHover) screen.draw(buttonsOver[5], 799, 76);

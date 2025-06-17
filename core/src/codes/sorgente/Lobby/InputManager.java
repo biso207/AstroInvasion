@@ -112,14 +112,15 @@ public class InputManager implements InputProcessor {
 
     // metodo per definire le aree di gioco cliccabili
     public void hitAreas() {
-        hitBoxes.put(0, new HitBox(42, 182, 247, 200, 0, false));  // 'classic game'
-        hitBoxes.put(1, new HitBox(44, 232, 241, 250, 1, false)); // 'space battle'
-        hitBoxes.put(2, new HitBox(42, 285, 260, 303, 2, false)); // 'space journey'
-        hitBoxes.put(3, new HitBox(43, 336, 194, 354, 3, false)); // 'missions'
-        hitBoxes.put(4, new HitBox(44, 389, 241, 407, 4, true)); // 'spacecrafts'
-        hitBoxes.put(5, new HitBox(44, 441, 247, 463, 5, false)); // 'marketplace'
+        hitBoxes.put(0, new HitBox(42, 235, 247, 253, 0, false));  // 'classic game'
+        hitBoxes.put(1, new HitBox(44, 285, 241, 303, 1, false)); // 'space battle'
+        hitBoxes.put(2, new HitBox(42, 338, 260, 356, 2, false)); // 'space journey'
+        hitBoxes.put(3, new HitBox(43, 389, 194, 407, 3, false)); // 'missions'
+        hitBoxes.put(4, new HitBox(44, 442, 241, 460, 4, true)); // 'spacecrafts'
+        hitBoxes.put(5, new HitBox(44, 494, 247, 516, 5, false)); // 'marketplace'
+        hitBoxes.put(12, new HitBox(45, 546, 236, 567, 12, true));  // 'how to play'
+
         hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
-        hitBoxes.put(12, new HitBox(45, 493, 236, 514, 12, true));  // 'how to play'
     }
 
     // todo: aggiungere la chiusura della schermata leaderboard

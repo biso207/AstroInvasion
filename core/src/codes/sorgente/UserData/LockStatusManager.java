@@ -11,8 +11,8 @@ import java.util.Map;
 public class LockStatusManager {
 
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/astroinvasioncloud/databases/(default)/documents/";
-    private static final long DEFAULT_REFRESH_INTERVAL_MS = 5_000; // 10 secondi
-    private static long refreshInterval = DEFAULT_REFRESH_INTERVAL_MS;
+    private static final long DEFAULT_REFRESH_INTERVAL_MS = 5_000; // 5 secondi
+    private static final long refreshInterval = DEFAULT_REFRESH_INTERVAL_MS;
 
     // metodo per recuperare l'ultimo timestamp
     private static long getLastTimestamp(String username) throws IOException {

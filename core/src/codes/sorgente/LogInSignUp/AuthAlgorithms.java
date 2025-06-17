@@ -197,9 +197,10 @@ public class AuthAlgorithms implements InputProcessor {
 
             // sessione scaduta => rilascio del lock
             if (LockStatusManager.isSessionExpired(nickname)) { LockStatusManager.setLockStatus(nickname, false); }
+            else { resetErrors(); error3 = true; return; } // sessione attiva
 
             // stato del lock => "true"=>impossibile accedere/"false"=>l'utente entra
-            if (LockStatusManager.isUserLocked(nickname)) { resetErrors(); error3 = true; return; }
+            //if (LockStatusManager.isUserLocked(nickname)) { resetErrors(); error3 = true; return; }
 
             // blocca subito la sessione
             LockStatusManager.setLockStatus(nickname, true);
