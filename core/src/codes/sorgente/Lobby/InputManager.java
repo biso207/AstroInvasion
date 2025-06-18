@@ -630,7 +630,7 @@ public class InputManager implements InputProcessor {
                 secondScreen = open13 = false;
                 LobbyManager.soundtrack.stop();
 
-                //SessionLockManager.shutdownAll(); // rilascia il lock
+                SessionLockManager.shutdownAll(); // rilascia il lock
 
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi
 
