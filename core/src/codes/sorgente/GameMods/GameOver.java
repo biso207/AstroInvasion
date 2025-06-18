@@ -323,13 +323,11 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         catch (Exception e) { System.out.println(e.getMessage()); }
 
         // aggiornamento progressi task Missions dei crediti
-        if (missionID==4) {
-            if (completedMissions) DataUserManager.setProgress("credits_missions", UIManager.Missions[missionID-1].calcNumObjMission());
-            else DataUserManager.setProgress("credits_missions", creditsSB + (int) DataUserManager.getProgress("credits_missions"));
+        if (missionID==4) { // crediti cg + sb
+            DataUserManager.setProgress("credits_missions", creditsSB + (int) DataUserManager.getProgress("credits_missions"));
         }
-        else if (missionID==3) {
-            if (completedMissions) DataUserManager.setProgress("points_missions", UIManager.Missions[missionID-1].calcNumObjMission());
-            else DataUserManager.setProgress("points_missions", pointsSB + (int) DataUserManager.getProgress("points_missions"));
+        else if (missionID==3) { // punti cg + sb
+            DataUserManager.setProgress("points_missions", pointsSB + (int) DataUserManager.getProgress("points_missions"));
         }
     }
 

@@ -355,7 +355,7 @@ public class UIManager implements ResourceLoader {
         // creazione oggetti
         Missions Missions0 = new Missions("Hit", 100, "aliens in Classic Game matches.", "1 Gold Heart", "images/cards/cart1_gold_heart_eng.png");
         Missions Missions1 = new Missions("Win", 1, "Space Battle matches.", "1 Shield", "images/cards/cart2_shield_eng.png");
-        Missions Missions2 = new Missions("Earn", 10000, "points through\nthe Classic Game.", "100 Credits", "images/cards/card_100_coins.png");
+        Missions Missions2 = new Missions("Earn", 10000, "points through Space Battle\nand/or Classic Game matches.", "100 Credits", "images/cards/card_100_coins.png");
         Missions Missions3 = new Missions("Earn", 100, "credits through Space Battle\nand/or Classic Game matches.", "1 Super Laser", "images/cards/cart3_super_laser_eng.png");
 
         Missions[0] = Missions0;
@@ -368,9 +368,6 @@ public class UIManager implements ResourceLoader {
     public void drawMissionsPage(SpriteBatch screen, int missionID) {
         // immagine premio //
         screen.draw(MissionsPrizes[missionID-1], 660, 100);
-
-        // pulsante raccolta premio //
-        if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(claimPrize, 767, 100);
 
         int progress, maxProgress;
 
@@ -385,6 +382,12 @@ public class UIManager implements ResourceLoader {
         // progresso totale da compiere
         maxProgress = Missions[missionID-1].calcNumObjMission();
 
+        // pulsante raccolta premio //
+        if ((boolean) DataUserManager.getProgress("completed_mission")) {
+            screen.draw(claimPrize, 767, 100);
+            progress=maxProgress;
+        }
+
         // lunghezza barra riempita
         float filledWidth = (progress / (float) maxProgress) * 380;
 
@@ -392,9 +395,7 @@ public class UIManager implements ResourceLoader {
             screen.draw(progressBarRegion, 519, 276, filledWidth, 20);
         }
 
-        // progresso road to glory => percentuale o stampa progresso?
-        int percentage = (int) Math.ceil((progress / (float) maxProgress)*100);
-        //fontBoldWhite20.draw(screen, percentage+"%", 525, 294);
+        // progresso road to glory
         fontBoldWhite20.draw(screen, formatter.format(progress) + "/" + formatter.format(maxProgress), 525, 294);
 
         // button start hover

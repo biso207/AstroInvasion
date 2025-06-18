@@ -576,10 +576,10 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
             if (win) {
                 DataUserManager.setProgress("won_SB", (int) DataUserManager.getProgress("won_SB") + 1);
-                DataUserManager.setProgress("cons_won_SB", (int) DataUserManager.getProgress("cons_won_SB") + 1);
+                DataUserManager.setProgress("win_streak_SB", (int) DataUserManager.getProgress("win_streak_SB") + 1);
             }
             else {
-                DataUserManager.setProgress("cons_won_SB", 0);
+                DataUserManager.setProgress("win_streak_SB", 0);
             }
 
             // aggiornamento partite giocate
