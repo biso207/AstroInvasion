@@ -41,7 +41,7 @@ public class AuthAlgorithms implements InputProcessor {
     protected boolean error2 = false; // "No Internet Connection"
     protected boolean error3 = false; // "Your session is already open on another device"
     protected boolean error4 = false; // "Nickname not valid"
-    protected boolean success = true; // passaggio alla lobby
+    protected boolean success = false; // passaggio alla lobby
 
 
     /* pagina di riferimento

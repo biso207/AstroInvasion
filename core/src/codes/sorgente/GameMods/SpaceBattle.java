@@ -200,7 +200,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         switch (difficulty){
             case 1:
                 playerSpeed = 200 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                //laserSpeed = 200 + selectedSp.getLaserSpeed() * 100;
+                laserSpeed = 300;
                 enemySpeed = 400;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.3f;
@@ -211,7 +212,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 break;
             case 2:
                 playerSpeed = 250 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 250 + selectedSp.getLaserSpeed() * 100;
+                //laserSpeed = 250 + selectedSp.getLaserSpeed() * 100;
+                laserSpeed = 350;
                 enemySpeed = 500;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.25f;
@@ -222,7 +224,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 break;
             case 3:
                 playerSpeed = 300 + selectedSp.getSpSpeed() * 100;
-                laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
+                //laserSpeed = 300 + selectedSp.getLaserSpeed() * 100;
+                laserSpeed = 400 + selectedSp.getLaserSpeed() * 100;
                 enemySpeed = 600;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.2f;
