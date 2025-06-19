@@ -68,7 +68,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     // istanza del soundManager per riprodurre i suoni
     private final SoundManager soundManager;
 
-    private Texture  gameOver1, gameOver2;
+    private Texture gameOver2;
 
     // variabile controllo se il gioco è un livello
     private final boolean isLevel;
@@ -146,15 +146,16 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         Random random = new Random();
         int selection = random.nextInt(20) + 1;
 
+        // caricamento risorse di gioco
+        loadImages();
+        loadFont();
         loadEnemyTextures();
-
 
         if(!isLevel){
             enemyPicture = enemySpacecraft(selection);
             enemyTexture = enemyTextures.get(selection);
             laserTexture = laserTextures.get(selection);
         }
-        //for (int i = 1; i < 22; i++) i++;
         else{
             enemyPicture = enemySpacecraftlevel(level);
             enemyTexture = enemyTextureJourney.get(level);
@@ -190,13 +191,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
         else shotType = 2;
 
-
-        //InputManager.goldHeart = false;
-        //InputManager.superLaser = false;
-
         hits_level = level;
-
-
     }
 
     //Valori di inizio gioco
@@ -335,9 +330,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         playImg = new Texture("images/play.png");
         stopImg = new Texture("images/stop.png");
-
-        gameOver1 = new Texture(Gdx.files.internal("secondary_screens/game_over_sb_eng.png"));
-        gameOver2 = new Texture(Gdx.files.internal("secondary_screens/victory_sb_eng.png"));
 
         // quit match
         quitMatch = new Texture(Gdx.files.internal("lobby_screens/lobby (16).png"));

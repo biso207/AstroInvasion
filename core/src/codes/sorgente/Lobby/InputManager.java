@@ -127,8 +127,6 @@ public class InputManager implements InputProcessor {
         hitBoxes.put(6, new HitBox(858, 62, 943, 145, 6, true));  // 'profile infos'
     }
 
-    // todo: aggiungere la chiusura della schermata leaderboard
-
     // metodo per popolare le aree cliccabili nella selezione delle navicelle
     private void selectSPAreas() {
         // popolamento mappa range per la selezione delle navicelle

@@ -12,9 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.UserData.CloudStorageManager;
 import sorgente.Main;
-import sorgente.UserData.DataUserManager;
 
 public class LobbyManager implements Screen {
     protected static Main game; // variabile di riferimento tipo gioco
@@ -48,7 +46,6 @@ public class LobbyManager implements Screen {
     // ****************************** //
     // METODI DELL'INTERFACCIA Screen //
     // ****************************** //
-
     // metodo per aggiornare lo schermo
     @Override public void render(float delta) {
         // attivazione controllo input

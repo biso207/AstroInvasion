@@ -50,19 +50,20 @@ public class SpaceJourney implements Screen, InputProcessor {
         22, 24, 26, 28,
         32, 34, 36, 38);
 
-    // navicella utente
-    private final Spacecraft selectedSp;
+    // istanza del soundManager per riprodurre i suoni
+    private final SoundManager soundManager;
 
     // costruttore
     public SpaceJourney(Main game, Spacecraft selectedSp, int numGalaxy) {
         this.game = game;
         // init dello screen
         this.screen = game.screen;
-        // navicella utente
-        this.selectedSp = selectedSp;
 
         // init lista galassie
         galaxies = new ArrayList<>();
+
+        // istanza del soundManager per riprodurre i suoni
+        soundManager = new SoundManager(InputManager.soundPercent);
 
         // galassia corrente
         SpaceJourney.numGalaxy = numGalaxy;
