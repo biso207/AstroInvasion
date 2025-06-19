@@ -22,7 +22,7 @@ public class CheckRTG {
         return switch(numMission) {
             case 0 -> points>=5000000;
             case 1 -> winsSB>=200;
-            case 2 -> numTask>=100;
+            case 2 -> numTask>=50;
             case 3 -> credits>=50000;
             default -> false;
         };
