@@ -265,4 +265,20 @@ public class CloudStorageManager {
             }
         }).start();
     }
+
+    // ELIMINAZIONE PROFILO //
+    // metodo per eliminare definitivamente un profilo utente
+    public static void deleteUserProfile(String username) throws IOException {
+        String url = DATABASE_URL + "astroData/" + username;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+            .url(url)
+            .header("Authorization", "Bearer " + getAccessToken())
+            .delete()
+            .build();
+
+        Response response = client.newCall(request).execute();
+        response.close();
+    }
 }

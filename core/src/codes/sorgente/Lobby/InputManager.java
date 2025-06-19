@@ -25,9 +25,12 @@ import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
 import sorgente.UserData.SessionLockManager;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static sorgente.LogInSignUp.AuthAlgorithms.checkInternetConnection;
 
 public class InputManager implements InputProcessor {
     // mappa dei range
@@ -37,10 +40,11 @@ public class InputManager implements InputProcessor {
 
     // variabili per mostrare le schermate in sovra impressione
     protected static boolean secondScreen=false, open13=false, open14=false, open16=false,
-        open17=false, open18=false, open19=false, open20=false;
+        open17=false, open18=false, open19=false, open20=false, open21=false, open22=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
-        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false;
+        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false,
+        isHoverIconNoInternet=false, isDeleteAccountHover=false, isBtnDeleteHover=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -171,7 +175,8 @@ public class InputManager implements InputProcessor {
     // metodo per rilevare il click della tastiera
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
-        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20)) {
+        if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17
+            && !open18 && !open19 && !open20 && !open21 && !open22)) {
             open13 = true;
             secondScreen = true;
             return true;
@@ -194,12 +199,21 @@ public class InputManager implements InputProcessor {
         esempio: l'utente NON può avviare il 'classic game' da una pagina in sovra impressione o esterna che riempe lo schermo
         */
 
-        //System.out.println("screenX: "+screenX+" screenY: "+screenY);
+        System.out.println("screenX: "+screenX+" screenY: "+screenY);
+
+        // todo: aggiungere l'apertura per il cambio password
+        //  aggiungere l'hover per la conferma del cambio password
+        //  per il cambio password controllare che sia diversa da quella attuale altrimenti non va nè l'hover nè
+        //  la chiamata al metodo savePassword(nick, psw) di CloudStorageManager che sovrascrive la vecchia password
+        //  con quella nuova
+        //  permettere la digitazione della nuova password solo se open21 è true, limitare a 10 caratteri
+        //  permettere di mostrare/nascondere la password durante la digitazione, come nelle pagine di autenticazione
 
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
-        if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
+        if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 &&
+            !open20 && !open21 && !open22) {
 
             // CAMBIO PAGINE LOBBY
             // for-each per iterare i vari range e controllare i cambi pagina
@@ -553,14 +567,34 @@ public class InputManager implements InputProcessor {
             }
 
             // apertura pagina 7 'avatar'
-            if (!open19 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
+            if (!open19 && !open21 && !open22 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 page = 7;
             }
             // apertura pagina "gloria utente"
-            if (page == 6 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) {
+            if (page == 6 && !open21 && !open22 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open19 = true;
+            }
+            // apertura delete profile
+            if (page==6 && !open19 && !open21 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                secondScreen = open22 = true;
+            }
+
+            // eliminazione profilo
+            if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) {
+                SessionLockManager.shutdownAll(); // rilascio del lock => altrimenti il documento si ricrea anche se eliminato
+                try {
+                    CloudStorageManager.deleteUserProfile(AuthAlgorithms.nickname); // richiamo metodo per eliminazione profilo
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                ui.disposeUI(); // rilascio risorse
+                // apertura pagina autenticazione
+                LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+
             }
 
             // selezione avatar
@@ -603,9 +637,14 @@ public class InputManager implements InputProcessor {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open19 = false;
             }
+            // X delete/change psw => chiusura pagina delete profile/cambio password
+            if (secondScreen && (open22 || open21) && (screenX >= 670 && screenX <= 710) && (screenY >= 205 && screenY <= 245)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                secondScreen = open22 = open21 = false;
+            }
 
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
-            if (!open19 && !open20 && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
+            if (!(open19 || open20 || open21 || open22) && !((page==4 || page==12)) && (screenX >= 905 && screenX <= 945) && (screenY >= 83 && screenY <= 123)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 if (page == 7) {
                     page = 6; // evita di tornare alla lobby dalla pagina degli avatar
@@ -772,7 +811,8 @@ public class InputManager implements InputProcessor {
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
-        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=isBtnGloryHover=false;
+        isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=
+            isBtnGloryHover=isHoverIconNoInternet=isDeleteAccountHover=isBtnDeleteHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
 
@@ -787,10 +827,18 @@ public class InputManager implements InputProcessor {
             isBtnRHover=true;
         }
 
-        // profile info
-        if (page==6 && !open19 && !open20 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+        // rtg (road to glory)
+        if (page==6 && !open19 && !open21 && !open22 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+        // delete the account
+        if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) isDeleteAccountHover=true;
+        // delete account button
+        if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) isBtnDeleteHover=true;
 
+        // pagine della lobby
         if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
+            // messaggio no internet
+            if (!UIManager.isConnected && (screenX>=811 && screenX<=841 && screenY>=90 && screenY<=120)) isHoverIconNoInternet=true;
+
             // Missions
             if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) isBtnClaimHover=true;
 

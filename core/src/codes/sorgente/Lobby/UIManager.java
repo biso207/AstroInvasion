@@ -30,7 +30,8 @@ public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive;
+        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive, noInternetIcon,
+        noInternetMessage;
 
     // textureRegione per definire l'area di completamento della task corrente in Missions
     private TextureRegion progressBarRegion;
@@ -51,12 +52,12 @@ public class UIManager implements ResourceLoader {
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontBoldWhite27, fontItalicBoldWhite15, fontBoldWhite60,
-        fontSemiboldYellow25;
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontBoldWhite27, fontBoldWhite30, fontBoldWhite35,
+        fontItalicBoldWhite15, fontBoldWhite60, fontSemiboldYellow25;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
-    private final HashMap<Integer, Texture> mapAvatarsImgs; // immagini avatar
+    private final HashMap<Integer, Texture> mapAvatarImg; // immagini avatar
     private final HashMap<Integer, Avatar> mapAvatars; // oggetti avatar
     private static HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
     private final List<Spacecraft> spacecrafts;
@@ -74,14 +75,17 @@ public class UIManager implements ResourceLoader {
     protected Pixmap mouse; // immagini
     protected static Cursor cursor;
 
+    // variabile per lo stato della connessione a internet
+    public static boolean isConnected = true;
+
     // costruttore
     public UIManager() {
         this.mapLobby = new HashMap<>();
-        this.mapAvatarsImgs = new HashMap<>();
+        this.mapAvatarImg = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
         spacecrafts = new ArrayList<>();
-        this.buttonsOver = new Texture[10];
+        this.buttonsOver = new Texture[12];
         this.alphaFragments = new Texture[5];
         this.badgesRTG = new Texture[5];
 
@@ -129,6 +133,8 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 25
             fontBoldWhite27 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_27.fnt")); // inter-bold white 27
+            fontBoldWhite30 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
+            fontBoldWhite35 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
             // yellow
@@ -148,9 +154,9 @@ public class UIManager implements ResourceLoader {
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
 
         // popolamento mappa lobby
-        for (int i = 0; i < 21; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 23; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
-        for (int i = 0; i <= 19; i++) mapAvatarsImgs.put(i, new Texture("images/avatars/av (" + i + ").png"));
+        for (int i = 0; i <= 19; i++) mapAvatarImg.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
         // "pulsante" raccolta premio Missions
         Texture img_special = new Texture("images/rect_claim_reward_eng.png");
@@ -186,7 +192,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 12; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -247,6 +253,10 @@ public class UIManager implements ResourceLoader {
         topBanner = new Texture("images/top_banner.png");
         // X chiusura pagina 'how to play'
         topBanner2 = new Texture("images/top_banner2.png");
+
+        // icona internet assente
+        noInternetIcon = new Texture("login_signup_screens/no_internet.png");
+        noInternetMessage = new Texture("images/alert_message_noInternet.png");
     }
 
     // **************** //
@@ -319,6 +329,7 @@ public class UIManager implements ResourceLoader {
         // pulsante raccolta premio //
         if ((boolean) DataUserManager.getProgress("completed_mission")) {
             screen.draw(claimPrize, 767, 100);
+            fontBoldWhite30.draw(screen, "CLAIM", 785, 133); // testo CLAIM
             progress=maxProgress;
         }
 
@@ -479,11 +490,17 @@ public class UIManager implements ResourceLoader {
         // stampa immagini SOLO della Lobby
         if (!listSecondPages.contains(InputManager.page)) {
             // avatar
-            screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 870, 557);
+            screen.draw(mapAvatarImg.get((int) DataUserManager.getProgress("avatar")), 870, 557);
+
             // icona notifica completamento Missions
             if ((boolean) DataUserManager.getProgress("completed_mission")) screen.draw(notifyCompletedMissions, 27, 285);
+
             // crediti
             fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("credits")), 61, 516);
+
+            // icona No Internet Connected
+            if (!isConnected) screen.draw(noInternetIcon, 818, 581);
+            if (InputManager.isHoverIconNoInternet) screen.draw(noInternetMessage, 601, 555);
         }
 
         // switch delle pagine per stampare i vari elementi
@@ -716,9 +733,10 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "S.B. Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 540, 92); // vittorie space battle
 
                 // immagini //
-                screen.draw(mapAvatarsImgs.get((int) DataUserManager.getProgress("avatar")), 461, 513); // avatar
+                screen.draw(mapAvatarImg.get((int) DataUserManager.getProgress("avatar")), 461, 513); // avatar
 
                 if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 40, 145);
+                if (InputManager.isDeleteAccountHover) screen.draw(buttonsOver[11], 432, 426);
                 break;
 
             // pagina avatars
@@ -797,8 +815,19 @@ public class UIManager implements ResourceLoader {
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.finalPrize), 390, 347);
             }
             else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
-            else if (InputManager.open19) drawGloryPage(screen);
+            else if (InputManager.open19) drawGloryPage(screen); // road to glory
             else if (InputManager.open20) drawLeaderboard(screen); // leaderboard
+            else if (InputManager.open22) { // delete profile
+                screen.draw(mapLobby.get(22), 250, 165);
+
+                // button hover
+                if (InputManager.isBtnDeleteHover) screen.draw(buttonsOver[10], 423, 207);
+
+                // testo "DELETE"
+                fontBoldWhite35.draw(screen, "DELETE", 437, 247);
+            }
+
+            // todo: settare la schermata del cambio mostrando la nuova password che si sta digitando nell'InputManager
         }
     }
 
@@ -812,7 +841,7 @@ public class UIManager implements ResourceLoader {
         }
         selectedAvatar.dispose();
 
-        for (Texture t : mapAvatarsImgs.values()) t.dispose();
+        for (Texture t : mapAvatarImg.values()) t.dispose();
         for (Texture t : mapLobby.values()) t.dispose();
 
         tickImg.dispose();
@@ -826,6 +855,9 @@ public class UIManager implements ResourceLoader {
         spacecraftSelectionBox.dispose();
         topBanner.dispose();
         topBanner2.dispose();
+        infoBanner.dispose();
+        noInternetIcon.dispose();
+        noInternetMessage.dispose();
 
         rectSelectCard.dispose();
         claimPrize.dispose();

@@ -43,7 +43,7 @@ public class LoadingScreen implements Screen, ProgressListener {
             openSound.setLooping(false);
             openSound.play();
 
-            setProgress(100); // tempo di 1 secondo per aprire la pagina iniziale
+            setProgress(3000); // tempo di 1 secondo per aprire la pagina iniziale
         } else {
             // pagina di caricamento dati utente o creazione id
             new Thread(() -> {
