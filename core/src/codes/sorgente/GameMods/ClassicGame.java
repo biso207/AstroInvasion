@@ -129,14 +129,15 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // costruttore
-    public ClassicGame(Main game, Spacecraft selectedSp, boolean isLevel) {
+    public ClassicGame(Main game, boolean isLevel) {
         this.game = game;
         this.screen = game.screen;
         this.isLevel = isLevel;
 
         numLevel = (int) DataUserManager.getProgress("level");
         // navicella utente inizializzata
-        this.selectedSp = selectedSp;
+        int id = (int) DataUserManager.getProgress("spacecraft");
+        this.selectedSp = new Spacecraft(id);
 
         // colore alieno di default
         type=0;
@@ -555,8 +556,9 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         if (!isLevel) points = points+((points*(selectedSp.getBonusPoints()))/100); // aggiunta percentuale di bonus
 
         int[] stats = {points, credits, aliensHit};
-        // apertura pagina di game over
-        game.setScreen(new GameOver(game, selectedSp, mod, stats, win, isLevel));
+
+        game.setScreen(new GameOver(game, selectedSp, mod, stats, win, isLevel)); // apertura pagina game over
+        this.dispose(); // rilascio risorse
     }
 
     // classe per le animazioni
@@ -881,9 +883,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         bannerMissions.dispose();
         btnHoverL.dispose();
         btnHoverR.dispose();
-        soundManager.dispose(); // rilascio risorse audio
-
-        screen.dispose();
+        soundManager.dispose();
     }
 
     @Override public void resize(int width, int height) {}

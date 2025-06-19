@@ -88,7 +88,10 @@ public class LoadingScreen implements Screen, ProgressListener {
             loadingFinished = true;
 
             // accesso alla schermata successiva
-            if (playMusic) game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
+            if (playMusic) {
+                game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
+                this.dispose(); // rilascio risorse
+            }
             else {
                 GlobalProgressManager.isInitialLoading = false; // stato di caricamento iniziale dei dati
 
@@ -141,12 +144,10 @@ public class LoadingScreen implements Screen, ProgressListener {
 
     @Override
     public void dispose() {
-        background.dispose();
+        if (!playMusic) background.dispose();
         if (openSound != null) {
             openSound.dispose();
         }
-
-        screen.dispose();
     }
 
     // metodo che "ascolta" il progresso di caricamento durante upload/download dati

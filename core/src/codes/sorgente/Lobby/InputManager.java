@@ -80,8 +80,12 @@ public class InputManager implements InputProcessor {
     protected static float scrollY = 2300, scrollY2 = 2800; // posizioni iniziali delle pagine scrollabili
     private final float maxScrollY = 2300;
 
+    // istanza di UIManager
+    private final UIManager ui;
+
     // costruttore
-    public InputManager() {
+    public InputManager(UIManager ui) {
+        this.ui = ui;
         // definizione delle aree cliccabili
         hitAreas();
 
@@ -138,7 +142,7 @@ public class InputManager implements InputProcessor {
                 else area = new Rectangle(x3, y1, x4-x3, y2-y1);
 
                 // aggiunta del range solo se la navicella è cliccabile
-                if (SpacecraftData.isAchieved(spID)) clickableAreas.put(area, spID);
+                if (Spacecraft.isAchieved(spID)) clickableAreas.put(area, spID);
                 if (j==1)  { y1+=168; y2+=168; } // passaggio alla riga seguente
 
                 // passaggio alla navicella successiva
@@ -285,16 +289,22 @@ public class InputManager implements InputProcessor {
                     } else {
                         SoundManager.playClickButton(soundPercent); // riproduzione suono click
                         LobbyManager.soundtrack.stop(); // interruzione musica
-                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false)); // avvio classic game
+
+                        LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, false)); // avvio classic game
+                        ui.disposeUI(); // rilascio risorse
                     }
                 } else if (page == 1 && ((int) DataUserManager.getProgress("level") > 10)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
-                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game, UIManager.selectedSp, false)); // avvio space battle
+
+                    LobbyManager.game.setScreen(new SpaceBattle(LobbyManager.game,false)); // avvio space battle
+                    ui.disposeUI(); // rilascio risorse
                 } else if (page == 2) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
+
                     LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp, 0)); // apertura mappa space journey
+                    ui.disposeUI(); // rilascio risorse
                 }
             }
 
@@ -521,7 +531,7 @@ public class InputManager implements InputProcessor {
                         numSelectedSP = selectedId;
 
                         // cambio navicella e salvataggio navicella scelta se sbloccata
-                        if (SpacecraftData.isAchieved(selectedId)) {
+                        if (Spacecraft.isAchieved(selectedId)) {
                             SoundManager.playClickButton(soundPercent); // riproduzione suono click
 
                             // cambio stato selezione a true
@@ -639,6 +649,7 @@ public class InputManager implements InputProcessor {
 
                 // apertura schermata di autenticazione
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+                ui.disposeUI(); // rilascio risorse
             }
 
             // not show again waring
@@ -662,7 +673,8 @@ public class InputManager implements InputProcessor {
                 LobbyManager.soundtrack.stop(); // interruzione audio
 
                 // avvio cg
-                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, UIManager.selectedSp, false));
+                LobbyManager.game.setScreen(new ClassicGame(LobbyManager.game, false));
+                ui.disposeUI(); // rilascio risorse
             }
 
             // YES => conferma acquisto

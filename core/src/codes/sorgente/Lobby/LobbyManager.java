@@ -37,7 +37,7 @@ public class LobbyManager implements Screen {
         // istanza di UIManager con caricamento risorse e creazione grafica
         ui = new UIManager();
         // istanza di InputManager
-        input = new InputManager();
+        input = new InputManager(ui);
 
         // musica di sottofondo
         soundtrack = Gdx.audio.newMusic(Gdx.files.internal("sounds/lobby_sound.ogg")); // file audio
@@ -77,19 +77,10 @@ public class LobbyManager implements Screen {
     // metodo per rilasciare le risorse
     @Override public void dispose() {
         ui.disposeUI();
-        screen.dispose();
-    }
-    // metodo per ricaricare le risorse in caso di minimize dello schermo
-    @Override public void resume() {
-        /* release delle risorse in memoria
-        ui.disposeUI();
-        // ricarica immagini e font
-        ui.loadImages();
-        ui.loadFont();
-
-         */
     }
 
+
+    @Override public void resume() {}
     @Override public void show() {}
     @Override public void resize(int width, int height) {}
     @Override public void pause() {}

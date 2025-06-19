@@ -89,15 +89,19 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
     public int level = (int) DataUserManager.getProgress("level");
 
-    public SpaceBattle(Main game, Spacecraft selectedSp, boolean isLevel) {
+    public SpaceBattle(Main game, boolean isLevel) {
 
         this.game = game;
         this.screen = game.screen;
-        this.selectedSp = selectedSp;
         this.isLevel = isLevel;
 
         // istanza del soundManager per riprodurre i suoni
         soundManager = new SoundManager(InputManager.soundPercent);
+
+        // selezione navicella utente
+        // navicella utente inizializzata
+        int id = (int) DataUserManager.getProgress("spacecraft");
+        this.selectedSp = new Spacecraft(id);
 
         playerTexture = selectedSp.getImgTexture();
 
@@ -588,6 +592,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         int[] stats = {0, 0, 0};
         game.setScreen(new GameOver(game, selectedSp, 1, stats, win, isLevel));
+        this.dispose(); // rilascio risorse
     }
 
     private String enemySpacecraft(int i){
@@ -662,7 +667,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     @Override public void hide() { Gdx.input.setInputProcessor(null); }
     @Override public void dispose() {
         playerTexture.dispose();
-        //enemyTexture.dispose();
         backgroundTexture.dispose();
         font.dispose();
         for (Texture t : enemyBaseTextures) {
@@ -671,8 +675,6 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         for (Texture t : laserBaseTextures) {
             t.dispose();
         }
-
-        screen.dispose();
     }
 
     // ************************************** //
@@ -720,10 +722,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public void resize(int width, int height) {}
-    @Override public void show() {
-        loadImages();
-        loadFont();
-    }
+    @Override public void show() {}
     @Override public void pause() {}
     @Override public void resume() {}
 }

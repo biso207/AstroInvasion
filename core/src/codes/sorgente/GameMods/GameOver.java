@@ -585,19 +585,20 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
         // click ESC => ritorno alla lobby
         if (character == Input.Keys.ESCAPE) {
             game.setScreen(new LobbyManager(game));
+            this.dispose(); // rilascio risorse
         }
 
         // click ENTER => avvio nuova partita
         if (character == (Input.Keys.ENTER)) {
             switch (mod) {
                 case 0:
-                    game.setScreen(new ClassicGame(game, selectedSp, isLevel));
+                    game.setScreen(new ClassicGame(game, isLevel));
                     break;
                 case 1:
-                    if (!isLevel)game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
-                    if (isLevel)game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
+                    game.setScreen(new SpaceBattle(game, isLevel));
                     break;
             }
+            this.dispose(); // rilascio risorse
         }
 
         return true;
@@ -610,7 +611,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // 'back to galaxies' button
             if ((screenX >= 390 && screenX <= 595) && (screenY >= 573 && screenY <= 650)) {
                 SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+
                 game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+                this.dispose(); // rilascio risorse
             }
         }
         else { // vittoria-sconfitta space battle + sconfitta livelli
@@ -625,25 +628,27 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                         InputManager.superLaser = superLaser;
                         InputManager.doublePoints = doublePoints;
 
-                        game.setScreen(new ClassicGame(game, selectedSp, isLevel));
+                        game.setScreen(new ClassicGame(game, isLevel));
                         break;
                     case 1:
                         // stato carte speciali
                         InputManager.goldHeart = goldHeart;
                         InputManager.superLaser = superLaser;
 
-                        if (!isLevel)game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
-                        if (isLevel)game.setScreen(new SpaceBattle(game, selectedSp, isLevel));
+                        game.setScreen(new SpaceBattle(game, isLevel));
                         break;
                 }
+                this.dispose(); // rilascio risorse
             }
 
             // click NO => ritorno alla Lobby o mappa livelli
             if ((screenX >= 513 && screenX <= 713) && (screenY >= 573 && screenY <= 650)) {
                 SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
+
                 // livello corrente
                 if (!isLevel) game.setScreen(new LobbyManager(game));
                 else game.setScreen(new SpaceJourney(game, selectedSp, (int) Math.ceil((double) numLevel / 10)));
+                this.dispose(); // rilascio risorse
             }
         }
 
@@ -806,8 +811,6 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // dispose sound manager
         soundManager.dispose();
-
-        screen.dispose();
     }
 
     @Override public void show() {}

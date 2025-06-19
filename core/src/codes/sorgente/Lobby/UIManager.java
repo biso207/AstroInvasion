@@ -59,7 +59,7 @@ public class UIManager implements ResourceLoader {
     private final HashMap<Integer, Texture> mapAvatarsImgs; // immagini avatar
     private final HashMap<Integer, Avatar> mapAvatars; // oggetti avatar
     private static HashMap<Integer, Spacecraft> mapSpacecrafts; // oggetti navicella
-    private final List<SpacecraftData> spacecrafts;
+    private final List<Spacecraft> spacecrafts;
 
     // arraylist delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
@@ -80,12 +80,17 @@ public class UIManager implements ResourceLoader {
         this.mapAvatarsImgs = new HashMap<>();
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
+        spacecrafts = new ArrayList<>();
         this.buttonsOver = new Texture[10];
         this.alphaFragments = new Texture[5];
         this.badgesRTG = new Texture[5];
 
         // caricamento navicella utente
-        createSpacecrafts();
+        // popolamento della mappa navicelle
+        for (int i = 0; i < 24; i++) {
+            // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
+            mapSpacecrafts.put(i, new Spacecraft(i));
+        }
         // selezione navicella utente
         selectedSp = selectSpacecraft();
 
@@ -94,8 +99,10 @@ public class UIManager implements ResourceLoader {
         loadImages(); // immagini lobby
         loadFont(); // font
 
-        // caricamento dati navicelle
-        spacecrafts = loadSpacecrafts(); // navicelle per la schermata di selezione
+        // popolamento della mappa navicelle
+        for (int i = 0; i < 24; i++) {
+            spacecrafts.add(new Spacecraft(i));
+        }
         createAvatars(); // creazione oggetti avatar
 
         // il caricamento delle navicelle avviene in LobbyManager così da passargli la navicella selezionata
@@ -242,44 +249,6 @@ public class UIManager implements ResourceLoader {
         topBanner2 = new Texture("images/top_banner2.png");
     }
 
-    // creazione grafica delle navicelle
-    private List<SpacecraftData> loadSpacecrafts() {
-        List<SpacecraftData> list = new ArrayList<>();
-
-        // missioni delle navicelle
-        String[] missions = {"", "", "", "",
-            "Complete Level 2", "Complete Level 4", "Complete Level 6", "Complete Level 8",
-            "Complete Level 12", "Complete Level 14", "Complete Level 16", "Complete Level 18",
-            "Complete Level 22", "Complete Level 24", "Complete Level 26", "Complete Level 28",
-            "Complete Level 32", "Complete Level 34", "Complete Level 36", "Complete Level 38",
-            "Buy in the Marketplace", "Buy in the Marketplace", "Win 200 SB", "Collect all 4 fragments"
-        };
-        // lore delle navicelle
-        String[] lore = {"Inevitable End", "Shapeshifting Threat", "Legendary Flight", "Stellar Rebel",
-            "Ancestral Warrior", "Energy Thief", "Deadly Silence", "Blazing Rebirth",
-            "Cosmic Rage", "Divine Fortress", "Invincible Purity", "Glitched Code",
-            "Space Hunter", "Hybrid Fury", "Supersonic Wind", "Sacred Flame",
-            "Lunar Light", "Shadow Tentacles", "Eternal Abyss", "Echo Of Time",
-            "Stellar Longship", "Frost Dominator", "Rising star", "Absolute Origin"
-        };
-        // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
-        int[][] attributes = {
-            {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
-            {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
-            {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
-            {2, 2, 0}, {0, 2, 30}, {2, 0, 30}, {1, 3, 0},
-            {3, 2, 0}, {0, 3, 40}, {3, 0, 40}, {2, 3, 0},
-            {3, 3, 0}, {0, 3, 50}, {3, 0, 50}, {3, 3, 10}
-        };
-
-        // popolamento della mappa navicelle
-        for (int i = 0; i < 24; i++) {
-            list.add(new SpacecraftData(i, missions[i], lore[i], attributes[i][0], attributes[i][1], attributes[i][2]));
-        }
-
-        return list;
-    }
-
     // **************** //
     // GESTIONE GRAFICA //
     // **************** //
@@ -305,39 +274,6 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(17, new Avatar("Kiara", "Win 200 SB Matches"));
         mapAvatars.put(18, new Avatar("Luke", "Reach 5M Points"));
         mapAvatars.put(19, new Avatar("Emma", "Complete Task 100"));
-    }
-
-    // metodo per creare le navicelle
-    public void createSpacecrafts() {
-        // nomi delle navicelle
-        String[] names = {"Omega", "Idra", "Woka", "Pegaso", "Ares", "Andvari", "Siko", "Fenixia", "Selen", "Centauro",
-            "Zephyr", "Malloc", "Orion", "Asgard", "Galahad", "Seraphis", "Beowulf", "Scylla", "Keto", "Efron",
-            "Drakar", "Rorik", "Astrid", "Alpha"};
-        // percorsi immagine navicelle e laser navicelle
-        String[] imagePaths = new String[24];
-        // percorsi immagine laser
-        String[] laserPaths = new String[24];
-
-        // popolamento array texture navicelle
-        for (int i=0; i<24; i++) {
-            laserPaths[i] = "images/lasers/laser (" + (i+1) + ").png";
-            imagePaths[i] = "images/spacecrafts/sp" + (i+1) + ".png";
-        }
-        // potenze delle navicelle => ordine potenze: 0:vel navicella, 1:vel laser, 2:bonus punti
-        int[][] attributes = {
-            {2, 0, 0}, {0, 1, 5}, {1, 0, 5}, {0, 2, 0},
-            {1, 1, 0}, {0, 1, 10}, {1, 0, 10}, {1, 1, 0},
-            {2, 1, 0}, {0, 2, 20}, {2, 0, 20}, {1, 2, 0},
-            {2, 2, 0}, {0, 2, 30}, {2, 0, 30}, {1, 3, 0},
-            {3, 2, 0}, {0, 3, 40}, {3, 0, 40}, {2, 3, 0},
-            {3, 3, 0}, {0, 3, 50}, {3, 0, 50}, {3, 3, 10}
-        };
-
-        // popolamento della mappa navicelle
-        for (int i = 0; i < 24; i++) {
-            // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
-            mapSpacecrafts.put(i, new Spacecraft(names[i], new Texture(imagePaths[i]), new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
-        }
     }
 
     // metodo per selezionare la navicella: viene chiamato alla creazione della Lobby e al cambio navicella
@@ -439,14 +375,14 @@ public class UIManager implements ResourceLoader {
         // iterazione con 2 for per dividere i gruppi delle navicelle
         for (int i=0; i<6; i++) {
             for (int j=0; j<4; j++) {
-                SpacecraftData s = spacecrafts.get(spID); // oggetto navicella
+                Spacecraft s = spacecrafts.get(spID); // oggetto navicella
 
                 // x delle scritte (x1 è la prima colonna, x2 è la seconda)
                 X = (j == 0 || j == 2) ? x1 : x2;
 
                 // attributi mostrati se la navicella è sbloccata altrimenti sono nascosti
-                if (SpacecraftData.isAchieved(spID)) {
-                    if (s.getSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getSpeed(), X, y-InputManager.scrollY);
+                if (Spacecraft.isAchieved(spID)) {
+                    if (s.getSpSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getSpSpeed(), X, y-InputManager.scrollY);
                     if (s.getLaserSpeed()>=1) fontBoldWhite18.draw(screen, "+" + s.getLaserSpeed(), X, (y-37)-InputManager.scrollY);
                     if (s.getBonusPoints()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoints() + "%", X, (y-74)-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);

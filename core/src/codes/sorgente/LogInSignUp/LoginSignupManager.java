@@ -120,7 +120,9 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 // schermata di caricamento per upload/download dati
                 LoadingScreen loadingScreen = new LoadingScreen(game, false);
                 GlobalProgressManager.setListener(loadingScreen);
-                game.setScreen(loadingScreen);
+
+                game.setScreen(loadingScreen); // creazione di un nuovo screen
+                this.dispose(); // rilascio risorse
                 break;
             default:
                 break;
@@ -173,8 +175,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         continueBtnHover.dispose();
         noInternet.dispose();
 
-        alg.dispose(); // rilascio risorse della classe degli algoritmi
-
-        screen.dispose();
+        alg.dispose();
     }
 }

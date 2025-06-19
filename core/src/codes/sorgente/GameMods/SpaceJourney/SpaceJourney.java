@@ -198,11 +198,9 @@ public class SpaceJourney implements Screen, InputProcessor {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             soundtrack.stop(); // stop della musica
 
-            // rilascio risorse
-            dispose();
-
             // apertura nuovo screen - lobby
             game.setScreen(new LobbyManager(game));
+            this.dispose(); // rilascio risorse
         }
 
         // controllo click della X: da 0 a back to lobby; da 4<=numGalaxy<=1 a mapGalaxies (0)
@@ -211,11 +209,9 @@ public class SpaceJourney implements Screen, InputProcessor {
             if (numGalaxy == 0) {
                 soundtrack.stop(); // stop della musica
 
-                // rilascio risorse
-                dispose();
-
                 // apertura nuovo screen - lobby
                 game.setScreen(new LobbyManager(game));
+                this.dispose(); // rilascio risorse
             }
             else numGalaxy = 0;
         }
@@ -225,8 +221,10 @@ public class SpaceJourney implements Screen, InputProcessor {
             SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
             infoLevel=false; // chiusura pagina in sovra impressione
             soundtrack.stop(); // interruzione musica
-            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, selectedSp, true));
-            else game.setScreen(new ClassicGame(game, selectedSp, true));
+
+            if (listSB.contains(numLevel)) game.setScreen(new SpaceBattle(game, true));
+            else game.setScreen(new ClassicGame(game, true));
+            this.dispose(); // rilascio risorse
         }
 
         return true;
