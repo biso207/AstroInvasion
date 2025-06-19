@@ -10,14 +10,14 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Spacecraft {
     // attributi
-    private final String name, pathImg;
+    private final String name;
     private final int bonusPoints, spSpeed, laserSpeed;
-    private final Texture laserTexture;
+    private final Texture imgTexture, laserTexture;
 
     // costruttore
-    public Spacecraft(String name, String pathImg, Texture laserTexture, int spSpeed, int laserSpeed, int bonusPoints) {
+    public Spacecraft(String name, Texture imgTexture, Texture laserTexture, int spSpeed, int laserSpeed, int bonusPoints) {
         this.name = name;
-        this.pathImg = pathImg;
+        this.imgTexture = imgTexture;
         this.laserTexture = laserTexture;
         this.bonusPoints = bonusPoints;
         this.spSpeed = spSpeed;
@@ -32,8 +32,8 @@ public class Spacecraft {
     }
 
     // getter del percorso dell'immagine
-    public String getPathImg() {
-        return pathImg;
+    public Texture getImgTexture() {
+        return imgTexture;
     }
 
     // getter del percorso dell'immagine del laser

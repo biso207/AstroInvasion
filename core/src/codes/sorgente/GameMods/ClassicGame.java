@@ -142,7 +142,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
         type=0;
 
         // immagine navicella
-        spaceshipTexture = new Texture(selectedSp.getPathImg());
+        spaceshipTexture = selectedSp.getImgTexture();
         // sfondo in gioco
         backgroundTexture = new Texture("images/bgInGame.png");
         // init delle immagini degli alieni

@@ -99,7 +99,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         // istanza del soundManager per riprodurre i suoni
         soundManager = new SoundManager(InputManager.soundPercent);
 
-        playerTexture = new Texture(selectedSp.getPathImg());
+        playerTexture = selectedSp.getImgTexture();
 
         playerShip = new Rectangle(400, 20, 70, 64);
         enemyShip = new Rectangle(400, 520, 70, 64);

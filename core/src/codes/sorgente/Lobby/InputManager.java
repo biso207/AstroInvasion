@@ -192,7 +192,7 @@ public class InputManager implements InputProcessor {
         esempio: l'utente NON può avviare il 'classic game' da una pagina in sovra impressione o esterna che riempe lo schermo
         */
 
-        System.out.println("screenX: "+screenX+" screenY: "+screenY);
+        //System.out.println("screenX: "+screenX+" screenY: "+screenY);
 
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
@@ -581,7 +581,10 @@ public class InputManager implements InputProcessor {
             // X sp => chiusura pagina navicelle/info di gioco
             if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (screenY >= 67 && screenY <= 107)) {
                 // salvataggio navicella selezionata
-                if (page==4) DataUserManager.setProgress("spacecraft", numSelectedSP);
+                if (page==4) {
+                    DataUserManager.setProgress("spacecraft", numSelectedSP);
+                    isSPChanged = false;
+                }
 
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 page = previousPage;

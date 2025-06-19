@@ -93,6 +93,7 @@ public class UIManager implements ResourceLoader {
         createMissions();
         loadImages(); // immagini lobby
         loadFont(); // font
+
         // caricamento dati navicelle
         spacecrafts = loadSpacecrafts(); // navicelle per la schermata di selezione
         createAvatars(); // creazione oggetti avatar
@@ -152,9 +153,6 @@ public class UIManager implements ResourceLoader {
         txtSoldOut = new Texture("images/sold_item_txt.png");
         // pulsante reset elementi attivo
         btnResetActive = new Texture("images/btns_hover/active_reset_btn.png");
-
-        // immagine navicella
-        spImg = new Texture(selectedSp.getPathImg());
 
         // immagini badges RTG
         for (int i=0; i<5; i++) {
@@ -338,7 +336,7 @@ public class UIManager implements ResourceLoader {
         // popolamento della mappa navicelle
         for (int i = 0; i < 24; i++) {
             // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
-            mapSpacecrafts.put(i, new Spacecraft(names[i], imagePaths[i], new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
+            mapSpacecrafts.put(i, new Spacecraft(names[i], new Texture(imagePaths[i]), new Texture(laserPaths[i]), attributes[i][0], attributes[i][1], attributes[i][2]));
         }
     }
 
@@ -536,9 +534,8 @@ public class UIManager implements ResourceLoader {
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
-        selectedSp = selectSpacecraft(); // nuovo oggetto navicella
-        spImg = new Texture(selectedSp.getPathImg()); // caricamento della nuova immagine
-
+        selectedSp = selectSpacecraft(); // oggetto navicella
+        spImg = selectedSp.getImgTexture(); // immagine navicella
 
         // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
         if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);

@@ -14,6 +14,7 @@ public class SessionLockManager {
 
     private static int heartbeatFails = 0;
     private static String currentUsername;
+    private static int cont_hb=0;
 
     // metodo per iniziare ad aggiornare il timestamp ogni 10 secondi
     public static void startHeartbeat(String username) {
@@ -27,7 +28,9 @@ public class SessionLockManager {
             try {
                 LockStatusManager.setLockStatus(username, true);
                 heartbeatFails = 0;
-                System.out.println("Heartbeat OK");
+                cont_hb++;
+                System.out.println("Thread attivi: " + Thread.activeCount());
+                System.out.println("Heartbeat " + cont_hb + " OK");
             } catch (IOException e) {
                 heartbeatFails++;
                 System.out.println("Heartbeat fallito (" + heartbeatFails + ")");
