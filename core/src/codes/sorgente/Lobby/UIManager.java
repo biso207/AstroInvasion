@@ -31,7 +31,7 @@ public class UIManager implements ResourceLoader {
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive, noInternetIcon,
-        noInternetMessage;
+        noInternetMessage, showPS, coverPS;
 
     // textureRegione per definire l'area di completamento della task corrente in Missions
     private TextureRegion progressBarRegion;
@@ -53,7 +53,7 @@ public class UIManager implements ResourceLoader {
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
         fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontBoldWhite27, fontBoldWhite30, fontBoldWhite35,
-        fontItalicBoldWhite15, fontBoldWhite60, fontSemiboldYellow25;
+        fontBoldWhite40, fontItalicBoldWhite15, fontBoldWhite60, fontSemiboldYellow25;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -85,7 +85,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
         spacecrafts = new ArrayList<>();
-        this.buttonsOver = new Texture[12];
+        this.buttonsOver = new Texture[13];
         this.alphaFragments = new Texture[5];
         this.badgesRTG = new Texture[5];
 
@@ -135,6 +135,7 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite27 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_27.fnt")); // inter-bold white 27
             fontBoldWhite30 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
             fontBoldWhite35 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
+            fontBoldWhite40 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_40.fnt")); // inter-bold white 40
             fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
             // yellow
@@ -192,7 +193,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 13; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -257,6 +258,10 @@ public class UIManager implements ResourceLoader {
         // icona internet assente
         noInternetIcon = new Texture("login_signup_screens/no_internet.png");
         noInternetMessage = new Texture("images/alert_message_noInternet.png");
+
+        // icona mostra/nascondi password
+        showPS = new Texture("login_signup_screens/showPS.png");
+        coverPS = new Texture("login_signup_screens/coverPS.png");
     }
 
     // **************** //
@@ -817,6 +822,25 @@ public class UIManager implements ResourceLoader {
             else if (InputManager.open16) drawSettingsPage(screen); // impostazioni di gioco
             else if (InputManager.open19) drawGloryPage(screen); // road to glory
             else if (InputManager.open20) drawLeaderboard(screen); // leaderboard
+            else if (InputManager.open21) { // password change
+                screen.draw(mapLobby.get(21), 250, 165);
+
+                // button hover
+                if (InputManager.isBtnChangePSWHover) screen.draw(buttonsOver[12], 424, 207);
+
+                // testo "DELETE"
+                fontBoldWhite40.draw(screen, "SAVE", 449, 249);
+
+                // password digitata + icona mostra/nascondi psw
+                if (!InputManager.showPS) {
+                    fontBoldWhite30.draw(screen, "*".repeat(InputManager.passwordInput.length()), 290, 325);
+                    screen.draw(coverPS, 685,303);
+                }
+                else {
+                    fontBoldWhite30.draw(screen, InputManager.passwordInput, 290, 328);
+                    screen.draw(showPS, 685,303);
+                }
+            }
             else if (InputManager.open22) { // delete profile
                 screen.draw(mapLobby.get(22), 250, 165);
 
@@ -826,8 +850,6 @@ public class UIManager implements ResourceLoader {
                 // testo "DELETE"
                 fontBoldWhite35.draw(screen, "DELETE", 437, 247);
             }
-
-            // todo: settare la schermata del cambio mostrando la nuova password che si sta digitando nell'InputManager
         }
     }
 

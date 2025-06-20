@@ -147,11 +147,11 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
             else screen.draw(loginPageBtnHover, 428, 99);
         }
 
-        font.draw(screen, alg.nicknameInput, 265, 414); // testo password
+        font.draw(screen, alg.nicknameInput, 272, 412); // testo nickname
 
-        // la password può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
-        if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 265, 310);
-        else font.draw(screen, alg.passwordInput, 265, 315);
+        // testo password che può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
+        if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 272, 310);
+        else font.draw(screen, alg.passwordInput, 272, 316);
 
         screen.end();
     }

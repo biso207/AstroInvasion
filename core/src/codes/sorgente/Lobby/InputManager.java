@@ -44,12 +44,16 @@ public class InputManager implements InputProcessor {
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
         isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false,
-        isHoverIconNoInternet=false, isDeleteAccountHover=false, isBtnDeleteHover=false;
+        isHoverIconNoInternet=false, isDeleteAccountHover=false, isBtnDeleteHover=false,
+        isBtnChangePSWHover=false, showPS=false;
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
     protected static int page=0; // settato a zero alla primissima istanza
     private int previousPage;
+
+    // variabili per comporre la stringa della nuova password
+    protected static StringBuilder passwordInput;
 
     // boolean per le carte speciali
     public static boolean goldHeart, shield, superLaser, doublePoints;
@@ -106,6 +110,8 @@ public class InputManager implements InputProcessor {
         item1=item2=item3=item4=item5=item6=0;
         // recupero crediti
         currentCredit = (int) DataUserManager.getProgress("credits");
+
+        passwordInput = new StringBuilder();
 
         // recupero volume audio
         soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
@@ -200,14 +206,6 @@ public class InputManager implements InputProcessor {
         */
 
         System.out.println("screenX: "+screenX+" screenY: "+screenY);
-
-        // todo: aggiungere l'apertura per il cambio password
-        //  aggiungere l'hover per la conferma del cambio password
-        //  per il cambio password controllare che sia diversa da quella attuale altrimenti non va nè l'hover nè
-        //  la chiamata al metodo savePassword(nick, psw) di CloudStorageManager che sovrascrive la vecchia password
-        //  con quella nuova
-        //  permettere la digitazione della nuova password solo se open21 è true, limitare a 10 caratteri
-        //  permettere di mostrare/nascondere la password durante la digitazione, come nelle pagine di autenticazione
 
         // **************************************** //
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
@@ -576,6 +574,11 @@ public class InputManager implements InputProcessor {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open19 = true;
             }
+            // apertura password change
+            if (page==6 && !open19 && !open22 && (screenX>=434 && screenX<=454) && (screenY>=325 && screenY<=345)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                secondScreen = open21 = true;
+            }
             // apertura delete profile
             if (page==6 && !open19 && !open21 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -594,7 +597,25 @@ public class InputManager implements InputProcessor {
                 ui.disposeUI(); // rilascio risorse
                 // apertura pagina autenticazione
                 LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+            }
 
+            // mostra/nascondi password
+            if (open21 && (screenX>=674 && screenX<=704) && (screenY>=364 && screenY<=394)) showPS=!showPS;
+            // salvataggio nuova password
+            if (open21 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
+                // cambio valori variabili
+                String newPassword = passwordInput.toString();
+                AuthAlgorithms.password = newPassword;
+
+                // sovrascrittura in remoto della nuova password
+                try {
+                    CloudStorageManager.savePassword(AuthAlgorithms.nickname, newPassword);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                passwordInput.setLength(0); // reset lunghezza per futuri cambi
+                secondScreen = open21 = false; // chiusura pagina cambio password
             }
 
             // selezione avatar
@@ -812,7 +833,7 @@ public class InputManager implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
         isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=
-            isBtnGloryHover=isHoverIconNoInternet=isDeleteAccountHover=isBtnDeleteHover=false;
+            isBtnGloryHover=isHoverIconNoInternet=isDeleteAccountHover=isBtnDeleteHover=isBtnChangePSWHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
 
@@ -829,9 +850,11 @@ public class InputManager implements InputProcessor {
 
         // rtg (road to glory)
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+        // password change action button
+        if (open21 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) isBtnChangePSWHover=true;
         // delete the account
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) isDeleteAccountHover=true;
-        // delete account button
+        // delete account action button
         if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) isBtnDeleteHover=true;
 
         // pagine della lobby
@@ -902,8 +925,21 @@ public class InputManager implements InputProcessor {
         return true;
     }
 
+    // metodo per rilevare la digitazione della tastiera
+    @Override public boolean keyTyped(char character) {
+        // riproduzione suono digitazione
+        SoundManager.playDigitSound(soundPercent); // suono del click
+
+        if (open21) {
+            if (character == '\b' && !passwordInput.isEmpty()) passwordInput.deleteCharAt(passwordInput.length() - 1);
+                // controllo digitazione caratteri validi
+            else if (character >= 32 && character < 127 && passwordInput.length() <= 10) passwordInput.append(character);
+        }
+
+        return true;
+    }
+
     // altri metodi
-    @Override public boolean keyTyped(char character) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
 
