@@ -602,7 +602,7 @@ public class InputManager implements InputProcessor {
             // mostra/nascondi password
             if (open21 && (screenX>=674 && screenX<=704) && (screenY>=364 && screenY<=394)) showPS=!showPS;
             // salvataggio nuova password
-            if (open21 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
+            if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
                 // cambio valori variabili
                 String newPassword = passwordInput.toString();
                 AuthAlgorithms.password = newPassword;
@@ -851,7 +851,7 @@ public class InputManager implements InputProcessor {
         // rtg (road to glory)
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
         // password change action button
-        if (open21 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) isBtnChangePSWHover=true;
+        if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) isBtnChangePSWHover=true;
         // delete the account
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) isDeleteAccountHover=true;
         // delete account action button
