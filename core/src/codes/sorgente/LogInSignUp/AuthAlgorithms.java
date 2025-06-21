@@ -160,7 +160,7 @@ public class AuthAlgorithms implements InputProcessor {
 
         try {
             // nickname invalido, contiene parole invalide
-            if (!ProfanityFilter.isValidNickname(nickname)) { error4=true; return; } // todo: migliorarlo perché non funziona
+            //if (!ProfanityFilter.isValidNickname(nickname)) { error4=true; return; } // todo: migliorarlo perché non funziona
 
             // controllo presenza utente
             if (!CloudStorageManager.checkUsernameExists(nickname)) {
@@ -179,7 +179,7 @@ public class AuthAlgorithms implements InputProcessor {
                 SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
                 DataUserManager.loadProgresses(); // caricamento progressi utente
                 state = 2; // passaggio alla lobby
-                //notify.sendMessage(); // notifica di apertura gioco todo: togliere il comando prima del build finale
+                notify.sendMessage(); // notifica di apertura gioco
             }
             else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
                 error = true;
@@ -220,7 +220,7 @@ public class AuthAlgorithms implements InputProcessor {
             SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
             DataUserManager.loadProgresses(); // caricamento progressi utente
             state = 2; // passaggio alla lobby
-            //notify.sendMessage(); // notifica di apertura gioco todo: togliere il comando prima del build finale
+            notify.sendMessage(); // notifica di apertura gioco
 
         } catch(Exception e){
             System.err.println(e.getMessage());
