@@ -99,8 +99,6 @@ public class SoundManager {
         completedSound.dispose();
         winSound.dispose();
         defeatSound.dispose();
-        clickButtonSound.dispose();
-        digitSound.dispose();
     }
 }
 

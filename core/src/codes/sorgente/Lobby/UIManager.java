@@ -922,6 +922,5 @@ public class UIManager implements ResourceLoader {
         infoBanner.dispose();
 
         mouse.dispose();
-        cursor.dispose();
     }
 }
