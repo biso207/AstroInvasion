@@ -600,7 +600,10 @@ public class InputManager implements InputProcessor {
             }
 
             // mostra/nascondi password
-            if (open21 && (screenX>=674 && screenX<=704) && (screenY>=364 && screenY<=394)) showPS=!showPS;
+            if (open21 && (screenX>=674 && screenX<=704) && (screenY>=364 && screenY<=394)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                showPS=!showPS;
+            }
             // salvataggio nuova password
             if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
                 // cambio valori variabili
