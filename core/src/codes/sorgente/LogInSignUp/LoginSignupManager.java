@@ -109,9 +109,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 if (alg.success) fontBoldYellow20.draw(screen, "Creating ID", 445, 72);
                 break;
             case 2:
-                // caricamento risorse utente
+                // salvataggio password in remoto
                 try {
-                    // salvataggio password in remoto
                     CloudStorageManager.savePassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -119,9 +118,11 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
                 // schermata di caricamento per upload/download dati
                 LoadingScreen loadingScreen = new LoadingScreen(game, false);
+                game.setScreen(loadingScreen); // creazione di un nuovo screen
+
+                // setting oggetto del listener per la barra di caricamento
                 GlobalProgressManager.setListener(loadingScreen);
 
-                game.setScreen(loadingScreen); // creazione di un nuovo screen
                 this.dispose(); // rilascio risorse
                 break;
             default:

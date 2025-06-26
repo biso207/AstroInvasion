@@ -18,7 +18,7 @@ import java.util.Random;
 public class LoadingScreen implements Screen, ProgressListener {
     private final SpriteBatch screen;
     private float loadingProgress = 0;
-    private int targetProgress = 0;
+    private int targetProgress=0, finalProgress=0;
     public boolean loadingFinished = false;
     private final ShapeRenderer shapeRenderer;
     private final Main game;
@@ -43,9 +43,10 @@ public class LoadingScreen implements Screen, ProgressListener {
             openSound.setLooping(false);
             openSound.play();
 
-            setProgress(3000); // tempo di 1 secondo per aprire la pagina iniziale
+            targetProgress=finalProgress=200;
         } else {
-            // pagina di caricamento dati utente o creazione id
+            // caricamento pagina dei dati utente
+            finalProgress=100; // tempo caricamento
             new Thread(() -> {
                 for (int i = 0; i <= 100; i++) {
                     try { Thread.sleep(50); } catch (InterruptedException ignored) {}
@@ -77,14 +78,14 @@ public class LoadingScreen implements Screen, ProgressListener {
         screen.draw(background, 0, 0);
         screen.end();
 
-        float barWidth = (loadingProgress / 100f) * 390;
+        float barWidth = (loadingProgress / finalProgress) * 390;
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.valueOf(colorsLoader[bg]));
         drawRoundedRectangle(shapeRenderer, barWidth);
         shapeRenderer.end();
 
-        if (loadingProgress >= 100 && !loadingFinished) {
+        if (loadingProgress >= finalProgress && !loadingFinished) {
             loadingFinished = true;
 
             // accesso alla schermata successiva

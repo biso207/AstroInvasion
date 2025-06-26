@@ -149,7 +149,6 @@ public class AuthAlgorithms implements InputProcessor {
         } else {
             SignUpAlg(); // algoritmo di registrazione
         }
-
         resetTexts();
     }
 
@@ -179,7 +178,7 @@ public class AuthAlgorithms implements InputProcessor {
                 SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
                 DataUserManager.loadProgresses(); // caricamento progressi utente
                 state = 2; // passaggio alla lobby
-                notify.sendMessage(); // notifica di apertura gioco
+                //notify.sendMessage(); // notifica di apertura gioco todo: togliere il commento prima della build finale
             }
             else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
                 error = true;
@@ -220,8 +219,7 @@ public class AuthAlgorithms implements InputProcessor {
             SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
             DataUserManager.loadProgresses(); // caricamento progressi utente
             state = 2; // passaggio alla lobby
-            notify.sendMessage(); // notifica di apertura gioco
-
+            //notify.sendMessage(); // notifica di apertura gioco todo: togliere il commento prima della build finale
         } catch(Exception e){
             System.err.println(e.getMessage());
         }
@@ -319,7 +317,7 @@ public class AuthAlgorithms implements InputProcessor {
         }
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && !currentInput.isEmpty()) currentInput.deleteCharAt(currentInput.length() - 1);
-            // controllo digitazione caratteri validi
+        // controllo digitazione caratteri validi
         else if (character >= 32 && character < 127 && currentInput.length() <= 10) currentInput.append(character);
         return true;
     }
