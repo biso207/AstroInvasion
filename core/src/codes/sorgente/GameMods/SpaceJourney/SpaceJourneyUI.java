@@ -197,7 +197,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
 
         // pulsante per chiudere pagina
-        screen.draw(closeButton, 913, 576);
+        screen.draw(closeButton, 914, 576);
 
         // posizione iniziale immagine livello e icona numero livello
         int X=50, Y=343;
