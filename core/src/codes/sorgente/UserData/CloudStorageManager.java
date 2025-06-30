@@ -8,6 +8,7 @@ Developed by BIGA©. All rights reserved.
 package sorgente.UserData;
 
 // import librerie e codici
+import com.badlogic.gdx.Gdx;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import okhttp3.*;
@@ -24,12 +25,12 @@ public class CloudStorageManager {
     public static Map<String, Integer> userPointsMap = new HashMap<>();
 
     // dati del database per la connessione
-    private static final String PROJECT_ID = "astroinvasioncloud"; // <-- cambia col tuo project id
+    private static final String PROJECT_ID = "astroinvasioncloud"; // nome database
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents/";
 
     // metodo per recuperare il token che permette la comunicazione client-server
     protected static String getAccessToken() throws IOException {
-        GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream("../service-account.json"))
+        GoogleCredentials credentials = GoogleCredentials.fromStream(Gdx.files.internal("service-account.json").read())
             .createScoped("https://www.googleapis.com/auth/cloud-platform");
         credentials.refreshIfExpired();
         return credentials.getAccessToken().getTokenValue();
