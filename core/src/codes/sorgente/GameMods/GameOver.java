@@ -454,13 +454,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // difficoltà
                     switch ((int) DataUserManager.getProgress("diff_classic_game")) {
                         case 1:
-                            screen.draw(diffCG1, 843 ,259);
+                            screen.draw(diffCG1, 840 ,259);
                             break;
                         case 2:
-                            screen.draw(diffCG2, 843 ,259);
+                            screen.draw(diffCG2, 840 ,259);
                             break;
                         case 3:
-                            screen.draw(diffCG3, 843 ,259);
+                            screen.draw(diffCG3, 840 ,259);
                             break;
                     }
                 }
@@ -488,13 +488,13 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                     // difficoltà
                     switch ((int) DataUserManager.getProgress("diff_space_battle")) {
                         case 1:
-                            screen.draw(diffSB1, 843 ,259);
+                            screen.draw(diffSB1, 842 ,259);
                             break;
                         case 2:
-                            screen.draw(diffSB2, 843 ,259);
+                            screen.draw(diffSB2, 842 ,259);
                             break;
                         case 3:
-                            screen.draw(diffSB3, 843 ,259);
+                            screen.draw(diffSB3, 842 ,259);
                             break;
                     }
 

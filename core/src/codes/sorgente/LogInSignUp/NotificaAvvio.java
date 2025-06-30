@@ -31,9 +31,6 @@ public class NotificaAvvio {
             URL url = new URL(urlString);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
-
-            int responseCode = con.getResponseCode();
-            System.out.println("Messaggio Telegram inviato. Codice: " + responseCode); // messaggio di debug
         } catch (Exception e) {
             e.printStackTrace();
         }
