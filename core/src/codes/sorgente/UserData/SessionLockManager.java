@@ -40,7 +40,6 @@ public class SessionLockManager {
 
                 // debug
                 cont_hb++; // numero di heartbeats
-                System.out.println("Heartbeat " + cont_hb + " OK");
             }
         }, 0, HEARTBEAT_INTERVAL_MS, TimeUnit.MILLISECONDS);
     }
@@ -52,7 +51,6 @@ public class SessionLockManager {
             stopRecovery();
             if (currentUsername != null) {
                 LockStatusManager.setLockStatus(currentUsername, false);
-                System.out.println("Sessione terminata, lock rilasciato");
             }
         } catch (IOException e) {
             System.out.println("Errore durante il rilascio del lock: " + e.getMessage());

@@ -29,7 +29,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final AuthAlgorithms alg;
 
     // font
-    private BitmapFont font, fontBoldYellow20;
+    private BitmapFont font, fontBoldWhite20, fontBoldYellow20;
     // immagini
     private Texture img1, img2, digitAreaON, digitAreaOFF, showPS, coverPS, loginPageBtnHover,
         signupPageBtnHover, continueBtnHover, noInternet;
@@ -56,6 +56,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     public void loadFont() {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
+            fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldYellow20 = new BitmapFont(Gdx.files.internal("font/inter/bold_yellow_20.fnt")); // inter-regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
@@ -100,13 +101,11 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
                 if (alg.error) fontBoldYellow20.draw(screen, "Password wrong",420,72);
                 if (alg.error1) fontBoldYellow20.draw(screen, "Nickname not found",402,72);
                 if (alg.error3) fontBoldYellow20.draw(screen, "Your session is already open",361,72);
-                if (alg.success) fontBoldYellow20.draw(screen, "Downloading progresses", 380, 72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);
                 if (alg.error) fontBoldYellow20.draw(screen, "Nickname already in use",388,72);
                 if (alg.error4) fontBoldYellow20.draw(screen, "Nickname not valid",388,72);
-                if (alg.success) fontBoldYellow20.draw(screen, "Creating ID", 445, 72);
                 break;
             case 2:
                 // salvataggio password in remoto
@@ -139,18 +138,20 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         screen.draw(alg.enteringNickname ? digitAreaON : digitAreaOFF, 257, 379);
         screen.draw(alg.enteringPassword ? digitAreaON : digitAreaOFF, 257, 281);
 
+        // icona mostra/nascondi password
         if (alg.showPS) screen.draw(showPS, 690,288);
         else screen.draw(coverPS, 690,288);
 
+        // pulsante PLAY e cambio pagina
         if (alg.isHover1) screen.draw(continueBtnHover, 422, 185);
         if (alg.isHover2) {
             if (alg.state==1) screen.draw(signupPageBtnHover, 428, 99);
             else screen.draw(loginPageBtnHover, 428, 99);
         }
 
-        font.draw(screen, alg.nicknameInput, 272, 412); // testo nickname
-
-        // testo password che può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
+        // nickname
+        font.draw(screen, alg.nicknameInput, 272, 412);
+        // password che può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
         if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 272, 310);
         else font.draw(screen, alg.passwordInput, 272, 316);
 

@@ -52,8 +52,8 @@ public class UIManager implements ResourceLoader {
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
     private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldWhite25, fontBoldWhite27, fontBoldWhite30, fontBoldWhite35,
-        fontBoldWhite40, fontItalicBoldWhite15, fontBoldWhite60, fontSemiboldYellow25;
+        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldItalicWhite20, fontBoldWhite25, fontBoldWhite27, fontBoldWhite30, fontBoldWhite35,
+        fontBoldWhite40, fontBoldItalicWhite15, fontBoldWhite60, fontSemiboldYellow25, fontBoldItalicYellow20;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -85,7 +85,7 @@ public class UIManager implements ResourceLoader {
         this.mapAvatars = new HashMap<>();
         mapSpacecrafts = new HashMap<>();
         spacecrafts = new ArrayList<>();
-        this.buttonsOver = new Texture[13];
+        this.buttonsOver = new Texture[14];
         this.alphaFragments = new Texture[5];
         this.badgesRTG = new Texture[5];
 
@@ -136,10 +136,12 @@ public class UIManager implements ResourceLoader {
             fontBoldWhite30 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
             fontBoldWhite35 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 35
             fontBoldWhite40 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_40.fnt")); // inter-bold white 40
-            fontItalicBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
+            fontBoldItalicWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_15.fnt")); // inter-italic-bold white 15
+            fontBoldItalicWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_white_20.fnt")); // inter-italic-bold white 20
             fontBoldWhite60 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_60_1.fnt"));
             // yellow
-            fontSemiboldYellow25 = new BitmapFont(Gdx.files.internal("font/inter/semibold_yellow_25.fnt"));
+            fontSemiboldYellow25 = new BitmapFont(Gdx.files.internal("font/inter/semibold_yellow_25.fnt")); // inter-semibold yellow 25
+            fontBoldItalicYellow20 = new BitmapFont(Gdx.files.internal("font/inter/bold_italic_yellow_20.fnt")); // inter-italic-bold yellow 20
         } catch (Exception e) {
             // dichiarazione font
             BitmapFont font = new BitmapFont(); // font di default (arial)
@@ -155,7 +157,7 @@ public class UIManager implements ResourceLoader {
         cursor = Gdx.graphics.newCursor(mouse, 0, 0);
 
         // popolamento mappa lobby
-        for (int i = 0; i < 23; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
+        for (int i = 0; i < 24; i++) mapLobby.put(i, new Texture("lobby_screens/lobby (" + i + ").png"));
         // popolamento mappa avatar
         for (int i = 0; i <= 19; i++) mapAvatarImg.put(i, new Texture("images/avatars/av (" + i + ").png"));
 
@@ -193,7 +195,7 @@ public class UIManager implements ResourceLoader {
         selectedSetting = new Texture("images/selected_setting.png");
 
         // pulsanti "hover"
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 14; i++) {
             buttonsOver[i] = new Texture("images/btns_hover/hover_btn" + (i+1) + ".png");
         }
 
@@ -232,18 +234,18 @@ public class UIManager implements ResourceLoader {
         spacecraftSelectionBox = new Texture("images/rect_selected_SP.png");
 
         // array per gli avatar
-        avatars = new Texture[20];
-        avatarsCovered = new Texture[20];
+        avatars = new Texture[21];
+        avatarsCovered = new Texture[21];
 
         // caricamento avatar base
-        for (int i = 0; i < 20; i++) {
+        for (int i=0; i<=20; i++) {
             avatars[i] = new Texture("images/avatars/av (" + i + ") mini.png");
         }
         // caricamento avatar nascosti
         for (int i=0; i<4; i++) {
             avatarsCovered[i] = null; // null per i primi 4 avatar
         }
-        for (int i=4; i<=19; i++ ) {
+        for (int i=4; i<=20; i++ ) {
             avatarsCovered[i] = new Texture("images/avatars/av (" + i + ") mini covered.png");
         }
 
@@ -334,6 +336,10 @@ public class UIManager implements ResourceLoader {
         // pulsante raccolta premio //
         if ((boolean) DataUserManager.getProgress("completed_mission")) {
             screen.draw(claimPrize, 767, 100);
+
+            // button claim hover
+            if (InputManager.isBtnClaimHover) screen.draw(buttonsOver[3], 767, 100);
+
             fontBoldWhite30.draw(screen, "CLAIM", 785, 133); // testo CLAIM
             progress=maxProgress;
         }
@@ -347,9 +353,6 @@ public class UIManager implements ResourceLoader {
 
         // progresso road to glory
         fontBoldWhite20.draw(screen, formatter.format(progress) + "/" + formatter.format(maxProgress), 525, 294);
-
-        // button start hover
-        if (InputManager.isBtnClaimHover) screen.draw(buttonsOver[3], 767, 100);
     }
 
     // metodo per disegnare la pagina delle impostazioni
@@ -722,9 +725,9 @@ public class UIManager implements ResourceLoader {
             case 6:
                 // testi //
                 // SCRITTE A SX
-                fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 413); // nickname
-                fontMediumWhite20.draw(screen, "Password: " + AuthAlgorithms.password, 67, 373); // password
-                fontMediumWhite20.draw(screen, "Creation ID: " + DataUserManager.getProgress("date"), 67, 334); // data registrazione
+                fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 340); // nickname
+                fontMediumWhite20.draw(screen, "Password: " + AuthAlgorithms.password, 67, 300); // password
+                fontMediumWhite20.draw(screen, "Creation ID: " + DataUserManager.getProgress("date"), 67, 260); // data registrazione
 
                 // SCRITTE A DX
                 fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 540, 412); // punti
@@ -740,8 +743,13 @@ public class UIManager implements ResourceLoader {
                 // immagini //
                 screen.draw(mapAvatarImg.get((int) DataUserManager.getProgress("avatar")), 461, 513); // avatar
 
-                if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 40, 145);
-                if (InputManager.isDeleteAccountHover) screen.draw(buttonsOver[11], 432, 426);
+                // avatar cap alpha
+                screen.draw(InputManager.isGameCompleted ? avatars[20] : avatarsCovered[20], 93, 417);
+
+                // pulsanti schiariti al passaggio
+                if (InputManager.isBtnWiseManHover && InputManager.isGameCompleted) screen.draw(buttonsOver[13], 93, 417); // open wise man
+                if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 178, 417); // rtg
+                if (InputManager.isDeleteAccountHover) screen.draw(buttonsOver[11], 432, 354); // delete profile
                 break;
 
             // pagina avatars
@@ -751,7 +759,7 @@ public class UIManager implements ResourceLoader {
                 for (int i=0; i<=19; i++) {
                     // stampa immagine avatar
                     if (!Avatar.isAchieved(i)) {
-                        fontItalicBoldWhite15.draw(screen, mapAvatars.get(i).getMissione(), x, y-15);
+                        fontBoldItalicWhite15.draw(screen, mapAvatars.get(i).getMissione(), x, y-15);
                         screen.draw(avatarsCovered[i], x, y);
                     }
                     else {
@@ -850,6 +858,17 @@ public class UIManager implements ResourceLoader {
                 // testo "DELETE"
                 fontBoldWhite35.draw(screen, "DELETE", 437, 247);
             }
+            else if (InputManager.open23) { // wise man
+                screen.draw(mapLobby.get(23), 145, 165);
+
+                // messaggio cap alpha in giallo
+                fontBoldItalicYellow20.draw(screen, "“The key to true success lies in patience and perseverance.\n" +
+                    "And remember, never stop exploring.”", 208, 357);
+                // testi sotto in bianco
+                fontBoldItalicWhite20.draw(screen, "— Cap. Alpha", 208, 305);
+                fontBoldWhite20.draw(screen, "Congratulations " + AuthAlgorithms.nickname + ", the journey has come to an end.", 208, 272);
+                fontBoldWhite20.draw(screen, "Your glory will be remembered forever.", 208, 245);
+            }
         }
     }
 
@@ -915,7 +934,7 @@ public class UIManager implements ResourceLoader {
         fontBoldWhite18.dispose();
         fontBoldWhite20.dispose();
         fontBoldWhite25.dispose();
-        fontItalicBoldWhite15.dispose();
+        fontBoldItalicWhite15.dispose();
         fontBoldWhite60.dispose();
 
         spImg.dispose();

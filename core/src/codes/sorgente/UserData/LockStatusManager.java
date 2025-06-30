@@ -56,7 +56,6 @@ public class LockStatusManager {
         long currentTime = System.currentTimeMillis();
         // recupero dell'ultimo timestamp
         long lastTimestamp = getLastTimestamp(username);
-        System.out.println(lastTimestamp);
 
         return (currentTime - lastTimestamp) > (2 * refreshInterval);
     }

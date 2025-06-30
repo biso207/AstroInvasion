@@ -141,10 +141,6 @@ public class StartupHelper {
                         new InputStreamReader(process.getInputStream()));
                 String line;
 
-                while ((line = processOutput.readLine()) != null) {
-                    System.out.println(line);
-                }
-
                 process.waitFor();
             }
         } catch (Exception e) {

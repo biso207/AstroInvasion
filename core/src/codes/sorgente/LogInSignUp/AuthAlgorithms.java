@@ -326,18 +326,20 @@ public class AuthAlgorithms implements InputProcessor {
     @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // cambio pagina - accesso => registrazione
         if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+            resetTexts(); // reset campi editabili
+            resetErrors(); // reset di qualunque errore
             SoundManager.playClickButton(50); // suono del click
+
+            // cambio pagina
             if (state==0) state = 1;
             else state=0;
-
-            resetErrors(); // reset errori
-            resetTexts(); // reset campi editabili
         }
 
         // click per avviare il gioco
         if (isValidInput() && (screenX >= 415 && screenX <= 565) && (screenY >= 462 && screenY <= 512)) {
             SoundManager.playClickButton(50); // suono del click
 
+            // controllo internet e passaggio algoritmi di autenticazione
             if (!checkInternetConnection()) { resetErrors(); error2=true; }
             else { processLoginOrSignup(); }
         }

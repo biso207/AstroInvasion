@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
+import sorgente.Missions.CheckRTG;
 import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
@@ -40,12 +41,13 @@ public class InputManager implements InputProcessor {
 
     // variabili per mostrare le schermate in sovra impressione
     protected static boolean secondScreen=false, open13=false, open14=false, open16=false,
-        open17=false, open18=false, open19=false, open20=false, open21=false, open22=false;
+        open17=false, open18=false, open19=false, open20=false, open21=false, open22=false, open23=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
         isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false,
         isHoverIconNoInternet=false, isDeleteAccountHover=false, isBtnDeleteHover=false,
-        isBtnChangePSWHover=false, showPS=false;
+        isBtnChangePSWHover=false, showPS=false, isBtnWiseManHover=false, isGameCompleted=false;
+
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
     // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
@@ -175,6 +177,15 @@ public class InputManager implements InputProcessor {
         }
     }
 
+    // metodo per completare il completamento del gioco
+    public void checkCompleteGame() {
+        int cont=0;
+        for (int i=0; i<5; i++) {
+            cont++;
+        }
+        if (cont==4) isGameCompleted=true;
+    }
+
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
@@ -182,7 +193,7 @@ public class InputManager implements InputProcessor {
     @Override public boolean keyDown(int keycode) {
         // click tasto esc per il logout
         if (keycode == Input.Keys.ESCAPE && (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17
-            && !open18 && !open19 && !open20 && !open21 && !open22)) {
+            && !open18 && !open19 && !open20 && !open21 && !open22 && !open23)) {
             open13 = true;
             secondScreen = true;
             return true;
@@ -211,7 +222,7 @@ public class InputManager implements InputProcessor {
         // CAMBIO PAGINE LOBBY + CLICK NELLE PAGINE //
         // **************************************** //
         if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 &&
-            !open20 && !open21 && !open22) {
+            !open20 && !open21 && !open22 && !open23) {
 
             // CAMBIO PAGINE LOBBY
             // for-each per iterare i vari range e controllare i cambi pagina
@@ -221,11 +232,9 @@ public class InputManager implements InputProcessor {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                     if (hb.targetPage==12) scrollY2 = 2800; // reset altezza pagina info di gioco, si apre partendo dall'alto
-                    // pagina leaderboard
-                    if (hb.targetPage==20) {
-                        open20 = true; // apertura pagina in sovra impressione
-                        secondScreen = true;
-                    }
+                    if (hb.targetPage==20) { open20 = true; secondScreen = true; } // pagina leaderboard
+                    if (hb.targetPage==6) checkCompleteGame(); // controllo completamento missioni del RTG (completamento gioco)
+
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
                     break;
@@ -434,9 +443,9 @@ public class InputManager implements InputProcessor {
                         break;
                 }
 
+                DataUserManager.setProgress("completed_mission", false); // mission non più completata
                 DataUserManager.setProgress("num_mission", mission + 1);
                 DataUserManager.setProgress("mission_id", missionID);
-                DataUserManager.setProgress("completed_mission", false); // mission non più completata
             }
 
             // acquisti nel negozio
@@ -564,26 +573,36 @@ public class InputManager implements InputProcessor {
                 }
             }
 
-            // apertura pagina 7 'avatar'
-            if (!open19 && !open21 && !open22 && page == 6 && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                page = 7;
+            // pagine secondarie dalla pagina 6 (profile infos)
+            if (page==6) {
+                boolean nothingOpen = (!open19 && !open21 && !open22 && !open23);
+                // apertura pagina 7 'avatar'
+                if (!open19 && nothingOpen && ((screenX >= 453 && screenX <= 537) && (screenY >= 108 && screenY <= 188))) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    page = 7;
+                }
+                // apertura pagina "gloria utente"
+                if (nothingOpen && ((screenX >= 170 && screenX <= 426) && (screenY >= 217 && screenY <= 280))) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    secondScreen = open19 = true;
+                }
+                // apertura password change
+                if (nothingOpen && (screenX >= 434 && screenX <= 454) && (screenY >= 398 && screenY <= 416)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    secondScreen = open21 = true;
+                }
+                // apertura delete profile
+                if (nothingOpen && (screenX >= 424 && screenX <= 460) && (screenY >= 307 && screenY <= 343)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    secondScreen = open22 = true;
+                }
+                // apertura wise man
+                if (isGameCompleted && nothingOpen && (screenX>=84 && screenX<=147) && (screenY>=218 && screenY<=281)) {
+                    SoundManager.playClickButton(soundPercent); // riproduzione suono click
+                    secondScreen = open23 = true;
+                }
             }
-            // apertura pagina "gloria utente"
-            if (page == 6 && !open21 && !open22 && ((screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555))) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open19 = true;
-            }
-            // apertura password change
-            if (page==6 && !open19 && !open22 && (screenX>=434 && screenX<=454) && (screenY>=325 && screenY<=345)) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open21 = true;
-            }
-            // apertura delete profile
-            if (page==6 && !open19 && !open21 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
-                secondScreen = open22 = true;
-            }
+
 
             // eliminazione profilo
             if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) {
@@ -606,6 +625,7 @@ public class InputManager implements InputProcessor {
             }
             // salvataggio nuova password
             if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 // cambio valori variabili
                 String newPassword = passwordInput.toString();
                 AuthAlgorithms.password = newPassword;
@@ -665,6 +685,10 @@ public class InputManager implements InputProcessor {
             if (secondScreen && (open22 || open21) && (screenX >= 670 && screenX <= 710) && (screenY >= 205 && screenY <= 245)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open22 = open21 = false;
+            }
+            // X wise man => chiusura pagina wise man
+            if (secondScreen && open23 && (screenX >= 761 && screenX <= 801) && (screenY >= 204 && screenY <= 244)) {
+                secondScreen = open23 = false;
             }
 
             // X others => chiusura pagina info profilo-difficoltà-carte; avatar
@@ -836,7 +860,8 @@ public class InputManager implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         // finché si muove fuori dai pulsanti rimangono spenti, con le grafiche di base
         isBtnStartHover=isBtnClaimHover=isBtnBuyHover=isBtnResetHover=isBtnLHover=isBtnRHover=isOpenSpHover=
-            isBtnGloryHover=isHoverIconNoInternet=isDeleteAccountHover=isBtnDeleteHover=isBtnChangePSWHover=false;
+            isBtnGloryHover=isHoverIconNoInternet=isDeleteAccountHover=isBtnDeleteHover=
+                isBtnChangePSWHover=isBtnWiseManHover=false;
         // cambio cursore
         Gdx.graphics.setCursor(UIManager.cursor);
 
@@ -852,13 +877,15 @@ public class InputManager implements InputProcessor {
         }
 
         // rtg (road to glory)
-        if (page==6 && !open19 && !open21 && !open22 && (screenX>=30 && screenX<=484) && (screenY>=488 && screenY<=555)) isBtnGloryHover=true;
+        if (page==6 && !open19 && !open21 && !open22 && (screenX>=170 && screenX<=430) && (screenY>=217 && screenY<=280)) isBtnGloryHover=true;
         // password change action button
         if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) isBtnChangePSWHover=true;
-        // delete the account
-        if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=235 && screenY<=271)) isDeleteAccountHover=true;
+        // open delete the account
+        if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=307 && screenY<=343)) isDeleteAccountHover=true;
         // delete account action button
         if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) isBtnDeleteHover=true;
+        // open wise man
+        if (isGameCompleted && !open23 && (screenX>=84 && screenX<=147) && (screenY>=218 && screenY<=281)) isBtnWiseManHover=true;
 
         // pagine della lobby
         if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {
