@@ -29,7 +29,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final AuthAlgorithms alg;
 
     // font
-    private BitmapFont font, fontBoldWhite20, fontBoldYellow20;
+    private BitmapFont font, fontBoldYellow20;
     // immagini
     private Texture img1, img2, digitAreaON, digitAreaOFF, showPS, coverPS, loginPageBtnHover,
         signupPageBtnHover, continueBtnHover, noInternet;
@@ -56,7 +56,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     public void loadFont() {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
-            fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldYellow20 = new BitmapFont(Gdx.files.internal("font/inter/bold_yellow_20.fnt")); // inter-regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)

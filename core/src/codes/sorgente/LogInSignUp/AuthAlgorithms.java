@@ -41,7 +41,6 @@ public class AuthAlgorithms implements InputProcessor {
     protected boolean error2 = false; // "No Internet Connection"
     protected boolean error3 = false; // "Your session is already open on another device"
     protected boolean error4 = false; // "Nickname not valid"
-    protected boolean success = false; // passaggio alla lobby
 
 
     /* pagina di riferimento
@@ -173,8 +172,6 @@ public class AuthAlgorithms implements InputProcessor {
                 // blocco del lock
                 LockStatusManager.setLockStatus(nickname, true);
 
-
-                success=true;
                 SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
                 DataUserManager.loadProgresses(); // caricamento progressi utente
                 state = 2; // passaggio alla lobby
@@ -215,7 +212,6 @@ public class AuthAlgorithms implements InputProcessor {
             // password corretta => procede con la lobby
             password = passwordInput.toString();
 
-            success=true;
             SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
             DataUserManager.loadProgresses(); // caricamento progressi utente
             state = 2; // passaggio alla lobby

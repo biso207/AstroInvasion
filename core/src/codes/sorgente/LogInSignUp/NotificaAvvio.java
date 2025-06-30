@@ -22,7 +22,6 @@ public class NotificaAvvio {
         String chatId = "5191176873"; // chat_id
 
         try {
-            //String message = AuthAlgorithms.nickname + " ha avviato il gioco\nIP: " + InetAddress.getLocalHost(); // messaggio
             String message = AuthAlgorithms.nickname + " ha avviato il gioco"; // messaggio
             String urlString = "https://api.telegram.org/bot" + token + "/sendMessage" +
                 "?chat_id=" + chatId +
@@ -31,6 +30,7 @@ public class NotificaAvvio {
             URL url = new URL(urlString);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
+            con.getResponseCode(); // fondamentale per il ricevimento del messaggio
         } catch (Exception e) {
             e.printStackTrace();
         }
