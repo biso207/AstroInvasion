@@ -69,7 +69,7 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
-                spSpeed = 2;
+                spSpeed = 1;
                 laserSpeed = 0;
                 bonusPoints = 0;
             }
@@ -80,7 +80,7 @@ public class Spacecraft {
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
                 spSpeed = 0;
-                laserSpeed = 1;
+                laserSpeed = 0;
                 bonusPoints = 5;
             }
             case 2 -> {
@@ -89,7 +89,7 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
-                spSpeed = 1;
+                spSpeed = 0;
                 laserSpeed = 0;
                 bonusPoints = 5;
             }
@@ -100,7 +100,7 @@ public class Spacecraft {
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
                 spSpeed = 0;
-                laserSpeed = 2;
+                laserSpeed = 1;
                 bonusPoints = 0;
             }
             case 4 -> {

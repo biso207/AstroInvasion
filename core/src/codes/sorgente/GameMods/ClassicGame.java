@@ -240,8 +240,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
                 creditsInc = 1;
                 break;
             case 2:
-                spacecraftSpeed = 200;
-                laserSpeed = 200;
+                spacecraftSpeed = 150;
+                laserSpeed = 150;
                 alienSpeed = 300;
                 spawnInterval = 0.15f;
                 laserCooldown = 0.3f;
@@ -250,8 +250,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
                 creditsInc = 2;
                 break;
             case 3:
-                spacecraftSpeed = 200;
-                laserSpeed = 200;
+                spacecraftSpeed = 100;
+                laserSpeed = 100;
                 alienSpeed = 350;
                 spawnInterval = 0.1f;
                 laserCooldown = 0.3f;
