@@ -175,7 +175,7 @@ public class AuthAlgorithms implements InputProcessor {
                 SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
                 DataUserManager.loadProgresses(); // caricamento progressi utente
                 state = 2; // passaggio alla lobby
-                notify.sendMessage(); // notifica di apertura gioco
+                //notify.sendMessage(); // notifica di apertura gioco todo: togliere il commento prima del rilascio
             }
             else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
                 error = true;
@@ -215,7 +215,7 @@ public class AuthAlgorithms implements InputProcessor {
             SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
             DataUserManager.loadProgresses(); // caricamento progressi utente
             state = 2; // passaggio alla lobby
-            notify.sendMessage(); // notifica di apertura gioco
+            //notify.sendMessage(); // notifica di apertura gioco todo: togliere il commento prima del rilascio
         } catch(Exception e){
             System.err.println(e.getMessage());
         }

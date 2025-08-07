@@ -25,7 +25,7 @@ public class SpaceJourneyUI implements ResourceLoader {
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
 
     // font
-    private BitmapFont fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60,
+    private BitmapFont fontMediumWhite16, fontBoldBlue20, fontBoldWhite20, fontBoldWhite25, fontBoldWhite35, fontBoldWhite60,
         fontBoldWhite60_1, fontBoldItalicWhite25, fontBoldGreen25, fontBoldRed25;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
@@ -148,6 +148,7 @@ public class SpaceJourneyUI implements ResourceLoader {
             // blue
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-bold blue 20
             // white
+            fontMediumWhite16 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_16.fnt")); // inter-medium white 16
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
             fontBoldWhite25 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_25.fnt")); // inter-bold white 20
             fontBoldWhite35 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_35.fnt")); // inter-bold white 25
@@ -238,6 +239,10 @@ public class SpaceJourneyUI implements ResourceLoader {
                 X2 = 40; Y2 -= 224;
             }
         }
+
+        // crediti
+        fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
+        fontMediumWhite16.draw(screen, "August 2025", 850, 45); // versione di gioco
     }
 
     // metodo per stampare le info di un livello
@@ -252,7 +257,7 @@ public class SpaceJourneyUI implements ResourceLoader {
         fontBoldWhite35.draw(screen, "START", 443, 208); // testo avvio partita
 
         // tipologia gioco
-        if (listSB.contains(numLevel)) {
+        if (listSB.contains(numLevel)) { // Space Battle mode
             fontBoldWhite25.draw(screen, "Space Battle", 223, 445);
 
             // icona difficoltà
@@ -268,10 +273,10 @@ public class SpaceJourneyUI implements ResourceLoader {
                     break;
             }
 
-            // missione livello
-            fontBoldWhite25.draw(screen, "Hit him " + numLevel + " times", 560, 433);
+            // stampa testo missione livello
+            fontBoldWhite25.draw(screen, "Hit him " + (numLevel/2) + " times", 560, 433);
         }
-        else {
+        else { // Classic Game mode
             fontBoldWhite25.draw(screen, "Classic Game", 223, 445);
 
             // icona difficoltà

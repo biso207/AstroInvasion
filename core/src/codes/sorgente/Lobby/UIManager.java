@@ -31,7 +31,7 @@ public class UIManager implements ResourceLoader {
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
         volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive, noInternetIcon,
-        noInternetMessage, showPS, coverPS;
+        noInternetMessage, wiseManMessage, showPS, coverPS;
 
     // textureRegione per definire l'area di completamento della task corrente in Missions
     private TextureRegion progressBarRegion;
@@ -51,9 +51,10 @@ public class UIManager implements ResourceLoader {
     // pulsanti + scuri al passaggio del mouse
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
 
-    private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20,fontMediumWhite20,
-        fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldItalicWhite20, fontBoldWhite25, fontBoldWhite27, fontBoldWhite30, fontBoldWhite35,
-        fontBoldWhite40, fontBoldItalicWhite15, fontBoldWhite60, fontSemiboldYellow25, fontBoldItalicYellow20;
+    private BitmapFont fontBlue20, fontMediumBlue15, fontMediumBlue20, fontBoldBlue20, fontMediumWhite20,
+        fontMediumWhite16, fontBoldWhite15, fontBoldWhite18, fontBoldWhite20, fontBoldItalicWhite20, fontBoldWhite25,
+        fontBoldWhite27, fontBoldWhite30, fontBoldWhite35, fontBoldWhite40, fontBoldItalicWhite15, fontBoldWhite60,
+        fontSemiboldYellow25, fontBoldItalicYellow20;
 
     // hashmap/liste per diverse texture
     private final HashMap<Integer, Texture> mapLobby; // schermate lobby
@@ -128,6 +129,7 @@ public class UIManager implements ResourceLoader {
             fontBoldBlue20 = new BitmapFont(Gdx.files.internal("font/inter/bold_blue_20.fnt")); // inter-regular blue 20
             // white
             fontMediumWhite20 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_20.fnt")); // inter-medium white 20
+            fontMediumWhite16 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_16.fnt")); // inter-medium white 16
             fontBoldWhite15 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_15.fnt")); // inter-bold white 15
             fontBoldWhite18 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_18.fnt")); // inter-bold white 18
             fontBoldWhite20 = new BitmapFont(Gdx.files.internal("font/inter/bold_white_20.fnt")); // inter-bold white 20
@@ -260,6 +262,9 @@ public class UIManager implements ResourceLoader {
         // icona internet assente
         noInternetIcon = new Texture("login_signup_screens/no_internet.png");
         noInternetMessage = new Texture("images/alert_message_noInternet.png");
+
+        // messaggio info wise man
+        wiseManMessage = new Texture("images/info_secret_message.png");
 
         // icona mostra/nascondi password
         showPS = new Texture("login_signup_screens/showPS.png");
@@ -509,7 +514,13 @@ public class UIManager implements ResourceLoader {
             // icona No Internet Connected
             if (!isConnected) screen.draw(noInternetIcon, 818, 581);
             if (InputManager.isHoverIconNoInternet) screen.draw(noInternetMessage, 601, 555);
+
+            // crediti
+            fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
+            fontMediumWhite16.draw(screen, "August 2025", 850, 45); // versione di gioco
         }
+
+        int level = ((int) DataUserManager.getProgress("level"));
 
         // switch delle pagine per stampare i vari elementi
         switch (InputManager.page) {
@@ -642,7 +653,6 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Explore and conquire all the space's galaxies", 323, 457);
 
                 // testi //
-                int level = ((int) DataUserManager.getProgress("level"));
                 if (level==41) level = 40;
                 fontMediumWhite20.draw(screen, "Level: " + level, 332, 410); // livello
                 fontMediumWhite20.draw(screen, "Current Galaxy: " + ((level) / 10 + 1), 332, 381); // galassia corrente
@@ -723,6 +733,9 @@ public class UIManager implements ResourceLoader {
 
             // pagina 'profile info'
             case 6:
+                // correzione scrittura livello raggiunto
+                if (level==41) level = 40;
+
                 // testi //
                 // SCRITTE A SX
                 fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 340); // nickname
@@ -731,7 +744,7 @@ public class UIManager implements ResourceLoader {
 
                 // SCRITTE A DX
                 fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 540, 412); // punti
-                fontMediumWhite20.draw(screen, "Level: " + formatter.format((int) DataUserManager.getProgress("level")), 540, 372); // livello
+                fontMediumWhite20.draw(screen, "Level: " + level, 540, 372); // livello
                 fontMediumWhite20.draw(screen, "Mission: " + formatter.format((int) DataUserManager.getProgress("num_mission")), 540, 332); // numero missione
                 fontMediumWhite20.draw(screen, "Aliens Hit: " + formatter.format((int) DataUserManager.getProgress("num_aliens_hit")), 540, 292); // alieni colpiti
                 fontMediumWhite20.draw(screen, "Credits: " + formatter.format((int) DataUserManager.getProgress("credits")), 540, 252); // crediti
@@ -750,6 +763,9 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnWiseManHover && InputManager.isGameCompleted) screen.draw(buttonsOver[13], 93, 417); // open wise man
                 if (InputManager.isBtnGloryHover) screen.draw(buttonsOver[9], 178, 417); // rtg
                 if (InputManager.isDeleteAccountHover) screen.draw(buttonsOver[11], 432, 354); // delete profile
+
+                // messaggio di info wise man
+                if (InputManager.isBtnWiseManHover && !InputManager.isGameCompleted) screen.draw(wiseManMessage, 24, 511);
                 break;
 
             // pagina avatars

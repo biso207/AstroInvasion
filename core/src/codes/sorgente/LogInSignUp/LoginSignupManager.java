@@ -29,7 +29,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     private final AuthAlgorithms alg;
 
     // font
-    private BitmapFont font, fontBoldYellow20;
+    private BitmapFont font, fontMediumWhite16, fontBoldYellow20;
     // immagini
     private Texture img1, img2, digitAreaON, digitAreaOFF, showPS, coverPS, loginPageBtnHover,
         signupPageBtnHover, continueBtnHover, noInternet;
@@ -56,6 +56,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
     public void loadFont() {
         try {
             font = new BitmapFont(Gdx.files.internal("font/inter/bold_white_30.fnt")); // inter-bold white 30
+            fontMediumWhite16 = new BitmapFont(Gdx.files.internal("font/inter/medium_white_16.fnt")); // inter-medium white 16
             fontBoldYellow20 = new BitmapFont(Gdx.files.internal("font/inter/bold_yellow_20.fnt")); // inter-regular red 20
         } catch (Exception e) {
             font = new BitmapFont(); // font di default (arial)
@@ -153,6 +154,10 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         // password che può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
         if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 272, 310);
         else font.draw(screen, alg.passwordInput, 272, 316);
+
+        // crediti
+        fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
+        fontMediumWhite16.draw(screen, "August 2025", 850, 45); // versione di gioco
 
         screen.end();
     }

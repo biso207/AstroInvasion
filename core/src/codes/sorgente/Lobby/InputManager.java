@@ -885,7 +885,7 @@ public class InputManager implements InputProcessor {
         // delete account action button
         if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) isBtnDeleteHover=true;
         // open wise man
-        if (isGameCompleted && !open23 && (screenX>=84 && screenX<=147) && (screenY>=218 && screenY<=281)) isBtnWiseManHover=true;
+        if (!open23 && (screenX>=84 && screenX<=147) && (screenY>=218 && screenY<=281)) isBtnWiseManHover=true;
 
         // pagine della lobby
         if (!listSecondPages.contains(page) && !open13 && !open14 && !open16 && !open17 && !open18 && !open19 && !open20) {

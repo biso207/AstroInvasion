@@ -109,8 +109,8 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         enemyShip = new Rectangle(400, 520, 70, 64);
 
 
-        int difficulty = 0;
-
+        // setting difficoltà di gioco
+        int difficulty;
 
         if (isLevel && level <= 10 && level >= 0){
             difficulty = 1;
@@ -191,7 +191,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
         if (((int)DataUserManager.getProgress("shot_type")) == 1) shotType = 1;
         else shotType = 2;
 
-        hits_level = level;
+        hits_level = level/2;
     }
 
     //Valori di inizio gioco
@@ -228,7 +228,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
                 enemySpeed = 600;
                 playerLaserCooldown = 0.3f;
                 enemyLaserCooldown = 0.2f;
-                totalLives = 2;
+                totalLives = isLevel ? 3:2;
                 totalEnemyLives = 4;
                 playerLives = totalLives;
                 enemyLives = totalEnemyLives;

@@ -30,8 +30,7 @@ public class Lwjgl3Launcher {
         configuration.setWindowedMode(1000, 700); // dimensione schermo
         configuration.setResizable(false); // ridimensionamento pagina on/off
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
-        configuration.setWindowIcon("icon_astroinvasion_16x16.png", "icon_astroinvasion_32x32.png",
-            "icon_astroinvasion_64x64.png", "icon_astroinvasion_128x128.png"); // icona del gioco
+        configuration.setWindowIcon("astro invasion icon.png"); // icona del gioco
         return configuration;
     }
 }

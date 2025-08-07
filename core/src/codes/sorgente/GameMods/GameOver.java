@@ -150,6 +150,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
 
         // azzeramento statistiche in caso di livello
         if (isLevel) Arrays.fill(stats, 0);
+
         // recupero progressi partita
         this.points = stats[0];
         this.credits = stats[1];
@@ -221,6 +222,9 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
                 case 2 -> pointsSB = 2000;
                 case 3 -> pointsSB = 3000;
             }
+
+            // aggiunta bonus punti
+            if (!isLevel) pointsSB = pointsSB+((pointsSB*(selectedSp.getBonusPoints()))/100); // aggiunta percentuale di bonus
         }
         else creditsSB = 0;
     }
