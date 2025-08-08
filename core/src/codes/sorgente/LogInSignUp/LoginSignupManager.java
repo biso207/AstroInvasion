@@ -110,7 +110,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
             case 2:
                 // salvataggio password in remoto
                 try {
-                    CloudStorageManager.savePassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
+                    CloudStorageManager.setPassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

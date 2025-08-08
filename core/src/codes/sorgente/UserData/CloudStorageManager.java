@@ -13,8 +13,8 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import okhttp3.*;
 import sorgente.LogInSignUp.LoadingData.LoadCallback;
+import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +27,9 @@ public class CloudStorageManager {
     // dati del database per la connessione
     private static final String PROJECT_ID = "astroinvasioncloud"; // nome database
     private static final String DATABASE_URL = "https://firestore.googleapis.com/v1/projects/" + PROJECT_ID + "/databases/(default)/documents/";
+
+    // costruttore
+    public CloudStorageManager() {}
 
     // metodo per recuperare il token che permette la comunicazione client-server
     protected static String getAccessToken() throws IOException {
@@ -151,15 +154,16 @@ public class CloudStorageManager {
         Map responseMap = new Gson().fromJson(body, Map.class);
         Map fields = (Map) responseMap.get("fields");
         Map pswField = (Map) fields.get("psw");
-        String password = (String) pswField.get("stringValue");
-
-        return password;
+        return (String) pswField.get("stringValue");
     }
 
     // metodo per salvare la password utente in cloud
-    public static void savePassword(String username, String password) throws IOException {
+    public static void setPassword(String username, String password) throws IOException {
         // URL con updateMask per aggiornare solo il campo "psw"
         String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=psw";
+
+        // hash della password
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
 
         Map<String, Object> fields = new HashMap<>();
         Map<String, Object> pswField = new HashMap<>();

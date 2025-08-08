@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
+import org.mindrot.jbcrypt.BCrypt;
 import sorgente.UserData.DataUserManager;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.ProfanityFilter;
@@ -56,11 +57,10 @@ public class AuthAlgorithms implements InputProcessor {
     // istanza classe per mandare la notifica di avvio
     private final NotificaAvvio notify;
 
-
     // costruttore
     public AuthAlgorithms() {
         // attivazione area di digitazione
-        this.enteringNickname = checkInternetConnection();
+        this.enteringNickname = true;
         this.enteringPassword = false;
 
         // dichiarazione dei stringBuilder
@@ -204,10 +204,18 @@ public class AuthAlgorithms implements InputProcessor {
             LockStatusManager.setLockStatus(nickname, true);
 
             // recupero password utente dal server
-            String psw = CloudStorageManager.getPassword(nickname);
+            String hashedPsw = CloudStorageManager.getPassword(nickname);
+
+            /// once all the users will have the password hashed, we can leave only the hash control in the
+            /// password-check behind. now we use an "&&" statement to permit access for both types of passwords,
+            ///  hashed or not. the previous version of the game was using a non-hash method to save the passwords.
 
             // password errata => libera subito il lock
-            if (!psw.contentEquals(passwordInput)) { resetErrors(); error = true; LockStatusManager.setLockStatus(nickname, false); return; }
+            if (!hashedPsw.contentEquals(passwordInput) && !BCrypt.checkpw(String.valueOf(passwordInput), hashedPsw)) {
+                resetErrors(); error = true;
+                LockStatusManager.setLockStatus(nickname, false);
+                return;
+            }
 
             // password corretta => procede con la lobby
             password = passwordInput.toString();
@@ -226,6 +234,9 @@ public class AuthAlgorithms implements InputProcessor {
         // data di registrazione utente
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
         String date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
+
+        // hash della password
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
 
         // setting dati del nuovo utente
         DataUserManager.setProgress("nickname", nickname); // nickname

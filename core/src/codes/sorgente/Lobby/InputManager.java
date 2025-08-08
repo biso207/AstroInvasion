@@ -608,13 +608,14 @@ public class InputManager implements InputProcessor {
             // salvataggio nuova password
             if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
+
                 // cambio valori variabili
-                String newPassword = passwordInput.toString();
+                String newPassword = passwordInput.toString().trim();
                 AuthAlgorithms.password = newPassword;
 
                 // sovrascrittura in remoto della nuova password
                 try {
-                    CloudStorageManager.savePassword(AuthAlgorithms.nickname, newPassword);
+                    CloudStorageManager.setPassword(AuthAlgorithms.nickname, newPassword);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
