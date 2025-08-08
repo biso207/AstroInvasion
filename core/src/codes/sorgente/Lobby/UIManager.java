@@ -533,10 +533,10 @@ public class UIManager implements ResourceLoader {
                 // testi //
                 fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 332, 410); // punti totali
                 fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_CG")), 332, 381); // partite giocate
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_double_points")), 808, 248); // numero 'double points'
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -586,8 +586,8 @@ public class UIManager implements ResourceLoader {
                 fontMediumWhite20.draw(screen, "Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 332, 411); // vittorie
                 fontMediumWhite20.draw(screen, "Win Streak: " + formatter.format((int) DataUserManager.getProgress("win_streak_SB")), 332, 381); // vittorie consecutive
                 fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_SB")), 332, 351); // partite giocate
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
-                fontBoldBlue20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
+                fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
                 // testo "crediti X vittoria"
                 // calcolo crediti utente vinti

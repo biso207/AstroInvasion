@@ -62,7 +62,7 @@ public class InputManager implements InputProcessor {
     // nome navicella
     private String nameSp = UIManager.selectedSp.getName();
     // stato cambio navicella
-    protected static boolean isSPChanged=false, isAVChanged=false;
+    protected static boolean  isAVChanged=false;
 
     // recupero difficoltà classic game e space battle
     private int diffCG = (int) DataUserManager.getProgress("diff_classic_game");
@@ -549,25 +549,8 @@ public class InputManager implements InputProcessor {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
                         numSelectedSP = selectedId;
 
-                        // cambio navicella e salvataggio navicella scelta se sbloccata
-                        if (Spacecraft.isAchieved(selectedId)) {
-                            SoundManager.playClickButton(soundPercent); // riproduzione suono click
-
-                            // cambio stato selezione a true
-                            isSPChanged = true;
-                            // cambio nome navicella con creazione nuovo oggetto
-                            Spacecraft s = UIManager.selectSpacecraft();
-                            nameSp = s.getName();
-
-                            // reset stato carte per sicurezza
-                            goldHeart=shield=superLaser=doublePoints=false;
-
-                            // riattivazione carte speciali se selezionata una navicella premium
-                            if (nameSp.equals("Alpha")) goldHeart = true;
-                            if (nameSp.equals("Astrid")) shield = true;
-                            if (nameSp.equals("Rorik")) superLaser = true;
-                            if (nameSp.equals("Drakar")) doublePoints = true;
-                        }
+                        // riproduzione suono click
+                        if (Spacecraft.isAchieved(selectedId)) SoundManager.playClickButton(soundPercent);
                         break;
                     }
                 }
@@ -602,7 +585,6 @@ public class InputManager implements InputProcessor {
                     secondScreen = open23 = true;
                 }
             }
-
 
             // eliminazione profilo
             if (open22 && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) {
@@ -669,7 +651,19 @@ public class InputManager implements InputProcessor {
                 // salvataggio navicella selezionata
                 if (page==4) {
                     DataUserManager.setProgress("spacecraft", numSelectedSP);
-                    isSPChanged = false;
+
+                    // cambio nome navicella con creazione nuovo oggetto
+                    Spacecraft s = UIManager.selectSpacecraft();
+                    nameSp = s.getName();
+
+                    // reset stato carte per sicurezza
+                    goldHeart=shield=superLaser=doublePoints=false;
+
+                    // riattivazione carte speciali se selezionata una navicella premium
+                    if (nameSp.equals("Alpha")) goldHeart = true;
+                    if (nameSp.equals("Astrid")) shield = true;
+                    if (nameSp.equals("Rorik")) superLaser = true;
+                    if (nameSp.equals("Drakar")) doublePoints = true;
                 }
 
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -712,7 +706,6 @@ public class InputManager implements InputProcessor {
             // chiusura pagina leaderboard
             if ((secondScreen && open20) && ((screenX >= 715 && screenX <= 755) && (screenY >= 122 && screenY <= 162))) {
                 SoundManager.playClickButton(soundPercent);
-                page = previousPage;
                 secondScreen = open20 = false;
             }
 
