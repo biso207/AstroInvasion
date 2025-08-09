@@ -12,6 +12,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import sorgente.Missions.CheckRTG;
 import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
@@ -228,7 +231,7 @@ public class InputManager implements InputProcessor {
             // for-each per iterare i vari range e controllare i cambi pagina
             for (Map.Entry<Integer, HitBox> entry : hitBoxes.entrySet()) {
                 HitBox hb = entry.getValue();
-                if (hb.isInside(screenX, screenY)) {
+                if (hb.isInside((int)screenX, (int)screenY)) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     if (hb.targetPage==4) scrollY = 2300; // reset altezza pagina navicelle, si apre partendo dall'alto
                     if (hb.targetPage==12) scrollY2 = 2800; // reset altezza pagina info di gioco, si apre partendo dall'alto

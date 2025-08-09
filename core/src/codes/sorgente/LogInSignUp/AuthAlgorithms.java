@@ -319,7 +319,10 @@ public class AuthAlgorithms implements InputProcessor {
                     error2=true; // stampa errore
                 }
                 // processi di autenticazione
-                else processLoginOrSignup();
+                else {
+                    // apertura algoritmo autenticazione
+                    processLoginOrSignup();
+                }
             }
         }
         // BACKSPACE per cancellare un carattere
@@ -386,10 +389,9 @@ public class AuthAlgorithms implements InputProcessor {
             isHover1=true;
         }
         // pulsante cambio pagina
-        if (checkInternetConnection() && (screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
+        if ((screenX >= 425 && screenX <= 559) && (screenY >= 553 && screenY <= 595)) {
             isHover2=true;
         }
-
         return true;
     }
 
