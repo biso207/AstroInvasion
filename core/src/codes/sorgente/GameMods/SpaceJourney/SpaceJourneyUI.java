@@ -242,7 +242,7 @@ public class SpaceJourneyUI implements ResourceLoader {
 
         // crediti
         fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-        fontMediumWhite16.draw(screen, "August 2025", 850, 45); // versione di gioco
+        fontMediumWhite16.draw(screen, "September 2025", 820, 45); // versione di gioco
     }
 
     // metodo per stampare le info di un livello

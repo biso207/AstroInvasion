@@ -95,8 +95,6 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
         screen.begin();
 
-        fontBoldYellow20.draw(screen, "Connecting to the server...",420,72);
-
         switch (alg.state) {
             case 0:
                 screen.draw(img1, 0, 0);
@@ -159,7 +157,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
         // crediti
         fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-        fontMediumWhite16.draw(screen, "August 2025", 850, 45); // versione di gioco
+        fontMediumWhite16.draw(screen, "September 2025", 820, 45); // versione di gioco
 
         screen.end();
     }

@@ -28,7 +28,7 @@ public class Lwjgl3Launcher {
         //// useful for testing performance, but can also be very stressful to some hardware.
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
         configuration.setWindowedMode(1000, 700); // dimensione schermo
-        configuration.setResizable(true); // ridimensionamento pagina on/off
+        configuration.setResizable(false); // ridimensionamento pagina on/off
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         configuration.setWindowIcon("astro invasion icon.png"); // icona del gioco
         return configuration;

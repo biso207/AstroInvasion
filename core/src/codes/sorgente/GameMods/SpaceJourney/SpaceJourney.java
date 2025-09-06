@@ -150,11 +150,15 @@ public class SpaceJourney implements Screen, InputProcessor {
                 int y = startY + row * spacingY;
 
                 // controllo click su un singolo livello
-                if (screenX >= x && screenX <= x + levelSize &&
-                    screenY <= y + levelSize && screenY >= y) {
-                    SoundManager.playClickButton(InputManager.soundPercent); // riproduzione suono click
-                    if (levels.get(i).getState() == LevelState.UNLOCKED) infoLevel=true; // apertura info livello
-                    else if (levels.get(i).getState() == LevelState.TO_BUY) buyLevel=true; // apertura schermata sblocco livello
+                if (screenX >= x && screenX <= x + levelSize && screenY <= y + levelSize && screenY >= y) {
+                    // recupero stato del livello
+                    LevelState state = levels.get(i).getState();
+
+                    // riproduzione suono click
+                    if (state != LevelState.COMPLETED) SoundManager.playClickButton(InputManager.soundPercent);
+
+                    if (state == LevelState.UNLOCKED) infoLevel=true; // apertura info livello
+                    else if (state == LevelState.TO_BUY) buyLevel=true; // apertura schermata sblocco livello
                 }
             }
 
