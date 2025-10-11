@@ -878,10 +878,9 @@ public class UIManager implements ResourceLoader {
                 screen.draw(mapLobby.get(23), 145, 165);
 
                 // messaggio cap alpha in giallo
-                fontBoldItalicYellow20.draw(screen, "“The key to true success lies in patience and perseverance.\n" +
-                    "And remember, never stop exploring.”", 208, 357);
+                fontBoldItalicYellow20.draw(screen, "“The key to true success lies in patience and perseverance”", 208, 357);
                 // testi sotto in bianco
-                fontBoldItalicWhite20.draw(screen, "— Cap. Alpha", 208, 305);
+                fontBoldItalicWhite20.draw(screen, "Cap. Alpha", 208, 330);
                 fontBoldWhite20.draw(screen, "Congratulations " + AuthAlgorithms.nickname + ", the journey has come to an end.", 208, 272);
                 fontBoldWhite20.draw(screen, "Your glory will be remembered forever.", 208, 245);
             }

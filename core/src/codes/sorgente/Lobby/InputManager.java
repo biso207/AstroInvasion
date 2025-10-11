@@ -12,7 +12,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
-import sorgente.Missions.CheckRTG;
 import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
@@ -31,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static sorgente.LogInSignUp.AuthAlgorithms.checkInternetConnection;
 
 public class InputManager implements InputProcessor {
     // mappa dei range
@@ -183,7 +181,7 @@ public class InputManager implements InputProcessor {
         for (int i=0; i<5; i++) {
             cont++;
         }
-        if (cont==4) isGameCompleted=true;
+        if (cont==5) isGameCompleted=true;
     }
 
     // ************************************** //
@@ -683,6 +681,7 @@ public class InputManager implements InputProcessor {
             }
             // X wise man => chiusura pagina wise man
             if (secondScreen && open23 && (screenX >= 761 && screenX <= 801) && (screenY >= 204 && screenY <= 244)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open23 = false;
             }
 
