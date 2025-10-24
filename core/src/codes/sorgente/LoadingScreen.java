@@ -49,7 +49,7 @@ public class LoadingScreen implements Screen, ProgressListener {
             finalProgress=100; // tempo caricamento
             new Thread(() -> {
                 for (int i = 0; i <= 100; i++) {
-                    try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+                    try { Thread.sleep(40); } catch (InterruptedException ignored) {}
                     final int progress = i;
                     Gdx.app.postRunnable(() -> setProgress(progress));
                 }
