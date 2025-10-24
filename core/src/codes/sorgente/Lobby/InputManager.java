@@ -12,11 +12,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
+import sorgente.Missions.CheckRTG;
 import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
-
 import sorgente.LogInSignUp.AuthAlgorithms;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.SoundManager;
@@ -24,12 +24,10 @@ import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.LogInSignUp.LoginSignupManager;
 import sorgente.UserData.SessionLockManager;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 
 public class InputManager implements InputProcessor {
     // mappa dei range
@@ -42,9 +40,9 @@ public class InputManager implements InputProcessor {
         open17=false, open18=false, open19=false, open20=false, open21=false, open22=false, open23=false;
     // variabili per cambiare lo stile dei pulsanti
     protected static boolean isBtnStartHover=false, isBtnClaimHover=false, isBtnBuyHover=false, isBtnResetHover=false,
-        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected=false,
+        isBtnLHover=false, isBtnRHover=false, isOpenSpHover=false, isBtnGloryHover=false, isTickSelected,
         isHoverIconNoInternet=false, isDeleteAccountHover=false, isBtnDeleteHover=false,
-        isBtnChangePSWHover=false, showPS=false, isBtnWiseManHover=false, isGameCompleted=false;
+        isBtnChangePSWHover=false, showPS, isBtnWiseManHover=false, isGameCompleted;
 
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
@@ -96,6 +94,9 @@ public class InputManager implements InputProcessor {
         this.ui = ui;
         // definizione delle aree cliccabili
         hitAreas();
+
+        // reset alcune variabili boolean => importante per i cambi utente altrimenti rimangono allo stato dell'utente precedente
+        showPS=isGameCompleted=isTickSelected=false;
 
         // reset stato carte speciali
         goldHeart=shield=superLaser=doublePoints=false;
@@ -178,10 +179,11 @@ public class InputManager implements InputProcessor {
     // metodo per completare il completamento del gioco
     public void checkCompleteGame() {
         int cont=0;
-        for (int i=0; i<5; i++) {
-            cont++;
+        for (int i=0; i<4; i++) {
+            if (CheckRTG.checkMission(i)) cont++;
         }
-        if (cont==5) isGameCompleted=true;
+        System.out.println(cont);
+        if (cont==4) isGameCompleted=true;
     }
 
     // ************************************** //
@@ -681,7 +683,6 @@ public class InputManager implements InputProcessor {
             }
             // X wise man => chiusura pagina wise man
             if (secondScreen && open23 && (screenX >= 761 && screenX <= 801) && (screenY >= 204 && screenY <= 244)) {
-                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open23 = false;
             }
 
@@ -730,7 +731,7 @@ public class InputManager implements InputProcessor {
                 ui.disposeUI(); // rilascio risorse
             }
 
-            // not show again waring
+            // not show again warning
             if ((secondScreen && open18) && (screenX >= 375 && screenX <= 608) && (screenY >= 330 && screenY <= 375)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 isTickSelected = !isTickSelected;

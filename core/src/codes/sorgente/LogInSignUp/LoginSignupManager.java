@@ -157,7 +157,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
         // crediti
         fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-        fontMediumWhite16.draw(screen, "September 2025", 820, 45); // versione di gioco
+        fontMediumWhite16.draw(screen, "October 2025", 838, 45); // versione di gioco
 
         screen.end();
     }
