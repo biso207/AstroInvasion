@@ -14,6 +14,7 @@ public class Spacecraft {
     private String name, lore, mission;
     private int bonusPoints, spSpeed, laserSpeed;
     private Texture imgTexture, laserTexture;
+    public Boolean goldHeart, shield, superLaser, doublePoints;
 
     // costruttore
     public Spacecraft(int id) {
@@ -69,9 +70,15 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 0;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 1 -> {
                 name = "Idra";
@@ -79,9 +86,15 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 0;
                 bonusPoints = 5;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 2 -> {
                 name = "Woka";
@@ -89,9 +102,15 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 0;
                 bonusPoints = 5;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 3 -> {
                 name = "Pegaso";
@@ -99,9 +118,15 @@ public class Spacecraft {
                 mission = "";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 1;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 4 -> {
                 name = "Ares";
@@ -109,9 +134,15 @@ public class Spacecraft {
                 mission = "Complete Level 2";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 1;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 5 -> {
                 name = "Andvari";
@@ -119,9 +150,15 @@ public class Spacecraft {
                 mission = "Complete Level 4";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 1;
                 bonusPoints = 10;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 6 -> {
                 name = "Siko";
@@ -129,9 +166,15 @@ public class Spacecraft {
                 mission = "Complete Level 6";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 0;
                 bonusPoints = 10;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 7 -> {
                 name = "Fenixia";
@@ -139,9 +182,15 @@ public class Spacecraft {
                 mission = "Complete Level 8";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 1;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 8 -> {
                 name = "Selen";
@@ -149,9 +198,15 @@ public class Spacecraft {
                 mission = "Complete Level 12";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 2;
                 laserSpeed = 1;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 9 -> {
                 name = "Centauro";
@@ -159,9 +214,15 @@ public class Spacecraft {
                 mission = "Complete Level 14";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 2;
                 bonusPoints = 20;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 10 -> {
                 name = "Zephyr";
@@ -169,9 +230,15 @@ public class Spacecraft {
                 mission = "Complete Level 16";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 2;
                 laserSpeed = 0;
                 bonusPoints = 20;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 11 -> {
                 name = "Malloc";
@@ -179,9 +246,15 @@ public class Spacecraft {
                 mission = "Complete Level 18";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 2;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 12 -> {
                 name = "Orion";
@@ -189,9 +262,15 @@ public class Spacecraft {
                 mission = "Complete Level 22";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 2;
                 laserSpeed = 2;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 13 -> {
                 name = "Asgard";
@@ -199,9 +278,15 @@ public class Spacecraft {
                 mission = "Complete Level 24";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 2;
                 bonusPoints = 30;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 14 -> {
                 name = "Galahad";
@@ -209,9 +294,15 @@ public class Spacecraft {
                 mission = "Complete Level 26";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 2;
                 laserSpeed = 0;
                 bonusPoints = 30;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 15 -> {
                 name = "Seraphis";
@@ -219,8 +310,14 @@ public class Spacecraft {
                 mission = "Complete Level 28";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 1;
                 laserSpeed = 3;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
                 bonusPoints = 0;
             }
             case 16 -> {
@@ -229,9 +326,15 @@ public class Spacecraft {
                 mission = "Complete Level 32";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 3;
                 laserSpeed = 2;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 17 -> {
                 name = "Scylla";
@@ -239,9 +342,15 @@ public class Spacecraft {
                 mission = "Complete Level 34";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 3;
                 bonusPoints = 40;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 18 -> {
                 name = "Keto";
@@ -249,9 +358,15 @@ public class Spacecraft {
                 mission = "Complete Level 36";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 3;
                 laserSpeed = 0;
                 bonusPoints = 40;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 19 -> {
                 name = "Efron";
@@ -259,9 +374,15 @@ public class Spacecraft {
                 mission = "Complete Level 38";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 2;
                 laserSpeed = 3;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
             case 20 -> {
                 name = "Drakar";
@@ -269,9 +390,15 @@ public class Spacecraft {
                 mission = "Buy in the marketplace";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 3;
                 laserSpeed = 3;
                 bonusPoints = 0;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = false;
+                doublePoints = true;
             }
             case 21 -> {
                 name = "Rorik";
@@ -279,9 +406,15 @@ public class Spacecraft {
                 mission = "Buy in the marketplace";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 0;
                 laserSpeed = 3;
                 bonusPoints = 50;
+                // carte speciali
+                goldHeart = false;
+                shield = false;
+                superLaser = true;
+                doublePoints = false;
             }
             case 22 -> {
                 name = "Astrid";
@@ -289,9 +422,15 @@ public class Spacecraft {
                 mission = "Win 200 S.B. matches";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 3;
                 laserSpeed = 0;
                 bonusPoints = 50;
+                // carte speciali
+                goldHeart = false;
+                shield = true;
+                superLaser = false;
+                doublePoints = false;
             }
             case 23 -> {
                 name = "Alpha";
@@ -299,9 +438,15 @@ public class Spacecraft {
                 mission = "Collect all 4 fragments";
                 imgTexture = new Texture("images/spacecrafts/sp" + (id+1) + ".png");
                 laserTexture = new Texture("images/lasers/laser (" + (id+1) + ").png");
+                // incremento attributi
                 spSpeed = 3;
                 laserSpeed = 3;
                 bonusPoints = 10;
+                // carte speciali
+                goldHeart = true;
+                shield = false;
+                superLaser = false;
+                doublePoints = false;
             }
         }
     }
@@ -345,5 +490,16 @@ public class Spacecraft {
     // getter della percentuale punti bonus
     public int getBonusPoints() {
         return bonusPoints;
+    }
+
+    // getter stato delle carte
+    public boolean isCardActive(String card) {
+        return switch (card) {
+            case "goldHeart" -> goldHeart;
+            case "shield" -> shield;
+            case "superLaser" -> superLaser;
+            case "doublePoints" -> doublePoints;
+            default -> false;
+        };
     }
 }

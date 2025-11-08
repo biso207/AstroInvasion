@@ -55,9 +55,15 @@ public class InputManager implements InputProcessor {
 
     // boolean per le carte speciali
     public static boolean goldHeart, shield, superLaser, doublePoints;
-    // nome navicella
-    private String nameSp = UIManager.selectedSp.getName();
-    // stato cambio navicella
+
+    // nomi navicelle
+    private final Spacecraft spacecraftCG = UIManager.selectedCGSp;
+    private final Spacecraft spacecraftSB = UIManager.selectedSBSp;
+    private final Spacecraft spacecraftSJ = UIManager.selectedSJSp;
+    // oggetto navicella generica
+    private Spacecraft spacecraft=spacecraftCG;
+
+    // stato cambio avatar
     protected static boolean  isAVChanged=false;
 
     // recupero difficoltà classic game e space battle
@@ -98,14 +104,8 @@ public class InputManager implements InputProcessor {
         // reset alcune variabili boolean => importante per i cambi utente altrimenti rimangono allo stato dell'utente precedente
         showPS=isGameCompleted=isTickSelected=false;
 
-        // reset stato carte speciali
-        goldHeart=shield=superLaser=doublePoints=false;
-
-        // attivazione carte speciali se selezionata una navicella premium
-        if (nameSp.equals("Alpha")) goldHeart = true;
-        if (nameSp.equals("Astrid")) shield = true;
-        if (nameSp.equals("Rorik")) superLaser = true;
-        if (nameSp.equals("Drakar")) doublePoints = true;
+        // attivazione/disattivazione carte speciali
+        statusCards();
 
         // init numero prodotti
         item1=item2=item3=item4=item5=item6=0;
@@ -186,6 +186,14 @@ public class InputManager implements InputProcessor {
         if (cont==4) isGameCompleted=true;
     }
 
+    // metodo per attivare/disattivare le carte speciali
+    public void statusCards() {
+        goldHeart = spacecraft.goldHeart;
+        shield = spacecraft.shield;
+        superLaser = spacecraft.superLaser;
+        doublePoints = spacecraft.doublePoints;
+    }
+
     // ************************************** //
     // METODI DELL'INTERFACCIA InputProcessor //
     // ************************************** //
@@ -235,8 +243,14 @@ public class InputManager implements InputProcessor {
                     if (hb.targetPage==20) { open20 = true; secondScreen = true; } // pagina leaderboard
                     if (hb.targetPage==6) checkCompleteGame(); // controllo completamento missioni del RTG (completamento gioco)
 
+                    // selezione navicelle generica => semplifica i controlli nei punti seguenti del codice
+                    if (hb.targetPage==0) spacecraft=spacecraftCG;
+                    if (hb.targetPage==1) spacecraft=spacecraftSB;
+                    if (hb.targetPage==2) spacecraft=spacecraftSJ;
+
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
+                    statusCards(); // attivazione/disattivazione carte speciali
                     break;
                 }
             }
@@ -301,9 +315,9 @@ public class InputManager implements InputProcessor {
             if ((screenX >= 769 && screenX <= 920) && (screenY >= 550 && screenY <= 593)) {
                 // avvio modalità di gioco
                 if (page == 0) {
+                    boolean spName = (spacecraft.getName().equals("Omega") || spacecraft.getName().equals("Idra") || spacecraft.getName().equals("Pegaso") || spacecraft.getName().equals("Woka"));
                     // controllo per l'avviso difficoltà
-                    if ((nameSp.equals("Omega") || nameSp.equals("Idra") || nameSp.equals("Pegaso") || nameSp.equals("Woka"))
-                        && diffCG == 3d && (boolean)DataUserManager.getProgress("show_warning")) {
+                    if (spName && diffCG == 3d && (boolean)DataUserManager.getProgress("show_warning")) {
                         secondScreen = open18 = true;
                     } else {
                         SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -322,12 +336,12 @@ public class InputManager implements InputProcessor {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     LobbyManager.soundtrack.stop(); // interruzione musica
 
-                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSp, 0)); // apertura mappa space journey
+                    LobbyManager.game.setScreen(new SpaceJourney(LobbyManager.game, UIManager.selectedSJSp, 0)); // apertura mappa space journey
                     ui.disposeUI(); // rilascio risorse
                 }
             }
 
-            // cambio difficoltà classic game
+            // --- cambio difficoltà classic game --- //
             if (page == 0 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584) && diffCG < 3) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 diffCG++;
@@ -339,7 +353,7 @@ public class InputManager implements InputProcessor {
                 DataUserManager.setProgress("diff_classic_game", diffCG);
             }
 
-            // cambio difficoltà space battle
+            // --- cambio difficoltà space battle --- //
             if (page == 1 && (screenX >= 700 && screenX <= 720) && (screenY >= 560 && screenY <= 584) && diffSB < 3) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 diffSB++;
@@ -351,59 +365,63 @@ public class InputManager implements InputProcessor {
                 DataUserManager.setProgress("diff_space_battle", diffSB);
             }
 
-            // selezione carte speciali //
+            // todo: controllare e correggere gli errori della selezione carte
+            // --- selezione carte speciali --- //
             // gold heart
-            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && (!nameSp.equals("Alpha")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323))) {
+            if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && !spacecraft.getName().equals("Alpha") && ((screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323))) {
+                System.out.println(spacecraft.getName());
+                System.out.println(spacecraft.goldHeart);
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 goldHeart = !goldHeart;
 
                 // disattivazione altre carte
-                if (!nameSp.equals("Astrid")) shield = false;
-                if (!nameSp.equals("Rorik")) superLaser = false;
-                if (!nameSp.equals("Drakar")) doublePoints = false;
+                shield = spacecraft.shield;
+                superLaser = spacecraft.superLaser;
+                doublePoints = spacecraft.doublePoints;
             }
-            // shield
+            // shield (CG) && superLaser (SB) => stesso range, diversa carta attivata
             if (((screenX >= 793 && screenX <= 863) && (screenY >= 253 && screenY <= 323))) {
-                if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0) && !nameSp.equals("Astrid")) {
+                if (page == 0 && ((int) DataUserManager.getProgress("num_shield") > 0) && !spacecraft.getName().equals("Astrid")) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     shield = !shield;
 
                     // disattivazione altre carte
-                    if (!nameSp.equals("Alpha")) goldHeart = false;
-                    if (!nameSp.equals("Drakar")) doublePoints = false;
-                    if (!nameSp.equals("Rorik")) superLaser = false;
-                } else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !nameSp.equals("Rorik")) {
+                    goldHeart = spacecraft.goldHeart;
+                    superLaser = spacecraft.superLaser;
+                    doublePoints = spacecraft.doublePoints;
+                }
+                else if (page == 1 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !spacecraft.getName().equals("Rorik")) {
                     SoundManager.playClickButton(soundPercent); // riproduzione suono click
                     superLaser = !superLaser;
 
                     // disattivazione altre carte
-                    if (!nameSp.equals("Alpha")) goldHeart = false;
-                    if (!nameSp.equals("Drakar")) doublePoints = false;
-                    if (!nameSp.equals("Astrid")) shield = false;
+                    goldHeart = spacecraft.goldHeart;
+                    shield = spacecraft.shield;
+                    doublePoints = spacecraft.doublePoints;
                 }
             }
             // super laser
-            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && (!nameSp.equals("Rorik")) && ((screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438))) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_super_laser") > 0) && !spacecraft.getName().equals("Rorik") && ((screenX >= 680 && screenX <= 750) && (screenY >= 368 && screenY <= 438))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 superLaser = !superLaser;
 
                 // disattivazione altre carte
-                if (!nameSp.equals("Alpha")) goldHeart = false;
-                if (!nameSp.equals("Astrid")) shield = false;
-                if (!nameSp.equals("Drakar")) doublePoints = false;
+                goldHeart = spacecraft.goldHeart;
+                superLaser = spacecraft.superLaser;
+                doublePoints = spacecraft.doublePoints;
             }
             // double points
-            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && (!nameSp.equals("Drakar")) && ((screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438))) {
+            if (page == 0 && ((int) DataUserManager.getProgress("num_double_points") > 0) && !spacecraft.getName().equals("Drakar") && ((screenX >= 793 && screenX <= 863) && (screenY >= 368 && screenY <= 438))) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 doublePoints = !doublePoints;
 
                 // disattivazione altre carte
-                if (!nameSp.equals("Alpha")) goldHeart = false;
-                if (!nameSp.equals("Rorik")) superLaser = false;
-                if (!nameSp.equals("Astrid")) shield = false;
+                goldHeart = spacecraft.goldHeart;
+                superLaser = spacecraft.superLaser;
+                shield = spacecraft.shield;
             }
 
-            // claim reward delle missions
+            // -- claim reward delle missions --- //
             if (page == 3 && ((boolean) DataUserManager.getProgress("completed_mission")) && (screenX >= 762 && screenX <= 898) && (screenY >= 561 && screenY <= 595)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
 
@@ -448,7 +466,7 @@ public class InputManager implements InputProcessor {
                 DataUserManager.setProgress("mission_id", missionID);
             }
 
-            // acquisti nel negozio
+            // --- acquisti nel negozio --- //
             if (page == 5) {
                 // rimozione prodotto
                 if ((screenX >= 344 && screenX <= 364 && screenY >= 385 && screenY <= 405) && item1 > 0) { // item 1
@@ -651,20 +669,28 @@ public class InputManager implements InputProcessor {
             if ((page==4 || page==12)  && (screenX >= 908 && screenX <= 948) && (screenY >= 67 && screenY <= 107)) {
                 // salvataggio navicella selezionata
                 if (page==4) {
-                    DataUserManager.setProgress("spacecraft", numSelectedSP);
+                    // switch per la selezione del tipo di navicella
+                    String spType = switch (previousPage) {
+                        case 0 -> "spacecraft_CG";
+                        case 1 -> "spacecraft_SB";
+                        case 2 -> "spacecraft_SJ";
+                        default -> "";
+                    };
+
+                    // salvataggio nuova navicella
+                    DataUserManager.setProgress(spType, numSelectedSP);
 
                     // cambio nome navicella con creazione nuovo oggetto
-                    Spacecraft s = UIManager.selectSpacecraft();
-                    nameSp = s.getName();
+                    Spacecraft s = UIManager.selectSpacecraft(spType);
 
                     // reset stato carte per sicurezza
                     goldHeart=shield=superLaser=doublePoints=false;
 
                     // riattivazione carte speciali se selezionata una navicella premium
-                    if (nameSp.equals("Alpha")) goldHeart = true;
-                    if (nameSp.equals("Astrid")) shield = true;
-                    if (nameSp.equals("Rorik")) superLaser = true;
-                    if (nameSp.equals("Drakar")) doublePoints = true;
+                    goldHeart = s.goldHeart;
+                    shield = s.shield;
+                    superLaser = s.superLaser;
+                    doublePoints = s.doublePoints;
                 }
 
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -951,14 +977,16 @@ public class InputManager implements InputProcessor {
 
     // metodo per rilevare la digitazione della tastiera
     @Override public boolean keyTyped(char character) {
-        // riproduzione suono digitazione
-        SoundManager.playDigitSound(soundPercent); // suono del click
-
+        // pagina per la digitazione della nuova password
         if (open21) {
+            // riproduzione suono digitazione
+            SoundManager.playDigitSound(soundPercent); // suono del click
             if (character == '\b' && !passwordInput.isEmpty()) passwordInput.deleteCharAt(passwordInput.length() - 1);
                 // controllo digitazione caratteri validi
             else if (character >= 32 && character < 127 && passwordInput.length() <= 10) passwordInput.append(character);
         }
+
+        // digitazione del numero di oggetti da comprare nel negozio
 
         return true;
     }

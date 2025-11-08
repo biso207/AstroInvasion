@@ -132,7 +132,7 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
 
         numLevel = (int) DataUserManager.getProgress("level");
         // navicella utente inizializzata
-        int id = (int) DataUserManager.getProgress("spacecraft");
+        int id = (int) DataUserManager.getProgress("spacecraft_CG");
         this.selectedSp = new Spacecraft(id);
 
         // colore alieno di default

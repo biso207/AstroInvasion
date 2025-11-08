@@ -255,7 +255,9 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("level", 1);
         DataUserManager.setProgress("movement_type", 1);
         DataUserManager.setProgress("shot_type", 1);
-        DataUserManager.setProgress("spacecraft", 0);
+        DataUserManager.setProgress("spacecraft_CG", 0);
+        DataUserManager.setProgress("spacecraft_SB", 0);
+        DataUserManager.setProgress("spacecraft_SJ", 0);
         DataUserManager.setProgress("num_double_points", 1);
         DataUserManager.setProgress("num_gold_heart", 1);
         DataUserManager.setProgress("num_shield", 1);

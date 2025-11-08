@@ -45,8 +45,8 @@ public class UIManager implements ResourceLoader {
     private Texture[] MissionsPrizes;
     public static Missions[] Missions;
 
-    // immagine navicella + immagine space battle bloccato
-    private Texture spImg, infoBanner;
+    // immagini navicelle + immagine space battle bloccato
+    private Texture spCGImg, spSBImg, spSJImg, infoBanner;
 
     // pulsanti + scuri al passaggio del mouse
     private final Texture[] buttonsOver, alphaFragments, badgesRTG;
@@ -66,8 +66,8 @@ public class UIManager implements ResourceLoader {
     // arraylist delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
 
-    // creazione oggetto navicella per il package Lobby
-    protected static Spacecraft selectedSp;
+    // creazione oggetti navicella per il package Lobby
+    protected static Spacecraft selectedCGSp, selectedSBSp, selectedSJSp;
 
     // formatter per la virgola delle migliaia !in automatico converte l'intero in stringa
     private final NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US);
@@ -96,8 +96,11 @@ public class UIManager implements ResourceLoader {
             // ordine potenze: 0:bonus punti, 1:velocità navicella, 2:vel laser
             mapSpacecrafts.put(i, new Spacecraft(i));
         }
-        // selezione navicella utente
-        selectedSp = selectSpacecraft();
+
+        // selezione navicelle utente
+        selectedCGSp = selectSpacecraft("spacecraft_CG");
+        selectedSBSp = selectSpacecraft("spacecraft_SB");
+        selectedSJSp = selectSpacecraft("spacecraft_SJ");
 
         // caricamento risorse
         createMissions();
@@ -298,11 +301,13 @@ public class UIManager implements ResourceLoader {
         mapAvatars.put(19, new Avatar("Emma", "Complete Task 50"));
     }
 
-    // metodo per selezionare la navicella: viene chiamato alla creazione della Lobby e al cambio navicella
-    public static Spacecraft selectSpacecraft() {
+    // metodi la selezione delle navicelle: viene chiamato alla creazione della Lobby e al cambio navicella
+    public static Spacecraft selectSpacecraft(String type) {
+        if (DataUserManager.getProgress(type) == null) type = "spacecraft";
+
         // recupero navicella utente
-        int spacecraft = (int) DataUserManager.getProgress("spacecraft");
-        return mapSpacecrafts.get(spacecraft); // return oggetto navicella
+        int sCG = (int) DataUserManager.getProgress(type);
+        return mapSpacecrafts.get(sCG); // return oggetto navicella
     }
 
     public void createMissions() {
@@ -494,8 +499,15 @@ public class UIManager implements ResourceLoader {
 
     // metodo per mostrare i contenuti nelle pagine (testi, immagini, icone)
     public void showItems(SpriteBatch screen) {
-        selectedSp = selectSpacecraft(); // oggetto navicella
-        spImg = selectedSp.getImgTexture(); // immagine navicella
+        // qui serve una nuova definizione navicelle in caso di cambi
+        selectedCGSp = selectSpacecraft("spacecraft_CG");
+        selectedSBSp = selectSpacecraft("spacecraft_SB");
+        selectedSJSp = selectSpacecraft("spacecraft_SJ");
+
+        // SOLO QUI, solo 1 caricamento in memoria
+        spCGImg = selectedCGSp.getImgTexture(); // immagine navicella
+        spSBImg = selectedSBSp.getImgTexture(); // immagine navicella
+        spSJImg = selectedSJSp.getImgTexture(); // immagine navicella
 
         // background principale (NO la pagina 4 e 12 che sono scrollabili e gestite diversamente)
         if (InputManager.page !=4 && InputManager.page!=12) screen.draw(mapLobby.get(InputManager.page), 0, 0);
@@ -542,15 +554,15 @@ public class UIManager implements ResourceLoader {
                 // pulsante apertura pagina 'spacecrafts'
                 if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
-                screen.draw(spImg, 330, 130);
+                screen.draw(spCGImg, 330, 130);
                 // nome
-                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
+                fontMediumBlue15.draw(screen, selectedCGSp.getName(), 415, 226);
                 // bonus velocità
-                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
+                if (selectedCGSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedCGSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
-                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                if (selectedCGSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedCGSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
+                if (selectedCGSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedCGSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
                 switch ((int) DataUserManager.getProgress("diff_classic_game")) {
@@ -611,15 +623,15 @@ public class UIManager implements ResourceLoader {
                 // pulsante apertura pagina 'spacecrafts'
                 if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
-                screen.draw(spImg, 330, 130);
+                screen.draw(spSBImg, 330, 130);
                 // nome
-                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
+                fontMediumBlue15.draw(screen, selectedSBSp.getName(), 415, 226);
                 // bonus velocità
-                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
+                if (selectedSBSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSBSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
-                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                if (selectedSBSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSBSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
+                if (selectedSBSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSBSp.getBonusPoints() + "%", 450, 145);
 
                 // difficoltà
                 switch ((int) DataUserManager.getProgress("diff_space_battle")) {
@@ -661,15 +673,15 @@ public class UIManager implements ResourceLoader {
                 // pulsante apertura pagina 'spacecrafts'
                 if (InputManager.isOpenSpHover) screen.draw(buttonsOver[6], 318, 101);
                 // immagine
-                screen.draw(spImg, 330, 130);
+                screen.draw(spSJImg, 330, 130);
                 // nome
-                fontMediumBlue15.draw(screen, selectedSp.getName(), 415, 226);
+                fontMediumBlue15.draw(screen, selectedSJSp.getName(), 415, 226);
                 // bonus velocità
-                if (selectedSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getSpSpeed(), 480, 215);
+                if (selectedSJSp.getSpSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSJSp.getSpSpeed(), 480, 215);
                 // bonus v. laser
-                if (selectedSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getLaserSpeed(), 480, 180);
+                if (selectedSJSp.getLaserSpeed()>=1) fontBlue20.draw(screen, "+ " + selectedSJSp.getLaserSpeed(), 480, 180);
                 // bonus punti
-                if (selectedSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSp.getBonusPoints() + "%", 450, 145);
+                if (selectedSJSp.getBonusPoints()>=1) fontBlue20.draw(screen, "+ " + selectedSJSp.getBonusPoints() + "%", 450, 145);
 
                 // button map hover
                 if (InputManager.isBtnStartHover) screen.draw(buttonsOver[2], 777, 105);
@@ -952,7 +964,9 @@ public class UIManager implements ResourceLoader {
         fontBoldItalicWhite15.dispose();
         fontBoldWhite60.dispose();
 
-        spImg.dispose();
+        spCGImg.dispose();
+        spSBImg.dispose();
+        spSJImg.dispose();
         infoBanner.dispose();
 
         mouse.dispose();

@@ -100,7 +100,7 @@ public class SpaceBattle implements Screen, InputProcessor, ResourceLoader {
 
         // selezione navicella utente
         // navicella utente inizializzata
-        int id = (int) DataUserManager.getProgress("spacecraft");
+        int id = (int) DataUserManager.getProgress("spacecraftSB");
         this.selectedSp = new Spacecraft(id);
 
         playerTexture = selectedSp.getImgTexture();
