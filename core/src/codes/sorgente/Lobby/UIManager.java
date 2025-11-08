@@ -30,7 +30,9 @@ public class UIManager implements ResourceLoader {
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
-        volumeState, bgSpacecraftSelection, spacecraftSelectionBox, topBanner, topBanner2, btnResetActive, noInternetIcon,
+        volumeState, bgSpacecraftSelection, spacecraftCG_SelectionBox, spacecraftSB_SelectionBox, spacecraftSJ_SelectionBox,
+        spacecraft_comb1_SelectionBox, spacecraft_comb2_SelectionBox, spacecraft_comb3_SelectionBox, spacecraft_all_SelectionBox,
+        topBanner, topBanner2, btnResetActive, noInternetIcon,
         noInternetMessage, wiseManMessage, showPS, coverPS;
 
     // textureRegione per definire l'area di completamento della task corrente in Missions
@@ -78,6 +80,9 @@ public class UIManager implements ResourceLoader {
 
     // variabile per lo stato della connessione a internet
     public static boolean isConnected = true;
+
+    // variabili per le combinazioni di navicelle uguali
+    private boolean comb1, comb2, comb3, combAll, noComb;
 
     // costruttore
     public UIManager() {
@@ -236,7 +241,15 @@ public class UIManager implements ResourceLoader {
 
         // immagini per la pagina di selezione delle navicelle
         bgSpacecraftSelection = new Texture("lobby_screens/lobby (4).png");
-        spacecraftSelectionBox = new Texture("images/rect_selected_SP.png");
+        spacecraftCG_SelectionBox = new Texture("images/rect_selected_SP_CG.png");
+        spacecraftSB_SelectionBox = new Texture("images/rect_selected_SP_SB.png");
+        spacecraftSJ_SelectionBox = new Texture("images/rect_selected_SP_SJ.png");
+        // combinate
+        spacecraft_comb1_SelectionBox = new Texture("images/rect_selected_SP_comb1.png");
+        spacecraft_comb2_SelectionBox = new Texture("images/rect_selected_SP_comb2.png");
+        spacecraft_comb3_SelectionBox = new Texture("images/rect_selected_SP_comb3.png");
+        spacecraft_all_SelectionBox = new Texture("images/rect_selected_SP_all.png");
+
 
         // array per gli avatar
         avatars = new Texture[21];
@@ -305,9 +318,10 @@ public class UIManager implements ResourceLoader {
     public static Spacecraft selectSpacecraft(String type) {
         if (DataUserManager.getProgress(type) == null) type = "spacecraft";
 
+        // todo: risolvere errore a questo punto
         // recupero navicella utente
-        int sCG = (int) DataUserManager.getProgress(type);
-        return mapSpacecrafts.get(sCG); // return oggetto navicella
+        int numSP = (int) DataUserManager.getProgress(type);
+        return mapSpacecrafts.get(numSP); // return oggetto navicella
     }
 
     public void createMissions() {
@@ -393,6 +407,15 @@ public class UIManager implements ResourceLoader {
         fontBoldWhite20.draw(screen, Math.round(InputManager.musicPercent*100)+"%", 705, 177);
     }
 
+    // metodo per il check delle combinazioni
+    public void checkCombinations() {
+        comb1 = InputManager.numSelectedSP_CG == InputManager.numSelectedSP_SB;
+        comb2 = InputManager.numSelectedSP_SB == InputManager.numSelectedSP_SJ;
+        comb3 = InputManager.numSelectedSP_CG == InputManager.numSelectedSP_SJ;
+        combAll = comb1 && comb2;
+        noComb = !comb1 || !comb2;
+    }
+
     // metodo per stampare i testi e le immagini
     public void drawSPSelectionPage(SpriteBatch screen) {
         // immagine di sfondo
@@ -400,6 +423,8 @@ public class UIManager implements ResourceLoader {
 
         int spID=0; // id navicella per recuperarne gli attributi
         int X, x1=266, x2= 678, y=2645; // x e y della prima scritta della prima navicella
+
+        checkCombinations(); // controllo combinazioni navicelle uguali
 
         // iterazione con 2 for per dividere i gruppi delle navicelle
         for (int i=0; i<6; i++) {
@@ -416,8 +441,15 @@ public class UIManager implements ResourceLoader {
                     if (s.getBonusPoints()>=1) fontBoldWhite18.draw(screen, "+" + s.getBonusPoints() + "%", X, (y-74)-InputManager.scrollY);
                     fontBoldWhite18.draw(screen, s.getLore(), X, (y-107)-InputManager.scrollY);
 
-                    // disegno rettangolo di selezione
-                    if (spID == InputManager.numSelectedSP) screen.draw(spacecraftSelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    // disegno rettangoli di selezione
+                    if (spID == InputManager.numSelectedSP_CG && !(comb1||comb3)) screen.draw(spacecraftCG_SelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP_SB && !(comb1||comb2)) screen.draw(spacecraftSB_SelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP_SJ && !(comb2||comb3)) screen.draw(spacecraftSJ_SelectionBox, X-178, (y-145)-InputManager.scrollY);
+                    // combinazioni
+                    if (spID == InputManager.numSelectedSP_CG && comb1) screen.draw(spacecraft_comb1_SelectionBox, X-173, (y-140)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP_SB && comb2) screen.draw(spacecraft_comb2_SelectionBox, X-173, (y-140)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP_SJ && comb3) screen.draw(spacecraft_comb3_SelectionBox, X-173, (y-140)-InputManager.scrollY);
+                    if (spID == InputManager.numSelectedSP_CG && combAll) screen.draw(spacecraft_all_SelectionBox, X-173, (y-140)-InputManager.scrollY);
 
                     // disegno di alpha completata
                     if (i*j==15) screen.draw(alphaFragments[4], X-125, (y-79)-InputManager.scrollY);
@@ -504,7 +536,7 @@ public class UIManager implements ResourceLoader {
         selectedSBSp = selectSpacecraft("spacecraft_SB");
         selectedSJSp = selectSpacecraft("spacecraft_SJ");
 
-        // SOLO QUI, solo 1 caricamento in memoria
+        // recupero immagine navicelle già renderizzata e caricata in memoria
         spCGImg = selectedCGSp.getImgTexture(); // immagine navicella
         spSBImg = selectedSBSp.getImgTexture(); // immagine navicella
         spSJImg = selectedSJSp.getImgTexture(); // immagine navicella
@@ -920,7 +952,7 @@ public class UIManager implements ResourceLoader {
         diffSB2.dispose();
         diffSB3.dispose();
         bgSpacecraftSelection.dispose();
-        spacecraftSelectionBox.dispose();
+        spacecraftCG_SelectionBox.dispose();
         topBanner.dispose();
         topBanner2.dispose();
         infoBanner.dispose();

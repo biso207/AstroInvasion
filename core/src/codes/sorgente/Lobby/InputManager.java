@@ -46,9 +46,10 @@ public class InputManager implements InputProcessor {
 
     // lista delle pagine secondarie
     private final Set<Integer> listSecondPages = Set.of(4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-    // 'previousPage' serve a memorizzare l'ultima pagina aperta. //
-    protected static int page=0; // settato a zero alla primissima istanza
-    private int previousPage;
+
+    protected static int page=0; // settato a zero alla primissima istanza (pagina 1 -> Classic Game)
+    private int previousPage; // serve a memorizzare l'ultima pagina aperta
+    private int lastGameMode; // memorizza l'ultima pagina con modalità di gioco
 
     // variabili per comporre la stringa della nuova password
     protected static StringBuilder passwordInput;
@@ -87,7 +88,7 @@ public class InputManager implements InputProcessor {
     public static int movementType, shotType;
 
     // elementi selezionati cambiati => verranno aggiornati sul server non a ogni click
-    public static int numSelectedSP, selectedAvatar;
+    public static int numSelectedSP_CG, numSelectedSP_SB, numSelectedSP_SJ, selectedAvatar;
 
     protected static float scrollY = 2300, scrollY2 = 2800; // posizioni iniziali delle pagine scrollabili
     private final float maxScrollY = 2300;
@@ -105,7 +106,7 @@ public class InputManager implements InputProcessor {
         showPS=isGameCompleted=isTickSelected=false;
 
         // attivazione/disattivazione carte speciali
-        statusCards();
+        resetSP_Cards();
 
         // init numero prodotti
         item1=item2=item3=item4=item5=item6=0;
@@ -122,7 +123,9 @@ public class InputManager implements InputProcessor {
         shotType = (int) DataUserManager.getProgress("shot_type");
         // recupero navicella e avatar
         selectedAvatar = (int) DataUserManager.getProgress("avatar");
-        numSelectedSP = (int) DataUserManager.getProgress("spacecraft");
+        numSelectedSP_CG = (int) DataUserManager.getProgress("spacecraft_CG");
+        numSelectedSP_SB = (int) DataUserManager.getProgress("spacecraft_SB");
+        numSelectedSP_SJ = (int) DataUserManager.getProgress("spacecraft_SJ");
     }
 
     // metodo per definire le aree di gioco cliccabili
@@ -182,16 +185,26 @@ public class InputManager implements InputProcessor {
         for (int i=0; i<4; i++) {
             if (CheckRTG.checkMission(i)) cont++;
         }
-        System.out.println(cont);
         if (cont==4) isGameCompleted=true;
     }
 
     // metodo per attivare/disattivare le carte speciali
-    public void statusCards() {
+    public void resetSP_Cards() {
+        String spType = switch (page) {
+            case 0 -> "spacecraft_CG";
+            case 1 -> "spacecraft_SB";
+            case 2 -> "spacecraft_SJ";
+            default -> null;
+        };
+        // nuova navicella
+        spacecraft = UIManager.selectSpacecraft(spType);
+
+        // attivazione x le navicelle premium
         goldHeart = spacecraft.goldHeart;
         shield = spacecraft.shield;
         superLaser = spacecraft.superLaser;
         doublePoints = spacecraft.doublePoints;
+        System.out.println("pagina " + page + ", navicella: " + spacecraft.getName());
     }
 
     // ************************************** //
@@ -244,13 +257,13 @@ public class InputManager implements InputProcessor {
                     if (hb.targetPage==6) checkCompleteGame(); // controllo completamento missioni del RTG (completamento gioco)
 
                     // selezione navicelle generica => semplifica i controlli nei punti seguenti del codice
-                    if (hb.targetPage==0) spacecraft=spacecraftCG;
-                    if (hb.targetPage==1) spacecraft=spacecraftSB;
-                    if (hb.targetPage==2) spacecraft=spacecraftSJ;
+                    if (hb.targetPage==0) { spacecraft=spacecraftCG; lastGameMode=0; }
+                    if (hb.targetPage==1) { spacecraft=spacecraftSB; lastGameMode=1; }
+                    if (hb.targetPage==2) { spacecraft=spacecraftSJ; lastGameMode=2; }
 
                     if (hb.remembersPrevious) previousPage = page; // memorizzazione pagina precedente
                     page = hb.targetPage; // cambio pagina
-                    statusCards(); // attivazione/disattivazione carte speciali
+                    resetSP_Cards(); // attivazione/disattivazione carte speciali
                     break;
                 }
             }
@@ -369,8 +382,6 @@ public class InputManager implements InputProcessor {
             // --- selezione carte speciali --- //
             // gold heart
             if ((page == 0 || page == 1) && ((int) DataUserManager.getProgress("num_gold_heart") > 0) && !spacecraft.getName().equals("Alpha") && ((screenX >= 680 && screenX <= 750) && (screenY >= 253 && screenY <= 323))) {
-                System.out.println(spacecraft.getName());
-                System.out.println(spacecraft.goldHeart);
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 goldHeart = !goldHeart;
 
@@ -407,7 +418,7 @@ public class InputManager implements InputProcessor {
 
                 // disattivazione altre carte
                 goldHeart = spacecraft.goldHeart;
-                superLaser = spacecraft.superLaser;
+                shield = spacecraft.shield;
                 doublePoints = spacecraft.doublePoints;
             }
             // double points
@@ -417,8 +428,8 @@ public class InputManager implements InputProcessor {
 
                 // disattivazione altre carte
                 goldHeart = spacecraft.goldHeart;
-                superLaser = spacecraft.superLaser;
                 shield = spacecraft.shield;
+                superLaser = spacecraft.superLaser;
             }
 
             // -- claim reward delle missions --- //
@@ -565,7 +576,11 @@ public class InputManager implements InputProcessor {
                     Rectangle area = entry.getKey();
                     if (area.contains(screenX, screenY+(maxScrollY - scrollY))) {
                         selectedId = entry.getValue(); // recupero id navicella selezionata
-                        numSelectedSP = selectedId;
+                        switch (lastGameMode) {
+                            case 0 -> numSelectedSP_CG = selectedId;
+                            case 1 -> numSelectedSP_SB = selectedId;
+                            case 2 -> numSelectedSP_SJ = selectedId;
+                        };
 
                         // riproduzione suono click
                         if (Spacecraft.isAchieved(selectedId)) SoundManager.playClickButton(soundPercent);
@@ -670,27 +685,36 @@ public class InputManager implements InputProcessor {
                 // salvataggio navicella selezionata
                 if (page==4) {
                     // switch per la selezione del tipo di navicella
-                    String spType = switch (previousPage) {
-                        case 0 -> "spacecraft_CG";
-                        case 1 -> "spacecraft_SB";
-                        case 2 -> "spacecraft_SJ";
-                        default -> "";
+                    int numSelectedSP=0; String spType="";
+
+                    numSelectedSP = switch (lastGameMode) {
+                        case 0 -> {
+                            spType = "spacecraft_CG";
+                            yield numSelectedSP_CG;
+                        }
+                        case 1 -> {
+                            spType = "spacecraft_SB";
+                            yield numSelectedSP_SB;
+                        }
+                        case 2 -> {
+                            spType = "spacecraft_SJ";
+                            yield numSelectedSP_SJ;
+                        }
+                        default -> numSelectedSP;
                     };
 
                     // salvataggio nuova navicella
                     DataUserManager.setProgress(spType, numSelectedSP);
 
                     // cambio nome navicella con creazione nuovo oggetto
-                    Spacecraft s = UIManager.selectSpacecraft(spType);
+                    spacecraft = UIManager.selectSpacecraft(spType);
+                    System.out.println("navicella selezionata: " + spacecraft.getName());
 
                     // reset stato carte per sicurezza
                     goldHeart=shield=superLaser=doublePoints=false;
 
                     // riattivazione carte speciali se selezionata una navicella premium
-                    goldHeart = s.goldHeart;
-                    shield = s.shield;
-                    superLaser = s.superLaser;
-                    doublePoints = s.doublePoints;
+                    resetSP_Cards();
                 }
 
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
@@ -709,6 +733,7 @@ public class InputManager implements InputProcessor {
             }
             // X wise man => chiusura pagina wise man
             if (secondScreen && open23 && (screenX >= 761 && screenX <= 801) && (screenY >= 204 && screenY <= 244)) {
+                SoundManager.playClickButton(soundPercent); // riproduzione suono click
                 secondScreen = open23 = false;
             }
 
