@@ -785,7 +785,7 @@ public class UIManager implements ResourceLoader {
                 // testi //
                 // SCRITTE A SX
                 fontMediumWhite20.draw(screen, localization.get("label.nickname", AuthAlgorithms.nickname), 67, 340);
-                fontMediumWhite20.draw(screen, localization.get("label.password", AuthAlgorithms.password), 67, 300);
+                fontMediumWhite20.draw(screen, localization.get("label.pin", "••••"), 67, 300);
                 fontMediumWhite20.draw(screen, localization.get("label.creationId", DataUserManager.getProgress("date")), 67, 260);
 
                 // SCRITTE A DX
@@ -903,11 +903,11 @@ public class UIManager implements ResourceLoader {
 
                 // password digitata + icona mostra/nascondi psw
                 if (!InputManager.showPS) {
-                    fontBoldWhite30.draw(screen, "*".repeat(InputManager.passwordInput.length()), 290, 325);
+                    fontBoldWhite30.draw(screen, "•".repeat(InputManager.pinInput.length()), 290, 325);
                     screen.draw(coverPS, 685,303);
                 }
                 else {
-                    fontBoldWhite30.draw(screen, InputManager.passwordInput, 290, 328);
+                    fontBoldWhite30.draw(screen, InputManager.pinInput, 290, 328);
                     screen.draw(showPS, 685,303);
                 }
             }
@@ -935,12 +935,8 @@ public class UIManager implements ResourceLoader {
 
     // metodo per liberare la memoria
     public void disposeUI() {
-        for (int i = 0; i < 20; i++) {
-            avatars[i].dispose();
-        }
-        for (int i=4; i<=19; i++) {
-            avatarsCovered[i].dispose();
-        }
+        for (int i = 0; i < 20; i++) avatars[i].dispose();
+        for (int i=4; i<=19; i++) avatarsCovered[i].dispose();
         selectedAvatar.dispose();
 
         for (Texture t : mapAvatarImg.values()) t.dispose();

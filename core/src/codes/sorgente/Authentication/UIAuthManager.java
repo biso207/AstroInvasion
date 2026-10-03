@@ -14,12 +14,11 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.*;
+import sorgente.LoadingScreen;
+import sorgente.Main;
+import sorgente.ResourceLoader;
 import sorgente.Authentication.LoadingData.GlobalProgressManager;
-import sorgente.UserData.CloudStorageManager;
 import sorgente.Localization.LocalizationManager;
-
-import java.io.IOException;
 
 public class UIAuthManager extends ScreenAdapter implements ResourceLoader {
     // variabile di riferimento al gioco
@@ -111,13 +110,6 @@ public class UIAuthManager extends ScreenAdapter implements ResourceLoader {
                 if (alg.error4) fontBoldYellow20.draw(screen, localization.get("auth.nicknameInvalid"),388,72);
                 break;
             case 2:
-                // salvataggio password in remoto
-                try {
-                    CloudStorageManager.setPassword(AuthAlgorithms.nickname, AuthAlgorithms.password);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
                 // schermata di caricamento per upload/download dati
                 LoadingScreen loadingScreen = new LoadingScreen(game, false);
                 game.setScreen(loadingScreen); // creazione di un nuovo screen
@@ -139,7 +131,7 @@ public class UIAuthManager extends ScreenAdapter implements ResourceLoader {
 
         // aree di testo
         screen.draw(alg.enteringNickname ? digitAreaON : digitAreaOFF, 257, 379);
-        screen.draw(alg.enteringPassword ? digitAreaON : digitAreaOFF, 257, 281);
+        screen.draw(alg.enteringPin ? digitAreaON : digitAreaOFF, 257, 281);
 
         // icona mostra/nascondi password
         if (alg.showPS) screen.draw(showPS, 690,288);
@@ -155,8 +147,8 @@ public class UIAuthManager extends ScreenAdapter implements ResourceLoader {
         // nickname
         font.draw(screen, alg.nicknameInput, 272, 412);
         // password che può essere visibile o meno, l'utente deve solo cliccare l'icona a dx
-        if (!alg.showPS) font.draw(screen, "*".repeat(alg.passwordInput.length()), 272, 310);
-        else font.draw(screen, alg.passwordInput, 272, 316);
+        if (!alg.showPS) font.draw(screen, "*".repeat(alg.pinInput.length()), 272, 310);
+        else font.draw(screen, alg.pinInput, 272, 316);
 
         // crediti
         fontMediumWhite16.draw(screen, localization.get("studio"), 53, 45);

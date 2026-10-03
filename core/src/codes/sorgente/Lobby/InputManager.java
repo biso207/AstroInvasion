@@ -1,8 +1,9 @@
 /*
-Astro Invasion - class InputManager -
-Gestisce i metodi di controllo degli input utente
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class InputManager -
+ * Handles lobby input events and delegates user actions to application services.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 // package di appartenenza
 package sorgente.Lobby;
@@ -23,6 +24,7 @@ import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.Authentication.UIAuthManager;
+import sorgente.Authentication.PinValidator;
 import sorgente.UserData.SessionLockManager;
 import java.io.IOException;
 import java.util.HashMap;
@@ -51,8 +53,8 @@ public class InputManager implements InputProcessor {
     private int previousPage; // serve a memorizzare l'ultima pagina aperta
     private int lastGameMode; // memorizza l'ultima pagina con modalità di gioco
 
-    // variabili per comporre la stringa della nuova password
-    protected static StringBuilder passwordInput;
+    // Input buffer used while changing the authentication PIN.
+    protected static StringBuilder pinInput;
 
     // boolean per le carte speciali
     public static boolean goldHeart, shield, superLaser, doublePoints;
@@ -113,7 +115,7 @@ public class InputManager implements InputProcessor {
         // recupero crediti
         currentCredit = (int) DataUserManager.getProgress("credits");
 
-        passwordInput = new StringBuilder();
+        pinInput = new StringBuilder();
 
         // recupero volume audio
         soundPercent = ((Number) DataUserManager.getProgress("sound_volume")).floatValue();
@@ -639,21 +641,20 @@ public class InputManager implements InputProcessor {
                 showPS=!showPS;
             }
             // salvataggio nuova password
-            if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) {
+            if (open21 && PinValidator.isValid(pinInput.toString()) && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) {
                 SoundManager.playClickButton(soundPercent); // riproduzione suono click
 
                 // cambio valori variabili
-                String newPassword = passwordInput.toString().trim();
-                AuthAlgorithms.password = newPassword;
+                String newPin = pinInput.toString();
 
                 // sovrascrittura in remoto della nuova password
                 try {
-                    CloudStorageManager.setPassword(AuthAlgorithms.nickname, newPassword);
+                    CloudStorageManager.setPin(AuthAlgorithms.nickname, newPin);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                passwordInput.setLength(0); // reset lunghezza per futuri cambi
+                pinInput.setLength(0);
                 secondScreen = open21 = false; // chiusura pagina cambio password
             }
 
@@ -924,7 +925,7 @@ public class InputManager implements InputProcessor {
         // rtg (road to glory)
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=170 && screenX<=430) && (screenY>=217 && screenY<=280)) isBtnGloryHover=true;
         // password change action button
-        if (open21 && !passwordInput.isEmpty() && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488) && (!AuthAlgorithms.password.contentEquals(passwordInput))) isBtnChangePSWHover=true;
+        if (open21 && PinValidator.isValid(pinInput.toString()) && (screenX>=415 && screenX<=565) && (screenY>=438 && screenY<=488)) isBtnChangePSWHover=true;
         // open delete the account
         if (page==6 && !open19 && !open21 && !open22 && (screenX>=424 && screenX<=460) && (screenY>=307 && screenY<=343)) isDeleteAccountHover=true;
         // delete account action button
@@ -1006,9 +1007,9 @@ public class InputManager implements InputProcessor {
         if (open21) {
             // riproduzione suono digitazione
             SoundManager.playDigitSound(soundPercent); // suono del click
-            if (character == '\b' && !passwordInput.isEmpty()) passwordInput.deleteCharAt(passwordInput.length() - 1);
+            if (character == '\b' && !pinInput.isEmpty()) pinInput.deleteCharAt(pinInput.length() - 1);
                 // controllo digitazione caratteri validi
-            else if (character >= 32 && character < 127 && passwordInput.length() <= 10) passwordInput.append(character);
+            else if (character >= '0' && character <= '9' && pinInput.length() < PinValidator.MAX_LENGTH) pinInput.append(character);
         }
 
         // digitazione del numero di oggetti da comprare nel negozio

@@ -1,8 +1,9 @@
 /*
-Astro Invasion - class AuthAlgorithms -
-Implementa i metodi di autenticazione per i processi di accesso e registrazione utente
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class AuthAlgorithms -
+ * Coordinates authentication input and application-level login and signup flows.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 // package di appartenenza
 package sorgente.Authentication;
@@ -12,10 +13,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.Pixmap;
-import org.mindrot.jbcrypt.BCrypt;
 import sorgente.UserData.DataUserManager;
 import sorgente.UserData.CloudStorageManager;
-import sorgente.ProfanityFilter;
 import sorgente.SoundManager;
 import sorgente.UserData.LockStatusManager;
 import sorgente.UserData.SessionLockManager;
@@ -28,11 +27,9 @@ import java.time.format.DateTimeFormatter;
 
 public class AuthAlgorithms implements InputProcessor {
     // variabili di controllo digitazione
-    protected boolean enteringNickname, enteringPassword;
-    // variabili per recuperare nick e psw utente
-    public static String nickname, password;
-    // variabili per comporre le stringhe digitate di nick e psw
-    protected final StringBuilder nicknameInput, passwordInput;
+    protected boolean enteringNickname, enteringPin;
+    public static String nickname;
+    protected final StringBuilder nicknameInput, pinInput;
 
     // variabile per nascondere/mostrare la password e cambiare stile pulsanti
     protected boolean showPS=false, isHover1=false, isHover2=false;
@@ -62,11 +59,11 @@ public class AuthAlgorithms implements InputProcessor {
     public AuthAlgorithms() {
         // attivazione area di digitazione
         this.enteringNickname = true;
-        this.enteringPassword = false;
+        this.enteringPin = false;
 
         // dichiarazione dei stringBuilder
         nicknameInput = new StringBuilder();
-        passwordInput = new StringBuilder();
+        pinInput = new StringBuilder();
 
         mouse = new Pixmap(Gdx.files.internal("images/cursor.png"));
 
@@ -78,8 +75,6 @@ public class AuthAlgorithms implements InputProcessor {
         // apertura schermata login
         state = 0;
 
-        // caricamento lista di parole vietate per il nickname
-        ProfanityFilter.loadBlacklists();
     }
 
     // metodo per il rilascio delle risorse
@@ -117,28 +112,28 @@ public class AuthAlgorithms implements InputProcessor {
         // reset lunghezza
         if (state==0) { // caso login
             if (error) { // error solo password errata
-                passwordInput.setLength(0);
+                pinInput.setLength(0);
                 // reset campi digitabili
                 enteringNickname = false;
-                enteringPassword = true;
+                enteringPin = true;
                 return;
             }
 
             // qualunque altro errore //
             // reset lunghezza testi
             nicknameInput.setLength(0);
-            passwordInput.setLength(0);
+            pinInput.setLength(0);
             // reset campi digitabili
             enteringNickname = true;
-            enteringPassword = false;
+            enteringPin = false;
         }
 
         // caso signup - ogni testo e campo da resettare //
         nicknameInput.setLength(0);
-        passwordInput.setLength(0);
+        pinInput.setLength(0);
         // campi digitabili
         enteringNickname = true;
-        enteringPassword = false;
+        enteringPin = false;
     }
 
 
@@ -155,20 +150,20 @@ public class AuthAlgorithms implements InputProcessor {
     // algoritmo di registrazione
     public void SignUpAlg() {
         // recupero nickname digitato con pulizia da caratteri non adatti
-        nickname = sanitizeNickname(nicknameInput.toString());
+        nickname = nicknameInput.toString();
+        UsernameValidationResult usernameResult = UsernameValidator.validate(nickname);
+        if (!usernameResult.isValid() || !PinValidator.isValid(pinInput.toString())) {
+            error4 = !usernameResult.isValid();
+            error = !PinValidator.isValid(pinInput.toString());
+            return;
+        }
 
         try {
-            // nickname invalido, contiene parole invalide
-            //if (!ProfanityFilter.isValidNickname(nickname)) { error4=true; return; } // todo: migliorarlo perché non funziona
-
             // controllo presenza utente
             if (!CloudStorageManager.checkUsernameExists(nickname)) {
-
-                // assegnazione della psw digitata
-                password = passwordInput.toString();
-
                 // creazione file utente
                 createFiles();
+                CloudStorageManager.setPin(nickname, pinInput.toString());
 
                 // blocco del lock
                 LockStatusManager.setLockStatus(nickname, true);
@@ -178,7 +173,7 @@ public class AuthAlgorithms implements InputProcessor {
                 state = 2; // passaggio alla lobby
                 //notify.sendMessage(); // notifica di apertura gioco todo: togliere il commento prima del rilascio
             }
-            else if (!nickname.isEmpty() && !passwordInput.isEmpty()) {
+            else if (!nickname.isEmpty() && !pinInput.isEmpty()) {
                 error = true;
             }
         }
@@ -189,7 +184,9 @@ public class AuthAlgorithms implements InputProcessor {
 
     // algoritmo di accesso
     public void LogInAlg() {
-        nickname = sanitizeNickname(nicknameInput.toString());
+        nickname = nicknameInput.toString();
+        UsernameValidationResult usernameResult = UsernameValidator.validate(nickname);
+        if (!usernameResult.isValid()) { resetErrors(); error4 = true; return; }
 
         try {
             // nickname non trovato
@@ -204,22 +201,19 @@ public class AuthAlgorithms implements InputProcessor {
             // blocca subito la sessione
             LockStatusManager.setLockStatus(nickname, true);
 
-            // recupero password utente dal server
-            String hashedPsw = CloudStorageManager.getPassword(nickname);
-
-            /// once all the users will have the password hashed, we can leave only the hash control in the
-            /// password-check behind. now we use an "&&" statement to permit access for both types of passwords,
-            ///  hashed or not. the previous version of the game was using a non-hash method to save the passwords.
+            String storedPinHash = CloudStorageManager.getPin(nickname);
 
             // password errata => libera subito il lock
-            if (!hashedPsw.contentEquals(passwordInput) && !BCrypt.checkpw(String.valueOf(passwordInput), hashedPsw)) {
+            boolean pinMatches = PinSecurityService.matches(pinInput.toString(), storedPinHash);
+            if (!pinMatches && pinInput.toString().equals(storedPinHash)) {
+                CloudStorageManager.setPin(nickname, pinInput.toString());
+                pinMatches = true;
+            }
+            if (!pinMatches) {
                 resetErrors(); error = true;
                 LockStatusManager.setLockStatus(nickname, false);
                 return;
             }
-
-            // password corretta => procede con la lobby
-            password = passwordInput.toString();
 
             SessionLockManager.startHeartbeat(nickname); // inizio del refresh del timestamp
             DataUserManager.loadProgresses(); // caricamento progressi utente
@@ -236,12 +230,8 @@ public class AuthAlgorithms implements InputProcessor {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy"); // formato
         String date = LocalDate.now().format(formatter); // recupero giorno creazione profilo
 
-        // hash della password
-        password = BCrypt.hashpw(password, BCrypt.gensalt());
-
         // setting dati del nuovo utente
         DataUserManager.setProgress("nickname", nickname); // nickname
-        DataUserManager.setProgress("password", password); // password
         DataUserManager.setProgress("date", date); // data di registrazione
 
         // init progressi del nuovo utente
@@ -296,7 +286,7 @@ public class AuthAlgorithms implements InputProcessor {
 
     // metodo per validare gli input
     private boolean isValidInput() {
-        return !nicknameInput.isEmpty() && !passwordInput.isEmpty();
+        return !nicknameInput.isEmpty() && PinValidator.isValid(pinInput.toString());
     }
 
     // metodo per rilevare il click da tastiera
@@ -305,13 +295,13 @@ public class AuthAlgorithms implements InputProcessor {
         SoundManager.playDigitSound(50); // suono del click
 
         // scelta del campo da modificare
-        StringBuilder currentInput = enteringNickname ? nicknameInput : passwordInput;
+        StringBuilder currentInput = enteringNickname ? nicknameInput : pinInput;
 
         // ENTER terminare la digitazione
         if ((character == '\n' || character == '\r')) {
             // passaggio alla digitazione della password
             if (enteringNickname) {
-                enteringPassword = true;
+                enteringPin = true;
                 enteringNickname = false;
             }
             // controllo validità campi digitati
@@ -329,7 +319,8 @@ public class AuthAlgorithms implements InputProcessor {
         // BACKSPACE per cancellare un carattere
         else if (character == '\b' && !currentInput.isEmpty()) currentInput.deleteCharAt(currentInput.length() - 1);
         // controllo digitazione caratteri validi
-        else if (character >= 32 && character < 127 && currentInput.length() <= 10) currentInput.append(character);
+        else if (enteringNickname && character >= 32 && character < 127 && currentInput.length() < UsernameValidator.MAX_LENGTH) currentInput.append(character);
+        else if (enteringPin && character >= '0' && character <= '9' && currentInput.length() < PinValidator.MAX_LENGTH) currentInput.append(character);
         return true;
     }
 
@@ -362,15 +353,15 @@ public class AuthAlgorithms implements InputProcessor {
         }
 
         // click per attivare la digitazione della password
-        if (!enteringNickname && ((screenX>=249 && screenX<=730) && (screenY>=277 && screenY<=319))) {
+        if (!enteringPin && ((screenX>=249 && screenX<=730) && (screenY>=277 && screenY<=319))) {
             SoundManager.playClickButton(50); // suono del click
             enteringNickname=true;
-            enteringPassword=false;
+            enteringPin=false;
         }
         // click per attivare la digitazione del nickname
-        if (!enteringPassword && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417))) {
+        if (!enteringNickname && ((screenX>=249 && screenX<=730) && (screenY>=375 && screenY<=417))) {
             SoundManager.playClickButton(50); // suono del click
-            enteringPassword=true;
+            enteringPin=true;
             enteringNickname=false;
         }
         return true;

@@ -1,89 +1,73 @@
 /*
-Astro Invasion - class AuthAlgorithms -
-Implementa i metodi per il controllo della digitazione di un nuovo nickname accettabile
-Developed by BIGA©. All rights reserved.
-*/
-
-// package di appartenenza
+ * Astro Invasion - class ProfanityFilter -
+ * Loads multilingual moderation data and checks normalized usernames.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 package sorgente;
 
-// import librerie e codici
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.Normalizer;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
-public class ProfanityFilter {
-    private static final List<String> LANGS = List.of("it", "en", "fr", "de", "es");
-    private static final List<String> blacklist = new ArrayList<>();
-    private static Pattern badPattern;
+public final class ProfanityFilter {
+    private static final String[] LANGUAGES = {"it", "en", "fr", "de", "es"};
+    private static final Set<String> BLACKLIST = new HashSet<>();
+    private static boolean loaded;
 
-    /** Carica blacklist da file <lang>.txt (una parola per riga), rimuove commenti/vuote - by ChatGPT */
-    public static void loadBlacklists() {
-        for (String lang : LANGS) {
-            FileHandle file = Gdx.files.internal("badwords/" + lang + ".txt");
+    private ProfanityFilter() {}
 
-            String content = file.readString("UTF-8");
-            String[] lines = content.split("\\r?\\n");
-
-            for (String w : lines) {
-                w = w.strip().toLowerCase();
-                if (w.isBlank() || w.startsWith("#")) continue;
-                blacklist.add(Pattern.quote(w));
+    public static synchronized void loadBlacklists() {
+        if (loaded) {
+            return;
+        }
+        for (String language : LANGUAGES) {
+            FileHandle file = Gdx.files.internal("badwords/" + language + ".txt");
+            for (String word : file.readString("UTF-8").split("\\r?\\n")) {
+                String normalized = normalize(word);
+                if (!normalized.isBlank() && !normalized.startsWith("#")) {
+                    BLACKLIST.add(normalized);
+                }
             }
         }
-
-        buildPattern();
+        loaded = true;
     }
 
-    /** Costruisce regex che cattura qualsiasi parola vietata - by ChatGPT */
-    private static void buildPattern() {
-        String joined = String.join("|", blacklist);
-        badPattern = Pattern.compile("(?i)\\b(" + joined + ")\\b");
-    }
-
-    /** Normalizza “furbetto” nickname sostituendo simboli e numeri - by ChatGPT */
-    public static String normalize(String s) {
-        // Converte tutto in minuscolo
-        s = s.toLowerCase();
-
-        // Sostituzioni personalizzate dei "furbetti"
-        Map<Character, Character> substitutions = Map.of(
-            '4', 'a',
-            '@', 'a',
-            '3', 'e',
-            '€', 'e',
-            '1', 'i',
-            '!', 'i',
-            '0', 'o',
-            '5', 's',
-            '$', 's'
-        );
-
-        StringBuilder normalized = new StringBuilder();
-
-        for (char c : s.toCharArray()) {
-            if (substitutions.containsKey(c)) {
-                normalized.append(substitutions.get(c));
-            } else if (Character.isLetter(c)) {
-                normalized.append(c);
-            }
-            // Altri caratteri vengono ignorati
-        }
-
-        return normalized.toString();
-    }
-
-
-    /** Controlla se il nickname è pulito - by ChatGPT */
     public static boolean isValidNickname(String nickname) {
-        String norm = normalize(nickname);
-        Matcher m = badPattern.matcher(norm);
-        return !m.find();
+        loadBlacklists();
+        String normalized = normalize(nickname);
+        for (String bannedWord : BLACKLIST) {
+            if ((bannedWord.length() <= 3 && normalized.equals(bannedWord))
+                || (bannedWord.length() > 3 && normalized.contains(bannedWord))) {
+                return false;
+            }
+        }
+        return true;
     }
 
+    private static String normalize(String value) {
+        if (value == null) {
+            return "";
+        }
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFKC).toLowerCase(Locale.ROOT);
+        StringBuilder result = new StringBuilder(normalized.length());
+        for (char character : normalized.toCharArray()) {
+            switch (character) {
+                case '4', '@' -> result.append('a');
+                case '3', '€' -> result.append('e');
+                case '1', '!' -> result.append('i');
+                case '0' -> result.append('o');
+                case '5', '$' -> result.append('s');
+                default -> {
+                    if (Character.isLetter(character)) {
+                        result.append(character);
+                    }
+                }
+            }
+        }
+        return result.toString().replaceAll("(.)\\1+", "$1");
+    }
 }
-

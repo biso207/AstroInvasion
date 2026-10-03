@@ -1,8 +1,9 @@
 /*
-Astro Invasion - class CloudStorageManager -
-Gestisce la lettura/scrittura dei dati utente sul Firestore Database
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class CloudStorageManager -
+ * Reads and writes user data and authentication records in Firestore.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 // package di appartenenza
 package sorgente.UserData;
@@ -13,7 +14,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import okhttp3.*;
 import sorgente.Authentication.LoadingData.LoadCallback;
-import org.mindrot.jbcrypt.BCrypt;
+import sorgente.Authentication.PinSecurityService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -134,9 +135,8 @@ public class CloudStorageManager {
         }
     }
 
-    // PASSWORD //
-    // metodo per recuperare la password utente
-    public static String getPassword(String username) throws IOException {
+    // PIN authentication data.
+    public static String getPin(String username) throws IOException {
         String url = DATABASE_URL + "astroData/" + username;
 
         OkHttpClient client = new OkHttpClient();
@@ -153,22 +153,21 @@ public class CloudStorageManager {
 
         Map responseMap = new Gson().fromJson(body, Map.class);
         Map fields = (Map) responseMap.get("fields");
-        Map pswField = (Map) fields.get("psw");
-        return (String) pswField.get("stringValue");
+        Map pinField = (Map) fields.get("pinHash");
+        if (pinField == null) {
+            pinField = (Map) fields.get("psw");
+        }
+        return pinField == null ? null : (String) pinField.get("stringValue");
     }
 
-    // metodo per salvare la password utente in cloud
-    public static void setPassword(String username, String password) throws IOException {
-        // URL con updateMask per aggiornare solo il campo "psw"
-        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=psw";
-
-        // hash della password
-        password = BCrypt.hashpw(password, BCrypt.gensalt());
+    public static void setPin(String username, String pin) throws IOException {
+        String url = DATABASE_URL + "astroData/" + username + "?updateMask.fieldPaths=pinHash";
+        String pinHash = PinSecurityService.hash(pin);
 
         Map<String, Object> fields = new HashMap<>();
-        Map<String, Object> pswField = new HashMap<>();
-        pswField.put("stringValue", password);
-        fields.put("psw", pswField);
+        Map<String, Object> pinField = new HashMap<>();
+        pinField.put("stringValue", pinHash);
+        fields.put("pinHash", pinField);
 
         Map<String, Object> document = new HashMap<>();
         document.put("fields", fields);
