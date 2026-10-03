@@ -5,7 +5,7 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.LogInSignUp;
+package sorgente.Authentication;
 
 // import librerie e codici
 import com.badlogic.gdx.Gdx;
@@ -19,6 +19,7 @@ import sorgente.ProfanityFilter;
 import sorgente.SoundManager;
 import sorgente.UserData.LockStatusManager;
 import sorgente.UserData.SessionLockManager;
+import sorgente.Localization.SupportedLanguage;
 
 import java.net.InetAddress;
 
@@ -278,7 +279,8 @@ public class AuthAlgorithms implements InputProcessor {
         DataUserManager.setProgress("sound_volume", 0.5);
         DataUserManager.setProgress("music_volume", 0.5);
         DataUserManager.setProgress("alpha_fragments", 0);
-        DataUserManager.setProgress("show_warning", true);
+            DataUserManager.setProgress("show_warning", true);
+            DataUserManager.setLanguage(SupportedLanguage.ENGLISH.getCode());
 
         // salvataggio punti di base in remoto nel loro apposito campo
         try { CloudStorageManager.setUserPoints(AuthAlgorithms.nickname, 0); }

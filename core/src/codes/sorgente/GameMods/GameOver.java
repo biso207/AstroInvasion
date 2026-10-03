@@ -7,6 +7,8 @@ Developed by BIGA©. All rights reserved.
 // package di appartenenza
 package sorgente.GameMods;
 
+import sorgente.Localization.LocalizationManager;
+
 // import librerie e codici
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import sorgente.*;
@@ -23,7 +25,7 @@ import sorgente.GameMods.SpaceJourney.SpaceJourney;
 import sorgente.Lobby.InputManager;
 import sorgente.Lobby.LobbyManager;
 import sorgente.Lobby.UIManager;
-import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.Authentication.AuthAlgorithms;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.UserData.DataUserManager;
 
@@ -524,8 +526,8 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             if (isBtnRHover) screen.draw(btnHoverR, 519, 48);
 
             // scritte pulsanti
-            fontBoldWhite60.draw(screen, "YES", 320, 110);
-            fontBoldWhite60.draw(screen, "NO", 577, 110);
+            fontBoldWhite60.draw(screen, LocalizationManager.getInstance().get("button.yes"), 320, 110);
+            fontBoldWhite60.draw(screen, LocalizationManager.getInstance().get("button.no"), 577, 110);
         }
         screen.end();
     }
@@ -548,7 +550,7 @@ public class GameOver implements Screen, InputProcessor, ResourceLoader {
             // pulsanti hover //
             if (isBtnLHover) screen.draw(btnHoverL, 398, 48);
             // testo pulsante //
-            fontBoldWhite50.draw(screen, "CLOSE", 420, 105);
+            fontBoldWhite50.draw(screen, LocalizationManager.getInstance().get("button.close"), 420, 105);
 
             // livello corrente già aggiornato al successivo
             int currentLevel = (int) DataUserManager.getProgress("level");

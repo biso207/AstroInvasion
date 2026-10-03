@@ -1,11 +1,12 @@
 /*
-Astro Invasion - class AuthManagerUI -
-Gestisce le grafiche delle schermate di autenticazione e registrazione
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class UIAuthManager -
+ * Renders the authentication and registration screens.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 // package di appartenenza
-package sorgente.LogInSignUp;
+package sorgente.Authentication;
 
 // import codici e librerie
 import com.badlogic.gdx.Gdx;
@@ -14,12 +15,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.*;
-import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
+import sorgente.Authentication.LoadingData.GlobalProgressManager;
 import sorgente.UserData.CloudStorageManager;
+import sorgente.Localization.LocalizationManager;
 
 import java.io.IOException;
 
-public class LoginSignupManager extends ScreenAdapter implements ResourceLoader {
+public class UIAuthManager extends ScreenAdapter implements ResourceLoader {
     // variabile di riferimento al gioco
     private final Main game;
     // screen di gioco
@@ -27,6 +29,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
 
     // istanza classe algoritmi
     private final AuthAlgorithms alg;
+    private final LocalizationManager localization = LocalizationManager.getInstance();
 
     // font
     private BitmapFont font, fontMediumWhite16, fontBoldYellow20;
@@ -35,7 +38,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         signupPageBtnHover, continueBtnHover, noInternet;
 
     // costruttore
-    public LoginSignupManager(Main game) {
+    public UIAuthManager(Main game) {
         this.game = game;
         this.screen = game.screen;
 
@@ -98,14 +101,14 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         switch (alg.state) {
             case 0:
                 screen.draw(img1, 0, 0);
-                if (alg.error) fontBoldYellow20.draw(screen, "Password wrong",420,72);
-                if (alg.error1) fontBoldYellow20.draw(screen, "Nickname not found",402,72);
-                if (alg.error3) fontBoldYellow20.draw(screen, "Your session is already open",361,72);
+                if (alg.error) fontBoldYellow20.draw(screen, localization.get("auth.passwordWrong"),420,72);
+                if (alg.error1) fontBoldYellow20.draw(screen, localization.get("auth.nicknameNotFound"),402,72);
+                if (alg.error3) fontBoldYellow20.draw(screen, localization.get("auth.sessionOpen"),361,72);
                 break;
             case 1:
                 screen.draw(img2, 0, 0);
-                if (alg.error) fontBoldYellow20.draw(screen, "Nickname already in use",388,72);
-                if (alg.error4) fontBoldYellow20.draw(screen, "Nickname not valid",388,72);
+                if (alg.error) fontBoldYellow20.draw(screen, localization.get("auth.nicknameUsed"),388,72);
+                if (alg.error4) fontBoldYellow20.draw(screen, localization.get("auth.nicknameInvalid"),388,72);
                 break;
             case 2:
                 // salvataggio password in remoto
@@ -131,7 +134,7 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         // messaggio "internet assente"
         if (alg.error2) {
             screen.draw(noInternet, 364, 50);
-            fontBoldYellow20.draw(screen, "No Internet Connection",406,72);
+            fontBoldYellow20.draw(screen, localization.get("network.noInternet"),406,72);
         }
 
         // aree di testo
@@ -156,8 +159,8 @@ public class LoginSignupManager extends ScreenAdapter implements ResourceLoader 
         else font.draw(screen, alg.passwordInput, 272, 316);
 
         // crediti
-        fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-        fontMediumWhite16.draw(screen, "October 2025", 838, 45); // versione di gioco
+        fontMediumWhite16.draw(screen, localization.get("studio"), 53, 45);
+        fontMediumWhite16.draw(screen, localization.get("version"), 838, 45);
 
         screen.end();
     }

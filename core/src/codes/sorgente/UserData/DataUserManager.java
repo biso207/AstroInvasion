@@ -1,20 +1,14 @@
 /*
-Astro Invasion - class DataUserManager -
-Gestisce i progressi utente
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class DataUserManager -
+ * Loads, stores, and persists the active user's progress and preferences.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 /*
-Questa classe gestisce i metodi di scrittura e lettura dei progressi utente.
-Il metodo loadProgresses carica i progressi utente dal server in cloud. I progressi sono mappati in un
-HashMap con una key String che fa riferimento al tipo di progresso e un value Object che prende i valori
-dei progressi indipendentemente dal loro tipo, verrà poi eseguito un casting dal chiamante per recuperare
-il tipo necessario.
-La scrittura sulla mappa e sul server è eseguita a modifica o progresso compiuto mentre, il download dei dati e
-la loro decifrazione e lettura, solo all'avvio di una sessione utente, le uniche cose che si modificano
-sono le value della HashMap. Così facendo non occupiamo memoria per salvare i progressi in diverse variabili
-e viene effettuata una scrittura ogni tanto leggendo una sola volta numerosi dati di progressi utente.
-*/
+ * This class loads user progress from the cloud once per session and keeps the
+ * active values in memory. Changes are persisted whenever a value is updated.
+ */
 
 // package di appartenenza
 package sorgente.UserData;
@@ -23,16 +17,19 @@ package sorgente.UserData;
 import java.io.*;
 import java.util.*;
 import org.json.JSONObject;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
-import sorgente.LogInSignUp.LoadingData.LoadCallback;
+import sorgente.Authentication.AuthAlgorithms;
+import sorgente.Authentication.LoadingData.GlobalProgressManager;
+import sorgente.Authentication.LoadingData.LoadCallback;
+import sorgente.Localization.LocalizationManager;
+import sorgente.Localization.SupportedLanguage;
 
 import java.util.Base64;
 
 public class DataUserManager implements LoadCallback {
-    private static final Map<String, Object> progressi = new HashMap<>();; // hashmap per i dati
+    private static final String LANGUAGE_KEY = "language";
+    private static final Map<String, Object> progress = new HashMap<>();
 
-    // carica i progressi utente (decodifica Base64 + parsing JSON)
+    // Load user progress by decoding Base64 and parsing JSON.
     public static void loadProgresses() throws IOException {
         // caricamento da cloud in remoto
         CloudStorageManager.downloadDatAsync(AuthAlgorithms.nickname, new LoadCallback() {
@@ -49,21 +46,22 @@ public class DataUserManager implements LoadCallback {
                     byte[] decodedBytes = Base64.getDecoder().decode(result);
                     String jsonText = new String(decodedBytes);
 
-                    // salvataggio dati nella mappa dei progressi utente
+                    // Store downloaded progress and preferences in memory.
                     JSONObject json = new JSONObject(jsonText);
                     for (String key : json.keySet()) {
-                        progressi.put(key, json.get(key));
+                        progress.put(key, json.get(key));
                     }
+                    LocalizationManager.getInstance().setLanguage(getLanguage());
                 } else {
-                    System.out.println("Errore nel download dei progressi utente: " + result);
+                    System.err.println("Unable to download user progress: " + result);
                 }
             }
         });
     }
 
-    // salva i progressi sul server remoto (JSON → Base64 → scrittura)
+    // Save progress to the remote server after encoding the JSON as Base64.
     public static void saveProgresses() {
-        JSONObject json = new JSONObject(progressi);
+        JSONObject json = new JSONObject(progress);
         String encoded = Base64.getEncoder().encodeToString(json.toString(4).getBytes());
 
         // salvataggio dati utente in cloud remoto
@@ -81,20 +79,33 @@ public class DataUserManager implements LoadCallback {
         });
     }
 
-    // recupera un progresso specifico
-    public static Object getProgress(String nome) {
-        return progressi.getOrDefault(nome, null);
+    // Retrieve one progress value.
+    public static Object getProgress(String name) {
+        return progress.getOrDefault(name, null);
     }
 
-    // aggiorna un valore e salva tutto
-    public static void setProgress(String nome, Object valore) {
-        progressi.put(nome, valore);
+    // Update one value and persist all progress.
+    public static void setProgress(String name, Object value) {
+        progress.put(name, value);
         saveProgresses();
     }
 
-    // metodo per resettare i progressi al logout => evita sovrascritture
+    public static String getLanguage() {
+        Object value = progress.get(LANGUAGE_KEY);
+        return SupportedLanguage.fromCode(value instanceof String ? (String) value : null).getCode();
+    }
+
+    public static void setLanguage(String languageCode) {
+        SupportedLanguage language = SupportedLanguage.fromCode(languageCode);
+        progress.put(LANGUAGE_KEY, language.getCode());
+        LocalizationManager.getInstance().setLanguage(language);
+        saveProgresses();
+    }
+
+    // Clear the in-memory session state after logout.
     public static void resetProgress() {
-        progressi.clear();
+        progress.clear();
+        LocalizationManager.getInstance().setLanguage(SupportedLanguage.ENGLISH);
     }
 
     // ************************************ //

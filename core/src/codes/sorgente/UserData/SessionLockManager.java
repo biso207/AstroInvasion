@@ -5,7 +5,7 @@ import sorgente.Lobby.UIManager;
 import java.io.IOException;
 import java.util.concurrent.*;
 
-import static sorgente.LogInSignUp.AuthAlgorithms.checkInternetConnection;
+import static sorgente.Authentication.AuthAlgorithms.checkInternetConnection;
 
 public class SessionLockManager {
 

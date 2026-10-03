@@ -1,4 +1,4 @@
-package sorgente.LogInSignUp.LoadingData;
+package sorgente.Authentication.LoadingData;
 
 public class GlobalProgressManager {
     private static ProgressListener listener;

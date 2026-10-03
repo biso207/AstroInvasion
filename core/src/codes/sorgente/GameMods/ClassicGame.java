@@ -7,6 +7,8 @@ Developed by BIGA©. All rights reserved.
 // package di appartenenza
 package sorgente.GameMods;
 
+import sorgente.Localization.LocalizationManager;
+
 // import librerie e codici
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.*;
@@ -664,8 +666,8 @@ public class ClassicGame implements Screen, InputProcessor, ResourceLoader {
             else if (isBtnRHover) screen.draw(btnHoverR, 519, 217);
 
             // scritte pulsanti
-            fontBoldWhite60.draw(screen, "YES", 320, 280);
-            fontBoldWhite60.draw(screen, "NO", 577, 280);
+            fontBoldWhite60.draw(screen, LocalizationManager.getInstance().get("button.yes"), 320, 280);
+            fontBoldWhite60.draw(screen, LocalizationManager.getInstance().get("button.no"), 577, 280);
         }
 
         // stampa statistiche

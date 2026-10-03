@@ -1,8 +1,9 @@
 /*
-Astro Invasion - class SpaceJourneyUI -
-Gestisce la grafica della singola galassia
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class SpaceJourneyUI -
+ * Renders the Space Journey galaxy and level selection interface.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 package sorgente.GameMods.SpaceJourney;
 
@@ -13,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.UserData.DataUserManager;
 import sorgente.ResourceLoader;
+import sorgente.Localization.LocalizationManager;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class SpaceJourneyUI implements ResourceLoader {
+    private final LocalizationManager localization = LocalizationManager.getInstance();
     private Texture imgFlagSeat, imgNumLevelSeat, closeButton, priceRect, buyLevelImg,
         diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, btnHoverL, btnHoverR;
     private Texture[] bgs, infoLevels, imgButtonsStartHover;
@@ -241,8 +244,8 @@ public class SpaceJourneyUI implements ResourceLoader {
         }
 
         // crediti
-        fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-        fontMediumWhite16.draw(screen, "October 2025", 838, 45); // versione di gioco
+        fontMediumWhite16.draw(screen, localization.get("studio"), 53, 45);
+        fontMediumWhite16.draw(screen, localization.get("version"), 838, 45);
     }
 
     // metodo per stampare le info di un livello
@@ -253,12 +256,12 @@ public class SpaceJourneyUI implements ResourceLoader {
         if (SpaceJourney.startLevelHover) screen.draw(imgButtonsStartHover[SpaceJourney.numGalaxy-1], 425, 174);
 
         // testi //
-        fontBoldWhite60_1.draw(screen, "Level " + numLevel, 194, 560); // numero livello
-        fontBoldWhite35.draw(screen, "START", 443, 208); // testo avvio partita
+        fontBoldWhite60_1.draw(screen, localization.get("journey.level", numLevel), 194, 560);
+        fontBoldWhite35.draw(screen, localization.get("button.start"), 443, 208);
 
         // tipologia gioco
         if (listSB.contains(numLevel)) { // Space Battle mode
-            fontBoldWhite25.draw(screen, "Space Battle", 223, 445);
+            fontBoldWhite25.draw(screen, localization.get("mode.spaceBattle"), 223, 445);
 
             // icona difficoltà
             switch ((int) Math.ceil((double) numLevel / 10)) {
@@ -274,10 +277,10 @@ public class SpaceJourneyUI implements ResourceLoader {
             }
 
             // stampa testo missione livello
-            fontBoldWhite25.draw(screen, "Hit him " + (numLevel/2) + " times", 560, 433);
+            fontBoldWhite25.draw(screen, localization.get("journey.hitHim", numLevel / 2), 560, 433);
         }
         else { // Classic Game mode
-            fontBoldWhite25.draw(screen, "Classic Game", 223, 445);
+            fontBoldWhite25.draw(screen, localization.get("mode.classic"), 223, 445);
 
             // icona difficoltà
             switch ((int) Math.ceil((double) numLevel / 10)) {
@@ -293,7 +296,7 @@ public class SpaceJourneyUI implements ResourceLoader {
             }
 
             // missione livello
-            fontBoldWhite25.draw(screen, "Kill " + (numLevel*10) + " aliens", 560, 433);
+            fontBoldWhite25.draw(screen, localization.get("journey.killAliens", numLevel * 10), 560, 433);
         }
     }
 
@@ -317,8 +320,8 @@ public class SpaceJourneyUI implements ResourceLoader {
         else if (SpaceJourney.isBtnRHover) screen.draw(btnHoverR, 519, 217);
 
         // scritte pulsanti
-        fontBoldWhite60_1.draw(screen, "YES", 320, 280);
-        fontBoldWhite60_1.draw(screen, "NO", 577, 280);
+        fontBoldWhite60_1.draw(screen, localization.get("button.yes"), 320, 280);
+        fontBoldWhite60_1.draw(screen, localization.get("button.no"), 577, 280);
     }
 
     // metodo per stampare le grafiche

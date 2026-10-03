@@ -1,4 +1,4 @@
-package sorgente.LogInSignUp.LoadingData;
+package sorgente.Authentication.LoadingData;
 
 public interface LoadCallback {
     void onProgress(int progress); // esempio: 0-100

@@ -1,9 +1,9 @@
 /*
-Astro Invasion - class Main -
-Classe principale del progetto AstroInvasion.
-L'entrata del programma è in "lwjgl3/src/main/java/com.biga.astroinvasion.lwjgl3/Lwjgl3Launcher.java"
-Developed by BIGA©. All rights reserved.
-*/
+ * Astro Invasion - class Main -
+ * Owns the main libGDX game lifecycle and shared rendering resources.
+ *
+ * Developed & Designed by BIGA ©2024-2026. All rights reserved.
+ */
 
 // package di appartenenza
 package sorgente;
@@ -12,9 +12,8 @@ package sorgente;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import sorgente.LogInSignUp.AuthAlgorithms;
-import sorgente.UserData.CloudStorageManager;
 import sorgente.UserData.SessionLockManager;
+import sorgente.Localization.LocalizationManager;
 
 
 public class Main extends Game {
@@ -23,6 +22,7 @@ public class Main extends Game {
     @Override
     public void create() {
         screen = new SpriteBatch();
+        LocalizationManager.getInstance().setLanguage("en");
 
         // chiamata alla schermata di caricamento
         this.setScreen(new LoadingScreen(this, true));

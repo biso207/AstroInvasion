@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import sorgente.Lobby.LobbyManager;
-import sorgente.LogInSignUp.*;
-import sorgente.LogInSignUp.LoadingData.GlobalProgressManager;
-import sorgente.LogInSignUp.LoadingData.ProgressListener;
+import sorgente.Authentication.*;
+import sorgente.Authentication.LoadingData.GlobalProgressManager;
+import sorgente.Authentication.LoadingData.ProgressListener;
 
 import java.util.Random;
 
@@ -90,7 +90,7 @@ public class LoadingScreen implements Screen, ProgressListener {
 
             // accesso alla schermata successiva
             if (playMusic) {
-                game.setScreen(new LoginSignupManager(game)); // schermata di autenticazione
+                game.setScreen(new UIAuthManager(game)); // schermata di autenticazione
                 this.dispose(); // rilascio risorse
             }
             else {

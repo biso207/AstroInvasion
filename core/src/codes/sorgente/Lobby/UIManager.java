@@ -15,18 +15,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import sorgente.UserData.DataUserManager;
-import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.Authentication.AuthAlgorithms;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.Missions.CheckRTG;
 import sorgente.Missions.Missions;
 import sorgente.ResourceLoader;
 import sorgente.Entities.Spacecraft;
+import sorgente.Localization.LocalizationManager;
 
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.TreeMap;
 
 public class UIManager implements ResourceLoader {
+    private final LocalizationManager localization = LocalizationManager.getInstance();
     // dichiarazione immagini delle schermate
     private Texture tickImg, diffCG1, diffCG2, diffCG3, diffSB1, diffSB2, diffSB3, rectSelectCard,
         claimPrize, progressMissions, notifyCompletedMissions, txtSoldOut, soundOn, soundOff, musicOn, musicOff, selectedSetting,
@@ -364,7 +366,7 @@ public class UIManager implements ResourceLoader {
             // button claim hover
             if (InputManager.isBtnClaimHover) screen.draw(buttonsOver[3], 767, 100);
 
-            fontBoldWhite30.draw(screen, "CLAIM", 785, 133); // testo CLAIM
+            fontBoldWhite30.draw(screen, localization.get("button.claim"), 785, 133);
             progress=maxProgress;
         }
 
@@ -560,8 +562,8 @@ public class UIManager implements ResourceLoader {
             if (InputManager.isHoverIconNoInternet) screen.draw(noInternetMessage, 601, 555);
 
             // crediti
-            fontMediumWhite16.draw(screen, "BIGA Games", 53, 45); // firma al gioco
-            fontMediumWhite16.draw(screen, "October 2025", 838, 45); // versione di gioco
+            fontMediumWhite16.draw(screen, localization.get("studio"), 53, 45);
+            fontMediumWhite16.draw(screen, localization.get("version"), 838, 45);
         }
 
         int level = ((int) DataUserManager.getProgress("level"));
@@ -571,12 +573,12 @@ public class UIManager implements ResourceLoader {
             // pagina 'classic game'
             case 0:
                 // titolo e sottotitolo pagina
-                fontSemiboldYellow25.draw(screen, "CLASSIC GAME", 323, 494);
-                fontMediumWhite20.draw(screen, "The new Space Invaders", 323, 457);
+                fontSemiboldYellow25.draw(screen, localization.get("mode.classic"), 323, 494);
+                fontMediumWhite20.draw(screen, localization.get("mode.classicDescription"), 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 332, 410); // punti totali
-                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_CG")), 332, 381); // partite giocate
+                fontMediumWhite20.draw(screen, localization.get("label.points", formatter.format((int) DataUserManager.getProgress("points"))), 332, 410);
+                fontMediumWhite20.draw(screen, localization.get("label.matches", formatter.format((int) DataUserManager.getProgress("matches_CG"))), 332, 381);
                 fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 695, 248); // numero 'super laser'
                 fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_shield")), 808, 362); // numero 'shield'
@@ -623,13 +625,13 @@ public class UIManager implements ResourceLoader {
             // pagina 'space battle'
             case 1:
                 // titolo e sottotitolo pagina
-                fontSemiboldYellow25.draw(screen, "SPACE BATTLE", 323, 494);
-                fontMediumWhite20.draw(screen, "Enjoy a 1v1 Battle", 323, 457);
+                fontSemiboldYellow25.draw(screen, localization.get("mode.spaceBattle"), 323, 494);
+                fontMediumWhite20.draw(screen, localization.get("mode.spaceBattleDescription"), 323, 457);
 
                 // testi //
-                fontMediumWhite20.draw(screen, "Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 332, 411); // vittorie
-                fontMediumWhite20.draw(screen, "Win Streak: " + formatter.format((int) DataUserManager.getProgress("win_streak_SB")), 332, 381); // vittorie consecutive
-                fontMediumWhite20.draw(screen, "Matches: " + formatter.format((int) DataUserManager.getProgress("matches_SB")), 332, 351); // partite giocate
+                fontMediumWhite20.draw(screen, localization.get("label.victories", formatter.format((int) DataUserManager.getProgress("won_SB"))), 332, 411);
+                fontMediumWhite20.draw(screen, localization.get("label.winStreak", formatter.format((int) DataUserManager.getProgress("win_streak_SB"))), 332, 381);
+                fontMediumWhite20.draw(screen, localization.get("label.matches", formatter.format((int) DataUserManager.getProgress("matches_SB"))), 332, 351);
                 fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_gold_heart")), 695, 362); // numero 'gold heart'
                 fontBoldWhite20.draw(screen, formatter.format((int) DataUserManager.getProgress("num_super_laser")), 808, 362); // numero 'super laser'
 
@@ -693,13 +695,13 @@ public class UIManager implements ResourceLoader {
             // pagina 'space journey'
             case 2:
                 // titolo e sottotitolo pagina
-                fontSemiboldYellow25.draw(screen, "SPACE JOURNEY", 323, 494);
-                fontMediumWhite20.draw(screen, "Explore and conquire all the space's galaxies", 323, 457);
+                fontSemiboldYellow25.draw(screen, localization.get("mode.spaceJourney"), 323, 494);
+                fontMediumWhite20.draw(screen, localization.get("mode.spaceJourneyDescription"), 323, 457);
 
                 // testi //
                 if (level==41) level = 40;
-                fontMediumWhite20.draw(screen, "Level: " + level, 332, 410); // livello
-                fontMediumWhite20.draw(screen, "Current Galaxy: " + ((level) / 10 + 1), 332, 381); // galassia corrente
+                fontMediumWhite20.draw(screen, localization.get("label.level", level), 332, 410);
+                fontMediumWhite20.draw(screen, localization.get("label.currentGalaxy", level / 10 + 1), 332, 381);
 
                 // NAVICELLA //
                 // pulsante apertura pagina 'spacecrafts'
@@ -723,17 +725,17 @@ public class UIManager implements ResourceLoader {
             // pagina 'Missions'
             case 3:
                 // titolo e sottotitolo pagina
-                fontSemiboldYellow25.draw(screen, "MISSIONS", 323, 494);
-                fontMediumWhite20.draw(screen, "Complete different tasks to receive prizes", 323, 457);
+                fontSemiboldYellow25.draw(screen, localization.get("mode.missions"), 323, 494);
+                fontMediumWhite20.draw(screen, localization.get("mode.missionsDescription"), 323, 457);
 
                 // recupero missione corrente
                 int missionID = (int) DataUserManager.getProgress("mission_id");
                 Missions m = Missions[missionID-1];
 
                 // testi //
-                fontMediumBlue20.draw(screen, "Task " + formatter.format((int) DataUserManager.getProgress("num_mission")), 514, 407); // numero missione raggiunta
+                fontMediumBlue20.draw(screen, localization.get("label.task", formatter.format((int) DataUserManager.getProgress("num_mission"))), 514, 407);
                 fontMediumBlue20.draw(screen, m.printMission(), 516, 365); // missione da completare
-                fontMediumBlue20.draw(screen, "Prize: x" + m.prize, 660, 231); // premio missione
+                fontMediumBlue20.draw(screen, localization.get("label.prize", m.prize), 660, 231);
 
                 // progresso completamento task corrente
                 drawMissionsPage(screen, missionID);
@@ -747,8 +749,8 @@ public class UIManager implements ResourceLoader {
             // pagina 'marketplace'
             case 5:
                 // titolo e sottotitolo pagina
-                fontSemiboldYellow25.draw(screen, "MARKETPLACE", 323, 494);
-                fontMediumWhite20.draw(screen, "Use your credits to buy cards and unique objects", 323, 457);
+                fontSemiboldYellow25.draw(screen, localization.get("mode.marketplace"), 323, 494);
+                fontMediumWhite20.draw(screen, localization.get("mode.marketplaceDescription"), 323, 457);
 
                 // testi //
                 fontBoldWhite25.draw(screen, formatter.format(InputManager.currentCredit), 700, 495); // numero totale crediti
@@ -782,20 +784,20 @@ public class UIManager implements ResourceLoader {
 
                 // testi //
                 // SCRITTE A SX
-                fontMediumWhite20.draw(screen, "Nickname: " + AuthAlgorithms.nickname, 67, 340); // nickname
-                fontMediumWhite20.draw(screen, "Password: " + AuthAlgorithms.password, 67, 300); // password
-                fontMediumWhite20.draw(screen, "Creation ID: " + DataUserManager.getProgress("date"), 67, 260); // data registrazione
+                fontMediumWhite20.draw(screen, localization.get("label.nickname", AuthAlgorithms.nickname), 67, 340);
+                fontMediumWhite20.draw(screen, localization.get("label.password", AuthAlgorithms.password), 67, 300);
+                fontMediumWhite20.draw(screen, localization.get("label.creationId", DataUserManager.getProgress("date")), 67, 260);
 
                 // SCRITTE A DX
-                fontMediumWhite20.draw(screen, "Points: " + formatter.format((int) DataUserManager.getProgress("points")), 540, 412); // punti
-                fontMediumWhite20.draw(screen, "Level: " + level, 540, 372); // livello
-                fontMediumWhite20.draw(screen, "Mission: " + formatter.format((int) DataUserManager.getProgress("num_mission")), 540, 332); // numero missione
-                fontMediumWhite20.draw(screen, "Aliens Hit: " + formatter.format((int) DataUserManager.getProgress("num_aliens_hit")), 540, 292); // alieni colpiti
-                fontMediumWhite20.draw(screen, "Credits: " + formatter.format((int) DataUserManager.getProgress("credits")), 540, 252); // crediti
-                fontMediumWhite20.draw(screen, "All Time Credits: " + formatter.format((int) DataUserManager.getProgress("total_credits")), 540, 212); // crediti totali
-                fontMediumWhite20.draw(screen, "C.G. Matches: " + formatter.format((int) DataUserManager.getProgress("matches_CG")), 540, 172); // partite classic game
-                fontMediumWhite20.draw(screen, "S.B. Matches: " + formatter.format((int) DataUserManager.getProgress("matches_SB")), 540, 132); // partite space battle
-                fontMediumWhite20.draw(screen, "S.B. Victories: " + formatter.format((int) DataUserManager.getProgress("won_SB")), 540, 92); // vittorie space battle
+                fontMediumWhite20.draw(screen, localization.get("label.points", formatter.format((int) DataUserManager.getProgress("points"))), 540, 412);
+                fontMediumWhite20.draw(screen, localization.get("label.level", level), 540, 372);
+                fontMediumWhite20.draw(screen, localization.get("label.mission", formatter.format((int) DataUserManager.getProgress("num_mission"))), 540, 332);
+                fontMediumWhite20.draw(screen, localization.get("label.aliensHit", formatter.format((int) DataUserManager.getProgress("num_aliens_hit"))), 540, 292);
+                fontMediumWhite20.draw(screen, localization.get("label.credits", formatter.format((int) DataUserManager.getProgress("credits"))), 540, 252);
+                fontMediumWhite20.draw(screen, localization.get("label.allTimeCredits", formatter.format((int) DataUserManager.getProgress("total_credits"))), 540, 212);
+                fontMediumWhite20.draw(screen, localization.get("label.classicMatches", formatter.format((int) DataUserManager.getProgress("matches_CG"))), 540, 172);
+                fontMediumWhite20.draw(screen, localization.get("label.spaceBattleMatches", formatter.format((int) DataUserManager.getProgress("matches_SB"))), 540, 132);
+                fontMediumWhite20.draw(screen, localization.get("label.spaceBattleVictories", formatter.format((int) DataUserManager.getProgress("won_SB"))), 540, 92);
 
                 // immagini //
                 screen.draw(mapAvatarImg.get((int) DataUserManager.getProgress("avatar")), 461, 513); // avatar
@@ -856,8 +858,8 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
 
                 // scritte pulsanti
-                fontBoldWhite60.draw(screen, "YES", 320, 280);
-                fontBoldWhite60.draw(screen, "NO", 577, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.yes"), 320, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.no"), 577, 280);
             }
             else if (InputManager.open18) { // avviso difficoltà elevata
                 screen.draw(mapLobby.get(18), 250, 175);
@@ -869,8 +871,8 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
 
                 // scritte pulsanti
-                fontBoldWhite60.draw(screen, "OK", 339, 280);
-                fontBoldWhite60.draw(screen, "PLAY", 548, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.ok"), 339, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.play"), 548, 280);
             }
             else if (InputManager.open14) { // conferma acquisto
                 screen.draw(mapLobby.get(14), 250, 175);
@@ -880,8 +882,8 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnRHover) screen.draw(buttonsOver[8], 519, 217); // pulsante rosso
 
                 // scritte pulsanti
-                fontBoldWhite60.draw(screen, "YES", 320, 280);
-                fontBoldWhite60.draw(screen, "NO", 577, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.yes"), 320, 280);
+                fontBoldWhite60.draw(screen, localization.get("button.no"), 577, 280);
 
                 // scritte pulsanti
                 // testo prezzo totale
@@ -897,7 +899,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnChangePSWHover) screen.draw(buttonsOver[12], 424, 207);
 
                 // testo "DELETE"
-                fontBoldWhite40.draw(screen, "SAVE", 449, 249);
+                fontBoldWhite40.draw(screen, localization.get("button.save"), 449, 249);
 
                 // password digitata + icona mostra/nascondi psw
                 if (!InputManager.showPS) {
@@ -916,7 +918,7 @@ public class UIManager implements ResourceLoader {
                 if (InputManager.isBtnDeleteHover) screen.draw(buttonsOver[10], 423, 207);
 
                 // testo "DELETE"
-                fontBoldWhite35.draw(screen, "DELETE", 437, 247);
+                fontBoldWhite35.draw(screen, localization.get("button.delete"), 437, 247);
             }
             else if (InputManager.open23) { // wise man
                 screen.draw(mapLobby.get(23), 145, 165);
@@ -925,8 +927,8 @@ public class UIManager implements ResourceLoader {
                 fontBoldItalicYellow20.draw(screen, "“The key to true success lies in patience and perseverance”", 208, 357);
                 // testi sotto in bianco
                 fontBoldItalicWhite20.draw(screen, "Cap. Alpha", 208, 330);
-                fontBoldWhite20.draw(screen, "Congratulations " + AuthAlgorithms.nickname + ", the journey has come to an end.", 208, 272);
-                fontBoldWhite20.draw(screen, "Your glory will be remembered forever.", 208, 245);
+                fontBoldWhite20.draw(screen, localization.get("ending.congratulations", AuthAlgorithms.nickname), 208, 272);
+                fontBoldWhite20.draw(screen, localization.get("ending.glory"), 208, 245);
             }
         }
     }

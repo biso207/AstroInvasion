@@ -12,7 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.gson.Gson;
 import okhttp3.*;
-import sorgente.LogInSignUp.LoadingData.LoadCallback;
+import sorgente.Authentication.LoadingData.LoadCallback;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;

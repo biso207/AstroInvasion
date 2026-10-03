@@ -5,11 +5,10 @@ Developed by BIGA©. All rights reserved.
 */
 
 // package di appartenenza
-package sorgente.LogInSignUp;
+package sorgente.Authentication;
 
 // import librerie e codici
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.net.URLEncoder;

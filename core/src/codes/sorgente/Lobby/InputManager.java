@@ -17,12 +17,12 @@ import sorgente.UserData.DataUserManager;
 import sorgente.Entities.Avatar;
 import sorgente.Entities.Spacecraft;
 import sorgente.GameMods.ClassicGame;
-import sorgente.LogInSignUp.AuthAlgorithms;
+import sorgente.Authentication.AuthAlgorithms;
 import sorgente.UserData.CloudStorageManager;
 import sorgente.SoundManager;
 import sorgente.GameMods.SpaceBattle;
 import sorgente.GameMods.SpaceJourney.SpaceJourney;
-import sorgente.LogInSignUp.LoginSignupManager;
+import sorgente.Authentication.UIAuthManager;
 import sorgente.UserData.SessionLockManager;
 import java.io.IOException;
 import java.util.HashMap;
@@ -630,7 +630,7 @@ public class InputManager implements InputProcessor {
 
                 ui.disposeUI(); // rilascio risorse
                 // apertura pagina autenticazione
-                LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+                LobbyManager.game.setScreen(new UIAuthManager(LobbyManager.game));
             }
 
             // mostra/nascondi password
@@ -778,7 +778,7 @@ public class InputManager implements InputProcessor {
                 DataUserManager.resetProgress(); // pulizia mappa dei progressi
 
                 // apertura schermata di autenticazione
-                LobbyManager.game.setScreen(new LoginSignupManager(LobbyManager.game));
+                LobbyManager.game.setScreen(new UIAuthManager(LobbyManager.game));
                 ui.disposeUI(); // rilascio risorse
             }
 
